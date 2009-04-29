@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<appendix id="artifactory">
+  <title>Migrating to Nexus from Artifactory</title>
+
+  <section id="artifactory-sect-introduction">
+    <title>Introduction</title>
+
+    <para>This appendix walks you through the process of using the Nexus
+    Migration Plugin to migrate an existing Artifactory installation to a new
+    Nexus installation. The Nexus Migration Plugin can read an Artifactory
+    System Export archive and recreate groups and repositories based on your
+    existing Artifactory installation. Once the migration is completed, the
+    Nexus Artifactory Bridge will then serve repository artifacts to clients
+    using a web application which exposes the same artifacts to clients using
+    the same URLs and repository identifier that they referenced in your
+    legacy Artifactory installation. This Nexus Migration plugin offers an
+    easy, drop-in replacement for Artifactory.</para>
+  </section>
+
+  <section id="artifactory-sect-create-backup">
+    <title>Creating an Artifactory Backup</title>
+
+    <para>The Nexus Migration plugin relies on the Artifactory System Export
+    which is an ZIP archive containing all of the configuration and data for
+    an Artifactory installation. To generate this export, log in as an
+    administrative user in Artifactory, and click on the
+    <guibutton>System</guibutton> link under <guilabel>Import &amp;
+    Export</guilabel> in the left navigation menu. Clicking on this link will
+    show the <guilabel>Entire System Export &amp; Import</guilabel> screen as
+    shown in <xref linkend="fig-creating-artifactory-backup" />.</para>
+
+    <figure id="fig-creating-artifactory-backup">
+      <title>Creating an Artifactory System Export</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/artifactory_creating-backup.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>This appendix assumes that Artifactory has been installed in the
+    directory <filename>/usr/local/artifactory-2.0.2</filename>. To create a
+    backup ZIP archive in that same directory:</para>
+
+    <orderedlist>
+      <listitem>
+        <para>Enter <filename>/usr/local/artifactory-2.0.2</filename> into the
+        <guilabel>Target export dir</guilabel> field. If you are on a Windows
+        platform, or if you have installed Artifactory in a different path,
+        enter the path at which Artifactory is installed.</para>
+      </listitem>
+
+      <listitem>
+        <para>Check the <guilabel>Create a zip archive (slow!)</guilabel>
+        checkbox as shown in <xref
+        linkend="fig-creating-artifactory-backup" />.</para>
+      </listitem>
+
+      <listitem>
+        <para>Click the <guibutton>Export</guibutton> button.</para>
+      </listitem>
+    </orderedlist>
+
+    <para>When you click the <guibutton>Export</guibutton> button, Artifactory
+    is going to create a timestamped ZIP archive in the specified directory.
+    In this example, Artifactory creates a file named
+    <filename>/usr/local/artifactory-2.0.2/20090314.154349.zip</filename>.
+    Once this step is completed, you will no longer need to run Artifactory,
+    and you can safely shut it down. In the next section you will learn how to
+    install the Nexus Migration Plugin.</para>
+  </section>
+
+  <section id="artifactory-sect-installation">
+    <title>Installation of the Migration Plugin</title>
+
+    <para>The migration plugin is a free, open-source plugin that can be
+    downloaded by visiting <ulink
+    url="${nexusmigration.about.url}">${nexusmigration.about.url}</ulink> or
+    by downloading the plugin directly from Sonatype's Public Nexus Repository
+    <ulink
+    url="${nexusmigration.plugin.url}">${nexusmigration.plugin.url}</ulink>.</para>
+
+    <note>
+      <para>This section assumes that you have just downloaded and installed
+      Nexus Open Source or Nexus Professional. If you haven't installed Nexus,
+      you should make a bookmark for this section and jump to <xref
+      linkend="install" />. Once you have installed Nexus, return to this
+      section and install the Nexus Migration Plugin.</para>
+    </note>
+
+    <para>The following screen listing shows a series of commands which can be
+    used to install the Nexus Migration plugin into an existing Nexus
+    installation. This listing assumes that the environment variable
+    <varname>\${NEXUS_HOME}</varname> points to an existing Nexus
+    installation. Download the Nexus Migration plugin, copy the distribution
+    archive to the Nexus installation folder, and unpack it. This archive will
+    install the necessary applications and plugins to enable a smooth
+    migration from Artifactory to Nexus.</para>
+
+    <screen>$ <command>wget ${nexusmigration.plugin.url}</command>
+...
+Resolving repository.sonatype.org... 63.246.20.88
+Connecting to repository.sonatype.org|63.246.20.88|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 280179 (274K)
+Saving to: '${nexusmigration.dist}'
+
+100%[======================================&gt;] 280,179      406K/s   in 0.7s    
+
+2009-03-14 15:03:52 (406 KB/s) - `${nexusmigration.dist}' saved [280179/280179]
+$ <command>cp ${nexusmigration.dist} \${NEXUS_HOME}</command>
+$ <command>cd \${NEXUS_HOME}</command>
+$ <command>unzip ${nexusmigration.dist}</command>
+Archive:  ${nexusmigration.dist}
+   creating: runtime/
+   creating: runtime/apps/
+   creating: runtime/apps/artifactory-bridge/
+   creating: runtime/apps/artifactory-bridge/webapp/
+   creating: runtime/apps/artifactory-bridge/webapp/WEB-INF/
+  inflating: runtime/apps/artifactory-bridge/webapp/WEB-INF/web.xml  
+   creating: conf/
+  inflating: conf/plexus.xml         
+   creating: runtime/apps/nexus/
+   creating: runtime/apps/nexus/lib/
+  inflating: runtime/apps/nexus/lib/nexus-migration-plugin-artifactory-...jar  
+  inflating: runtime/apps/nexus/lib/nexus-migration-plugin-configuration-...jar  
+  inflating: runtime/apps/nexus/lib/plexus-archiver-...jar  
+  inflating: runtime/apps/nexus/lib/plexus-io-...jar  
+  inflating: runtime/apps/nexus/lib/nexus-repository-conversion-tool-...jar  
+  inflating: runtime/apps/nexus/lib/nexus-migration-plugin-artifactory-bridge-...jar  
+</screen>
+
+    <warning>
+      <para>The Nexus Migration plugin archive contains a copy of
+      <filename>conf/plexus.xml</filename>. If you have customized
+      <filename>plexus.conf</filename>, you will want to make a backup of your
+      customized <filename>plexus.xml</filename> before you install this
+      Migration plugin. Most people using the Nexus Migration plugin are going
+      to be setting up a new instance of Nexus so this shouldn't be an issue.
+      If you are migrating an Artifactory repository to an existing instance
+      of Nexus with a customized <filename>plexus.xml</filename>, you will
+      need to compare your customized <filename>plexus.xml</filename> to the
+      version in the Nexus Migration plugin archive paying close attention to
+      the <sgmltag>webappInfos</sgmltag> element in the Jetty configuration.
+      The Nexus Migration plugin modifies this file, adding a new web
+      application served under the context path
+      <filename>/artifactory</filename> which provides a mapping between
+      legacy Artifactory URLs and new Nexus URLs.</para>
+    </warning>
+
+    <para>Once the Nexus Migration plugin has been installed, start up Nexus
+    and go to the Nexus URL. If you are just setting up Nexus, and you've
+    skipped the installation chapter, the default Nexus URL is <ulink
+    url="http://localhost:8081/nexus">http://localhost:8081/nexus</ulink> and
+    the default administrative username/password combination is "admin" and
+    "admin123". If the Nexus Migration Plugin is installed properly, you
+    should see the <guilabel>Artifactory Import</guilabel> link under
+    <guilabel>Administration</guilabel> in the Nexus application menu as shown
+    in <xref linkend="fig-artifactory-import-panel" />.</para>
+
+    <figure id="fig-artifactory-import-panel">
+      <title>Artifactory Import Panel from the Nexus Migration Plugin</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/artifactory_after-installation.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
+
+  <section id="artifactory-sect-importing">
+    <title>Importing an Artifactory System Backup</title>
+
+    <para>To import the backup created in <xref
+    linkend="artifactory-sect-create-backup" />, enter the path to the
+    Artifactory system backup archive in the <guilabel>Artifactory
+    Import</guilabel> panel as shown in <xref
+    linkend="fig-artifactory-import-backup" />. This path references a
+    filesystem path on the same server that is running Nexus.</para>
+
+    <note>
+      <para>Please note that the filesystem path in Step 1 of the Artifactory
+      Import process references a path on the same server that is running
+      Nexus. This field is not a file upload field, and you are not uploading
+      the Artifactory System Backup archive from your local machine to the
+      server. The Artifactory system export archive can be rather large, and
+      the assumption of the Nexus Migration plugin is that you are installing
+      Nexus on the same server that had previously run Artifactory. If you are
+      not installing Nexus on the same server, you must upload the Artifactory
+      System Backup ZIP file to the Nexus server prior to typing in the
+      filesystem path shown in <xref
+      linkend="fig-artifactory-import-backup" />.</para>
+    </note>
+
+    <figure id="fig-artifactory-import-backup">
+      <title>Specifying the Artifactory System Backup Path</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/artifactory_import-artifactory-backup.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>Click the <guibutton>Import</guibutton> button, and Nexus will then
+    examine the Artifactory System Backup archive and populate fields in Step
+    2 of the Artifactory Import panel.</para>
+  </section>
+
+  <section id="artifactory-sect-configuring">
+    <title>Configuring the Artifactory Import</title>
+
+    <para>Once the System Backup has been imported, the Nexus Migration plugin
+    will populate the Groups, Repositories, and Users tables in Step 2 of the
+    Artifactory Import panel as shown in <xref
+    linkend="fig-artifactory-configuring-import" />. These tables and form
+    elements allow you to customize which repositories and groups are going to
+    be imported into Nexus and how Nexus will configure corresponding
+    repositories. The following sections describe each of these configuration
+    tables in detail.</para>
+
+    <figure id="fig-artifactory-configuring-import">
+      <title>Configuring the Artifactory Import</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/artifactory_customer-import-step2.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <section id="artifactory-sect-configuring-groups">
+      <title>Configuring Artifactory Group Imports</title>
+
+      <para>The groups table displays all of the groups contained in the
+      Artifactory system backup. By default, all groups are selected. If you
+      wish to omit an Artifactory group from the import process, deselect the
+      checkbox for that group in the Import column. Each group's content type
+      resolution is shown in the Content Type Resolution column. Changing the
+      content type resolution will control how Nexus configures the Nexus
+      Group that corresponds to each Artifactory Group.</para>
+
+      <figure id="fig-artifactory-configuring-groups">
+        <title>Configuring Artifactory Group Imports</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/artifactory_groups-content-type.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section id="fig-artifactory-config-repository-imports">
+      <title>Configuring Artifactory Repository Imports</title>
+
+      <para>The second table in Step 2 of the Artifactory Import panel is the
+      Repostiories panel. In this panel you can select repositories to import
+      and also configure how Artifactory proxy repositories would be mapped to
+      Nexus proxy repository with matching canonical URLs. Each row in the
+      Repositories table contains the following columns:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Import</term>
+
+          <listitem>
+            <para>This column contains a simple checkbox. If the checkbox is
+            checked, the repository will be imported into Nexus. If the
+            checkbox is not check, the Nexus Migration plugin will omit the
+            repository from the import process.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Repository ID</term>
+
+          <listitem>
+            <para>This is the repository identifier from Artifactory. This
+            column cannot be edited.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Type</term>
+
+          <listitem>
+            <para>This is the type of the repository being imported. Hosted
+            repositories in Artifactory will be imported as hosted
+            repositories in Nexus. Proxy repositories in Artifactory will be
+            imported as proxy repositories in Nexus unless they are merged
+            with an existing proxy repository.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Map URLs</term>
+
+          <listitem>
+            <para>Since Nexus is a drop-in replacement for Artifactory, the
+            Nexus Migration Plugin gives you the option to Map the legacy
+            Artifactory URLs to the newer Nexus URLs. Checking this box will
+            tell the Nexus Migration plugin to create the appropriate URL
+            mappings to allow clients to interact with the newly created Nexus
+            repositories via the legacy Artifactory URLs.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Copy Cached Artifacts</term>
+
+          <listitem>
+            <para>Checking this box will tell the Nexus Migration plugin to
+            copy the cache contents of a proxy repository to the newly created
+            Nexus repository. Leaving this box unchecked will tell the Nexus
+            Migration plugin to only copy the configuration for a proxy
+            repository.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Releases/Snapshots</term>
+
+          <listitem>
+            <para>This allows you to customize the Repository Policy in a
+            newly created Nexus repository. If you want a hosted or proxy
+            repository to serve only release or snapshot versions, select the
+            corresponding value in the dropdown. If you want a host or proxy
+            repository to serve both release and snapshot versions, select
+            both in this dropdown list. If you want Nexus to use the type
+            implied by the Artifactory repository, don't select a value in
+            this dropdown.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <figure id="fig-artifactory-configuring-repo">
+        <title>Configuring Repositories for Artifactory Import</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/artifactory_repository-releases-snapshots.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <variablelist>
+        <varlistentry>
+          <term>Merge With</term>
+
+          <listitem>
+            <para>If an Artifactory proxy repository has a canonical URL which
+            matches the canonical URL of an existing Nexus repository, you can
+            merge this proxy repository into the existing Nexus proxy
+            repository. Most people running the Artifactory Import process
+            will likely have a <varname>repo1</varname> proxy repository in
+            Artifactory for the Central Maven Repository and a
+            <varname>central</varname> proxy repository in Nexus for the
+            Central Maven Repository. As both of these repositories have the
+            same URL, the Nexus Migration plugin will show a checkbox in the
+            <guilabel>Merge With</guilabel> column as shown in <xref
+            linkend="fig-artifactory-merge-with" />. Checking this box will
+            instruct the Nexus Migration plugin to merge the contents and
+            configuration of the <varname>repo1</varname> repository with the
+            existing <varname>central</varname> repository. In other words, if
+            this box is checked, the Nexus Migration plugin will not create a
+            new proxy repository for <varname>repo1</varname>, and if the box
+            isn't checked, the Nexus Migration plugin will create new proxy
+            repository for <varname>repo1</varname>.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <figure id="fig-artifactory-merge-with">
+        <title>Merging a Proxy Repository During Artifactory Import</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/artifactory_merging-proxy-repos.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section>
+      <title>Configuring Users and Privileges in the Artifactory
+      Import</title>
+
+      <para>The Users table shown in <xref
+      linkend="fig-artifactory-configuring-users" /> allows you to select
+      which users are imported into Nexus from the Artifactory system backup
+      archive. The columns in the User table are:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Import</term>
+
+          <listitem>
+            <para>If the checkbox in this column is selected, the Artifactory
+            user will be imported into Nexus, if the box is not selected this
+            user will not be imported into Nexus.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>User ID</term>
+
+          <listitem>
+            <para>This is the User identifier from Artifactory, this field
+            cannot be edited.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Email</term>
+
+          <listitem>
+            <para>This is the email of a User, this field cannot be
+            edited.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Admin</term>
+
+          <listitem>
+            <para>If this checkbox is selected, Nexus will associate the newly
+            imported user with the Nexus Administrator role.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <figure id="fig-artifactory-configuring-users">
+        <title>Configuring Users During Artifactory Import</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/artifactory_user-import.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Just below the Users table is the <guilabel>Import
+      Permissions</guilabel> checkbox. If this checkbox is selected, Nexus
+      will attempt to import Artifactory privileges into Nexus and map the
+      corresponding roles and privileges to the imported users.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Performing the Artifactory Import</title>
+
+    <para>Once the Artifactory import has been configured, click on the
+    <guibutton>Start Import</guibutton> button at the bottom of the
+    <guilabel>Artifactory Import</guilabel> panel. Clicking on the
+    <guibutton>Start Import</guibutton> button will show you the warning
+    dialog shown in <xref linkend="fig-artifactory-loading-warning" />.</para>
+
+    <figure id="fig-artifactory-loading-warning">
+      <title>Loading Artifactory Configuration Warning</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/artifactory_warning-long-time.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>If you are migrating a large Artifactory installation, the loading
+    process could take a significant amount of time. If you are comfortable
+    with your import configuration, click on the <guibutton>Yes</guibutton>
+    button. Clicking on the <guibutton>Yes</guibutton> button will then cause
+    Nexus to display the dialog shown in <xref
+    linkend="fig-artifactory-import-scheduled" />.</para>
+
+    <figure id="fig-artifactory-import-scheduled">
+      <title>Artifactory Import Scheduled Dialog</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/artifactory_import-scheduled.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>This dialog informs you that the import is scheduled to start as
+    soon as possible using the Nexus scheduled Job execution infrastructure.
+    You can check on the progress of the import process by clicking on the
+    <guibutton>Show Log</guibutton> button at the bottom of the
+    <guilabel>Artifactory Import</guilabel> panel or by clicking on
+    <guilabel>Logs and Config Files</guilabel> under the
+    <guimenu>Views/Repositories</guimenu> menu and selecting the
+    <filename>migration.log</filename> file from the "Select a document..."
+    dropdown. The migration log is shown in <xref
+    linkend="fig-artifactory-migration-log" />.</para>
+
+    <figure id="fig-artifactory-migration-log">
+      <title>Viewing the Migration Logs</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/artifactory_migration-log.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
+
+  <section>
+    <title>Configuring Artifactory Clients to Use Nexus</title>
+
+    <para>Nexus is a drop-in replacement for Artifactory, this means that you
+    don't need to reconfigure your project's <filename>settings.xml</filename>
+    and repository elements throughout your POMs to start using Nexus. When
+    you installed the Nexus Migration plugin, you also installed a web
+    application called the Artifactory Bridge which should be running under
+    the context path <filename>/artifactory</filename> next to the
+    <filename>/nexus</filename> application. If you run Nexus at the default
+    <ulink
+    url="http://localhost:8081/nexus/">http://localhost:8081/nexus/</ulink>
+    URL, the artifactory bridge will be running at <ulink
+    url="http://localhost:8081/artifactory/">http://localhost:8081/artifactory/</ulink>.</para>
+
+    <para>This Artifactory Bridge will serve repository metadata and artifacts
+    from Nexus under the same URLs that your existing Artifactory clients
+    expect. When you were configuring your repositories during the Artifactory
+    Import in <xref linkend="fig-artifactory-config-repository-imports" />,
+    you'll remember that there was a column named <guilabel>Map
+    URL</guilabel>. Clicking on this <guilabel>Map URL</guilabel> check box
+    for a repository instructed the Nexus Migration plugin to configure a
+    mapping between the old Artifactory URL and repository identifer and the
+    new Nexus URL and repository identifier.</para>
+
+    <para>To see this mapping in action, take a look at the Central repository
+    through three different URLs. This example assumes that you mapped your
+    old <varname>repo1</varname> Artifactory proxy repository to the Nexus
+    <varname>central</varname> proxy repository. Let's take a quick look at
+    the URL for <filename>metadata.xml</filename> for the
+    <varname>nexus-index</varname> artifact which is under the group
+    identifier <varname>org.sonatype.nexus</varname>. To retrieve this
+    directly from the Central Maven repository, you would use the following
+    URL: </para>
+
+    <screen>http://repo1.maven.org/maven2/org/sonatype/nexus/nexus-indexer/maven-metadata.xml</screen>
+
+    <para>To reterieve the same file from the Nexus <varname>central</varname>
+    proxy of the Central Maven repository, you would use the following URL
+    which contains the new Nexus repository identifier "central":</para>
+
+    <screen>http://localhost:8081/nexus/content/repositories/central/org/sonatype/nexus/nexus-indexer/maven-metadata.xml</screen>
+
+    <para>To retrieve the same file from the Artifactory Bridge, you would use
+    the following URL which contains the old Artifactory repository identifier
+    "repo1":</para>
+
+    <screen>http://localhost:8081/artifactory/repo1/org/sonatype/nexus/nexus-indexer/maven-metadata.xml</screen>
+
+    <para>The configuration for these mappings is stored in
+    <filename>sonatype-work/nexus/conf/mapping.xml</filename>. This is an XML
+    file which was configured during the import that maps the old Artifactory
+    repository identifiers to the new Nexus repository identifiers. The
+    Artifactory Bridge web application is configured in
+    <filename>\${NEXUS_HOME}/conf/plexus.xml</filename> contains a reference to
+    the web application and also configures the context-path
+    <filename>/artifactory</filename>.</para>
+  </section>
+</appendix>

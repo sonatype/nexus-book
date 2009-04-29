@@ -1,0 +1,1476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="config">
+  <title>Configuring</title>
+
+  <section id="config-sect-nexus">
+    <title>Configuring Nexus</title>
+
+    <para>Many of the configuration screens shown in this section are only
+    available to administrative users. Nexus allows the admin user to
+    customize the list of repositories, create repository groups, customize
+    server settings, and create routes or "rules" that Maven will use to
+    include or exclude artifacts from a repository.</para>
+
+    <section id="config-sect-repoman-server-conf">
+      <title>Customizing Server Configuration</title>
+
+      <para>In a production installation of Nexus, you'll probably want to
+      customize the administrative password to something other than
+      "admin123", and you might want to override the default directories that
+      Nexus uses to store repository data. To do this, log in as the
+      administrative user and click on Server under Configuration in the
+      left-hand navigation menu. The server configuration screen is shown in
+      <xref linkend="fig-nexus-server-config" /> and <xref
+      linkend="fig-nexus-server-config-2" />.</para>
+
+      <figure id="fig-nexus-server-config">
+        <title>Nexus Server Configuration (File, SMTP, and HTTP
+        Config)</title>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_server-settings.png" />
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+
+      <figure id="fig-nexus-server-config-2">
+        <title>Nexus Server Configuration (Security, App Server, and HTTP
+        Proxy Config)</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/repository-manager_server-settings-2.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <figure id="fig-nexus-server-config-3">
+        <title>Nexus Server Configuration (Security, App Server, and HTTP
+        Proxy Config)</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/repository-manager_server-settings-3.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <figure>
+        <title>Configuring PGP Keyserver Preferences</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/configuring_pgp-keyserver.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>This screen allows you to change:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>SMTP Settings</term>
+
+          <listitem>
+            <para>Nexus sends email to users who need to recover usernames and
+            password. To do this, you'll need to configure the SMTP server
+            settings in this dialog. This section of the form takes an SMTP
+            Host and Port as well as other parameters relating to SMTP
+            authentication and encryption. You can also change the From:
+            header of an email from Nexus.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>User Agent</term>
+
+          <listitem>
+            <para>This is the identifier which Nexus uses when it is making an
+            <acronym>HTTP</acronym> request. You may want to change this if
+            Nexus needs to use an <acronym>HTTP</acronym> Proxy, and the Proxy
+            will only work if the User Agent is set to a specific
+            value.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Additional <acronym>URL</acronym> Parameters</term>
+
+          <listitem>
+            <para>This is a list of extra parameters to place on a
+            <acronym>GET</acronym> request to a remote repository. You could
+            use this to add identifying information to requests.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Request Timeout</term>
+
+          <listitem>
+            <para>The amount of time Nexus will wait for a request to succeed
+            when interacting with an external, remote repository.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Request Retry Attempts</term>
+
+          <listitem>
+            <para>The number of times Nexus will retry a failed
+            <acronym>HTTP</acronym> request.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Security Settings</term>
+
+          <listitem>
+            <para>You can choose to enable or disable security, enable or
+            disable anonymous access, and set the username and password for
+            anonymous access. If you choose to enable security, you are
+            telling Nexus to enforce role-based access control to enforce read
+            and write access to repositories.</para>
+
+            <para>The anonymous username and password is used to integrate
+            with other realms that may need a special username for anonymous
+            access. In other words, the username and password here is what we
+            attempt to authorize when someone makes an anonymous request. You
+            would change the anonymous username to “guest” if you wanted to
+            integrate Nexus with Microsoft's Active Directory.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Application Server Settings</term>
+
+          <listitem>
+            <para>This section allows you to change the Base URL for your
+            Nexus installation. It is used when generating links in emails and
+            RSS feeds. The Sonatype Nexus repository is available on
+            http://respository.sonatype.org, and it makes use of this Base URL
+            field to ensure that links in emails and RSS feeds point to the
+            correct URL. If you are hosting Nexus behind a proxy server and
+            you want to make sure that Nexus always uses the specified Base
+            URL, check the "Force Base URL" checkbox. If the Force Base URL is
+            not checked, Nexus will craft URLs in HTTP responses based on the
+            request URL, but it will use the Base URL when it is generating
+            emails.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>HTTP Proxy Settings</term>
+
+          <listitem>
+            <para>There are a number of HTTP Proxy settings for Nexus
+            installations which need to be configured to use an HTTP Proxy.
+            You can specify a host, port, and a number of authentication
+            options which might be required by your proxy server.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>PGP Key Server Information</term>
+
+          <listitem>
+            <para>Nexus Professional uses a PGP Key Server to retrieve PGP
+            keys when validating artifact signatures. To add a new Key Server
+            URL, enter the URL in the Key Server URL field and click on the
+            Add button. To remove a Key Server URL, click on the URL you wish
+            to remove from the list and click on the Remove button. Key
+            Servers are consulted in the order that they are listed in the Key
+            Server URLs list, to reorder your Key Server URLs, click and drag
+            a URL in the Key Server URLs list.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </section>
+
+    <section id="config-sect-manage-repo">
+      <title>Managing Repositories</title>
+
+      <para>To manage Nexus repositories, log in as the administrative user
+      and click on Repositories in the Views/Repositories menu in the
+      left-hand navigation menu. If you are logged into Nexus as a user with
+      administrative privileges, you will see Configuration and Mirrors tabs
+      in the lower portion of the Nexus window. Nexus provides for three
+      different kinds of repositories:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Proxy Repository</term>
+
+          <listitem>
+            <para>A proxy repository is a proxy of a remote repository. By
+            default, Nexus ships with the following configured proxy
+            repositories:</para>
+
+            <variablelist>
+              <varlistentry>
+                <term>Apache Snapshots</term>
+
+                <listitem>
+                  <para>This repository contains snapshot releases from the
+                  Apache Software Foundation
+                  http://people.apache.org/repo/m2-snapshot-repository</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Codehaus Snapshots</term>
+
+                <listitem>
+                  <para>This repository contains snapshot released from
+                  Codehaus http://snapshots.repository.codehaus.org/</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Central Maven Repository</term>
+
+                <listitem>
+                  <para>This is the central Maven repository (for releases).
+                  http://repo1.maven.org/maven2/</para>
+                </listitem>
+              </varlistentry>
+            </variablelist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Hosted Repository</term>
+
+          <listitem>
+            <para>A hosted repository is a repository which is hosted by
+            Nexus. Maven ships with the following configured hosted
+            repositories:</para>
+
+            <variablelist>
+              <varlistentry>
+                <term>3rd Party</term>
+
+                <listitem>
+                  <para>This hosted repository should be used for third-party
+                  dependencies not available in the public Maven repositories.
+                  Examples of these dependencies could be commercial,
+                  proprietary libraries such as an Oracle JDBC driver that may
+                  be referenced by your organization.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Releases</term>
+
+                <listitem>
+                  <para>This hosted repository is where your organization will
+                  publish internal releases.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Snapshots</term>
+
+                <listitem>
+                  <para>This hosted repository is where your organization will
+                  publish internal snapshots.</para>
+                </listitem>
+              </varlistentry>
+            </variablelist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Virtual Repository</term>
+
+          <listitem>
+            <para>This serves as an adapter to and from different types of
+            repositories. Currently Nexus supports conversion to and from
+            Maven 1 repositories and Maven 2 repositories.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <figure id="fig-repo-config">
+        <title>Repository Configuration Screen for a Proxy Repository</title>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_repository-config.png" />
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+
+      <figure id="fig-repo-config-2">
+        <title>Repository Configuration Screen for a Proxy Repository</title>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_repository-config-2.png" />
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+
+      <para><xref linkend="fig-repo-config" /> shows the Repository
+      configuration screen for a Proxy repository in Nexus. From this screen,
+      you can manage the settings for proxying an external repository. From
+      this screen, you can configure:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Repository ID</term>
+
+          <listitem>
+            <para>The repository ID is the identifier which will be used in
+            the Nexus URL. For example, the central proxy repository has an ID
+            of "central", this means that maven can access the repository
+            directly at
+            http://localhost:8081/nexus/content/repositories/central. The
+            Repository ID must be unique in a given Nexus installation. ID is
+            required.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Repository Name</term>
+
+          <listitem>
+            <para>The display name for a repository. Name is required.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Repository Type</term>
+
+          <listitem>
+            <para>The type of repository (proxy, hosted, or virtual). You
+            can't change the type of a repository, it is selected when you
+            create a repository.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Repository Policy</term>
+
+          <listitem>
+            <para>If a proxy repository has a policy of release than it will
+            only access released versions from the remote repository. If a
+            proxy repository has a policy of snapshot, it will download
+            snapshots from the remote repository.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Default Storage Location</term>
+
+          <listitem>
+            <para>Not editable, shown for reference. This is the default
+            storage location for the local cached contents of the
+            repository.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Override Storage Location</term>
+
+          <listitem>
+            <para>You can choose to override the storage location for a
+            specific repository. You would do this if you were concerned about
+            storage and wanted to put the contents of a specific repository
+            (such as central) in a different location.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Remote Repository Access</term>
+
+          <listitem>
+            <para>This section tells Nexus where to look for and how to
+            interact with the remote Maven repository being proxied.</para>
+
+            <variablelist>
+              <varlistentry>
+                <term>Remote Storage Location</term>
+
+                <listitem>
+                  <para>This is the URL of the remote Maven repository.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Download Remote Indexes (Not shown in figure)</term>
+
+                <listitem>
+                  <para>This field controls the downloading of the remote
+                  indexes. Currently only central has an index at <ulink
+                  url="http://repo1.maven.org/maven2/.index">http://repo1.maven.org/maven2/.index</ulink>.
+                  If enabled, Nexus will download the index and use that for
+                  its searches as well as serve that up to any clients which
+                  ask for the index (like m2eclipse). The default for new
+                  proxy repositories is enabled, but all of the default
+                  repositories included in Nexus have this option disabled. To
+                  change this setting for one of the proxy repositories that
+                  ship with Nexus, change the option, save the repository, and
+                  then re-index the repository. Once this is done, artifact
+                  search will return every artifact available on the Central
+                  Maven repository. <xref linkend="sect-manage-repo" />
+                  details the process for re-indexing a repository.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Checksum Policy</term>
+
+                <listitem>
+                  <para>Sets the checksum policy for a remote repository. This
+                  option is set to <varname>Warn</varname> by default. The
+                  possible values of this setting are:</para>
+
+                  <itemizedlist>
+                    <listitem>
+                      <para><varname>Ignore</varname> - Ignore the checksums
+                      entirely</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><varname>Warn</varname> - Print a warning in the
+                      log if a checksum is not correct</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><varname>StrictIfExists</varname> - Refuse to
+                      cache an artifact if the calculated checksum is
+                      inconsistent with a checksum in the repository. Only
+                      perform this check if the checksum file is
+                      present.</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><varname>Strict</varname> - Refuse to cache an
+                      artifact if the calculated checksum is inconsistent or
+                      if there is no checksum for an artifact.</para>
+                    </listitem>
+                  </itemizedlist>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Authentication</term>
+
+                <listitem>
+                  <para>This section allows you to set a Username, Password,
+                  Private Key, Key Passphrase, NT LAN Host, and NT Lan Manager
+                  Domain for a remote repository.</para>
+                </listitem>
+              </varlistentry>
+            </variablelist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Access Settings</term>
+
+          <listitem>
+            <para>This section configures access settings for a
+            repository.</para>
+
+            <variablelist>
+              <varlistentry>
+                <term>Allow Deployment</term>
+
+                <listitem>
+                  <para>If allow deployment is set to true, Nexus will allow
+                  Maven to deploy artifacts to this repository. This option is
+                  visible for Hosted repositories.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Allow File Browsing</term>
+
+                <listitem>
+                  <para>When set to true, users can browse the contents of the
+                  repository with a web browser.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Include in Search</term>
+
+                <listitem>
+                  <para>When set to true, this repository is search when you
+                  perform an Artifact Search in Nexus. If this setting is
+                  false, the contents of the repository are excluded from a
+                  search.</para>
+                </listitem>
+              </varlistentry>
+            </variablelist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Expiration Settings</term>
+
+          <listitem>
+            <para>Nexus maintains a local cache of artifacts and metadata, you
+            can configure expiration parameters for a proxy repository. The
+            expiration settings are:</para>
+
+            <variablelist>
+              <varlistentry>
+                <term>Not Found Cache TTL</term>
+
+                <listitem>
+                  <para>If Nexus fails to locate an artifact, it will cache
+                  this result for a given number of minutes. In other words,
+                  if Nexus can't find an artifact in a remote repository, it
+                  will not repeated attempt to resolve this artifact until the
+                  Not Found Cache TTL time has been exceeded. The default for
+                  this setting is 1440 minutes (or 24 hours).</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Artifact Max Age</term>
+
+                <listitem>
+                  <para>Tells Nexus when that maximum age of an artifact is
+                  before it retrieves a new version from the remote
+                  repository. The default for this setting is -1 for a
+                  repository with a Release policy and 1440 for a repository
+                  with Snapshot policy.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Metadata Max Age</term>
+
+                <listitem>
+                  <para>Nexus retrieves metadata from the remote repository.
+                  It will only retrieve updates to metadata after the Metadata
+                  Max Age has been exceeded. The default value for this
+                  setting is 1440 minutes (or 24 hours).</para>
+                </listitem>
+              </varlistentry>
+            </variablelist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>HTTP Request Settings</term>
+
+          <listitem>
+            <para>This section lets you change the properties of the HTTP
+            request to the remote repository. In this section you can
+            configure the User Agent of the request, add parameters to a
+            request, and set the timeout and retry behavior. This section
+            refers to the HTTP request made from Nexus to the remote Maven
+            repository being proxied.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>HTTP Proxy Settings</term>
+
+          <listitem>
+            <para>This section lets you configure the HTTP Proxy for the
+            request from Nexus to the remote repository. You can configure a
+            proxy host and port plus an authentication settings you need tell
+            Nexus to use an HTTP Proxy for all requests to a remote
+            repository.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <section>
+        <title>Selecting Mirrors for Proxy Repositories</title>
+
+        <para>Nexus also allows you to select which mirrors Nexus will consult
+        for a particular Proxy repository. Clicking on the Mirrors tab will
+        show the figure shown in <xref
+        linkend="fig-configuring-mirror-config" />.</para>
+
+        <figure>
+          <title>Configuring Mirrors for Proxy Repositories</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_config-mirrors.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>To configure a mirror repository, click on the Mirror URL
+        dropdown and select a mirror for the Proxy repository. Click the Add
+        button, and Nexus will then be configured to download artifacts from
+        the selected mirror. Nexus will always download checksums and metadata
+        from the original (or Canonical) URL for a proxy repository. For
+        example, if Nexus is going to download an artifact, it will retrieve
+        the MD5 checksum from the original Maven Central repository and then
+        retrieve the artifact from the selected mirror.</para>
+      </section>
+
+      <section>
+        <title>Adding a Mirror Entry for a Hosted Repository</title>
+
+        <para>If you are logged in as a user with Administrative privilege,
+        there will be a Mirrors tab available when you are viewing a Hosted
+        repository, clicking on this Mirrors tab will show the form shown in
+        <xref linkend="fig-configuring-mirrors-hosted" />. This tab contains a
+        list of mirror URLs for this hosted repository. If there are other
+        sites which mirror the contents of this hosted repository, this tab
+        allows you to populate the repository mirror metadata with those
+        URLs.</para>
+
+        <figure id="fig-configuring-mirrors-hosted">
+          <title>Configuring Mirrors for a Hosted Repository</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/configuring_hosted-mirrors.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>This repository mirror metadata can then be consumed by other
+        systems that interact with your hosted repository. For example, if you
+        have a release repository which is used by your customers or by the
+        general public, if one of people consuming your Hosted repository is
+        also running a Nexus, they can configure a Proxy repository that
+        targets your Hosted repository and they can use the mirror metadata to
+        configure their instance of Nexus to consume artifacts from mirrors of
+        your Hosted repository.</para>
+      </section>
+    </section>
+
+    <section id="config-sect-managing-groups">
+      <title>Managing Groups</title>
+
+      <para>Groups are a powerful feature of Nexus, they allow you to combine
+      multiple repositories in a single URL. Nexus ships with two groups:
+      public and public-snapshots. The public group combines the three hosted
+      repositories: 3rd Party, Releases, and Snapshots with the Central Maven
+      repository. The public-snapshots repository combines the Apache
+      Snapshots and Codehaus Snapshots repositories. In <xref
+      linkend="sect-conf-maven-nexus" /> we configured Maven via the
+      <filename>settings.xml</filename> to look for artifacts in the
+      <varname>public</varname> group managed by Nexus. <xref
+      linkend="fig-group-config" /> shows the group configuration screen in
+      Nexus, in this figure you can see the contents of the
+      <varname>public</varname> group.</para>
+
+      <figure id="fig-group-config">
+        <title>Group Configuration Screen in Nexus</title>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_group-config.png" />
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+
+      <para>Note that the order of the repositories listed in Order Group
+      Repositories is important. When Nexus searches for an artifact in a
+      group of repositories it will return the first match. To reorder a
+      repository in this list, click and the drag the repositories in the
+      Ordered Group Repositories selection list.</para>
+
+      <para>The order of repositories in a group can be used to influence the
+      effective metadata that will be retrieved by Maven from a Nexus
+      Repository Group. We recommend placing release repositories higher in
+      the list than snapshot repositories so that LATEST and RELEASE versions
+      are merged appropriately. We also recommend placing repositories with a
+      higher probability of matching the majority of artifacts higher in this
+      list. If most of your artifacts are going to be retrieved from the
+      Central Maven Repository, putting Central higher in this list than a
+      smaller, more focused repository is going to be better for performance
+      as Nexus is not going to interrogate the smaller remote repository for
+      as many missing artifacts.</para>
+    </section>
+
+    <section id="config-sect-managing-routes">
+      <title>Managing Routes</title>
+
+      <para>Nexus Routes are like filters you can apply to Nexus Groups, they
+      allow you to configure Nexus to include or exclude repositories from a
+      particular artifact search when Nexus is trying to locate an artifact in
+      a Nexus Group. There are a number of different scenarios in which you
+      might configure a route in Nexus, the most common is when you want to
+      make sure that you are retrieving artifacts in a particular group ID
+      from a particular repository. This is especially useful when you want to
+      make sure that you are trying to retrieve your own organization's
+      artifacts from the hosted Release and Snapshot repositories. Nexus
+      Routes are applicable when you are trying to resolve an artifact from a
+      Nexus Group; using Routes allow you to modify the repositories Nexus
+      will consult when it tries to resolve an artifact from a group of
+      repositories.</para>
+
+      <figure id="fig-route-config">
+        <title>Routes Configuration Screen in Nexus</title>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_route-config.png" />
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+
+      <para><xref linkend="fig-route-config" /> shows the Route Configuration
+      screen. Clicking on a route will bring up a screen which will allow you
+      to configure the properties of a route. The configuration options
+      available for a route are:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>URL Pattern</term>
+
+          <listitem>
+            <para>This is the pattern which Nexus will use to match a request
+            to Nexus. If the regular expression in this pattern is matched,
+            Nexus will either include or exclude the listed repositories from
+            a particular artifact query. In <xref
+            linkend="fig-route-config" /> the two patterns are:</para>
+
+            <variablelist>
+              <varlistentry>
+                <term>.*/(com|org)/somecompany/.*</term>
+
+                <listitem>
+                  <para>This pattern would match all of the paths which
+                  included either "/com/somecompany/" or "/org/somecompany".
+                  The expression in the parenthesis matches either com or org,
+                  and the ".*" matches one or more characters. You would use a
+                  route like this to match your own organization's artifacts
+                  and map these requests to the hosted Nexus Releases and
+                  Snapshots repositories.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>.*/org/some-oss/.*</term>
+
+                <listitem>
+                  <para>This pattern is used in an exclusive route. It matches
+                  every path that contains "/org/some-oss/". This particular
+                  exclusive route excludes the local hosted Releases and
+                  Snapshots directory for all artifacts which match this path.
+                  When Nexus tries to resolve artifacts that match this path,
+                  it will exclude the Releases and Snapshots
+                  repositories.</para>
+                </listitem>
+              </varlistentry>
+            </variablelist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Rule Type</term>
+
+          <listitem>
+            <para>Rule Type can be either "inclusive" or "exclusive". An
+            inclusive rule type defines the set of repositories which should
+            be searched for artifacts when the <varname>URL</varname> pattern
+            has been matched. An exclusive rule type defines repositories
+            which should not be searched for a particular artifact.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Ordered Route Repositories</term>
+
+          <listitem>
+            <para>This is an ordered list of repositories which Nexus will
+            search to locate a particular artifact. Nexus searches top to
+            bottom; if it’s looking for an artifact, it will return the first
+            match. When Nexus is looking for metadata, all repositories in a
+            group are checked and the results are merged. The merging is
+            applied giving preference to the earlier repositories. This is
+            relevant when a project is looking for a <varname>LATEST</varname>
+            or a <varname>RELEASE</varname> version. Within a Nexus Group, you
+            should define the release repositories before the snapshot
+            repositories, otherwise <varname>LATEST</varname> may incorrectly
+            resolve to a snapshot version.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>In this figure you can see the two dummy Routes that Nexus has as
+      default routes. The first route is an inclusive route, it is provided as
+      an example of a custom route an organization might use to make sure that
+      internally generated artifacts are resolved from the Releases and
+      Snapshots repositories. If your organization's group IDs all start with
+      com.somecompany, and if you deploy internally generated artifacts to the
+      Releases and Snapshots repositories, this Route will make sure that
+      Nexus doesn't waste time trying to resolve these artifacts from public
+      Maven repositories like the Central Maven Repository or the Apache
+      Snapshots repository.</para>
+
+      <para>The second dummy route is an exclusive route. This route excludes
+      the Releases and Snapshots repositories when the request path contains
+      "/org/some-oss". This example might make more sense if we replaced
+      "some-oss" with "apache" or "codehaus". If the pattern was
+      "/org/apache", this rule is telling Nexus to exclude the internal
+      Releases and Snapshots repositories when it is trying to resolve these
+      dependencies. In other words, don't bother looking for an Apache
+      dependency in your organization's internal repositories.</para>
+
+      <para>What if there is a conflict between two routes? Nexus will process
+      inclusive routes before it will process the exclusive routes. Remember
+      that Nexus Routes only affect Nexus' resolution of artifacts when it is
+      searching a Group. When Nexus starts to resolve an artifact from a Nexus
+      Group it will start with the list of repositories in a group. If there
+      are matching inclusive routes, Nexus will then take the intersection of
+      the repositories in the Group and the repositories in the inclusive
+      Nexus Route. The order as defined in the Nexus Group will not be
+      affected by the Inclusive routes. Nexus will then take the result of
+      applying the inclusive routes and apply the exclusive routes to this new
+      group. The resulting list is then searched for a matching
+      artifact.</para>
+
+      <para>One straightforward use of routes is to create a route that
+      excludes the Central Maven repository from all searches for your own
+      organization's hosted artifacts. If you are deploying your own artifacts
+      to Nexus under a <varname>groupId</varname> of
+      <varname>org.mycompany</varname>, and if you are not deploying these
+      artifacts to a public repository, you can create a rule that tells Nexus
+      not to interrogate Central for your own organization's artifacts. This
+      will improve performance because Nexus will not need to communicate with
+      a remote repository when it serves your own organization's artifacts. In
+      addition to the performance benefits, excluding Central from searches
+      for your own artifacts will reduce needless queries to the public
+      repositories.</para>
+
+      <para>To summarize, there are creative possibilities with Routes that
+      the designers of Nexus may not have anticipated, but we advise you to
+      proceed with caution if you start relying on conflicting or overlapping
+      Routes. Use Routes sparingly, and use course URL patterns, as Nexus
+      evolves there will be more features which allow for more fine grained
+      rules to allow you to prohibit requests for specific artifacts and
+      specific versions of artifacts. Remember that routes are only applied to
+      Nexus Groups, routes are not used when an artifact is requested from a
+      specific repository.</para>
+    </section>
+
+    <section id="config-sect-scheduled-services">
+      <title>Managing Scheduled Services</title>
+
+      <para>Nexus allows you to schedule tasks that will be applied to all
+      repositories or to specific repositories on a configurable schedule. You
+      can create the following kinds of scheduled services:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Remove Snapshots from a Repository</term>
+
+          <listitem>
+            <para>Often, you will want to remove snapshots from a snapshot
+            repository to preserve storage space. When you create a scheduled
+            service to remove snapshots, you can specify:</para>
+
+            <itemizedlist>
+              <listitem>
+                <para>Minimum Snapshots to preserve in a repository</para>
+              </listitem>
+
+              <listitem>
+                <para>Snapshot Retention (in days)</para>
+              </listitem>
+
+              <listitem>
+                <para>Whether snapshots should be removed if an artifact has
+                been released</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Clear Repository Caches</term>
+
+          <listitem>
+            <para>Nexus maintains information about a proxied remote
+            repository to avoid unnecessary network traffic. Clear cache
+            simply expires the artifacts so next time they are requested,
+            Nexus will recheck the remote. This scheduled job clears all
+            cached information about a remote repository stored in your
+            installation of Nexus, and forces Nexus to retrieve artifacts and
+            information from the remote repository.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Empty Trash</term>
+
+          <listitem>
+            <para>The Evict and Purge actions do not delete data from the
+            Nexus working directory. They simply move data to be cleared or
+            evicted to a trash directory under the Nexus work directory. This
+            service deletes the data in this trash directory.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Evict Unused Proxied Items From Repository Caches</term>
+
+          <listitem>
+            <para>Use it or lose it. This scheduled service tells Nexus to get
+            rid of all proxied items which haven't been "used" (referenced or
+            retrieved by a client). This can be a good job to run if you are
+            try to conserve storage space. In this service you can specify the
+            number of days over which Nexus will look for activity before
+            making the decision to evict an artifact. (See note about
+            deletion.)</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Publish Indexes</term>
+
+          <listitem>
+            <para>Just as Maven downloads an index from a remote repository,
+            Nexus can publish an index in the same format. This will make it
+            easier for people using m2eclipse or Nexus to interact with your
+            repositories.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Purge Nexus Timeline</term>
+
+          <listitem>
+            <para>Nexus maintains a lot of data that relates to the
+            interaction between itself, proxied remote repositories, and
+            clients on Nexus. While this information can be important for
+            purposes of auditing, it can also take up storage space. Using
+            this scheduled service you can tell Nexus to periodically purge
+            this information. (See note about deletion.)</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Rebuild Repository Attributes</term>
+
+          <listitem>
+            <para>This scheduled service tells Nexus to walk every file in a
+            repository and gather information like checksums and file contents
+            for every file.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Reindex Repositories</term>
+
+          <listitem>
+            <para>This service tells Nexus to reindex a repository.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Synchronize Shadow Repository</term>
+
+          <listitem>
+            <para>This service synchronizes a shadow (or virtual) repository
+            with its master repository.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <note>
+        <para>The Evict and Purge actions do not delete data from the Nexus
+        working directory. They simply move data to be cleared or evicted to a
+        trash directory under the Nexus work directory. If you want to reclaim
+        disk space, you need to clear the Trash on the Browse Repositories
+        screen. If something goes wrong with a evict of clear service, you can
+        move the data back to the appropriate storage location from the trash.
+        You can also schedule the Empty Trash service to clear this directory
+        on a periodic basis.</para>
+      </note>
+
+      <para>When you create a new service you can configure it to apply to all
+      repositories, the repositories in a Nexus Group, or a specific Nexus
+      Repository. A service can be scheduled to run once at a specific date
+      and time, or periodically once every Day, Week, or Month. If none of
+      these options suit your specific needs, you can select a recurrence of
+      "Advanced" which will allow you to supply your own cron expression to
+      specify when the job should execute.</para>
+
+      <para>To create a new scheduled service, click on Scheduled Services
+      under the Administration menu, and click on the Add button. This will
+      bring up the screen shown in <xref
+      linkend="fig-repomap-scheduled" />.</para>
+
+      <figure id="fig-repomap-scheduled">
+        <title>Managing Nexus Scheduled Services</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/repository-manager_schedule-service.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <section>
+        <title>Managing Configuration Backups with a Scheduled Service</title>
+
+        <para>Nexus Professional includes a scheduled service which allows you
+        to create automated, scheduled backups of your Nexus configuration.
+        This scheduled job will archive the contents of the
+        sonatype-work/nexus/conf directory. <xref
+        linkend="fig-configuring-schedule-conf-backup" /> shows a scheduled
+        configuration backup job configured to backup the contents of the
+        Nexus configuration every day at 12:15 AM.</para>
+
+        <figure id="fig-configuring-schedule-conf-backup">
+          <title>Configuring a Scheduled Backup of Nexus Configuration</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/configuring_schedule-conf-backup.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>Once a backup has been run, the contents of the backup will be
+        available in <filename>sonatype-work/nexus/backup</filename> in a
+        series of ZIP archives which include the date and a timestamp.</para>
+      </section>
+    </section>
+
+    <section id="config-sect-managing-security">
+      <title>Managing Security</title>
+
+      <para>The latest release of Nexus has role-based access control (RBAC)
+      which gives administrators very fine-grained control over who can read
+      from a repository (or a subset of repositories), who can administer the
+      server, and who can deploy to repositories. The security model in Nexus
+      is also so flexible as to allow you to specify that only certain users
+      or roles can deploy and manage artifacts in a specific repository under
+      a specific groupId or asset class. The default configuration of Nexus
+      ships with three roles and three users with a standard set of
+      permissions that will make sense for most users. As your security
+      requirements evolve, you'll likely need to customize security settings
+      to create protected repositories for multiple departments, or
+      development groups. Nexus provides a security model which can adapt to
+      almost anything.</para>
+
+      <para>Nexus' Role-based access control (RBAC) system is designed around
+      the following four security concepts:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Privileges</term>
+
+          <listitem>
+            <para>Privileges are rights to read, update, create, or manage
+            resources and perform operations. Nexus ships with a set of core
+            privileges which cannot be modified, and you can create new
+            privileges to allow for fine-grained targeting of role and user
+            permissions for specific repositories.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Targets</term>
+
+          <listitem>
+            <para>Privileges are usually associated with resources or targets.
+            In the case of Nexus, a target can be a specific repository or a
+            set of repositories grouped in something called a repository
+            target. A target can also be a subset of a repository or a
+            specific asset classes within a repository. Using a target you can
+            apply to a specific privilege to apply to a single groupId.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Roles</term>
+
+          <listitem>
+            <para>Collections of privileges can be grouped into roles to make
+            it easier to define collections of privileges common to certain
+            classes of users. For example, deployment users will all have
+            similar sets of permissions. Instead of assigning individual
+            privileges to individual users, you use Roles to make it easier to
+            manage users with similar sets of privileges. A role has one or
+            more privilege and/or one or more roles.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Users</term>
+
+          <listitem>
+            <para>Users can be assigned roles and privileges, and model the
+            individuals who will be logging into Nexus and read, deploying, or
+            managing repositories.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <section id="config-sect-managing-privileges">
+        <title>Managing Privileges</title>
+
+        <para>Nexus has two types of privileges: application privileges which
+        cover actions a user can execute in Nexus and repository-target
+        privileges which govern the level of access a user has to a particular
+        repository or repository target. Behind the scenes, a privilege is
+        related to a single REST operation and method like create, update,
+        delete, read.</para>
+
+        <figure>
+          <title>Managing Security Privileges</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_security-privileges.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <figure>
+          <title>Managing Security Privileges</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_security-privileges-2.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>Repository target privileges can apply to individual
+        repositories or repository targets. All of the permissions which ship
+        with Nexus target repository targets. To create a new repository
+        target privilege which targets a specific repository, click on the Add
+        button and select a repository from the repository drop down. The list
+        of application permissions are as follows. Application permissions
+        correspond to areas of the application to which a user has a specific
+        level of access (method). The available methods are create, read,
+        update, and delete.</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>Administrator Privilege (ALL)</para>
+          </listitem>
+
+          <listitem>
+            <para>Artifact Download</para>
+          </listitem>
+
+          <listitem>
+            <para>Artifact Upload</para>
+          </listitem>
+
+          <listitem>
+            <para>Checksum Search</para>
+          </listitem>
+
+          <listitem>
+            <para>Clear Repository Cache</para>
+          </listitem>
+
+          <listitem>
+            <para>Configuration File</para>
+          </listitem>
+
+          <listitem>
+            <para>Login to UI</para>
+          </listitem>
+
+          <listitem>
+            <para>Logs</para>
+          </listitem>
+
+          <listitem>
+            <para>Nexus Remote Control</para>
+          </listitem>
+
+          <listitem>
+            <para>Read Repository Metadata</para>
+          </listitem>
+
+          <listitem>
+            <para>Read Repository Status</para>
+          </listitem>
+
+          <listitem>
+            <para>Rebuild Repository Attributes</para>
+          </listitem>
+
+          <listitem>
+            <para>Reindex</para>
+          </listitem>
+
+          <listitem>
+            <para>Repositories</para>
+          </listitem>
+
+          <listitem>
+            <para>Repository Groups</para>
+          </listitem>
+
+          <listitem>
+            <para>Repository Routes</para>
+          </listitem>
+
+          <listitem>
+            <para>Repository Targets</para>
+          </listitem>
+
+          <listitem>
+            <para>Repository Templates</para>
+          </listitem>
+
+          <listitem>
+            <para>RSS Feeds</para>
+          </listitem>
+
+          <listitem>
+            <para>Scheduled Tasks</para>
+          </listitem>
+
+          <listitem>
+            <para>Search Repositories</para>
+          </listitem>
+
+          <listitem>
+            <para>Server Settings</para>
+          </listitem>
+
+          <listitem>
+            <para>Server Status</para>
+          </listitem>
+
+          <listitem>
+            <para>Status</para>
+          </listitem>
+
+          <listitem>
+            <para>User Change Password</para>
+          </listitem>
+
+          <listitem>
+            <para>User Forgot Password</para>
+          </listitem>
+
+          <listitem>
+            <para>User Forgot User ID</para>
+          </listitem>
+
+          <listitem>
+            <para>User Privileges</para>
+          </listitem>
+
+          <listitem>
+            <para>User Reset Password</para>
+          </listitem>
+
+          <listitem>
+            <para>User Roles</para>
+          </listitem>
+
+          <listitem>
+            <para>Users</para>
+          </listitem>
+
+          <listitem>
+            <para>Wastebasket</para>
+          </listitem>
+        </itemizedlist>
+      </section>
+
+      <section id="config-sect-repo-targets">
+        <title>Managing Repository Targets</title>
+
+        <para>A target is a set of regular expressions to match on a path
+        (exactly how the route rules work now). This allows you to define for
+        example a target called Apache Maven which is "org/apache/maven/.*"
+        You can then add a new privilege that relates to the target and
+        controls the CRUD operations for artifacts matching that path (the
+        privilege can span multiple repositories if you want). You could thus
+        delegate all control of org.apache.maven targets to a "Maven" team. In
+        this way, you don't need to create separate repositories for each
+        logical division of your artifacts.</para>
+
+        <figure>
+          <title>Managing Repository Targets</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_repository-targets.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <figure>
+          <title>Managing Repository Targets</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_repository-targets-2.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+      </section>
+
+      <section id="config-sect-managing-roles">
+        <title>Managing Security Roles</title>
+
+        <para>Nexus ships with three roles: Nexus Administrator Role, Nexus
+        Anonymous Role, and Nexus Deployment Role. The administrator role
+        grants all privileges, the anonymous role grants read-only privileges,
+        and the deployment role grants read and update permissions for all
+        repositories.</para>
+
+        <figure>
+          <title>Managing Security Roles</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_security-roles.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <figure>
+          <title>Managing Security Roles</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_security-roles-3.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <figure>
+          <title>Managing Security Roles</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_security-roles-2.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>With the Repository Targets, you have fine grained control over
+        every action in the system. For example you could make a target that
+        includes everything except sources (.*(?!-sources)\.*) and assign that
+        to one group while giving yet another group access to everything. This
+        means you can host your public and private artifacts in a single
+        repository without giving up control of your private artifacts.</para>
+      </section>
+
+      <section id="config-sect-managing-users">
+        <title>Managing Users</title>
+
+        <para>Nexus ships with three users: admin, anonymous, and deployment.
+        The admin user has all privileges, the anonymous user has read-only
+        privileges, and the deployment user can both read and deploy to
+        repositories. If you need to create users with a more focused set of
+        permissions, you can click on Users under Security in the left-hand
+        navigation menu. Once you see the list of users, you can click on a
+        user to edit that specific user's user ID, name, email, or status. You
+        can also assign or revoke specific roles or permissions for a
+        particular user.</para>
+
+        <figure>
+          <title>Managing Users</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/repository-manager_security-users.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+      </section>
+    </section>
+
+    <section id="config-sect-network-configuration">
+      <title>Network Configuration</title>
+
+      <para>By default, Nexus listens on port 8081. You can change this port,
+      by changing the value in
+      <filename>\${NEXUS_HOME}/conf/plexus.properties</filename> this file is
+      shown in <xref linkend="ex-plexus-props" />. To change the port, stop
+      Nexus, change the value of <varname>applicationPort</varname> in this
+      file, and then restart Nexus. Once you do this, you should see a log
+      statement in <filename>\${NEXUS_HOME}/logs/wrapper.log</filename>
+      telling you that Nexus is listening on the altered port.</para>
+
+      <example id="ex-plexus-props">
+        <title>Contents of \${NEXUS_HOME}/conf/plexus.properties</title>
+
+        <programlisting>applicationPort=8081
+runtime=\${basedir}/runtime
+apps=\${runtime}/apps
+work=\${runtime}/work
+webapp=\${runtime}/apps/nexus/webapp
+nexus.configuration=\${runtime}/apps/nexus/conf/nexus.xml</programlisting>
+      </example>
+    </section>
+
+    <section id="configuring-sect-log">
+      <title>Nexus Logging Configuration</title>
+
+      <para>You can configure the format and level of logging from within the
+      Nexus interface. To do this, click on Log under the Administration menu
+      in the left-hand navigation menu. Clicking on this link will display the
+      panel shown in <xref linkend="fig-configuring-log-config" />.</para>
+
+      <figure id="fig-configuring-log-config">
+        <title>The Log Configuration Panel</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/repository-manager_log-config.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>From this panel you can configure the following logging
+      configuration properties:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Root Logger Level</term>
+
+          <listitem>
+            <para>This controls how verbose the Nexus logging will be. If set
+            to DEBUG, Nexus will be very verbose printing all log messages
+            include debugging statements. If set to ERROR, Nexus will be far
+            less verbose only printing out a log statement if Nexus encounters
+            an error.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>File Appender Pattern</term>
+
+          <listitem>
+            <para>This field contols the format of each log line. This field's
+            format corresponds to the format expected by a Log4J
+            PatternAppender. For more information about this format, refer to
+            the <ulink
+            url="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html">Javadoc
+            for Log4J's PatternAppender</ulink>.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>The other configuration parameters: Root Logger Appenders and File
+      Append Location, are not editable in this release of Sonatype
+      Nexus.</para>
+    </section>
+  </section>
+</chapter>

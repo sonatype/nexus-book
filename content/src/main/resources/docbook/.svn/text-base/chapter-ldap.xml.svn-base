@@ -1,0 +1,1034 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="ldap">
+  <title>Nexus LDAP Integration</title>
+
+  <para>Nexus Professional adds a Lightweight Directory Access Protocol
+  (<acronym>LDAP</acronym>) Authentication realm which provides Nexus with the
+  capability to authenticate users against an <acronym>LDAP</acronym> server.
+  In addition to handling authentication, Nexus can be configured to map Nexus
+  roles to <acronym>LDAP</acronym> groups. If an <acronym>LDAP</acronym> user
+  is a member of a group that matches the ID of a Nexus role, Nexus will grant
+  that user the matching Nexus Role. In addition to this highly configurable
+  user and group mapping capability, Nexus can augment <acronym>LDAP</acronym>
+  group membership with Nexus-specific user-role mapping.</para>
+
+  <section id="ldap-sect-enabling">
+    <title>Enabling the LDAP Authentication Realm</title>
+
+    <para><indexterm>
+        <primary>LDAP</primary>
+
+        <secondary>Authentication Realm</secondary>
+      </indexterm><indexterm>
+        <primary>Nexus Security</primary>
+
+        <secondary>LDAP Authentication Realm</secondary>
+      </indexterm>To enable the <acronym>LDAP</acronym> Authentication realm,
+    you will need to add the Nexus <acronym>LDAP</acronym> Authentication
+    Realm to the Selected Realms in the Security section of the Server
+    configuration panel. To load the Server configuration panel, click on the
+    Server link under Administration in the Nexus menu. Once you have the
+    Server configuration panel loaded, select
+    <classname>NexusLdapAuthenticationRealm</classname> in the Available
+    Realms list under the Security section and click the
+    <guibutton>Add</guibutton> button (or Left Arrow) as shown in <xref
+    linkend="fig-ldap-selecting-realm" xrefstyle="select: label" />.</para>
+
+    <figure id="fig-ldap-selecting-realm">
+      <title>Adding the LDAP Authentication Realm to Available Realms</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/ldap_moving_ldap_realm_over.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>Next, click on the <guibutton>Save</guibutton> button in the Server
+    configuration panel. To make sure that your Nexus instance attempts to
+    authenticate against <acronym>LDAP</acronym> first, click on the
+    <classname>NexusLdapAuthenticationRealm</classname> in the Selected Realms
+    list and drag it to the top of the list as shown in <xref
+    linkend="fig-ldap-move-realm-to-top" xrefstyle="select: label" />. This
+    will ensure that Nexus will consult the <acronym>LDAP</acronym> Server
+    before it consults the other Authentication Realms.</para>
+
+    <note>
+      <para>Nexus will continue to fall-back to the
+      <classname>XmlAuthenticatingRealm</classname> if it cannot authenticate
+      a user against the <acronym>LDAP</acronym> server. If your
+      <acronym>LDAP</acronym> server is unavailable, and you need to
+      reconfigure the <acronym>LDAP</acronym> connection, you can always login
+      as the default <literal>admin</literal> user.</para>
+    </note>
+
+    <figure id="fig-ldap-move-realm-to-top">
+      <title>Move the LDAP Authentication Realm to the Top of Selected
+      Realms</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/ldap_moving_ldap_realm_to_top.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
+
+  <section id="ldap-sect-configuring">
+    <title>Configuring Nexus LDAP Integration</title>
+
+    <para>To configure the Nexus <acronym>LDAP</acronym> integration, click on
+    the <acronym>LDAP</acronym> Configuration link in the Nexus menu as shown
+    in <xref linkend="fig-ldap-config-link" xrefstyle="select: label" />.
+    <acronym>LDAP</acronym> Configuration is under Security in the Nexus
+    menu.</para>
+
+    <figure id="fig-ldap-config-link">
+      <title>LDAP Configuration Option in the Nexus Menu</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/ldap_loading_ldap_configuration_panel.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>Clicking on the <acronym>LDAP</acronym> Configuration link will load
+    the <acronym>LDAP</acronym> Configuration panel as shown in <xref
+    linkend="fig-ldap-connection-authentication" xrefstyle="select: label" />
+    and <xref linkend="fig-ldap-user-mapping" xrefstyle="select: label" />.
+    The following sections outline the configuration options available in the
+    <acronym>LDAP</acronym> Configuration panel.</para>
+  </section>
+
+  <section id="ldap-sect-connect-auth">
+    <title>Connection and Authentication</title>
+
+    <para><xref linkend="fig-ldap-connection-authentication"
+    xrefstyle="select: label" /> <indexterm>
+        <primary>LDAP</primary>
+
+        <secondary>Security</secondary>
+      </indexterm>shows Nexus configured to hit an <acronym>LDAP</acronym>
+    server running on localhost port 10389 using the search base of
+    "<literal>ou=system</literal>". On a more standard installation, you would
+    likely not want to use Simple Authentication as it sends the password in
+    cleartext over the network, and you would also use a search base which
+    corresponds to your organization's top-level domain components such as
+    "<literal>dc=sonatype,dc=com</literal>".</para>
+
+    <figure id="fig-ldap-connection-authentication">
+      <title>Connection and Authentication Configuration for LDAP
+      Integration</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/ldap_configure_connection_and_authentication.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para><xref linkend="tbl-ldap-connection-config"
+    xrefstyle="select: label" /> and <xref
+    linkend="tbl-ldap-authentication-config" xrefstyle="select: label" />
+    contain detailed descriptions of the configuration fields in both the
+    Connection and Authentication sections of the <acronym>LDAP</acronym>
+    Configuration panel.</para>
+
+    <table id="tbl-ldap-connection-config">
+      <title>Connection Configuration for LDAP Integration</title>
+
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry>Field Name</entry>
+
+            <entry>Description</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row valign="top">
+            <entry>Protocol</entry>
+
+            <entry>Valid values in this dropdown are <literal>ldap</literal>
+            and <literal>ldaps</literal> which correspond to the Lightweight
+            Directory Access Protocol and the Lightweight Directory Access
+            Protocol over <acronym>SSL</acronym>.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Hostname</entry>
+
+            <entry>The hostname or <acronym>IP</acronym> address of the
+            <acronym>LDAP</acronym> server.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Port</entry>
+
+            <entry>The port on which the <acronym>LDAP</acronym> server is
+            listening. Port 389 is the default port for the
+            <literal>ldap</literal> protocol, and port 636 is the default port
+            for the <literal>ldaps</literal> protocol.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Search Base</entry>
+
+            <entry>The search base is the Distinguished Name
+            (<acronym>DN</acronym>) to be appended to the
+            <acronym>LDAP</acronym> <acronym>URL</acronym>. The search base
+            usually corresponds to the domain name of an organization. For
+            example, the search base on the Sonatype <acronym>LDAP</acronym>
+            server is "<literal>dc=sonatype,dc=com</literal>".</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <table id="tbl-ldap-authentication-config">
+      <title>Authentication Configuration for LDAP Integration</title>
+
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry>Field Name</entry>
+
+            <entry>Description</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row valign="top">
+            <entry>Authentication Method</entry>
+
+            <entry>Nexus provides four distinct authentication methods to be
+            used when connecting to the <acronym>LDAP</acronym>
+            Server:<variablelist>
+                <varlistentry>
+                  <term>Simple Authentication</term>
+
+                  <listitem>
+                    <para>Simple authentication is not recommended for
+                    production deployments not using the secure
+                    <literal>ldaps</literal> protocol as it sends a cleartext
+                    password over the network.</para>
+                  </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                  <term>Anonymous Authentication</term>
+
+                  <listitem>
+                    <para>Used when Nexus only needs read-only access to
+                    non-protected entries and attributes when binding to the
+                    <acronym>LDAP</acronym> server.</para>
+                  </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                  <term>Digest-MD5</term>
+
+                  <listitem>
+                    <para>This is an improvement on the CRAM-MD5
+                    authentication method. For more information, see <ulink
+                    url="http://www.ietf.org/rfc/rfc2831.txt">RFC
+                    2831</ulink>.</para>
+                  </listitem>
+                </varlistentry>
+
+                <varlistentry>
+                  <term>CRAM-MD5</term>
+
+                  <listitem>
+                    <para>The Challenge-Response Authentication Method
+                    (<acronym>CRAM</acronym>) based on the HMAC-MD5 MAC
+                    algorithm. In this authentication method, the server sends
+                    a challenge string to the client, the client responds with
+                    a username followed by a Hex digest which the server
+                    compares to an expected value. For more information, see
+                    <ulink url="http://tools.ietf.org/html/rfc2195">RFC
+                    2195</ulink>.</para>
+                  </listitem>
+                </varlistentry>
+              </variablelist><para>For a full discussion of
+            <acronym>LDAP</acronym> authentication approaches, see <ulink
+            url="http://www.ietf.org/rfc/rfc2829.txt">RFC 2829</ulink> and
+            <ulink url="http://www.ietf.org/rfc/rfc2251.txt">RFC
+            2251</ulink>.</para></entry>
+          </row>
+
+          <row valign="top">
+            <entry>SASL Realm</entry>
+
+            <entry>The Simple Authentication and Security Layer
+            (<acronym>SASL</acronym>) Realm to connect with.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Username</entry>
+
+            <entry>Username of an <acronym>LDAP</acronym> User to connect (or
+            bind) with. This is a Distinguished Name of a user who has
+            administrative rights</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Password</entry>
+
+            <entry>Password for an Administrative <acronym>LDAP</acronym>
+            User</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
+
+  <section id="ldap-sect-user-group-mapping">
+    <title>User and Group Mapping</title>
+
+    <para><indexterm>
+        <primary>LDAP</primary>
+
+        <secondary>Static Groups</secondary>
+      </indexterm><indexterm>
+        <primary>LDAP</primary>
+
+        <secondary>User Mapping</secondary>
+      </indexterm><indexterm>
+        <primary>LDAP</primary>
+
+        <secondary>Group Mapping</secondary>
+      </indexterm>The LDAP Configuration panel also contains sections to
+    manage User Element Mapping and Group Element Mapping as shown in <xref
+    linkend="fig-ldap-user-mapping" xrefstyle="select: label" />.</para>
+
+    <figure id="fig-ldap-user-mapping">
+      <title>Configuring User Mapping for LDAP Integration</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/ldap_configure_user_mapping.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>The fields for both the User Element Mapping and Group Element
+    Mapping sections are described in detail in <xref
+    linkend="tbl-ldap-user-element-config" xrefstyle="select: label" /> and
+    <xref linkend="tbl-ldap-group-element-config"
+    xrefstyle="select: label" />.</para>
+
+    <table id="tbl-ldap-user-element-config">
+      <title>User Element Mapping Configuration for LDAP Integration</title>
+
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry>Field Name</entry>
+
+            <entry>Description</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row valign="top">
+            <entry>Base DN</entry>
+
+            <entry>Corresponds to the Base DN containing user entries. This DN
+            is going to be relative to the Search Base which was specified in
+            <xref linkend="fig-ldap-connection-authentication"
+            xrefstyle="select: label" />. For example, if your users are all
+            contained in "<literal>ou=users,dc=sonatype,dc=com</literal>" and
+            you specified a Search Base of
+            "<literal>dc=sonatype,dc=com</literal>" you would use a value of
+            "<literal>ou=users</literal>" in this field.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>User Subtree</entry>
+
+            <entry>True if there is a tree below the Base DN which can contain
+            user entries. False if all users are contain within the specified
+            Base DN. For example, if all users are in
+            "<literal>ou=users,dc=sonatype,dc=com</literal>" this field should
+            be false. If users can appear in organizational units within
+            organizational units such as
+            <literal>"ou=development,ou=users,dc=sonatype,dc=com</literal>"
+            this field should be true.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Object Class</entry>
+
+            <entry>This value defaults to <classname>inetOrgPerson</classname>
+            which is a standard object class defined in <ulink
+            url="http://www.faqs.org/rfcs/rfc2798.html">RFC 2798</ulink>.
+            <classname>inetOrgPerson</classname> contains standard fields such
+            as <varname>mail</varname>, <varname>displayName</varname>,
+            <varname>uid</varname>, <varname>sn</varname>. Other possible
+            values are <classname>posixAccount</classname> or a custom
+            class.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>User ID Attribute</entry>
+
+            <entry>This is the attribute of the Object class which supplies
+            the User ID. Nexus will use this attribute as the Nexus User
+            ID.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Real Name Attribute</entry>
+
+            <entry>This is the attribute of the Object class which supplies
+            the real name of the user. Nexus will use this attribute when it
+            needs to display the real name of a user.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>E-Mail Attribute</entry>
+
+            <entry>This is the attribute of the Object class which supplies
+            the email address of the user. Nexus will use this attribute when
+            it needs to send an email to a user.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Password Attribute</entry>
+
+            <entry>This is the attribute of the Object class which supplies
+            the password of the user. Nexus will use this attribute when it is
+            authenticating a user against an <acronym>LDAP</acronym>
+            server.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Password Encoding</entry>
+
+            <entry>Defines the preferred password encoding mechanism to be
+            used when sending password data to the <acronym>LDAP</acronym>
+            server.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <table id="tbl-ldap-group-element-config">
+      <title>Group Element Mapping Configuration for LDAP Integration</title>
+
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry>Field Name</entry>
+
+            <entry>Description</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row valign="top">
+            <entry>Group Type</entry>
+
+            <entry>Groups are generally one of two types in
+            <acronym>LDAP</acronym> systems - static or dynamic. A static
+            group contains a list of users. A dynamic group is where the user
+            contains a list of groups the user belongs to. In
+            <acronym>LDAP</acronym> a static group would be captured in an
+            entry with an Object class <literal>groupOfUniqueNames</literal>
+            which contains one or more <literal>uniqueMember</literal>
+            attributes. In a dynamic group configuration, each user entry in
+            <acronym>LDAP</acronym> contains an attribute which lists group
+            membership.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Base DN</entry>
+
+            <entry>This field is similar to the Base DN field described in
+            <xref linkend="tbl-ldap-user-element-config"
+            xrefstyle="select: label" />. This field is visible if Static
+            Groups is selected. If your groups were defined under
+            "<literal>ou=groups,dc=sonatype,dc=com</literal>", this field
+            would have a value of "<literal>ou=groups</literal>".</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Group Subtree</entry>
+
+            <entry>This field is similar to the User Subtree field described
+            in <xref linkend="tbl-ldap-user-element-config"
+            xrefstyle="select: label" />. If all groups are defined under the
+            entry defined in Base DN, this field should be false, if a group
+            can be defined in a tree of organizational units under the Base
+            DN, this field should be true. This field is visible if Static
+            Groups is selected.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Object Class</entry>
+
+            <entry>This value defaults to
+            <classname>groupOfUniqueNames</classname> which is a standard
+            object class defined in <ulink
+            url="http://www.faqs.org/rfcs/rfc2798.html">RFC 4519</ulink>.
+            <classname>groupOfUniqueNames</classname> is simply a collection
+            of references to unique entries in an LDAP directory and can be
+            used to associate user entries with a group. Other possible values
+            are <classname>posixGroup</classname> or a custom class. This
+            field is visible if Static Groups is selected.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Group ID Attribute</entry>
+
+            <entry>Specifies the attribute of the Object class which specifies
+            the Group ID. If the value of this field corresponds to the ID of
+            a Nexus Role, members of this group will have the corresponding
+            Nexus privileges. Defaults to "<literal>cn</literal>". This field
+            is visible if Static Groups is selected.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Group Member Attribute</entry>
+
+            <entry>Specifies the attribute of the Object class which specifies
+            a member of a group. A <classname>groupOfUniqueNames</classname>
+            has multiple <classname>uniqueMember</classname> attributes for
+            each member of a group. Defaults to
+            "<literal>uniqueMember</literal>". This field is visible if Static
+            Groups is selected.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Group Member Format</entry>
+
+            <entry>This field captures the format of the Group Member
+            Attribute and it is used by Nexus to extract a username from this
+            attribute. For example, if the Group Member Attribute has the
+            format "<literal>uid=brian,ou=users,dc=sonatype,dc=com</literal>",
+            then the Group Member Format would be
+            "<literal>uid=\${username},ou=users,dc=sonatype,dc=com</literal>".
+            If the Group Member Attribute had the format
+            "<literal>brian</literal>", then the Group Member Format would be
+            "<literal>\${username}</literal>". This field is visible if Static
+            Groups is selected.</entry>
+          </row>
+
+          <row valign="top">
+            <entry>Member of Attribute</entry>
+
+            <entry>When Dynamic Groups is selected, Nexus will inspect an
+            attribute of the user entry to get a list of groups that the user
+            is a member of. In this configuration, a user entry would have an
+            attribute such as <literal>memberof</literal> which would contain
+            the name of a group. This field is visible if Dynamic Groups is
+            selected.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <para><indexterm>
+        <primary>LDAP</primary>
+
+        <secondary>Dynamic Groups</secondary>
+      </indexterm>If your <acronym>LDAP</acronym> installation does not use
+    Static Groups, you can configure Nexus <acronym>LDAP</acronym> Integration
+    to refer to an attribute on the User entry to derive group membership. To
+    do this, select Dynamic Groups in the Group Type field in Group Element
+    Mapping. Selecting Dynamic Groups will show a single field named Member of
+    Attribute as shown in <xref linkend="fig-ldap-dynamic-groups"
+    xrefstyle="select: label" />.</para>
+
+    <figure id="fig-ldap-dynamic-groups">
+      <title>Group Element Mapping with Dynamic Groups Selected</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/ldap_dynamic_groups.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <section id="ldap-sect-mapping-active-directory">
+      <title>Mapping Users and Groups with Active Directory</title>
+
+      <para>When mapping users and groups to an Active Directory installation,
+      try the common configuration values listed in <xref
+      linkend="tbl-ldap-ad-user-element" /> and <xref
+      linkend="tbl-ldap-ad-group-element" />.</para>
+
+      <table id="tbl-ldap-ad-user-element">
+        <title>User Element Mapping Configuration for Active Directory</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry>Configuration Element</entry>
+
+              <entry>Configuration Value</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>Base DN</entry>
+
+              <entry>cn=users</entry>
+            </row>
+
+            <row>
+              <entry>User Subtree</entry>
+
+              <entry>false</entry>
+            </row>
+
+            <row>
+              <entry>Object Class</entry>
+
+              <entry>user</entry>
+            </row>
+
+            <row>
+              <entry>User ID Attribute</entry>
+
+              <entry>sAMAccountName</entry>
+            </row>
+
+            <row>
+              <entry>Real Name Attribute</entry>
+
+              <entry>cn</entry>
+            </row>
+
+            <row>
+              <entry>E-Mail Attribute</entry>
+
+              <entry>mail</entry>
+            </row>
+
+            <row>
+              <entry>Password Attribute</entry>
+
+              <entry>(Not Used)</entry>
+            </row>
+
+            <row>
+              <entry>Password Encoding</entry>
+
+              <entry>(Not Used)</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table id="tbl-ldap-ad-group-element">
+        <title>Group Element Mapping Configuration for Active
+        Directory</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry>Configuration Element</entry>
+
+              <entry>Configuration Value</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>Group Type</entry>
+
+              <entry>Dynamic Groups</entry>
+            </row>
+
+            <row>
+              <entry>Member Of Attribute</entry>
+
+              <entry>memberOf</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+
+    <section id="ldap-sect-mapping-posix">
+      <title>Mapping Users and Groups with posixAccount</title>
+
+      <para>When mapping users and groups to LDAP entries of type
+      posixAccount, try the common configuration values listed in <xref
+      linkend="tbl-ldap-posix-user-element" /> and <xref
+      linkend="tbl-ldap-posix-group-element" />.</para>
+
+      <table id="tbl-ldap-posix-user-element">
+        <title>User Element Mapping Configuration for posixAccount</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry>Configuration Element</entry>
+
+              <entry>Configuration Value</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>Base DN</entry>
+
+              <entry>(Not Standard)</entry>
+            </row>
+
+            <row>
+              <entry>User Subtree</entry>
+
+              <entry>false</entry>
+            </row>
+
+            <row>
+              <entry>Object Class</entry>
+
+              <entry>posixAccount</entry>
+            </row>
+
+            <row>
+              <entry>User ID Attribute</entry>
+
+              <entry>sAMAccountName</entry>
+            </row>
+
+            <row>
+              <entry>Real Name Attribute</entry>
+
+              <entry>uid</entry>
+            </row>
+
+            <row>
+              <entry>E-Mail Attribute</entry>
+
+              <entry>mail</entry>
+            </row>
+
+            <row>
+              <entry>Password Attribute</entry>
+
+              <entry>(Not Used)</entry>
+            </row>
+
+            <row>
+              <entry>Password Encoding</entry>
+
+              <entry>(Not Used)</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table id="tbl-ldap-posix-group-element">
+        <title>Group Element Mapping Configuration for posixAccount</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry>Configuration Element</entry>
+
+              <entry>Configuration Value</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>Group Type</entry>
+
+              <entry>Static Groups</entry>
+            </row>
+
+            <row>
+              <entry>Base DN</entry>
+
+              <entry>(Not Standard)</entry>
+            </row>
+
+            <row>
+              <entry>Group Subtree</entry>
+
+              <entry>false</entry>
+            </row>
+
+            <row>
+              <entry>Object Class</entry>
+
+              <entry>posixGroup</entry>
+            </row>
+
+            <row>
+              <entry>Group ID Attribute</entry>
+
+              <entry>cn</entry>
+            </row>
+
+            <row>
+              <entry>Group Member Attribute</entry>
+
+              <entry>memberUid</entry>
+            </row>
+
+            <row>
+              <entry>Group Member Format</entry>
+
+              <entry>${username}</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+  </section>
+
+  <section id="ldap-sect-mapping-roles-ldap">
+    <title>Mapping Roles to LDAP Users</title>
+
+    <para><indexterm>
+        <primary>LDAP</primary>
+
+        <secondary>Mapping Nexus Roles</secondary>
+      </indexterm><indexterm>
+        <primary>Security</primary>
+
+        <secondary>Mapping LDAP Groups</secondary>
+      </indexterm>Once User and Group Mapping has been configured, you can
+    start verifying how <acronym>LDAP</acronym> users and groups are mapped to
+    Nexus Roles. If a user is a member of an <acronym>LDAP</acronym> group
+    that has a Group ID corresponding to the ID of a Nexus Role, that user is
+    granted the appropriate permissions in Nexus. For example, if the
+    <acronym>LDAP</acronym> user entry in
+    "<literal>uid=brian,ou=users,dc=sonatype,dc=com</literal>" is a member of
+    a <classname>groupOfUniqueNames</classname> with a <literal>cn</literal>
+    attribute value of <literal>admin</literal>, when this user logs into
+    Nexus, it will be granted the Nexus Administrator Role if Group Element
+    Mapping is configured properly. To verify the User Element Mapping and
+    Group Element Mapping, click on <guibutton>Check User Mapping</guibutton>
+    in the <acronym>LDAP</acronym> Configuration panel directly below the
+    Group Element Mapping section, <xref
+    linkend="fig-ldap-verify-user-mapping" xrefstyle="select: label" /> shows
+    the results of this check.</para>
+
+    <figure id="fig-ldap-verify-user-mapping">
+      <title>Checking the User and Group Mapping in LDAP Configuration</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/ldap_verifying_user_mapping.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>In <xref linkend="fig-ldap-verify-user-mapping"
+    xrefstyle="select: label" />, Nexus <acronym>LDAP</acronym> Integration
+    locates a user with a User ID of "brian" who is a member of the "admin"
+    group. When brian logs in, he will have all of the rights that the admin
+    Nexus Role has.</para>
+
+    <section id="ldap-sect-mapping-nexus-roles-ext">
+      <title>Mapping Nexus Roles for External Users</title>
+
+      <para>If you are unable to map all of the Nexus roles to
+      <acronym>LDAP</acronym> groups, you can always augment the Role
+      information by adding a specific user-role mapping for an external
+      <acronym>LDAP</acronym> user in Nexus. In other words, if you need to
+      make sure that a specific user in LDAP gets a specific Nexus role and
+      you don't want to model this as a group membership, you can add a role
+      mapping for an external user in Nexus. Nexus will keep track of this
+      association independent of your LDAP server. Nexus continues to delegate
+      authentication to the LDAP server for this user, Nexus will continue to
+      map the user to Nexus roles based on the group element mapping you have
+      configured, but Nexus will also add any roles specified in the User
+      panel. You are augmenting the role information that Nexus gathers from
+      the group element mapping.</para>
+
+      <para>Once the User and Group Mapping has been configured, click on the
+      Users link under Security in the Nexus menu. The Users tab is going to
+      contain all of the "configured" users for this Nexus instance as shown
+      in <xref linkend="fig-ldap-all-configured-users-initial" />. A
+      configured user is a user in a Nexus-managed Realm or an External User
+      which has an explicit mapping to a Nexus role. In <xref
+      linkend="fig-ldap-all-configured-users-initial" />, you can see the
+      three default users in the Nexus-managed default realm plus the brian
+      user from LDAP. The brian user appears because this user has been mapped
+      to a Nexus role.</para>
+
+      <figure id="fig-ldap-all-configured-users-initial">
+        <title>Viewing All Configured Users</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/ldap_ad_all_configured_users_initial.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>The list of users in <xref
+      linkend="fig-ldap-all-configured-users-initial" /> is a combination of
+      all of the users in the Nexus default realm and all of the External
+      Users with role mappings. To explore these two sets of user, click on
+      the All Configured Users dropdown and choose "Default Realm Users". Once
+      you select this, click in the search field and press Enter. Searching
+      with a blank string in the Users panel will return all of the users of
+      the selected type. In <xref linkend="fig-ldap-all-default-realm" /> you
+      see a dialog containing all three default users from the Nexus default
+      realm.</para>
+
+      <figure id="fig-ldap-all-default-realm">
+        <title>All Default Realm Users</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/ldap_ad_all_default_realm_users.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>If you wanted to see a list of all LDAP users, select "LDAP" from
+      the "All Configured Users" dropdown shown in <xref
+      linkend="fig-ldap-all-configured-users-initial" /> and click on the
+      search button (magnifying glass) with an empty search field. Clicking
+      search with an empty search field will return all of the LDAP users as
+      shown in <xref linkend="fig-ldap-all-ldap-realm" />.</para>
+
+      <note>
+        <para>Note that the user "tobrien" does not show up in the "All
+        Configured Users" list. This is by design. Nexus is only going to show
+        you information about users with external role mappings. If an
+        organization has an LDAP directory with thousands of developers, Nexus
+        doesn't need to retain any configuration information for users that
+        don't have custom Nexus role mappings.</para>
+      </note>
+
+      <figure id="fig-ldap-all-ldap-realm">
+        <title>All LDAP Users</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/ldap_ad_all_ldap_realm_users.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>To add a mapping for an external LDAP user, you would click on the
+      "All Configured Users" dropdown and select LDAP. Once you've selected
+      LDAP, type in the user ID you are searching for and click the search
+      button (magnifying glass icon to right of the search field). In <xref
+      linkend="fig-ldap-search-ldap-users" />, a search for "brian" yields one
+      user from the LDAP server.</para>
+
+      <figure id="fig-ldap-search-ldap-users">
+        <title>Search LDAP Users</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/ldap_ad_searching_ldap_users.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>To add a Nexus role mapping for the external user "brian" shown in
+      <xref linkend="fig-ldap-search-ldap-users" />, click on the user in the
+      results table and drag a role from Available Roles to Selected Roles as
+      shown in <xref linkend="fig-ldap-mapping-deploy" />. In this case, the
+      user "brian" is mapped to the Administrative group by virtue of his
+      membership in an "admin" group in the <acronym>LDAP</acronym> server. In
+      this use case, a Nexus administrator would like to grant Brian the
+      Deployment Role without having to create a <acronym>LDAP</acronym> group
+      for this role and modifying his group memberships in
+      <acronym>LDAP</acronym>.</para>
+
+      <figure id="fig-ldap-mapping-deploy">
+        <title>Mapping the Deployment Role to an External User</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/ldap_ad_mapping_ldap_deployment.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>The end result of this operation is to augment the Group-Role
+      mapping that is provided by the <acronym>LDAP</acronym> integration. You
+      can use <acronym>LDAP</acronym> groups to manage coarse-grained
+      permissions to grant people administrative privileges and developer
+      roles, and if you need to perform more targeted privilege assignments in
+      Nexus you can Map <acronym>LDAP</acronym> users to Nexus roles with the
+      techniques shown in this section.</para>
+    </section>
+
+    <section id="ldap-sect-external-role-mapping-config">
+      <title>Mapping External Roles to Nexus Roles</title>
+
+      <para>Nexus makes it very straightfoward to map an external role to an
+      internal Nexus role. This is something you would do, if you want to
+      grant every member of an externally managed group (such as an LDAP
+      group) an certain privilege in Nexus. For example, assume that you have
+      a group in LDAP named "svn" and you want to make sure that everyone in
+      the "svn" group has Nexus Administrative privileges. To do this, you
+      would click on the Add.. dropdown in the Role panel as shown in <xref
+      linkend="fig-ldap-select-ext-role-map" />. This dropdown can be found in
+      the Role management panel which is opened by click on Roles in the
+      Security menu.</para>
+
+      <figure id="fig-ldap-select-ext-role-map">
+        <title>Selecting External Role Mapping in the Role Management
+        Panel</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/ldap_mapping-external-role.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Selecting External Role Mapping under Add... will show you a
+      dialog which contains a dropdown of External Realms. Selecting an
+      external realm such as LDAP will then bring a up a list of roles managed
+      by that external realm. The dialog shown in <xref
+      linkend="fig-ldap-select-ext-role" /> shows the external realm LDAP
+      selected and the role "svn" being selected to map to a Nexus
+      role.</para>
+
+      <figure id="fig-ldap-select-ext-role">
+        <title>Selecting an Externally Managed Role to Map to a Nexus
+        Role</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/ldap_mapping-external-role-select.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Once the external role has been selected, Nexus will create a
+      corresponding Nexus Role. You can then assign other Roles to this new
+      externally mapped Role. <xref linkend="fig-ldap-external-role-config" />
+      shows that the SVN role from LDAP is being assigned the Nexus
+      Administrator Role. This means that any user that is authenticated
+      against the external LDAP Realm who is a member of the svn LDAP group
+      will be assigned a role that maps to the Nexus Administrator
+      Role.</para>
+
+      <figure id="fig-ldap-external-role-config">
+        <title>Mapping an External Role to a Nexus Role</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/ldap_mapping-external-role-config.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para></para>
+    </section>
+  </section>
+</chapter>

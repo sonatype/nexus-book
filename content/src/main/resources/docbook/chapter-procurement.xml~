@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="procure">
+  <title>Nexus Procurement Suite</title>
+
+  <section id="procure-sect-intro">
+    <title>Introduction</title>
+
+    <para><indexterm>
+        <primary>Procurement Suite</primary>
+      </indexterm>Nexus Procurement Suite provides an organization with
+    control over what artifacts are allowed into a repository from an
+    external, proxied repository such as the <indexterm>
+        <primary>Repository</primary>
+
+        <secondary>Maven Central</secondary>
+      </indexterm>Central Maven Repository. Such control can be a prerequisite
+    for organizations unwilling or unable to trust the entire contents of an
+    external public repository. If an organization is developing mission
+    critical code, they will likely want to subject every third party
+    dependency to intense scrutiny and testing before making an artifact
+    available to build a release or support a team of developers. In most
+    Enterprise development environments, a developer can't just decide to add
+    in a new dependency to Hibernate or to the Spring Framework on a whim; the
+    decision to add dependencies to third-party libraries will need to be
+    funnelled through an oversight process that relies on an architect or an
+    administrator to promote artifacts to a certified release
+    repository.</para>
+
+    <para>Another, more common experience is an organization which needs to
+    proxy something like the Central Maven Repository but wants to limit
+    access to specific versions of artifacts or prevent dependencies on
+    everything contained under a specific group. Some organizations are more
+    amenable to trusting the contents of a remote, proxied repository like
+    Central, but they also need the ability to block certain dependencies.
+    Maybe you work on a team that needs to limit access to dependencies with a
+    certain license, or maybe you just want to make sure no one uses a
+    problematic version of Hibernate with a known bug? The procurement suite
+    is the tool that provides for both coarse and fine-grained control of the
+    artifacts that can appear in a repository.</para>
+
+    <section id="procure-sect-stages">
+      <title>The Stages of Procurement</title>
+
+      <para>A procured repository is a Hosted Repository which procures
+      artifacts from a Proxy Repository. For example, one could create a
+      hosted repository named "Secured Maven Central" and then configure this
+      hosted repository to procure artifacts from the "Maven Central"
+      repository. Once the hosted repository has been created and the source
+      of procurement has been configured, the repository will obtain artifacts
+      from the proxy repository as long as procurement is activated. If you
+      start procurement for a Hosted repository, the hosted repository will
+      fetch artifacts from the Proxy repository specified in the procurement
+      settings. If you stop procurement for a Hosted Repository, no additional
+      artifacts will be retrieved from the Proxy repository specified in the
+      procurement settings.</para>
+
+      <para>The ability to enable or disable procurement for a Hosted
+      repository comes in very handy when you want to "certify" a Hosted
+      repository as containing all of the artifacts (no more and no less)
+      required for a production build. You can start procurement, run a build
+      which triggers artifact procurement, and then stop procurement knowing
+      that the procured repository now contains all of the artifacts required
+      for building a specific project. Stopping procurement assures you that
+      the contents of the repository will not change if the third-party,
+      external proxied repository does. This is an extra level of assurance
+      that your release artifacts depend on a set of artifacts under your
+      complete control.</para>
+    </section>
+
+    <section id="procure-sect-approaches">
+      <title>Two Approaches to Procurement</title>
+
+      <para>There are two main use cases for the Procurement Suite. In the
+      first use case, the Procured Release Repository, the Procurement
+      features of Nexus Professional are used to create a secured release
+      repository to make sure that the organization has full control over the
+      artifacts that are making it into a production release. The other use
+      case, the Procured Development Repository, is for organizations that
+      need more upfront control over which artifacts are allowed during the
+      development of a project. The following sections describe these two uses
+      cases in more detail.</para>
+
+      <section id="procure-sect-cert">
+        <title>Procured Release Repository</title>
+
+        <para>The Procurement Suite can be used in two different ways. In the
+        "Procured Release" mode, developers work with a proxied 3rd party
+        repository exactly as they would without the Procurement Suite. When a
+        developer needs to add a dependency on a new artifact, Nexus will
+        retrieve the artifact from the third-party repository (like Central or
+        Apache Snapshots) and this artifact will be served to Maven via a
+        proxied Nexus repository. When a QA or Release engineer needs to build
+        a release or staging artifact, the Release or QA build would be
+        configured to execute against a procured repository. A procured
+        repository is one which only serves the artifacts which have been
+        explicitly approved using the Procurement Suite.</para>
+
+        <figure>
+          <title>Procurement to a Certified Release Repository</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/procurement_release-procurement.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>In this model, developers can add as many third-party
+        dependencies as they want, and it is the responsibility of the QA and
+        Release engineers to approve (or procure) artifacts from the
+        Development Repository to the QA/Release Repository. Developers can
+        move forward, adding dependencies freely from a third-party, proxied
+        repository, but once it is time to populate a Release repository, a
+        Nexus administrator can audit the required artifacts, create a secured
+        repository, turn on procurement, populate the repository, and then
+        deactivate procurement. This has the effect of "locking down" the
+        artifacts that are involved in a production release.</para>
+      </section>
+
+      <section id="procure-sect-dev">
+        <title>Procured Development Repository</title>
+
+        <para>There are some development environments which require even more
+        control over which artifacts can be used and referenced by developers.
+        In these situations, it might make sense to only allow developers to
+        work with a secured, procured repository. In this mode, a developer
+        must ask a Nexus administrator for permission to add a dependency on a
+        particular third-party artifact. A Procurement Manager would then have
+        to approve the artifact, or group of artifacts so that they would be
+        made available to the developers. This is the "ask-first" model for
+        organizations that want to control which artifacts make it into the
+        development cycle.</para>
+
+        <figure>
+          <title>Procurement to a Certified Development Repository</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="figs/web/procurement_ask-first-procurement.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>This is a model common in industries that have strict oversight
+        requirements. More often than not, banks, hospitals, and government
+        agencies have fairly strict regulations on the software that can be
+        used by large development teams. With the Secured Development
+        Repository approach, an architecture group can have full control over
+        what artifacts can be referenced by a large development team.</para>
+      </section>
+    </section>
+  </section>
+
+  <section id="procure-sect-install">
+    <title>Installing the Procurement Suite</title>
+
+    <para>If you installed Nexus Professional, the Nexus Procurement Suite is
+    already installed. Just start Nexus and look for the Artifact Procurement
+    option in the left-hand navigation menu of the Nexus interface. If you see
+    the Artifact Procurement link as shown in <xref
+    linkend="fig-procure-links" />, the Procurement Suite is available and
+    ready to be configured.</para>
+
+    <figure id="fig-procure-links">
+      <title>Artifact Procurement in the Nexus Menu</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/procurement_installation.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
+
+  <section id="procure-sect-configure">
+    <title>Setting up a Procured Repository</title>
+
+    <para>This section will walk through the process of creating and
+    configuring a hosted repository named "Procured Central" which will be
+    procured from the "Maven Central" proxy repository. Setting up a procured
+    repository consists of the following steps:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Enabling Remote Index Downloads for a Proxy Repository</para>
+      </listitem>
+
+      <listitem>
+        <para>Creating a Hosted Repository to be Procured</para>
+      </listitem>
+
+      <listitem>
+        <para>Configuring Procurement for the Hosted Repository</para>
+      </listitem>
+
+      <listitem>
+        <para>Configuring Procurement Rules</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Before configuring a procured repository, you need to make sure that
+    you have enabled Remote Index downloading for the proxied repository that
+    will serve as the source for your procured repository.</para>
+
+    <section id="procure-sect-enabled-remote">
+      <title>Enable Remote Index Downloads</title>
+
+      <para><indexterm>
+          <primary>Repository</primary>
+
+          <secondary>Proxy</secondary>
+
+          <tertiary>Remote Index Download</tertiary>
+        </indexterm>When you configure procurement rules for a hosted
+      repository, the administrative interface displays the repository as a
+      tree of groups and artifacts populated from the Remote Repository's
+      Nexus Index. Nexus ships with a set of proxy repositories, but remote
+      index downloading is disabled by default. To use procurement, you will
+      need to tell Nexus to download the remote indexes for a proxy
+      repository. Click on "Repositories" under Views/Repositories in the
+      Nexus menu, then click on the Maven Central repository in the list of
+      repositories. Click on the Configuration tab, locate Download Remote
+      Indexes, and switch this option to "True" as shown in <xref
+      linkend="fig-procure-enabling-remote" />.</para>
+
+      <figure id="fig-procure-enabling-remote">
+        <title>Enabling Remote Index Downloads for a Proxy Repository</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_central-download-remote-index.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Click on the Save button in the dialog shown in <xref
+      linkend="fig-procure-enabling-remote" />. Right-click on the Index in
+      the Repositories list and select "Re-Index". Nexus will then download
+      the remote repository and recreate the index for any Repository Groups
+      that contain this proxied repository. Nexus may take a few minutes to
+      download the remote index for a large repository. Depending on your
+      connection to the Internet, this process can take anywhere from under a
+      minute to a few minutes. The size of the remote index for Maven Central
+      is on the order of 30 MB. To check on the status of the remote index
+      download, click on System Feeds under Views in the Nexus menu. Click on
+      the last feed to see a list of "System Changes in Nexus". If you see a
+      log entry like the one highlighted in <xref
+      linkend="fig-procure-system-feed" />, Nexus has successfully downloaded
+      the Remote Index from Maven Central.</para>
+
+      <figure id="fig-procure-system-feed">
+        <title>Verification that the Remote Index has been Downloaded</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_reindex-system-feed.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section id="procue-sect-create-hosted">
+      <title>Create a Hosted Repository</title>
+
+      <para><indexterm>
+          <primary>Repository</primary>
+
+          <secondary>Hosted</secondary>
+        </indexterm>When you configure procurement you are establishing a
+      relationship between a Proxy repository and a Hosted repository. To
+      create a Hosted repository, select Repositories from the Administration
+      section of the Nexus menu, and click on the Add button selecting Hosted
+      as shown in <xref linkend="fig-procure-add-hosted" />.</para>
+
+      <figure id="fig-procure-add-hosted">
+        <title>Adding a Hosted Repository</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_add-hosted.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Selecting Hosted will then load the Repository Config form shown
+      in <xref linkend="fig-procure-add-secured" />. Create a repository with
+      a Repository ID of "secured" and a name of "Secured". Make the release
+      policy "Release". Click the <guibutton>Save</guibutton> button to create
+      the new Hosted Repository.</para>
+
+      <figure id="fig-procure-add-secured">
+        <title>Adding the "Secured" Hosted Repository</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_after-add-secured.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section id="procure-sect-config-procure-hosted">
+      <title>Configuring Procurement for Hosted Repository</title>
+
+      <para>At this point, the list of Repositories will have a new Hosted
+      repository named "Secured". The next step is to start procurement for
+      the new Secured repository. When you do this, you are establishing a
+      relationship between the new Hosted repository and a Proxy repository.
+      In this case, we're configuring procurement for the Secured repository
+      and we're telling the Procurement Suite to procure artifacts from the
+      Maven Central proxy repository. To configure this relationship and to
+      start procurement, right click on the repository in the list of
+      Repositories and select "Start Procurement..." as shown in <xref
+      linkend="fig-procure-starting-procurement" />.</para>
+
+      <figure id="fig-procure-starting-procurement">
+        <title>Starting Procurement for a Hosted Repository.</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_configure-procurement.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Once you select "Starting Procurement..", the Start Procurement
+      dialog as shown in <xref
+      linkend="fig-procure-start-procurement-dialog" />. Select the "Maven
+      Central" proxy repository from the list of available Target
+      repositories.</para>
+
+      <figure id="fig-procure-start-procurement-dialog">
+        <title>Configuring Procurement for a Hosted Repository</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_configure-procurement-confirm.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <note>
+        <para>While the word "target" implies a destination for procured
+        artifacts, in the context of the Procurement Suite, you are specifying
+        the source of artifacts for a procured, hosted repository. Selecting
+        "target" in this context means that artifacts from the Maven Central
+        repository will be used to populate the Secured repository.</para>
+      </note>
+
+      <para>Procurement is now configured and started, if you are using an
+      instance of Nexus installed on localhost port 8081, you can configure
+      your clients to reference the new Secured repository at <ulink
+      url="http://localhost:8081/nexus/content/repositories/secured">http://localhost:8081/nexus/content/repositories/secured</ulink>.
+      By default, all artifacts are allowed and without further customization
+      of the procurement rules any artifact in Maven Central is made available
+      in the new Secured repository.</para>
+
+      <para>One interesting thing to note about the "Secured" repository is
+      that the Repository Type changed, once procurement was started. When
+      procurement is activate for a Hosted repository, the repository will
+      show up in the Nexus interface as a Proxy repository. Click refresh in
+      the Repositories list, and look at the Secured repository in the list of
+      repositories, you will see that the repository type column contains
+      "proxy" as shown in <xref linkend="fig-procure-hosted-now-proxy" />.
+      When procurement is started for a hosted repository it is effectively a
+      proxy repository, and when it is stopped it will revert back to being a
+      normal hosted repository.</para>
+
+      <figure id="fig-procure-hosted-now-proxy">
+        <title>Hosted Repository is a Proxy Repository while Procurement is
+        Active</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procured_started-now-proxy.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+  </section>
+
+  <section id="procure-sect-creating-rules">
+    <title>Administering a Procured Repository</title>
+
+    <para>Once you've defined the relationship between a Hosted repository and
+    a Proxy repository and you have started procurement, you can start
+    defining the rules which will control which artifacts are allowed in a
+    procured repository and which artifacts are denied. You can also start and
+    stop procurement. This section details some of the administration panels
+    and features which are available for a procured repository.</para>
+
+    <section id="procure-sect-viewing">
+      <title>Viewing the Procurement Management Interface</title>
+
+      <para>A procurement rule is a rule to allow or deny the procurement of a
+      group, artifact, or a collection of groups or artifacts. You load the
+      Artifact Procurement interface by selecting Artifact Procurement under
+      the Enterprise section of the Nexus menu. Clicking on this link will
+      load a list of procured repositories. Clicking on the repository will
+      load the entire repository in a tree as shown in <xref
+      linkend="fig-procure-repository-view" />. This section will illustrate
+      the steps required for blocking access to an entire artifact and then
+      selectively allowing access to a particular version of that same
+      artifact. This is a common use-case in organizations which want to
+      standardize on specific versions of a particular dependency.</para>
+
+      <figure id="fig-procure-repository-view">
+        <title>Viewing a Repository in the Artifact Procurement
+        Interface</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_repository-view.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>The directory tree in <xref
+      linkend="fig-procure-repository-view" /> is the index of the proxy
+      repository from which artifacts are being procured.</para>
+    </section>
+
+    <section id="procure-sect-config-rule">
+      <title>Configuring a Procurement Rule</title>
+
+      <para>To configure a procurement rule, right click on a folder in the
+      tree. <xref linkend="fig-procure-deny-group-all" /> displays the
+      procurement interface after right clicking on the jython artifact
+      folder. In this dialog, we are telling the procurement interface to deny
+      everything in the jython group and its sub-groups. If you attempt to
+      retrieve any version under the jython artifact after this rule is
+      created, the Procurement Suite will prevent access to this artifact. For
+      example, if you attempt to build a project that depends on
+      jython:jython:2.1, it will not be made available via the Secured
+      repository created in <xref linkend="procure-sect-configure" />.</para>
+
+      <figure id="fig-procure-deny-group-all">
+        <title>Denying Procurement for Everything Under a Group</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_deny-all-jython.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>After denying access to the entire jython artifact, right-click on
+      the 2.1 version folder under the jython artifact folder. Select "Exactly
+      the artifact" as shown in <xref
+      linkend="fig-procure-allowing-artifact" /> to allow for the procurement
+      of only the 2.1 version. This has the effect of creating a specific rule
+      which allows the procurement of a single version of the jython:jython
+      artifact.</para>
+
+      <figure id="fig-procure-allowing-artifact">
+        <title>Allowing Access to a Single Artifact in a Denied Group</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_approve-artifact.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>After allowing this element, your procurement tree is going to
+      contain red and green markers on the affected folders as shown in <xref
+      linkend="fig-procure-composite-effects" />. While the jython artifact
+      folder has a red slash through it the 2.1 version folder has a green
+      check. You have configured the Procurement Suite to deny access to all
+      versions of the jython artifact except version 2.1.</para>
+
+      <figure id="fig-procure-composite-effects">
+        <title>Viewing the Effect of Composite Procurement Rules on the
+        Tree</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_only-one-jython.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section id="procure-sect-manage-rules">
+      <title>Managing Procurement Rules</title>
+
+      <para>Once you've created a set of procurement rules you are going to
+      want to know how to view the procurement rules which are applicable to a
+      particular node. Procurement rules will frequently overlap; for example,
+      in <xref linkend="procure-sect-creating-rules" />, there are two rules:
+      one rule applies to all of the versions (folder) below the jython
+      artifact folder, and the other rule applies to a particular version
+      directory. Since rules can overlap, Nexus provides a simple way to list
+      and manage the rules which apply to a specific node in the directory
+      tree. <xref linkend="fig-procure-composite-effects" /> shows the
+      resolved procurement rules after clicking on the Jython 2.1 version
+      artifact from <xref linkend="procure-sect-configure" />.</para>
+
+      <figure id="fig-procure-effective">
+        <title>Effective Procurement Rules for a Particular Node</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_effective-rules.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>This dialog gives the procurement administrator a fine-grained
+      view into the rules that apply to a particular node. From this dialog
+      you can remove rules which apply to a specific node.</para>
+    </section>
+
+    <section id="procure-sect-stopping">
+      <title>Stopping Procurement</title>
+
+      <para>Some organizations may want to "lock down" the artifacts that a
+      release build can depend upon, and it is also a good idea to make sure
+      that your build isn't going to be affected by changes to a repository
+      not under you control. A procurement administrator might configure a
+      procured repository, start procurement, and run an enterprise build
+      against the repository to populate the procured, hosted repository with
+      all of the necessary artifacts. After this process, the procurement
+      administrator can stop procurement and continue to run the same release
+      build against the hosted repository which now contains all of the
+      procured artifacts.</para>
+
+      <para>To stop procurement, go to the Artifact Procurement management
+      interface by clicking on Artifact Procurement under the Enterprise
+      section of the Nexus menu. Right click on the repository and choose Stop
+      Procurement as shown in <xref linkend="fig-procure-stopping" />.</para>
+
+      <figure id="fig-procure-stopping">
+        <title>Stopping Procurement for a Procured Repository</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_stop-procurement.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>After choosing Stop Procurement, you will then see a dialog
+      confirming your decision to stop procurement as shown in <xref
+      linkend="fig-procure-stop-confirm" />.</para>
+
+      <figure id="fig-procure-stop-confirm">
+        <title>Stop Procurement Confirmation Dialog</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/procure_stop-procurement-confirm.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Once procurement is stopped, the Secure repository will revert
+      back to being a plain-old Hosted repository. You can validate this by
+      looking at the repository type in the list of repositories.</para>
+    </section>
+  </section>
+</chapter>

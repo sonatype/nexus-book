@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="plugins">
+  <title>Nexus Plugins</title>
+
+  <section id="plugins-sect-intro">
+    <title>Introduction</title>
+
+    <para>While Nexus is a capable repository management and collaboration
+    platform without any plugin extensions, Sonatype has provide a way for
+    developers to extend the feature set of Nexus by exposing a plugin API.
+    This chapter is a brief survey of some of the plugins which are available
+    for Nexus.</para>
+  </section>
+
+  <section id="plugins-sect-install">
+    <title>Installing Plugins</title>
+
+    <para>Nexus plugins are incredibly easy to install. All you need to do to
+    install a Nexus plugin is to put the Plugin JAR file in
+    <filename>\${NEXUS_HOME}/runtime/apps/nexus/lib</filename>. As long as the
+    plugin JAR is in the classpath of Nexus, it will be loaded the next time
+    Nexus starts.</para>
+
+    <figure>
+      <title>Installing a Nexus Plugin</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/plugins_installing.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
+
+  <section id="plugins-sect-available">
+    <title>Available Plugins</title>
+
+    <para>The following sections list some of the available plugins. Some of
+    the plugins in this list are very simple, like the Google Analytics
+    Plugin. Other plugins such as the Staging Suite and Procurement Suite are
+    of sufficient complexity to deserve an entire chapter of
+    documentation.</para>
+
+    <section>
+      <title>Nexus Staging Suite</title>
+
+      <para>The Nexus Staging Suite provides an organization with an easy way
+      to deploy artifacts to a temporary staging repository prior to a full
+      releases. Using the features in the Nexus Staging Suite, developers
+      deploy to a hosted repository only to have the deployed artifacts
+      intercepted by a staging profile and held in a temporary staging
+      repository. Once artifacts have been deployed to a temporary staging
+      repository, Nexus administrators, release engineers, and QA personnel
+      can then validate and certify a set of staged artifact before they are
+      either promoted to a hosted repository or discarded.</para>
+
+      <para>The Nexus Staging Suite is an essential tool for organizations
+      that need to incorporate QA into the release cycle. For more information
+      about the Nexus Staging Suite, see <xref linkend="staging" />.</para>
+    </section>
+
+    <section id="plugins-sect-procurement">
+      <title>Nexus Procurement Suite</title>
+
+      <para>Many organizations want to have some control over the third-party
+      dependencies used in a system. This could be for a number of reasons.
+      Maybe an architecture groups wants to limit access to a set of approved
+      frameworks, or maybe the product's legal team wants to make sure that
+      the licenses of every open source library incorporated into a project
+      has gone through some evaluation process. Whatever the reason, the Nexus
+      Procurement Suite gives a Nexus Administrator some control over what
+      artifacts are going to be made available from a proxied
+      repository.</para>
+
+      <para>The Nexus Procurement Suite gives organizations some control over
+      inbound, third-party Maven artifacts. If you need to control and specify
+      which dependencies are allow in your organization, you should learn
+      about the Maven Procurement Plugin introduced in <xref
+      linkend="procurement" />.</para>
+    </section>
+
+    <section id="plugins-sect-ldap">
+      <title>LDAP Authentication</title>
+
+      <para>When an organization needs to integrate Nexus with LDAP, it can do
+      so by installing the LDAP Authentication plugin. This plugin adds the
+      necessary configuration panels and modifies the security subsystem of
+      Nexus to delegate authentication and access control to an external LDAP
+      server. You can configure Nexus roles to match roles for users in LDAP
+      and use these roles to manage access to Nexus resources.</para>
+    </section>
+
+    <section id="plugins-sect-google">
+      <title>Google Analytics Plugin</title>
+
+      <para>The Google Analytics Plugin is a simple plugin that simply inserts
+      the Google Analytics tracking code just before the closing body tag in
+      the Nexus HTML. To configure the Google Analytics plugin, you will need
+      to put your organization's Google Analytics Web Property ID in the
+      <filename>\${SONATYPE_WORK}/nexus/conf/ga-tracking-id.txt</filename>
+      file.</para>
+
+      <para>If the \${SONATYPE_WORK}/nexus/conf/ga-tracking-id.txt file
+      contains the value "UA-16932923-9", then the Nexus markup should contain
+      the following HTML just before the closing body tag:</para>
+
+      <example>
+        <title>Output from the Google Analytics Nexus Plugin</title>
+
+        <programlisting>....
+
+&lt;!-- Plugin post-BODY contributions start here --&gt;
+&lt;script type="text/javascript"&gt;
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + 
+                 gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+&lt;/script&gt;
+
+&lt;script type="text/javascript"&gt;
+  var pageTracker = _gat._getTracker("UA-1693297-9");
+  pageTracker._trackPageview();
+&lt;/script&gt;
+
+&lt;!-- Plugin post-BODY contributions ends here --&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</programlisting>
+      </example>
+    </section>
+  </section>
+</chapter>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="intro">
+  <title>Introducing Sonatype Nexus</title>
+
+  <section id="intro-sect-intro">
+    <title>Introduction</title>
+
+    <para>Repository managers serve two purposes: they act as highly
+    configurable proxies between your organization and the public Maven
+    repositories and they also provide an organization with a deployment
+    destination for your own generated artifacts.</para>
+
+    <para>Proxying a Maven repository brings a number of benefits. Proxying
+    speeds up builds throughout your organization by installing a local cache
+    for all artifacts from the Central Maven repository. If a developer in
+    your organization needs to download version 2.5 of the Spring Framework
+    and you are using Nexus, the dependencies (and the dependency's
+    dependencies) only need to be downloaded from the remote repository once.
+    With a high-speed connection to the Internet this might seem like a minor
+    concern, but if you are constantly asking your developers to download
+    hundreds of megabytes of third-party dependencies, the real cost savings
+    are going to be the time it takes Maven to check for new versions of
+    dependencies and to download dependencies. Serving Maven dependencies from
+    a local repository can save you hundreds of requests over
+    <acronym>HTTP</acronym>, and, in very large multi-project builds, this can
+    shave minutes from a build.</para>
+
+    <para>If your project is relying on a number of SNAPSHOT dependencies,
+    Maven will need to check for updated version of these snapshots. Depending
+    on the configuration of your remote repositories, Maven will check for
+    SNAPSHOT updates periodically, or it might be checking for SNAPSHOT
+    updates on every build. When Maven checks for a snapshot update it needs
+    to interrogate the remote repository for the latest version of the
+    SNAPSHOT dependency. Depending on your connection to the public Internet
+    and the load on the central Maven repository, a SNAPSHOT update can add
+    seconds to your project's build for each SNAPSHOT update. When you host a
+    local repository proxy with a repository like Nexus, your repository
+    manager is going to check for SNAPSHOT updates on a regular schedule, and
+    your applications will be able to interact with a local repository. If you
+    develop software with a lot of SNAPSHOT dependencies, using a local
+    repository manager can often shave minutes from a large multi-module
+    project build, your 5-10 second SNAPSHOT update checks against the public
+    central repository are going to execute in hundreds of milliseconds (or
+    less).</para>
+
+    <para>In addition to the simple savings in time and bandwidth, a
+    repository manager provides an organization with control over what is
+    downloaded by Maven. You can include or exclude specific artifacts from
+    the public repository, and having this level of control over what is
+    downloaded from the central Maven repository is a prerequisite for
+    organizations which need strict control over what dependencies are used
+    throughout an organization. An organization which wants to standardize on
+    a specific version of a dependency like Hibernate or Spring can enforce
+    this standardization by only providing access to a specific version of an
+    artifact in a repository manager like Nexus. Other organizations might be
+    concerned with making sure that every external dependency has a license
+    compatible with the legal standards of that organization. If a corporation
+    is producing a application which is distributed, they might want to make
+    sure that no one inadvertently adds a dependency on a third-party library
+    which is covered under a copy-left license like the GPL. Repository
+    managers provide for the level of control that an organization needs to
+    make sure that overall architecture and policy can be enforced.</para>
+
+    <para>Aside from the benefits of mediating access to remote repositories,
+    a repository manager also provides something essential to full adoption of
+    Maven. Unless you expect every member of your organization to download and
+    build every single internal project, you will want to provide a mechanism
+    for developers and departments to share both SNAPSHOT and releases for
+    internal project artifacts. Nexus provides your organization with such a
+    deployment target. Once you install Nexus, you can start using Maven to
+    deploy snapshots and releases to a custom repository managed by Nexus.
+    Over time, this central deployment point for internal projects becomes the
+    fabric for collaboration between different development teams.</para>
+  </section>
+
+  <section id="intro-sect-history">
+    <title>History of Nexus</title>
+
+    <para>Tamas Cservenak started working on Proximity in December 2005 as he
+    was trying to find a way to isolate his own systems from an incredibly
+    slow <acronym>ADSL</acronym> connection provided by a Hungarian
+    <acronym>ISP</acronym>. Proximity started as a simple web application to
+    proxy artifacts for a small organization with connectivity issues.
+    Creating a local on-demand cache for Maven artifacts from the central
+    Maven repository gave an organization access to the artifacts on the
+    Central Maven Repository, but it also made sure that these artifacts
+    weren't downloaded over a very slow <acronym>ADSL</acronym> connection
+    used by a number of developers. In 2007, Sonatype asked Tamas to help
+    create a similar product named Nexus. Nexus is currently considered the
+    logical next step to Proximity. Nexus currently has an active development
+    team, and portions of the indexing code from Nexus are also being used in
+    m2eclipse.</para>
+  </section>
+</chapter>

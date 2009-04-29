@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="maven">
+  <title>Configuring Maven to Use Nexus</title>
+
+  <section id="maven-sect-conf-maven-nexus">
+    <title>Introduction</title>
+
+    <para>To use Nexus, you will configure Maven to check Nexus instead of the
+    public repositories. To do this, you'll need to edit your mirror settings
+    in your <filename>~/.m2/settings.xml</filename> file. First, we're going
+    to demonstrate how to configure Maven to consult your Nexus installation
+    instead of retrieving artifacts directly from the Central Maven
+    repository. After we override the central repository and demonstrate that
+    Nexus is working, we'll circle back to provide a more sensible set of
+    settings that will cover both releases and snapshots.</para>
+  </section>
+
+  <section id="maven-sect-single-group">
+    <title>Configuring Maven to Use a Single Nexus Group</title>
+
+    <para>If you are adopting Nexus for internal development you should
+    configure a single Nexus group which contains both releases and snapshots.
+    To do this, add snapshot repositories to your public group, and add the
+    following mirror configuration to your Maven settings in
+    <filename>~/.m2/settings.xml</filename>.</para>
+
+    <example id="ex-maven-nexus-simple">
+      <title>Configuring Maven to Use a Single Nexus Group</title>
+
+      <programlisting language="xml">&lt;settings&gt;
+  &lt;mirrors&gt;
+    &lt;mirror&gt;
+      &lt;!--This sends everything else to /public --&gt;
+      &lt;id&gt;nexus&lt;/id&gt;
+      &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
+      &lt;url&gt;http://localhost:8081/nexus/content/groups/public&lt;/url&gt;
+    &lt;/mirror&gt;
+  &lt;/mirrors&gt;
+  &lt;profiles&gt;
+    &lt;profile&gt;
+      &lt;id&gt;nexus&lt;/id&gt;
+      &lt;!--Enable snapshots for the built in central repo to direct --&gt;
+      &lt;!--all requests to nexus via the mirror --&gt;
+      &lt;repositories&gt;
+        &lt;repository&gt;
+          &lt;id&gt;central&lt;/id&gt;
+          &lt;url&gt;http://central&lt;/url&gt;
+          &lt;releases&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/releases&gt;
+          &lt;snapshots&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/snapshots&gt;
+        &lt;/repository&gt;
+      &lt;/repositories&gt;
+     &lt;pluginRepositories&gt;
+        &lt;pluginRepository&gt;
+          &lt;id&gt;central&lt;/id&gt;
+          &lt;url&gt;http://central&lt;/url&gt;
+          &lt;releases&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/releases&gt;
+          &lt;snapshots&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/snapshots&gt;
+        &lt;/pluginRepository&gt;
+      &lt;/pluginRepositories&gt;
+    &lt;/profile&gt;
+  &lt;/profiles&gt;
+  &lt;activeProfiles&gt;
+    &lt;!--make the profile active all the time --&gt;
+    &lt;activeProfile&gt;nexus&lt;/activeProfile&gt;
+  &lt;/activeProfiles&gt;
+&lt;/settings&gt;</programlisting>
+
+      <para>In <xref linkend="ex-maven-nexus-simple" /> we have defined a
+      single profile: <varname>nexus</varname>. The <varname>nexus</varname>
+      profile is configured to download from the central repository with a
+      bogus <acronym>URL</acronym> of <varname>http://central</varname>. This
+      <acronym>URL</acronym> is overridden by the mirror setting in the same
+      <filename>settings.xml</filename> file to point to the URL of your
+      single Nexus group. The <varname>nexus</varname> group is then listed as
+      an active profile in the <sgmltag>activeProfiles</sgmltag>
+      element.</para>
+    </example>
+  </section>
+
+  <section id="maven-sect-custom-for-missing">
+    <title>Adding Custom Repositories for Missing Dependencies</title>
+
+    <para>If you've configured your Maven <filename>settings.xml</filename> to
+    list Nexus as a mirror for all repositories, you might encounter projects
+    which are unable to retrieve artifacts from your local Nexus installation.
+    This usually happens because you are trying to build a project which has
+    defined a custom set of <varname>repositories</varname> and
+    <varname>snapshotRepositories</varname> in a <filename>pom.xml</filename>.
+    This is definitely going to happen if you are building open source
+    projects or if you've added custom third-party Maven repositories to your
+    configuration.</para>
+
+    <para>As an example, let's try to build Apache Shindig from source we've
+    checked out of the Apache Incubator. What is Apache Shindig? It doesn't
+    matter to this example; all we need is an example project we can easily
+    checkout from source control and build. If you really want to know,
+    Shindig is a project in the Apache Incubator that revolves around the
+    OpenSocial API from Google. Shindig aims to provide a container that will
+    allow people to execute OpenSocial gadgets. It provides us with an
+    interesting example project, because it depends on some custom Maven
+    repositories for components which have yet to be added to the Central
+    Maven repository. Using Shindig we can show you what happens when Nexus
+    doesn't have your artifacts and what steps you can take to add
+    repositories to Nexus.</para>
+
+    <para>The following example assumes that you have Subversion installed and
+    that you are running Subversion from the command-line. Let's checkout
+    Apache Shindig from the Apache Incubator with Subversion and attempt to
+    build it from source. To do this, execute the following commands:</para>
+
+    <screen>$ <command>svn co http://svn.apache.org/repos/asf/incubator/shindig/trunk shindig</command>
+... Subversion will checkout the trunk of Apache Shindig ...
+$ <command>cd shindig</command>
+$ <command>mvn install</command>
+... Maven will build Shindig ...
+Downloading: http://localhost:8081/nexus/content/groups/public/caja/caja/r2178/caja-r2178.jar
+...
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD ERROR
+[INFO] ------------------------------------------------------------------------
+[INFO] Failed to resolve artifact.
+
+Missing:
+----------
+1) caja:caja:jar:r2178
+
+  Try downloading the file manually from the project website.
+
+...
+----------
+3 required artifacts are missing.
+
+for artifact: 
+  org.apache.shindig:shindig-gadgets:jar:1-SNAPSHOT
+
+from the specified remote repositories:
+  nexus (http://localhost:8081/nexus/content/groups/public)
+</screen>
+
+    <para>The build fails because it is unable to download three artifacts.
+    One of the artifacts Maven was trying to download has a group identifier
+    of <varname>caja</varname>, and artifactId of <varname>caja</varname>, and
+    a version of <varname>r2178</varname>. It is an artifact that is hosted on
+    a custom repository <ulink
+    url="http://google-caja.googlecode.com/svn/maven">http://google-caja.googlecode.com/svn/maven</ulink>.
+    Maven failed to download this artifact because your
+    <filename>settings.xml</filename> was configured to direct all mirrors to
+    the <varname>public</varname> and <varname>public-snapshots</varname>
+    groups hosted on our Nexus installation. Even though the
+    <filename>pom.xml</filename> for Apache Shindig defined a repository and
+    pointed it at <ulink
+    url="http://google-caja.googlecode.com/svn/maven">http://google-caja.googlecode.com/svn/maven</ulink>,
+    Nexus won't retrieve an artifact from a repository it doesn't know about
+    and you've configured all requests for remote artifacts to pass through
+    Nexus. In fact, there are two repositories that Nexus doesn't know about
+    in this build: <varname>caja</varname> and <varname>oauth</varname>.
+    <ulink url="http://code.google.com/p/google-caja/">Caja</ulink> and <ulink
+    url="http://code.google.com/p/oauth/">OAuth</ulink> are two libraries
+    which are still in development. Both projects have been "released", and
+    the versions that Shindig depends upon are certainly not SNAPSHOT
+    releases, but these projects have not been published to the Central Maven
+    Repository. We need to find a way to let Nexus know about these
+    repositories before we can build this project.</para>
+
+    <para>There are two ways to fix this problem. First, you can change your
+    <filename>settings.xml</filename> to override specific repository
+    identifiers. Instead of listing the Nexus public group as a
+    <sgmltag>mirrorOf</sgmltag> all repositories, you could change the
+    <sgmltag>mirrorOf</sgmltag> element in your
+    <filename>settings.xml</filename> to "central". If you did this, Maven
+    would then attempt to download the dependencies directly from the
+    <varname>oauth</varname> and <varname>caja</varname> repositories at the
+    <acronym>URL</acronym>s listed in the previous screen listing. This would
+    work because Maven is only going to consult Nexus for repositories which
+    match the repositories specified in the <sgmltag>mirrorOf</sgmltag>
+    element in <filename>settings.xml</filename>. If Maven sees the
+    repositories identifier <varname>caja</varname> or
+    <varname>oauth</varname>, and doesn't see a mirror configured in your
+    <filename>settings.xml</filename>, it is going to attempt to connect to
+    the repository directly.</para>
+
+    <para>The second, more interesting option is to add both of these
+    repositories to Nexus and then add these repositories to the public
+    group.</para>
+  </section>
+
+  <section id="maven-sect-adding">
+    <title>Adding a New Repository</title>
+
+    <para>To add the caja repository, log into Nexus as an Administrator, and
+    click on the Repositories link in the left-hand navigation menu in the
+    Views/Repositories section. Clicking on this link should bring up a window
+    that lists all of the repositories which Nexus knows about. You'll then
+    want to create a new proxy repository. To do this, click on the Add link
+    which is directly above the list of repositories. When you click the Add
+    button, click the down arrow directly to the right of the word Add, this
+    will show a drop-down which has the options: Hosted Reposiotry, Proxy
+    Repository, Virtual Repository, and Repository Group. Since you are
+    creating a proxy repository, click on Proxy Repository. </para>
+
+    <figure>
+      <title>Creating a New Nexus Proxy Repository</title>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/repository-manager_add-repository-dropdown.png" />
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+
+    <para>Once you do this, you will see a screen resembling <xref
+    linkend="fig-add-repo" />. Populate the required fields Repository ID and
+    the Repository Name with "caja" and "Google Caja". Set the Repository
+    Policy to "Release", and the Remote Storage Location to <ulink
+    url="http://google-caja.googlecode.com/svn/maven">http://google-caja.googlecode.com/svn/maven</ulink>.</para>
+
+    <figure id="fig-add-repo">
+      <title>Adding a Nexus Repository</title>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/repository-manager_add-repository.png" />
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+
+    <para>Once you've filled out this screen, click on the
+    <guibutton>Save</guibutton> button. Nexus will then be configured with the
+    caja proxy repository. Do the same thing for the oauth repository. Create
+    a repository with the Repository ID of oauth, with a Release policy, and
+    the Remote Storage Location of <ulink
+    url="http://oauth.googlecode.com/svn/code/maven">http://oauth.googlecode.com/svn/code/maven</ulink>.</para>
+  </section>
+
+  <section id="maven-sect-adding-to-group">
+    <title>Adding a Repository to a Group</title>
+
+    <para>Next you will need to add both of these new repositories to the
+    public Nexus Group. To do this, click on the Repositories link in the
+    left-hand navigation menu in the Views/Repositories section. Nexus lists
+    Groups and Repositories, in the same list so click on the public group.
+    After clicking on the public group, you should see the Browse and
+    Configuration tabs in the lower half of the Nexus window.</para>
+
+    <note>
+      <para>If you click on a repository or a group in the Repositories list
+      and you do not see the Configuration tab, this is because your Nexus
+      user does not have administrative privileges. To perform the
+      configuration tasks outlined in this chapter, you will need to be logged
+      in as a user with administrative privileges.</para>
+    </note>
+
+    <para>Clicking on the Configuration tab will bring up a screen which looks
+    like <xref linkend="fig-add-to-group" />.</para>
+
+    <figure id="fig-add-to-group">
+      <title>Adding New Repositories to a Nexus Group</title>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/repository-manager_add-to-group.png" />
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+
+    <para>To add the two new repositories to the <varname>public</varname>
+    Nexus Group, find the repositories in the Available Repositories list on
+    the right, click on the repository you want to add and drag it to the left
+    to the Ordered Group Repositories list. Once the repository is in the
+    Ordered Group Repositories list you can click and drag the repository
+    within that list to alter the order in which a repository will be searched
+    for a matching artifact. Once the Google Caja and Google OAuth project
+    repositories are added to the public Nexus Group, you should be able to
+    build Apache Shindig and watch Maven download the Caja and OAuth artifacts
+    from the respective repositories.</para>
+
+    <note>
+      <para>Nexus makes use of an interesting Javascript widget library named
+      <ulink url="http://extjs.com/">ExtJS</ulink>. ExtJS provides for a
+      number of interesting UI widgets that allow for rich interaction like
+      the drag-drop UI for adding repositories to a group and reordering the
+      contents of a group.</para>
+    </note>
+
+    <para>In the last few sections, you encountered a situation where you
+    needed to add two custom repositories to a build in order to download two
+    libraries (Google Caja and Google OAuth) which are not available in the
+    central Maven repository. If you were not using a repository manager, you
+    would have added these repositories to the repository element of your
+    project's <acronym>POM</acronym>, or you would have asked all of your
+    developers to modify <filename>~/.m2/settings.xml</filename> to reference
+    two new repositories. Instead, you used the Nexus repository manager to
+    add the two repositories to the public group. If all of the developers are
+    configured to point to the public group in Nexus, you can freely swap in
+    new repositories without asking your developers to change local
+    configuration, and you've gained a certain amount of control over which
+    repositories are made available to your development team.</para>
+  </section>
+</chapter>
