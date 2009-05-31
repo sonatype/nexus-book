@@ -1,0 +1,212 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+	<groupId>org.sonatype.nexusbook</groupId>
+	<artifactId>book</artifactId>
+<<<<<<< .working
+	<version>0.5</version>
+=======
+	<version>0.3-SNAPSHOT</version>
+>>>>>>> .merge-right.r7961
+  </parent>
+  <artifactId>content</artifactId>
+  <packaging>jar</packaging>
+  <name>Repository Management with Nexus</name>
+  <description>A book about Sonatype Nexus</description>
+  <build>
+    <finalName>book</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>docbook/*.xml</include>
+          <include>xsl/html_chunk.xsl</include>
+          <include>xsl/fopdf.xsl</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>docbook/*.xml</exclude>
+          <exclude>xsl/html_chunk.xsl</exclude>
+          <exclude>xsl/fopdf.xsl</exclude>
+        </excludes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <escapeString>\</escapeString>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+	    <groupId>com.agilejava.docbkx</groupId>
+	    <artifactId>docbkx-maven-plugin</artifactId>
+        <version>2.0.7</version>
+	    <dependencies>
+	      <dependency>
+	        <groupId>org.docbook</groupId>
+	        <artifactId>docbook-xml</artifactId>
+	        <version>4.5</version>
+	        <scope>system</scope>
+	        <systemPath>${basedir}/lib/docbook-4.5.jar</systemPath>
+	      </dependency>
+	    </dependencies>
+        <executions>
+          <execution>
+            <id>generate-pdf</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>generate-pdf</goal>
+            </goals>
+            <configuration>
+              <imgSrcPath>${basedir}/target/classes/docbook/</imgSrcPath>
+              <foCustomization>${basedir}/target/classes/xsl/fopdf.xsl</foCustomization>
+              <postProcess>
+                <copy tofile="${project.build.directory}/site/pdf/nexus.pdf">
+                  <fileset file="${project.build.directory}/docbkx/pdf/book.pdf"/>
+                </copy>
+                <copy todir="${project.build.directory}/site/pdf/">
+                  <fileset dir="${project.build.directory}/docbkx/pdf">
+                    <include name="**/chapter-*.pdf"/>
+                  </fileset>
+                </copy>
+              </postProcess>
+            </configuration>
+          </execution> 
+          <execution>
+            <id>generate-html</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>generate-html</goal>
+            </goals>
+            <configuration>
+              <chunkedOutput>true</chunkedOutput>
+              <chunkSectionDepth>2</chunkSectionDepth>
+              <chunkSeparateLots>1</chunkSeparateLots>
+              <htmlCustomization>${basedir}/target/classes/xsl/html_chunk.xsl</htmlCustomization>
+              <postProcess>
+                <copy todir="${project.build.directory}/site/reference">
+                  <fileset dir="${project.build.directory}/docbkx/html"/>
+                </copy>
+                <copy todir="${project.build.directory}/site">
+                  <fileset dir="${basedir}/src/site/resources"/>
+                </copy>
+                <copy todir="${project.build.directory}/site/images">
+                  <fileset dir="${basedir}/target/classes/images"/>
+                </copy>
+                <copy todir="${project.build.directory}/site">
+                  <fileset dir="src/site/resources"/>
+                </copy>
+                <copy todir="${project.build.directory}/site/reference/figs/web">
+                  <fileset dir="target/classes/docbook/figs/web"/>
+                </copy>
+              </postProcess>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+	      <sourceDirectory>${basedir}/target/classes/docbook</sourceDirectory>
+	      <includes>book.xml</includes>
+	      <xincludeSupported>true</xincludeSupported>
+	      <fopExtensions>1</fopExtensions>
+	    </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.book</groupId>
+        <artifactId>maven-book-sitemesh-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>mesh-velocity</id>
+            <phase>site</phase>
+            <goals>
+              <goal>mesh-velocity</goal>
+            </goals>
+            <configuration>
+            	<velocityTemplate>src/main/resources/vm/site.vm</velocityTemplate>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.0.1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>project-team</report>
+              <report>license</report>
+              <report>mailing-list</report>
+              <report>summary</report>
+              <report>cim</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  <profiles>
+    <profile>
+        <id>publish</id>
+        <distributionManagement>
+        <site>
+          <id>sonatype-site</id>
+          <name>Sonatype Book Examples</name>
+          <url>scp://deployer@172.16.0.1/var/www/domains/sonatype.com/books/htdocs/nexus-book/</url>
+        </site>
+        </distributionManagement>
+        <properties>
+           <maven.book.baseurl>http://books.sonatype.com/maven-book</maven.book.baseurl>
+        </properties>
+      </profile>
+    <profile>
+        <id>publish-external</id>
+        <distributionManagement>
+        <site>
+          <id>sonatype-site</id>
+          <name>Sonatype Book Examples</name>
+          <url>scp://deployer@svn.sonatype.com/var/www/domains/sonatype.com/books/htdocs/nexus-book/</url>
+        </site>
+        </distributionManagement>
+        <properties>
+           <maven.book.baseurl>http://books.sonatype.com/maven-book</maven.book.baseurl>
+        </properties>
+      </profile>
+    <profile>
+        <id>stage</id>
+        <distributionManagement>
+        <site>
+          <id>sonatype-site</id>
+          <name>Sonatype Book Examples</name>
+          <url>scp://deployer@172.16.0.1/var/www/domains/sonatype.com/books/htdocs/nexus-book-stage/</url>
+        </site>
+        </distributionManagement>
+      </profile>
+    <profile>
+        <id>stage-external</id>
+        <distributionManagement>
+        <site>
+          <id>sonatype-site</id>
+          <name>Sonatype Book Examples</name>
+          <url>scp://deployer@svn.sonatype.com/var/www/domains/sonatype.com/books/htdocs/nexus-book-stage/</url>
+        </site>
+        </distributionManagement>
+      </profile>
+  </profiles>
+  <dependencies>
+  </dependencies>
+
+</project>
