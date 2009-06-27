@@ -120,68 +120,7 @@
 		###################################################
 	-->
 	<xsl:template name="book.titlepage.recto">
-		<fo:block>
-			<fo:table table-layout="fixed" width="175mm">
-				<fo:table-column column-width="175mm" />
-				<fo:table-body>
-					<fo:table-row>
-						<fo:table-cell text-align="center">
-							<fo:block>
-								<fo:external-graphic content-width="scale-to-fit" content-height="scale-to-fit" width="100mm"
-									src="${organization.logo}" />
-							</fo:block>
-							<fo:block font-family="Helvetica" font-size="22pt"
-								padding-before="10mm">
-                              ${book.title}
-							</fo:block>
-							<fo:block font-family="Helvetica" font-size="14pt"
-								padding="10mm">
-                              ${book.subtitle}
-							</fo:block>
-							<fo:block font-family="Helvetica" font-size="12pt"
-								padding="10mm">
-                              Edition: ${project.version}
-							</fo:block>
-						</fo:table-cell>
-					</fo:table-row>
-					<fo:table-row>
-						<fo:table-cell text-align="center">
-							<fo:block font-family="Helvetica" font-size="14pt"
-								padding="10mm">
-                              Nexus Version: ${nexus.version}
-							</fo:block>
-						</fo:table-cell>
-					</fo:table-row>
-					<fo:table-row>
-						<fo:table-cell text-align="center">
-							<fo:block font-family="Helvetica" font-size="12pt"
-								padding="10mm">
-								<xsl:for-each select="bookinfo/authorgroup/author">
-									<xsl:if test="position() > 1">
-										<xsl:text>, </xsl:text>
-									</xsl:if>
-									<xsl:value-of select="firstname" />
-									<xsl:text> </xsl:text>
-									<xsl:value-of select="surname" />
-									<xsl:text> (</xsl:text>
-									<xsl:value-of select="affiliation" />
-									<xsl:text>)</xsl:text>
-								</xsl:for-each>
-							</fo:block>
-							<fo:block font-family="Helvetica" font-size="12pt"
-								padding="10mm">
-								<xsl:text>Copyright &#xA9; ${copyright.year}</xsl:text>
-							</fo:block>
-
-                            <fo:block font-family="Helvetica" font-size="10pt" padding="1mm">
-                                <xsl:value-of select="bookinfo/legalnotice"/>
-                            </fo:block>
-                        </fo:table-cell>
-                    </fo:table-row>
-                </fo:table-body>
-            </fo:table>
-        </fo:block>
-    </xsl:template>
+	</xsl:template>
 
     <!-- Prevent blank pages in output -->
     <xsl:template name="book.titlepage.before.verso">
