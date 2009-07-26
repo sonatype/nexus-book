@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="p2">
+  <title>P2 Repositories</title>
+
+  <section id="p2-sect-intro">
+    <title>Introduction</title>
+
+    <para>Nexus Professional supports the P2 Repository format.</para>
+  </section>
+
+  <section>
+    <title>Managing P2 Repositories</title>
+
+    <para>The following sections detail the procedures for creating and
+    managing P2 repositories.</para>
+
+    <section>
+      <title>Proxy P2 Repositories</title>
+
+      <para>Nexus can proxy a P2 Repository. To create a new proxy P2
+      repository:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Login as an Administrator.</para>
+        </listitem>
+
+        <listitem>
+          <para>Click Repositories in the Left Navigation Menu.</para>
+        </listitem>
+
+        <listitem>
+          <para>Click the Add.. button above the list of Nexus repositories,
+          and choose Proxy repository from the dropdown of repository
+          types.</para>
+        </listitem>
+
+        <listitem>
+          <para>In the New Proxy Repository window,</para>
+
+          <orderedlist numeration="loweralpha">
+            <listitem>
+              <para>Select P2 as the Provider.</para>
+            </listitem>
+
+            <listitem>
+              <para>Supply an id and a repository name.</para>
+            </listitem>
+
+            <listitem>
+              <para>Enter the URL to the remote repository P2 XML as the
+              Remote Storage location.</para>
+            </listitem>
+
+            <listitem>
+              <para>Click Save.</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </orderedlist>
+
+      <para><xref linkend="fig-p2-create-proxy" /> provides some sample
+      configuration used to create a proxy of the Apache Felix P2
+      repository.</para>
+
+      <figure id="fig-p2-create-proxy">
+        <title>Creating a P2 Proxy Repository</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="figs/web/p2-create-proxy.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>To verify that the P2 proxy repository has been properly
+      configured, you can then load the P2 XML from Nexus Professional. If
+      Nexus Professional is properly configured, you will be able load the
+      <filename>p2.xml</filename> by navigating to the
+      <filename>p2.xml</filename> file under the <filename>.meta</filename>
+      directory:</para>
+
+      <screen>$ <command>curl http://localhost:8081/nexus/content/repositories/felix-proxy/.meta/p2.xml</command>
+&lt;?xml version='1.0' encoding='utf-8'?&gt;
+&lt;?xml-stylesheet type='text/xsl' href='http://www2.osgi.org/www/p22html.xsl'?&gt;
+&lt;repository name='Felix P2 Repository' lastmodified='1247493075615'&gt;
+&lt;resource id='org.apache.felix.javax.servlet/1.0.0' presentationname='Servlet 2.1 
+API' symbolicname='org.apache.felix.javax.servlet' uri='../bundles/org.apache.feli
+x.javax.servlet-1.0.0.jar' version='1.0.0'&gt;
+  &lt;description&gt;
+    Servlet 2.1 API
+  &lt;/description&gt;
+  &lt;documentation&gt;
+    http://www.apache.org/
+  &lt;/documentation&gt;
+  &lt;license&gt;
+    http://www.apache.org/licenses/LICENSE-2.0.txt
+  &lt;/license&gt;
+...</screen>
+    </section>
+  </section>
+
+  <section>
+    <title>Grouping P2 Repositories</title>
+
+    <para>Just like Nexus can group Maven repositories, Eclipse update sites,
+    and P2 repositories, Nexus can also be configured to group P2
+    Repositories. To group P2 repositories:</para>
+
+    <orderedlist>
+      <listitem>
+        <para>Login as an Administrator.</para>
+      </listitem>
+
+      <listitem>
+        <para>Click Repositories in the Left Navigation Menu.</para>
+      </listitem>
+
+      <listitem>
+        <para>Click the Add.. button above the list of Nexus repositories, and
+        choose Repository Group from the dropdown of repository types.</para>
+      </listitem>
+
+      <listitem>
+        <para>In the New Repository Group window,</para>
+
+        <orderedlist numeration="loweralpha">
+          <listitem>
+            <para>Select P2 Group as the Provider.</para>
+          </listitem>
+
+          <listitem>
+            <para>Drag and drop one or more hosted, proxy, or virtual P2
+            repositories into the new group.</para>
+          </listitem>
+
+          <listitem>
+            <para>Supply an id and a repository name.</para>
+          </listitem>
+
+          <listitem>
+            <para>Click Save.</para>
+          </listitem>
+        </orderedlist>
+      </listitem>
+    </orderedlist>
+
+    <para><xref linkend="fig-p2-create-group" /> shows an example of the a new
+    repository group which contains a hosted P2 repository, a virtual P2
+    repository, and a P2 proxy repository.</para>
+
+    <figure id="fig-p2-create-group">
+      <title>Creating a new P2 Repository Group</title>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="figs/web/p2_create_group.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
+</chapter>
