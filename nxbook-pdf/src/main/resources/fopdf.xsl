@@ -7,21 +7,13 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     <!-- These extensions are required for table printing and other stuff -->
     <xsl:param name="use.extensions">1</xsl:param>
-    <xsl:param name="fop.extensions">1</xsl:param>
     <xsl:param name="fop1.extensions">1</xsl:param>
+
+    <xsl:param name="use.role.for.mediaobject">1</xsl:param>
+    <xsl:param name="preferred.mediaobject.role" select="'print'"/>
+
     <xsl:param name="tablecolumns.extension">0</xsl:param>
     <xsl:param name="callout.extensions">1</xsl:param>
 
@@ -61,8 +53,10 @@
 
 	<xsl:param name="page.margin.bottom" select="'0.5in'" />
 	<xsl:param name="page.margin.top" select="'0.5in'" />
-	<xsl:param name="page.margin.inner" select="'1in'" />
-	<xsl:param name="page.margin.outer" select="'1in'" />
+	<xsl:param name="page.margin.inner" select="'0.75in'" />
+	<xsl:param name="page.margin.outer" select="'0.75in'" />
+
+    <xsl:param name="body.start.indent" select="'0pt'" />
 
     <!-- No intendation of Titles -->
     <xsl:param name="title.margin.left">0pc</xsl:param>
@@ -291,6 +285,10 @@
         <xsl:attribute name="space-after.maximum">0.1em</xsl:attribute>
     </xsl:attribute-set>
 
+<xsl:attribute-set name="formal.object.properties">
+   <xsl:attribute name="keep-together.within-column">auto</xsl:attribute>
+</xsl:attribute-set>
+
     <!-- Titles of formal objects (tables, examples, ...) -->
     <xsl:attribute-set name="formal.title.properties" use-attribute-sets="normal.para.spacing">
         <xsl:attribute name="font-weight">bold</xsl:attribute>
@@ -353,6 +351,7 @@
 
     <!-- Use nice graphics for admonitions -->
     <xsl:param name="admon.graphics">'1'</xsl:param>
+    <xsl:param name="admon.graphics.extension">.svg</xsl:param>
     <!--  <xsl:param name="admon.graphics.path">&admon_gfx_path;</xsl:param> -->
 
     <!--###################################################
