@@ -202,7 +202,7 @@
         <xsl:attribute name="font-family">
             <xsl:value-of select="$monospace.font.family"/>
         </xsl:attribute>
-        <xsl:attribute name="font-size">8pt</xsl:attribute>
+        <xsl:attribute name="font-size">9pt</xsl:attribute>
     </xsl:attribute-set>
 
     <!--###################################################
@@ -341,7 +341,7 @@
     <!-- Verbatim text formatting (programlistings) -->
     <xsl:attribute-set name="monospace.verbatim.properties">
         <xsl:attribute name="font-size">
-            <xsl:text>8pt</xsl:text>
+            <xsl:text>7.8pt</xsl:text>
         </xsl:attribute>
     </xsl:attribute-set>
 
