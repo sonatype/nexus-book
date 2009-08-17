@@ -31,8 +31,14 @@
       <title>The Maven Settings Panel</title>
 
       <mediaobject>
-        <imageobject>
+        <imageobject role="web">
           <imagedata fileref="figs/web/settings_managing-templates.png" />
+        </imageobject>
+
+        <imageobject role="print">
+          <imagedata align="center"
+                     fileref="figs/print/settings_managing-templates.pdf"
+                     scalefit="0" width="100%" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -51,7 +57,7 @@
 
     <variablelist>
       <varlistentry>
-        <term>${baseurl}</term>
+        <term>\${baseurl}</term>
 
         <listitem>
           <para>This variable will be replaced with the base URL of the Nexus
@@ -60,7 +66,7 @@
       </varlistentry>
 
       <varlistentry>
-        <term>${userId}</term>
+        <term>\${userId}</term>
 
         <listitem>
           <para>This variable will be replaced with the user id of the user
@@ -74,8 +80,8 @@
     dialog window which contains the Maven Settings file generated from this
     template. This rendered view of the Maven Settings template will have all
     variable references replaced using the current context of the user:
-    ${baseurl} will be replaced with the Base URL of the current Nexus
-    installation, and ${userId} will be replaced with the user id of the
+    \${baseurl} will be replaced with the Base URL of the current Nexus
+    installation, and \${userId} will be replaced with the user id of the
     current user.</para>
   </section>
 
@@ -84,7 +90,7 @@
 
     <para>Once you have defined a set of Maven templates, you can use the
     Nexus Maven plugin to distribute changes to the Maven Settings file to the
-    entire organization. </para>
+    entire organization.</para>
 
     <section>
       <title>Running the Nexus Maven Plugin</title>
@@ -119,7 +125,7 @@
         essential that you make sure that any new, custom templates also
         include this plugin group definition. Otherwise, there is a chance
         that a developer could update his or her Maven Settings and lose the
-        ability to use the Nexus Maven plugin. </para>
+        ability to use the Nexus Maven plugin.</para>
       </note>
 
       <para>Adding the org.sonatype.plugins group to your Maven Settings will
@@ -175,7 +181,7 @@
 
           <listitem>
             <para>Username to use for authenticating to Nexus. Default value
-            is ${user.name}.</para>
+            is \${user.name}.</para>
           </listitem>
         </varlistentry>
 
@@ -204,7 +210,7 @@
       settings templates. By default, if you don't specify the nexusURL and
       password parameters, the plugin will prompt you for them. If you don't
       specify the username parameter, the Java System property
-      <varname>${user.name}</varname> will be used.</para>
+      <varname>\${user.name}</varname> will be used.</para>
 
       <para>In addition to these security options, all of the Maven Settings
       management goal has the following configuration parameters:</para>
@@ -242,7 +248,7 @@
             <para>The standard destination where the downloaded settings.xml
             template should be saved. If the destination is "global", the
             Nexus Maven plugin will save the Maven Settings file to
-            ${M2_HOME}/conf. Is the destination is "user", the Nexus Maven
+            \${M2_HOME}/conf. Is the destination is "user", the Nexus Maven
             plugin will save the Maven Settings file to ~/.m2/settings.xml. If
             the target parameter is set, it will override this value. Default
             value is: user.</para>
@@ -303,15 +309,18 @@
 
       <screen>$ <command>mvn nexus:settings-download</command>
 [INFO] [nexus:settings-download]
-Settings Template URL: <command>http://localhost:8081/nexus/service/local/templates/settings/default/content</command>
-[INFO] Existing settings backed up to: /Users/tobrien/.m2/settings.xml.20090408_204422
+Settings Template URL: <command>\
+.../nexus/service/local/templates/settings/default/content</command>
+[INFO] Existing settings backed up to: \
+   /Users/tobrien/.m2/settings.xml.20090408_204422
 [INFO] Settings saved to: /Users/tobrien/.m2/settings.xml</screen>
 
       <para>Alternatively, you can specify the username, password, and URL on
       the command line.</para>
 
-      <screen>$ <command>mvn nexus:settings-download \
-      -Durl=http://localhost:8081/nexus/service/local/templates/settings/default/content \
+      <screen>$ <command>export NX_URL="http://localhost:8080/nexus/"</command>
+$ <command>mvn nexus:settings-download \
+      -Durl=\${NX_URL}/service/local/templates/settings/default/content \
       -Dusername=admin \
       -Dpassword=admin123</command></screen>
     </section>

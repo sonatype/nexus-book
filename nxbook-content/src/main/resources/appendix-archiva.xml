@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<appendix id="archiva">
+  <title>Migrating to Nexus from Archiva</title>
+
+  <section id="archiva-sect-introduction">
+    <title>Introduction</title>
+
+    <para>This appendix walks you through the process of migrating an existing
+    Archiva installation to a new Nexus installation.</para>
+  </section>
+
+  <section>
+    <title>Migrating Archiva Repositories</title>
+
+    <para>Archive uses the filesystem to store hosted repositories and proxied
+    repositories, because of this migrating from Archiva to Nexus couldn't be
+    simpler. The following sections outline the process for migrating existing
+    Archiva repositories to a new Nexus instance.</para>
+
+    <section>
+      <title>Migrating an Archiva Managed Repository</title>
+
+      <para>Archiva Managed Repositories are the equivalent of Nexus Hosted
+      repositories. To migrate a Managed Repository from Archiva to Nexus, all
+      you need to do is:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Create a New Hosted Repository in Nexus</para>
+        </listitem>
+
+        <listitem>
+          <para>Copy the Contents of the Archiva Managed Repository to the
+          Storage Directory of the newly-created Nexus Hosted
+          Repository</para>
+        </listitem>
+
+        <listitem>
+          <para>Rebuild the Index for the New Nexus Hosted Repository</para>
+        </listitem>
+      </orderedlist>
+
+      <para>The following example will walk through the process of migrating
+      the Archiva repository named "internal" to a new Nexus Hosted repository
+      named "internal". To view your managed repositories in Archiva, login to
+      Archiva as an administrative user and click on the "Repositories" link
+      in the left-hand navigation menu. Clicking on "Repositories" will list
+      all of your Archiva Managed repositories as shown in <xref
+      linkend="fig-archiva-managed" />.</para>
+
+      <figure id="fig-archiva-managed">
+        <title>Archiva Managed Repositories</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/archiva-managed-repositories.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/archiva-managed-repositories.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>To migrate this Managed repository to a Nexus Hosted repository,
+      you will need to find the directory in which Archiva stores all of the
+      repository artifacts. to do this, click on the Edit link listed next to
+      the name of the repository you want to migrate as shown in <xref
+      linkend="fig-archiva-managed" />. Click on Edit should load the form
+      shown in <xref linkend="fig-archiva-managed-edit" />.</para>
+
+      <figure id="fig-archiva-managed-edit">
+        <title>Editing an Archiva Managed Repository</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/archiva-managed-repo-edit.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/archiva-managed-repo-edit.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Take note of the file path for Directory. The file path shown in
+      <xref linkend="fig-archiva-managed-edit" /> is
+      <filename>./data/repositories/internal</filename>. If Archiva is
+      installed in <filename>/usr/local/archiva-1.2.1</filename>, this would
+      correspond to the directory
+      <filename>/usr/local/archiva-1.2.1/data/repositories/internal</filename>.
+      You will use this path later in this section to copy the contents of
+      your old Archiva Managed Repository to your new Nexus Hosted
+      Repository.</para>
+
+      <para>Next, create a new Nexus repository with the same identifier and
+      Name as the old Archiva Managed Repository. To do this, log into Nexus
+      as an administrative user, click on Repositories in the left-hand Nexus
+      navigation menu, and then click on the Add dropdown as shown in <xref
+      linkend="fig-archiva-new-nexus-hosted" />. Select "Hosted Repository"
+      and then fill out the Repository ID and Repository Name to match the
+      name of the old Archiva repository. If you are migrating a Snapshot
+      repository, select a Repository Policy of Snapshot, and if you are
+      migrating a Release repository select a Snapshot Policy of
+      Release.</para>
+
+      <figure id="fig-archiva-new-nexus-hosted">
+        <title>Creating a Nexus Hosted Respository</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/archiva-new-nexus-hosted.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/archiva-new-nexus-hosted.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Now, you'll need to copy the Archiva repository to the Nexus
+      repository. You can do this, by copying the contents of the Archiva
+      repository directory to the Nexus repository storage directory. If we
+      assume that Archiva is install in /usr/local/archiva-1.2.1, Nexus is
+      install in /usr/local/nexus-1.3.6, and the Sonatype Work directory is
+      /usr/local/sonatype-work. You can copy the contents of the Archiva
+      managed repository to the new Nexus hosted repository by executing the
+      following command:</para>
+
+      <screen>$ <command>cp -r /usr/local/archiva-1.2.1/data/repositories/internal/* \
+        /usr/local/sonatype-work/nexus/storage/internal/</command></screen>
+
+      <para>If you are migrating to a Nexus instance which is on a different
+      server, you can simply create an archive of the
+      <filename>/usr/local/archiva-1.2.1/data/repositories/internal</filename>
+      directory, copy it to the new server, and then uncompress your
+      repository archive in the appropriate directory.</para>
+
+      <warning>
+        <para>Archiva stores artifacts from proxied remote repositories in the
+        same directory as artifacts in a managed repository. If you have been
+        proxying a remote repository, you might want to remove artifacts that
+        have been proxied from a remote repository. For example, if your
+        organization uses a groupId of <varname>org.company</varname> for
+        internal project, you can make sure to only copy the artifacts under
+        the corresponding <filename>org/company/</filename> directory.</para>
+      </warning>
+
+      <para>Once the contents of the repository have been copied to the Nexus
+      Hosted repository, you must rebuild the repository index as shown in
+      <xref linkend="fig-archiva-nx-hosted-md" /> and <xref
+      linkend="figu-archiva-nx-hosted-idx" />. Right-clicking on the
+      repository in the list of Nexus repositories will display the context
+      menu shown in the following figure.</para>
+
+      <figure id="figu-archiva-nx-hosted-idx">
+        <title>Rebuilding the Index of a Nexus Hosted Repository</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/archiva-nx-hosted-rebuild-idx.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/archiva-nx-hosted-rebuild-idx.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Once the migration is complete, you will be able to search and
+      browse the contents of your newly migrated Nexus Hosted
+      repository.</para>
+    </section>
+
+    <section>
+      <title>Migrating an Archiva Proxy Connector</title>
+
+      <para>Archiva allows you to define remote repositories and repository
+      connectors to proxy remote repositories and cache remote artifacts from
+      remote repositories in Archiva Managed Repositories. While Nexus also
+      provides Proxy repositories, there is one major difference between Nexus
+      and Archiva. Where Nexus maintains a separate local storage directory
+      for each proxy repository, Archiva combines cached remote artifacts into
+      a single filesystem with the contents of a managed repository. In other
+      words, there is no good way to transfer an existing local cache of
+      artifacts between Archiva and Nexus without manually manipulating the
+      contents of Archiva's Managed Repository directory.</para>
+
+      <para>To recreate an Archiva repository connector in Nexus as a Proxy
+      repository and to preserve the local cache of artifacts from this
+      repository. You'll need to create a Proxy repository in Nexus, copy the
+      contents of the existing proxy repository to the Nexus storage location
+      for you new Proxy repository, and then rebuild the metadata of your new
+      Nexus Proxy repository.</para>
+
+      <para>First step is to take a look at the Remote Repositories in your
+      Archiva installation: log in as an administrative user and then click on
+      "Repositories" under the Administration menu in the left-hand Archiva
+      navigation menu. Once you've clicked this link and loaded the list of
+      repositories, scrool to the bottom of the page to see the list of remote
+      repositories as shown in <xref
+      linkend="fig-archiva-browsing-remote" />.</para>
+
+      <figure id="fig-archiva-browsing-remote">
+        <title>Browsing Archiva Remote Repositories</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/archiva-remote-repositories.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/archiva-remote-repositories.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Defining a proxy repository in Archiva involves associating one of
+      the remote repositories defined in <xref
+      linkend="fig-archiva-browsing-remote" /> with one of the Managed
+      Repositories defined in <xref linkend="fig-archiva-managed" />. Once you
+      do this, requests for artifacts from the managed repository will also
+      query the remote repository. If an artifact is found in the remote
+      repository, it will be retrieved and stored in the managed repository's
+      storage directory. To see a list of proxy connectors and the managed
+      repositories they are associated with, click on "Proxy Connectors" in
+      the left-hand Archiva menu, you will see a list similar to that shown in
+      <xref linkend="fig-archiva-proxy-connectors" />.</para>
+
+      <figure id="fig-archiva-proxy-connectors">
+        <title>Archiva Proxy Connectors</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/archiva-proxy-connectors.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/archiva-proxy-connectors.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Click on the Edit Icon (or Pencil) next to second Proxy Connector
+      listed in <xref linkend="fig-archiva-proxy-connectors" />, this will
+      then load the settings form for this proxy connector shown in <xref
+      linkend="fig-archiva-proxy-connector-settings" />. You should use the
+      settings for this proxy connect to configure your new Nexus Proxy
+      repository.</para>
+
+      <figure id="fig-archiva-proxy-connector-settings">
+        <title>Archiva Proxy Connector Settings</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/archiva-proxy-connector-settings.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/archiva-proxy-connector-settings.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>To create a Proxy repository that will correspond to the Proxy
+      Connector in Archiva, log into Nexus as an administrative user, and
+      click on Repositories in the left-hand Nexus menu. Once you can see a
+      list of Nexus repositories, click on Add... and select Proxy Repository
+      from the dropdown of repository types. In the New Proxy Repository form
+      (shown in <xref linkend="fig-archiva-nx-create-proxy" />) populate the
+      repository ID, repository Name, and use the remote URL that was
+      displayed in <xref linkend="fig-archiva-browsing-remote" />. You will
+      need to create a remote repository for every proxy connector that was
+      defined in Archiva.</para>
+
+      <figure id="fig-archiva-nx-create-proxy">
+        <title>Creating a Nexus Proxy Repository</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/archiva-nx-proxy-create.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/archiva-nx-proxy-create.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>To expose this new Proxy repository in a Repository Group, create
+      a new Nexus Repository group or select an existing group by clicking on
+      Repositories in the left-hand Nexus menu. Click on a repository group
+      and then select the Configuration tab to display the form shown in <xref
+      linkend="fig-archiva-proxy-to-group" />. In the Configuration tab you
+      will see a list of Order Group Repositories and Available Repositories.
+      Click and drag your new Nexus Proxy repository to the list of Ordered
+      Group Repositories, and click Save.</para>
+
+      <figure id="fig-archiva-proxy-to-group">
+        <title>Adding a Proxy Repository to a Repository Group</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/archiva-nx-repo-group-proxy.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/archiva-nx-repo-group-proxy.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Next, you will need to define repository groups that will tell
+      Nexus to only locate certain artifacts in the newly created proxy
+      repository. In , Archiva defined three patterns that were used to filter
+      artifacts available from the proxy connector. These three patterns were
+      "javax/**", "com/sun/**", and "org/jvnet/**". To recreate this behavior
+      in Nexus, define three Routes which will be applied to the group you
+      configured in <xref linkend="fig-archiva-proxy-to-group" />. To create a
+      route, log in as an administrative user, and click on Routes under the
+      Administration menu in the left-hand Nexus menu. Click on Add.. and add
+      three inclusive routes that will apply to the repository group you
+      configured in <xref linkend="fig-archiva-proxy-to-group" />.</para>
+
+      <figure>
+        <title>Defining Nexus Repository Groups</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/archiva-nx-repo-routes.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/archiva-nx-repo-routes.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+  </section>
+</appendix>
