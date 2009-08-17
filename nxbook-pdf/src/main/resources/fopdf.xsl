@@ -32,7 +32,7 @@
     <!-- Dot and Whitespace as separator in TOC between Label and Title-->
     <xsl:param name="autotoc.label.separator" select="'.  '"/>
 
-    <xsl:param name="highlight.source">1</xsl:param>
+    <xsl:param name="highlight.source">0</xsl:param>
 
 
     <!--###################################################
@@ -40,8 +40,8 @@
    ################################################### -->
 
     <!-- Paper type, no headers on blank pages, no double sided printing -->
-    <xsl:param name="page.height" select="'9in'"/>
-    <xsl:param name="page.width" select="'7in'"/>
+    <xsl:param name="page.height" select="'9.681in'"/>
+    <xsl:param name="page.width" select="'7.444in'"/>
     <xsl:param name="headers.on.blank.pages">0</xsl:param>
     <xsl:param name="footers.on.blank.pages">0</xsl:param>
 
@@ -52,7 +52,7 @@
     <xsl:param name="body.margin.bottom">0.4in</xsl:param>
     <xsl:param name="region.after.extent">0.3in</xsl:param>
 
-	<xsl:param name="page.margin.bottom" select="'0.5in'" />
+	<xsl:param name="page.margin.bottom" select="'0.75in'" />
 	<xsl:param name="page.margin.top" select="'0.75in'" />
 	<xsl:param name="page.margin.inner" select="'1.0in'" />
 	<xsl:param name="page.margin.outer" select="'0.75in'" />
@@ -74,13 +74,13 @@
     <!-- Line height in body text -->
     <xsl:param name="line-height">1.3</xsl:param>
 
-	<xsl:param name="body.font.family" select="'serif'" />
+<!--	<xsl:param name="body.font.family" select="'serif'" /> -->
 	<xsl:param name="body.font.master" select="'10'" />
 	<xsl:param name="body.font.small" select="'8'" />
 	<xsl:param name="dingbat.font.family" select="''" />
 	<xsl:param name="symbol.font.family" select="''" />
-	<xsl:param name="title.font.family" select="'sans-serif'" />
-	<xsl:param name="monospace.font.family" select="'monospace'" />
+<!--	<xsl:param name="title.font.family" select="'sans-serif'" /> -->
+<!--	<xsl:param name="monospace.font.family" select="'monospace'" /> -->
 	<xsl:param name="double.sided" select="'1'" />
 
 	<xsl:attribute-set name="normal.para.spacing">
