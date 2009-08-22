@@ -18,7 +18,7 @@
     which require complex procurement and staging workflows in addition to
     integration with LDAP.</para>
 
-    <section>
+    <section id="installing-sect-dl-open">
       <title>Downloading Nexus Open Source</title>
 
       <para>To download Nexus Open Source, go to <ulink
@@ -60,6 +60,13 @@
           </imageobject>
         </mediaobject>
       </figure>
+
+      <note>
+        <para>Nexus Open Source can also be deployed as a web application in a
+        servlet container like Jetty or Tomcat or an application server like
+        Glassfish or JBoss. Instructions for installing Nexus as a WAR are
+        found in <xref linkend="install-sect-as-a-war" />.</para>
+      </note>
     </section>
 
     <section id="install-sect-download">
@@ -95,13 +102,13 @@
   </section>
 
   <section id="install-sect-install">
-    <title>Installing Nexus</title>
+    <title>Installing Nexus Professional</title>
 
-    <para>The following instructions are for installing Nexus as a stand-alone
-    server. Nexus comes bundled with a Jetty instance and runs on a
-    (configurable) port 8081 by default. If you would like to run Nexus Open
-    Source as a web application in an existing application server or servlet
-    container, please refer to the instructions in <xref
+    <para>The following instructions are for installing Nexus Professional as
+    a stand-alone server. Nexus comes bundled with a Jetty instance and runs
+    on a (configurable) port 8081 by default. If you would like to run Nexus
+    Open Source as a web application in an existing application server or
+    servlet container, please refer to the instructions in <xref
     linkend="install-sect-as-a-war" />.</para>
 
     <note>
@@ -656,10 +663,19 @@ ProxyPreserveHost On
 
       <para>There is a known logging configuration conflict between the Nexus
       Open Source <acronym>WAR</acronym> and Glassfish. To address this
-      conflict, you will need to unpack the Nexus Open Source
-      <acronym>WAR</acronym> and locate the
-      <filename>WEB-INF/log4j.properties</filename> file contain within the
-      archive. Edit this <filename>log4j.properties</filename> file as
+      conflict, you will need to modify the
+      <filename>log4j.properties</filename> file and change a few of the
+      directives that print messages to the console. The
+      <filename>log4j.properties</filename> file is located in
+      <filename>~/sonatype-work/conf/log4j.properties</filename>. This file is
+      created the first time you attempt to deploy Nexus to Glassfish. To
+      create this file, deploy Nexus to Glassfish. While this initial
+      deployment will fail due to a logging conflict, the act of deploying
+      Nexus to Glassfish will create the working directory in
+      <filename>~/sonatype-work</filename> and the
+      <filename>log4j.properties</filename> file.</para>
+
+      <para>Edit this <filename>log4j.properties</filename> file as
       follows:</para>
 
       <orderedlist>
@@ -676,9 +692,7 @@ ProxyPreserveHost On
       </orderedlist>
 
       <para>These changes will instruct Log4J not to print messages to the
-      console. Once you make these edits, recreate the <acronym>WAR</acronym>
-      file using the <command>jar</command> command and deploy it in
-      Glassfish.</para>
+      console. Once you make these edits, restart Glassfish.</para>
     </section>
   </section>
 
@@ -803,5 +817,102 @@ ProxyPreserveHost On
       <ulink
       url="mailto:sales@sonatype.com">sales@sonatype.com</ulink>.</para>
     </section>
+  </section>
+
+  <section>
+    <title>Sonatype Nexus Work Directory</title>
+
+    <para></para>
+
+    <figure>
+      <title></title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/installing_work-dir.png" />
+        </imageobject>
+        <imageobject role="print">
+          <imagedata fileref="figs/print/installing_work-dir.pdf" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <figure>
+      <title></title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/installing_bin-dir-solaris.png" />
+        </imageobject>
+        <imageobject role="print">
+          <imagedata fileref="figs/print/installing_bin-dir-solaris.pdf" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <figure>
+      <title></title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/installing_runtime-dir.png" />
+        </imageobject>
+        <imageobject role="print">
+          <imagedata fileref="figs/print/installing_runtime-dir.pdf" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <figure>
+      <title></title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/installing_bin-dir-l32.png" />
+        </imageobject>
+        <imageobject role="print">
+          <imagedata fileref="figs/print/installing_bin-dir-l32.pdf" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <figure>
+      <title></title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/installing_bin-dir-osx.png" />
+        </imageobject>
+        <imageobject role="print">
+          <imagedata fileref="figs/print/installing_bin-dir-osx.pdf" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <figure>
+      <title></title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/installing_conf-dir.png" />
+        </imageobject>
+        <imageobject role="print">
+          <imagedata fileref="figs/print/installing_conf-dir.pdf" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <figure>
+      <title></title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/installing_bin-dir-win.png" />
+        </imageobject>
+        <imageobject role="print">
+          <imagedata fileref="figs/print/installing_bin-dir-win.pdf" />
+        </imageobject>
+      </mediaobject>
+    </figure>
   </section>
 </chapter>
