@@ -109,86 +109,155 @@
     </section>
   </section>
 
-  <section id="install-sect-install">
-    <title>Installing Nexus Professional</title>
+  <section>
+    <title>Installing Nexus</title>
 
-    <para>The following instructions are for installing Nexus Professional as
-    a stand-alone server. Nexus comes bundled with a Jetty instance which
-    listens to all configured IP addresses on a host (0.0.0.0) and runs on
-    port 8081 by default. If you would like to run Nexus Open Source as a web
-    application in an existing application server or servlet container, please
-    refer to the instructions in <xref
-    linkend="install-sect-as-a-war" />.</para>
+    <para>The following sections detail the installation process for both
+    Nexus Open Source and Nexus Professional.</para>
 
-    <note>
-      <para>The installation process for Nexus Open Source is exactly the same
-      as the installation process for Nexus Professional. If you are
-      installing Nexus Open Source, follow the directions in this section
-      substituting <filename>${nexusopen.bundle.name}.zip</filename> for
-      <filename>${nexus.bundle.name}.zip</filename> and
-      <filename>${nexusopen.bundle.name}.tgz</filename> for
-      <filename>${nexus.bundle.name}.tgz</filename>.</para>
-    </note>
+    <section id="insatll-sect-prereq">
+      <title>Nexus Prerequisites</title>
 
-    <para><indexterm>
-        <primary>Nexus</primary>
+      <para>Nexus Open Source and Nexus Professional only have one
+      prerequisite, a Java Runtime Environment (JRE) compatible with Java 5 or
+      higher. Nexus is most often run with the JRE than is bundled with a Java
+      Development Kit (JDK) installation, and it can be run with the latest
+      version of Sun's JDK or Java 5 or Java 6. To download the latest release
+      of the Sun JDK, go to <ulink
+      url="http://developers.sun.com/downloads/">http://developers.sun.com/downloads/</ulink>,
+      and download the latest Java 6 JDK or an older Java 5 JDK, either will
+      work.</para>
+    </section>
 
-        <secondary>Download</secondary>
-      </indexterm><indexterm>
-        <primary>Nexus</primary>
+    <section id="installing-sect-open-source">
+      <title>Installing Nexus Open Source</title>
 
-        <secondary>Installation</secondary>
-      </indexterm>Installing Nexus is straightforward, unpack the Nexus web
-    application archive in a directory. If you are installing Nexus on a local
-    workstation to give it a test run, you can install it in your home
-    directory or whenever you like; Nexus doesn't have any hard coded
-    directories, it will run from any directory. If you downloaded the
-    <acronym>ZIP</acronym> archive, run:</para>
+      <para>The following instructions are for installing Nexus Open Source as
+      a stand-alone server. Nexus comes bundled with a Jetty instance which
+      listens to all configured IP addresses on a host (0.0.0.0) and runs on
+      port 8081 by default. If you would like to run Nexus Open Source as a
+      web application in an existing application server or servlet container,
+      please refer to the instructions in <xref
+      linkend="install-sect-as-a-war" />.</para>
 
-    <screen>$ <command>unzip ${nexus.bundle.name}.zip</command></screen>
+      <para><indexterm>
+          <primary>Nexus Open Source</primary>
 
-    <para>And, if you download the GZip'd <acronym>TAR</acronym> archive,
-    run:</para>
+          <secondary>Download</secondary>
+        </indexterm><indexterm>
+          <primary>Nexus Open Source</primary>
 
-    <screen>$ <command>tar xvzf ${nexus.bundle.name}.tgz</command></screen>
+          <secondary>Installation</secondary>
+        </indexterm>Installing Nexus Open Source is straightforward, unpack
+      the Nexus web application archive in a directory. If you are installing
+      Nexus on a local workstation to give it a test run, you can install it
+      in your home directory or whenever you like; Nexus doesn't have any hard
+      coded directories, it will run from any directory. If you downloaded the
+      <acronym>ZIP</acronym> archive, run:</para>
 
-    <para><note>
-        <para>There are some known incompatibilities with the version of tar
-        provided by Solaris and the gzip tar format. If you are installing
-        Nexus on Solaris, you must use the GNU tar application, or you will
-        end up with corrupted files. Please see <ulink
-        url="http://sunsolarisadmin.blogspot.com/2007/03/how-to-install-gnu-tar-in-solaris.html">http://sunsolarisadmin.blogspot.com/2007/03/how-to-install-gnu-tar-in-solaris.html</ulink>.</para>
-      </note>If you are installing Nexus on a server, you might want to use a
-    directory other than your home directory. On a Unix machine, this could be
-    under <filename>/usr/local/${nexus.version.name}</filename> with a
-    symbolic link <filename>/usr/local/nexus</filename> to the nexus
-    directory. Using a generic symbolic link nexus to a specific version is a
-    common practice which makes it easier to upgrade when a newer version of
-    Nexus is made available.</para>
+      <screen>$ <command>unzip ${nexusopen.bundle.name}.zip</command></screen>
 
-    <screen>$ <command>sudo cp ${nexus.bundle.name}.tgz /usr/local</command>
+      <para>And, if you download the GZip'd <acronym>TAR</acronym> archive,
+      run:</para>
+
+      <screen>$ <command>tar xvzf ${nexusopen.bundle.name}.tgz</command></screen>
+
+      <para><note>
+          <para>There are some known incompatibilities with the version of tar
+          provided by Solaris and the gzip tar format. If you are installing
+          Nexus on Solaris, sectyou must use the GNU tar application, or you
+          will end up with corrupted files. Please see <ulink
+          url="http://sunsolarisadmin.blogspot.com/2007/03/how-to-install-gnu-tar-in-solaris.html">http://sunsolarisadmin.blogspot.com/2007/03/how-to-install-gnu-tar-in-solaris.html</ulink>.</para>
+        </note>If you are installing Nexus on a server, you might want to use
+      a directory other than your home directory. On a Unix machine, this book
+      assumes that Nexus is installed in
+      <filename>/usr/local/${nexus.version.name}</filename> with a symbolic
+      link <filename>/usr/local/nexus</filename> to the nexus directory. Using
+      a generic symbolic link nexus to a specific version is a common practice
+      which makes it easier to upgrade when a newer version of Nexus is made
+      available.</para>
+
+      <screen>$ <command>sudo cp ${nexusopen.bundle.name}.tgz /usr/local</command>
+$ <command>cd /usr/local</command>
+$ <command>sudo tar xvzf ${nexusopen.bundle.name}.tgz</command>
+$ <command>ln -s ${nexusopen.version.name} nexus</command></screen>
+
+      <para>Although it isn't required for Nexus to run, you may want to set
+      an environment variable <varname>NEXUS_HOME</varname> in your
+      environment which points to the installation directory of Nexus. This
+      chapter will refer to this location as
+      <varname>\${NEXUS_HOME}</varname>.</para>
+
+      <para>The Nexus installation directory
+      <filename>${nexusopen.version.name}</filename> has a sibling directory
+      named <filename>sonatype-work</filename>. This directory contains all of
+      the repository and configuration data for Nexus and is stored outside of
+      the Nexus installation directory to make it easier to upgrade to a newer
+      version of Nexus. By default, this directory is always a sibling to the
+      nexus installation directory; if you installed nexus in
+      <filename>/usr/local</filename>, the <filename>/usr/local/</filename>
+      directory would also contain a <filename>sonatype-work</filename>
+      subdirectory containing all of the content and configuration. The
+      location of the sonatype-work directory can be customized by altering
+      the <varname>nexus-work</varname> property in
+      <filename>\${NEXUS_HOME}/conf/plexus.properties</filename>.</para>
+    </section>
+
+    <section id="install-sect-pro">
+      <title>Installing Nexus Professional</title>
+
+      <para>The following instructions are for installing Nexus Professional
+      as a stand-alone server. Nexus Professional is bundled with a Jetty
+      instance which listens to all configured IP addresses on a host
+      (0.0.0.0) and runs on port 8081 by default. </para>
+
+      <para><indexterm>
+          <primary>Nexus Professional</primary>
+
+          <secondary>Download</secondary>
+        </indexterm><indexterm>
+          <primary>Nexus Professional</primary>
+
+          <secondary>Installation</secondary>
+        </indexterm>Installing Nexus is straightforward, unpack the Nexus web
+      application archive in a directory. If you are installing Nexus on a
+      local workstation to give it a test run, you can install it in your home
+      directory or whenever you like; Nexus doesn't have any hard coded
+      directories, it will run from any directory. If you downloaded the
+      <acronym>ZIP</acronym> archive, run:</para>
+
+      <screen>$ <command>unzip ${nexus.bundle.name}.zip</command></screen>
+
+      <para>And, if you download the GZip'd <acronym>TAR</acronym> archive,
+      run:</para>
+
+      <screen>$ <command>tar xvzf ${nexus.bundle.name}.tgz</command></screen>
+
+      <para>If you are installing Nexus on a server, you might want to use a
+      directory other than your home directory. On a Unix machine, this book
+      assumes that Nexus is installed in
+      <filename>/usr/local/${nexus.version.name}</filename> with a symbolic
+      link <filename>/usr/local/nexus</filename> to the nexus directory. Using
+      a symbolic link nexus/ to a directory which holds a specific version of
+      Nexus is a common practice which makes it easier to upgrade to a newer
+      version of Nexus.</para>
+
+      <screen>$ <command>sudo cp ${nexus.bundle.name}.tgz /usr/local</command>
 $ <command>cd /usr/local</command>
 $ <command>sudo tar xvzf ${nexus.bundle.name}.tgz</command>
 $ <command>ln -s ${nexus.version.name} nexus</command></screen>
 
-    <para>Although it isn't required for Nexus to run, you may want to set an
-    environment variable <varname>NEXUS_HOME</varname> in your environment
-    which points to the installation directory of Nexus. This chapter will
-    refer to this location as <varname>\${NEXUS_HOME}</varname>.</para>
-
-    <para>The Nexus installation directory
-    <filename>${nexus.version.name}</filename> has a sibling directory named
-    <filename>sonatype-work</filename>. This directory contains all of the
-    repository and configuration data for Nexus and is stored outside of the
-    Nexus installation directory to make it easier to upgrade to a newer
-    version of Nexus. By default, this directory is always a sibling to the
-    nexus installation directory; if you installed nexus in
-    <filename>/usr/local</filename>, the <filename>/usr/local/</filename>
-    directory would also contain a <filename>sonatype-work</filename>
-    subdirectory containing all of the content and configuration. The location
-    of the sonatype-work directory can be customized by altering the
-    <varname>nexus-work</varname> property in
-    <filename>\${NEXUS_HOME}/conf/plexus.properties</filename>.</para>
+      <para>Although it isn't required for Nexus to run, you may want to set
+      an environment variable <varname>NEXUS_HOME</varname> in your
+      environment which points to the installation directory of Nexus. This
+      chapter will refer to this location as
+      <varname>\${NEXUS_HOME}</varname>. The Nexus installation directory
+      <filename>${nexus.version.name}</filename> has a sibling directory named
+      <filename>sonatype-work</filename>. This directory contains all of the
+      repository and configuration data for Nexus and is stored outside of the
+      Nexus installation directory to make it easier to upgrade to a newer
+      version of Nexus. </para>
+    </section>
   </section>
 
   <section id="installation-sect-upgrading">
@@ -204,10 +273,11 @@ $ <command>ln -s ${nexus.version.name} nexus</command></screen>
     the <filename>sonatype-work/</filename> directory.</para>
 
     <note>
-      <para>With release 1.3, you will need to copy your log4j.properties from
-      from the old Nexus installations runtime working directory to the
-      <filename>sonatype-work/</filename> directory. For example, you will
-      need to copy
+      <para>If you are upgrading from a Nexus 1.2 release to a Nexus 1.3
+      release, you will need to copy your
+      <filename>log4j.properties</filename> from the old Nexus installation's
+      runtime working directory to the <filename>sonatype-work/</filename>
+      directory. For example, you will need to copy
       <filename>nexus-webapp-1.2.0/runtime/apps/nexus/conf/log4j.properties</filename>
       to
       <filename>sonatype-work/nexus/conf/log4j.properties</filename>.</para>
@@ -325,7 +395,7 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
           Host and Port as well as any necessary authentication parameters
           that Nexus needs to connect to a mail server. To configure the SMTP
           settings, load the server configuration dialog shown in <xref
-          linkend="sect-repoman-server-conf" />.</para>
+          linkend="fig-nexus-server-config" />.</para>
         </listitem>
       </varlistentry>
 
@@ -353,7 +423,7 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
               <para>Click on Repositories under the Administration menu and
               change Download Remote Indexes to true for the three proxy
               repositories. You'll need to load the dialog shown in <xref
-              linkend="sect-manage-repo" /> for each of the three
+              linkend="fig-repo-config" /> for each of the three
               repositories.</para>
             </listitem>
 
