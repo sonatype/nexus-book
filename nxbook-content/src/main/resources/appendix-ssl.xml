@@ -14,9 +14,7 @@
     repository manager for a team of developers spread out over a variety of
     locations both internal and external to a corporate network, you will
     likely want to secure your repository using SSL. The instructions in this
-    chapter assume that you are running Nexus embedded in Jetty. If you are
-    not running Nexus in Jetty, you will have to consult the documentation for
-    the specific container you are using.</para>
+    chapter assume that you are running Nexus embedded in Jetty.</para>
   </section>
 
   <section id="sect-ssl-client-cert">
@@ -169,11 +167,11 @@ wrapper.java.additional.5=-Djavax.net.ssl.keyStorePassword=&lt;keystore_password
 
     <para>If you need to serve repository content using SSL, you can always
     proxy Nexus with a server like Apache httpd. Apache httpd can easily be
-    configured to serve SSL content using mod_ssl, and there is a large amont
+    configured to serve SSL content using mod_ssl, and there is a large amount
     of reference material available for configuring httpd to serve secure
     content. But, Jetty can easily be configured to serve SSL content, and if
     you would like to avoid the extra work of putting a web server like Apache
-    gttpd in front of Nexus, this section shows you how to do that. To
+    httpd in front of Nexus, this section shows you how to do that. To
     configure Nexus to serve SSL directly to clients, you'll need to perform
     the following steps.</para>
 
@@ -325,30 +323,29 @@ MD5:6f1ed002ab5595859014ebf0951522d9 </screen>
   <section id="sect-ssl-redirecting">
     <title>Redirecting Non-SSL Connections to SSL</title>
 
-    <para>If you've set out to configure Nexus to serve SSL connections
-    directly, you'd really like to listen on a non-SSL port then redirect
-    traffic on that port over to the SSL side. This allows your main Nexus
-    service to be protected by SSL, while still accepting traffic where some
-    users may expect to find it (i.e. on the non-SSL port).</para>
+    <para>If you want to make it very easy for people to use your Nexus
+    repository, you will want to configure the automatic redirect from the
+    non-SSL port (default 80) to the SSL port (default 443). When this feature
+    is configured, browsers and clients that attempt to interact with the
+    non-SSL port will be seamlessly redirected to the SSL port. If you do not
+    turn on the automatic redirect to SSL, users who attempt to load the Nexus
+    interface via the default port 80 will see a network error.</para>
 
-    <para>This configuration amounts to URL rewriting, which is something you
-    normally see done in Apache Httpd or other similar webserver products. To
-    accomplish the same thing with only Jetty (embedded in Nexus), you'll need
-    to use a custom rewrite rule for Jetty that is bundled in Nexus, inside
-    the plexus-jetty6 library found in
-    $(basedir)/runtime/apps/nexus/lib.</para>
+    <para>If you are proxying your Nexus instance with a web server like
+    Apache httpd, you could configure mod_rewrite to automatically redirect
+    browsers to the SSL port, or you can configure Jetty to perform this
+    redirection. To do this in Jetty you use a custom rewrite rule for Jetty
+    that is bundled with Nexus, inside the <varname>plexus-jetty6</varname>
+    library found in
+    <filename>\${NEXUS_HOME}/runtime/apps/nexus/lib</filename>.</para>
 
-    <para>To enable this feature, first follow the steps outlined in the
-    section Serving SSL directly from Nexus, above. Then, further modify your
-    jetty.xml file with the following:</para>
+    <para>To enable this feature, configure Jetty to serve SSL directly as
+    demonstrated in <xref linkend="sect-ssl-ssl-direct" />. After you having
+    configured Jetty to serve SSL directly, open your jetty.xml and replace
+    the existing handler/context-collection declaration with a standalone
+    context-collection declaration, by replacing this section:</para>
 
-    <orderedlist>
-      <listitem>
-        <para>Replace the existing handler/context-collection declaration with
-        a standalone context-collection declaration, by replacing this
-        section:</para>
-
-        <programlisting>&lt;Set name="handler"&gt;
+    <programlisting>&lt;Set name="handler"&gt;
   &lt;New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection"&gt;
       &lt;!-- The following configuration is REQUIRED, and MUST BE FIRST.
            It makes the Plexus container available for use in the Nexus webapp. --&gt;
@@ -369,9 +366,9 @@ MD5:6f1ed002ab5595859014ebf0951522d9 </screen>
 &lt;/Set&gt;
 </programlisting>
 
-        <para>with this one:</para>
+    <para>with this one:</para>
 
-        <programlisting>&lt;New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection"&gt;
+    <programlisting>&lt;New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection"&gt;
     &lt;!-- The following configuration is REQUIRED, and MUST BE FIRST.
          It makes the Plexus container available for use in the Nexus webapp. --&gt;
     &lt;Call name="addLifeCycleListener"&gt;
@@ -389,14 +386,12 @@ MD5:6f1ed002ab5595859014ebf0951522d9 </screen>
     &lt;/Call&gt;
 &lt;/New&gt;
 </programlisting>
-      </listitem>
 
-      <listitem>
-        <para>Now, configure the rewrite handler for Jetty by adding the
-        following section just above the line with stopAtShutdown in
-        it:</para>
+    <para>Now, configure the rewrite handler for Jetty by adding the following
+    section just above the line with <varname>stopAtShutdown</varname> in
+    it:</para>
 
-        <programlisting>&lt;Set name="handler"&gt;
+    <programlisting>&lt;Set name="handler"&gt;
     &lt;New id="Handlers" class="org.mortbay.jetty.handler.rewrite.RewriteHandler"&gt;
         &lt;Set name="rules"&gt;
             &lt;Array type="org.mortbay.jetty.handler.rewrite.Rule"&gt;
@@ -422,16 +417,13 @@ MD5:6f1ed002ab5595859014ebf0951522d9 </screen>
     &lt;/New&gt;
 &lt;/Set&gt;
 </programlisting>
-      </listitem>
 
-      <listitem>
-        <para>Finally, modify your $(basedir)/conf/plexus.properties file to
-        include a new property, application-port-ssl. This will allow you to
-        customize both the SSL and non-SSL ports independently:</para>
+    <para>Modify <filename>\${NEXUS_HOME}/conf/plexus.properties</filename>
+    and add a new property, <varname>application-port-ssl</varname>. This will
+    allow you to customize both the SSL and non-SSL ports
+    independently:</para>
 
-        <programlisting>application-port-ssl=8443
+    <programlisting>application-port-ssl=8443
 </programlisting>
-      </listitem>
-    </orderedlist>
   </section>
 </appendix>
