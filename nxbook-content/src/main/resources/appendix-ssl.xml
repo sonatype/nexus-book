@@ -347,21 +347,22 @@ MD5:6f1ed002ab5595859014ebf0951522d9 </screen>
 
     <programlisting>&lt;Set name="handler"&gt;
   &lt;New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection"&gt;
-      &lt;!-- The following configuration is REQUIRED, and MUST BE FIRST.
-           It makes the Plexus container available for use in the Nexus webapp. --&gt;
-      &lt;Call name="addLifeCycleListener"&gt;
-          &lt;Arg&gt;
-            &lt;New class="org.sonatype.plexus.jetty.custom.InjectExistingPlexusListener" /&gt;
-          &lt;/Arg&gt;
-      &lt;/Call&gt;
+    &lt;!-- The following configuration is REQUIRED, and MUST BE FIRST.
+         It makes the Plexus container available for use in the Nexus webapp. --&gt;
+    &lt;Call name="addLifeCycleListener"&gt;
+      &lt;Arg&gt;
+        &lt;New 
+         class="org.sonatype.plexus.jetty.custom.InjectExistingPlexusListener" /&gt;
+      &lt;/Arg&gt;
+    &lt;/Call&gt;
 
-      &lt;!-- The following configuration disables JSP taglib support, the validation of which
-           slows down Jetty's startup significantly. --&gt;
-      &lt;Call name="addLifeCycleListener"&gt;
-          &lt;Arg&gt;
-            &lt;New class="org.sonatype.plexus.jetty.custom.DisableTagLibsListener" /&gt;
-          &lt;/Arg&gt;
-      &lt;/Call&gt;
+    &lt;!-- The following configuration disables JSP taglib support, 
+         the validation of which slows down Jetty's startup significantly. --&gt;
+    &lt;Call name="addLifeCycleListener"&gt;
+      &lt;Arg&gt;
+        &lt;New class="org.sonatype.plexus.jetty.custom.DisableTagLibsListener" /&gt;
+      &lt;/Arg&gt;
+    &lt;/Call&gt;
   &lt;/New&gt;
 &lt;/Set&gt;
 </programlisting>
@@ -369,21 +370,22 @@ MD5:6f1ed002ab5595859014ebf0951522d9 </screen>
     <para>with this one:</para>
 
     <programlisting>&lt;New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection"&gt;
-    &lt;!-- The following configuration is REQUIRED, and MUST BE FIRST.
-         It makes the Plexus container available for use in the Nexus webapp. --&gt;
-    &lt;Call name="addLifeCycleListener"&gt;
-        &lt;Arg&gt;
-          &lt;New class="org.sonatype.plexus.jetty.custom.InjectExistingPlexusListener" /&gt;
-        &lt;/Arg&gt;
-    &lt;/Call&gt;
+  &lt;!-- The following configuration is REQUIRED, and MUST BE FIRST.
+       It makes the Plexus container available for use in the Nexus webapp. --&gt;
+  &lt;Call name="addLifeCycleListener"&gt;
+    &lt;Arg&gt;
+      &lt;New 
+         class="org.sonatype.plexus.jetty.custom.InjectExistingPlexusListener" /&gt;
+    &lt;/Arg&gt;
+  &lt;/Call&gt;
 
-    &lt;!-- The following configuration disables JSP taglib support, the validation of which
-         slows down Jetty's startup significantly. --&gt;
-    &lt;Call name="addLifeCycleListener"&gt;
-        &lt;Arg&gt;
-          &lt;New class="org.sonatype.plexus.jetty.custom.DisableTagLibsListener" /&gt;
-        &lt;/Arg&gt;
-    &lt;/Call&gt;
+  &lt;!-- The following configuration disables JSP taglib support, the 
+       validation of which slows down Jetty's startup significantly. --&gt;
+  &lt;Call name="addLifeCycleListener"&gt;
+    &lt;Arg&gt;
+      &lt;New class="org.sonatype.plexus.jetty.custom.DisableTagLibsListener" /&gt;
+    &lt;/Arg&gt;
+  &lt;/Call&gt;
 &lt;/New&gt;
 </programlisting>
 
@@ -392,29 +394,33 @@ MD5:6f1ed002ab5595859014ebf0951522d9 </screen>
     it:</para>
 
     <programlisting>&lt;Set name="handler"&gt;
-    &lt;New id="Handlers" class="org.mortbay.jetty.handler.rewrite.RewriteHandler"&gt;
-        &lt;Set name="rules"&gt;
-            &lt;Array type="org.mortbay.jetty.handler.rewrite.Rule"&gt;
-                &lt;Item&gt;
-                  &lt;New id="redirecedHttps"
-                      class="org.sonatype.plexus.jetty.custom.RedirectToHttpsRule"&gt;
-                      &lt;Set name="httpsPort"&gt;${application-port-ssl}&lt;/Set&gt;
-                  &lt;/New&gt;
-                &lt;/Item&gt;
-            &lt;/Array&gt;
+  &lt;New id="Handlers" class="org.mortbay.jetty.handler.rewrite.RewriteHandler"&gt;
+    &lt;Set name="rules"&gt;
+      &lt;Array type="org.mortbay.jetty.handler.rewrite.Rule"&gt;
+        &lt;Item&gt;
+          &lt;New id="redirecedHttps"
+               class="org.sonatype.plexus.jetty.custom.RedirectToHttpsRule"&gt;
+            &lt;Set name="httpsPort"&gt;${application-port-ssl}&lt;/Set&gt;
+          &lt;/New&gt;
+        &lt;/Item&gt;
+      &lt;/Array&gt;
+    &lt;/Set&gt;
+    &lt;Set name="handler"&gt;
+      &lt;New id="Handlers" class="org.mortbay.jetty.handler.HandlerCollection"&gt;
+        &lt;Set name="handlers"&gt;
+          &lt;Array type="org.mortbay.jetty.Handler"&gt;
+            &lt;Item&gt;&lt;Ref id="Contexts"/&gt;&lt;/Item&gt;
+            &lt;Item&gt;
+              &lt;New id="DefaultHandler" 
+                   class="org.mortbay.jetty.handler.DefaultHandler"/&gt;&lt;/Item&gt;
+            &lt;Item&gt;
+              &lt;New id="RequestLog" 
+                   class="org.mortbay.jetty.handler.RequestLogHandler"/&gt;&lt;/Item&gt;
+          &lt;/Array&gt;
         &lt;/Set&gt;
-        &lt;Set name="handler"&gt;
-            &lt;New id="Handlers" class="org.mortbay.jetty.handler.HandlerCollection"&gt;
-                &lt;Set name="handlers"&gt;
-                    &lt;Array type="org.mortbay.jetty.Handler"&gt;
-                        &lt;Item&gt;&lt;Ref id="Contexts"/&gt;&lt;/Item&gt;
-                        &lt;Item&gt;&lt;New id="DefaultHandler" class="org.mortbay.jetty.handler.DefaultHandler"/&gt;&lt;/Item&gt;
-                        &lt;Item&gt;&lt;New id="RequestLog" class="org.mortbay.jetty.handler.RequestLogHandler"/&gt;&lt;/Item&gt;
-                    &lt;/Array&gt;
-                &lt;/Set&gt;
-            &lt;/New&gt;
-        &lt;/Set&gt;
-    &lt;/New&gt;
+      &lt;/New&gt;
+    &lt;/Set&gt;
+  &lt;/New&gt;
 &lt;/Set&gt;
 </programlisting>
 
