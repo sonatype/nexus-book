@@ -32,7 +32,7 @@
     <!-- Dot and Whitespace as separator in TOC between Label and Title-->
     <xsl:param name="autotoc.label.separator" select="'.  '"/>
 
-    <xsl:param name="highlight.source">0</xsl:param>
+    <xsl:param name="highlight.source">1</xsl:param>
 
 
     <!--###################################################
@@ -54,8 +54,8 @@
 
 	<xsl:param name="page.margin.bottom" select="'0.75in'" />
 	<xsl:param name="page.margin.top" select="'0.75in'" />
-	<xsl:param name="page.margin.inner" select="'1.0in'" />
-	<xsl:param name="page.margin.outer" select="'0.75in'" />
+	<xsl:param name="page.margin.inner" select="'0.875in'" />
+	<xsl:param name="page.margin.outer" select="'0.875in'" />
 
     <xsl:param name="body.start.indent" select="'0pt'" />
 
