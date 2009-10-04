@@ -283,7 +283,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Close Notification Roles</term>
+          <term>Close Repository Notification Roles</term>
 
           <listitem>
             <para>After a developer has deployed a set of related release
@@ -300,7 +300,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Promotion Notifcation Roles</term>
+          <term>Promotion Repository Notifcation Roles</term>
 
           <listitem>
             <para>Once a staging repository has been closed and certified by a
@@ -310,6 +310,19 @@
             promoted or discarded. All users with the roles specified in this
             list will be notified when a staged repository is either promoted
             or discarded.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Promote Repository Staging Rulesets</term>
+
+          <listitem>
+            <para>This defines the rulesets which will be applied to a staging
+            repository on promotion. If the repository does not pass the rules
+            defined in the promotion rulesets, the promotion will fail with an
+            error message supplied by the failing rule. For more information
+            about rulesets, see <xref
+            linkend="staging-sect-rulesets" />.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -611,6 +624,143 @@ Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
     activated, a new staging repository will be created and can be managed
     using the procedures outlined in <xref
     linkend="staging-sect-managing-staging" />.</para>
+  </section>
+
+  <section>
+    <title>Managing Staging Rulesets</title>
+
+    <para>Nexus Professional has the ability to define staging rules that must
+    be satisfied before a staging repository can be promoted.</para>
+
+    <section id="staging-sect-rulesets">
+      <title>Managing Staging Rulesets</title>
+
+      <para>Staging Rulesets are groups of rules that are applied to a Staging
+      repository at promotion time. A staging repository associated with a
+      staging ruleset cannot be promoted until all of the rules associated
+      with the rulesets have been satisfied. This feature allows you to set
+      standards for your own hosted repositories, and it is the mechanism that
+      is used to guarantee the consistency of artifacts stored in the Central
+      Maven repository.</para>
+
+      <para>Nexus Professional contains the following rules:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Staging Javadoc Validation</term>
+
+          <listitem>
+            <para>The Staging Javadoc Validation rule will vefiy that every
+            project has an artifact with the javadoc classifier. If you
+            attempt to promote a staging repository which contains artifacts
+            not accompanied by "-javadoc.jar" artifacts, this validation rule
+            will fail.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Staging POM Validation</term>
+
+          <listitem>
+            <para>The Staging POM Validation rule will verify the following
+            properties of all POMs to be promoted:</para>
+
+            <itemizedlist>
+              <listitem>
+                <para>Project URL - <varname>project/url</varname></para>
+              </listitem>
+
+              <listitem>
+                <para>Project Licenses -
+                <varname>project/licenses</varname></para>
+              </listitem>
+
+              <listitem>
+                <para>Project SCM Information -
+                <varname>project/scm</varname></para>
+              </listitem>
+            </itemizedlist>
+
+            <para>If any of these POM elements are missing or empty, this
+            Staging Ruleset will cause a promotion to fail.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Staging Signature Validation</term>
+
+          <listitem>
+            <para>The Staging Signature Validation rule verifies that every
+            item in the repository has a valid PGP signature. If you attempt
+            to promot a staging repository which contains artifacts not
+            accompanied by valid PGP signature, this validation will
+            fail.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Staging Sources Validation</term>
+
+          <listitem>
+            <para>The Staging Sources Validation rule will vefiy that every
+            project has an artifact with the sources classifier. If you
+            attempt to promote a staging repository which contains artifacts
+            not accompanied by "-sources.jar" artifacts, this validation rule
+            will fail.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>To create a Staging Ruleset, click on the Staging Ruleset link in
+      the Nexus Menu. This will load the interface shown in <xref
+      linkend="fig-staging-rulesets" />. The Staging Ruleset panel is used to
+      define sets of rules that can be applied to Staging Profiles. <xref
+      linkend="fig-staging-rulesets" /> shows a ruleset which contains all
+      four predefined staging rules.</para>
+
+      <figure id="fig-staging-rulesets">
+        <title>Creating a Staging Ruleset</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/staging-rulesets.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/staging-rulesets.pdf" scalefit="0"
+                       width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section id="staging-sect-defining-rulesets">
+      <title>Defining Rulesets for Promotion</title>
+
+      <para>To define a ruleset to be used for promotion, click on Staging in
+      the Nexus menu and select a Staging Profile. Click on the Configuration
+      tab, and scroll down to the Promote Repository Staging Rulesets section
+      of the Staging Profile configuration as shown in <xref
+      linkend="fig-staging-associate-ruleset" />. The next time you attempt to
+      promote a staging repository that was created with this profile, Nexus
+      Professional was check that all of the rules in the associated rulesets
+      are being adhered to.<figure id="fig-staging-associate-ruleset" label="">
+          <title>Associating a Staging Ruleset with a Staging Profile</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/staging-rulesets-associate.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/staging-rulesets-associate.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure></para>
+    </section>
   </section>
 
   <section id="staging-sect-managing-staging">
