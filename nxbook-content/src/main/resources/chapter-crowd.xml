@@ -4,6 +4,378 @@
 <chapter id="crowd">
   <title>Nexus Atlassian Crowd Plugin</title>
 
-  <para></para>
+  <para>Atlassian's Crowd is a single sign-on and identity management product
+  that many organizations use to consolidare user accounts and control which
+  users and groups have access to which applications. Nexus Professional
+  contains an optional security plugin that allows you to configure Nexus to
+  authenticate against an Atlassian Crowd instance. Form more information
+  about Atlassian Crowd, go to <ulink
+  url="http://www.atlassian.com/software/crowd/">http://www.atlassian.com/software/crowd/</ulink>.</para>
 
+  <section id="user-account-sect-installation">
+    <title>Installing the Crowd Plugin</title>
+
+    <para>When you downloaded Nexus Professional, you also download a few
+    optional plugins including the Nexus Crowd plugin. This plugin is located
+    in the
+    <filename>\${NEXUS_HOME}/runtime/apps/nexus/optional-plugins</filename>
+    directory under
+    <filename>security-crowd-realm-${nexus.version}</filename>. To install
+    this plugin in Nexus:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Copy the
+        <filename>security-crowd-realm-${nexus.version}/</filename> directory
+        from
+        <filename>\${NEXUS_HOME}/runtime/apps/nexus/optional-plugins</filename>
+        to
+        <filename>\${NEXUS_HOME}/runtime/apps/nexus/plugin-repository</filename>.</para>
+      </listitem>
+
+      <listitem>
+        <para>Once the optional User Account plugin has been copied to the
+        <filename>plugin-repository/</filename> directory, restart Nexus and
+        the User Account plugin will be installed.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Configuring the Crowd Plugin</title>
+
+    <para>Once the Atlassian Crowd plugin is installed, restart Nexus and
+    login as a user with Administrative privileges. To configure the Crowd
+    plugin, click on the Crown Configuration in the Securty section of the
+    Nexus menu as shown in <xref lang=""
+    linkend="fig-crowd-menu-link" />.</para>
+
+    <figure floatstyle="" id="fig-crowd-menu-link" label="">
+      <title>Crowd Menu Link under the Security Section of the Nexus
+      Menu</title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/crowd_menu-link.png" />
+        </imageobject>
+
+        <imageobject role="print">
+          <imagedata align="center" fileref="figs/print/crowd_menu-link.pdf"
+                     scalefit="0" security="" width="100%" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>Clicking on the Crowd Configuration link will load the form shown in
+    <xref linkend="fig-crowd-config" />. This configuration panel contains all
+    of the options that needs to be configured to connect your Nexus instance
+    to Crowd for authorization and authentication.</para>
+
+    <figure floatstyle="" id="fig-crowd-config" label="">
+      <title>Crowd Configuration Panel</title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/crowd_server-config.png" />
+        </imageobject>
+
+        <imageobject role="print">
+          <imagedata align="center"
+                     fileref="figs/print/crowd_server-config.pdf" scalefit="0"
+                     security="" width="100%" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>The following sections outline all of the sections of the Crowd
+    Configuration Pane.</para>
+
+    <section>
+      <title>Crowd Access Settings</title>
+
+      <para>The Access Settings section of the Crowd configuration is shown in
+      <xref linkend="fig-crowd-access-settings" />. This section contains the
+      following, required fields:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Application Name</term>
+
+          <listitem>
+            <para>This field contains the application name of a Crowd
+            application. This value should match the value in the Name field
+            of the form shown in <xref linkend="fig-crowd-app" />.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Application Password</term>
+
+          <listitem>
+            <para>This field contains the application password of a Crowd
+            application. This value should match the value in the Password
+            field of the form shown in <xref
+            linkend="fig-crowd-app" />.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Crowd Server URL</term>
+
+          <listitem>
+            <para>This is the URL of the Crowd Server, this URL should be
+            accessible to the Nexus process as it is the URL that Nexus will
+            use to connect to Crowd's SOAP services.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Authentication Interval</term>
+
+          <listitem>
+            <para>The number of minutes that a Crowd authentication is valid
+            for. This value is in units of minutes, and a value of 30 means
+            that Nexus will only require reauthentication is more than 30
+            minutes have elapsed since a previously authenticated user has
+            accessed Nexus.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Use Groups</term>
+
+          <listitem>
+            <para>If clicked, Use Groups allows Nexus to use Crowd Groups when
+            calculating Nexus Roles. When selected, you can map a Nexus Role
+            to a Crowd Group.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <figure floatstyle="" id="fig-crowd-access-settings" label="">
+        <title>Crowd Access Settings</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/crowd_server-config-access-settings.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/crowd_server-config-access-settings.pdf"
+                       scalefit="0" security="" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section>
+      <title>Crowd HTTP Settings</title>
+
+      <para>You can control the concurrency of connections to Crowd in the
+      HTTP Settings section shown in <xref
+      linkend="fig-crowd-http-settings" />. If you have a high-traffic
+      instance of Nexus, you will want to limit the number of simultaneous
+      connections to the Crowd server to a reasonable value like 20. The HTTP
+      Timeout specifies the number of milliseconds Nexus will wait for a
+      response from Crowd. A value of zero for either of these properties
+      indicates that there is no limit to either the number of connections or
+      the timeout.</para>
+
+      <figure floatstyle="" id="fig-crowd-http-settings" label="">
+        <title>Crowd HTTP Settings</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/crowd_server-config-http-settings.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/crowd_server-config-http-settings.pdf"
+                       scalefit="0" security="" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section>
+      <title>Crowd HTTP Proxy Settings</title>
+
+      <para>If your Nexus installation is connecting to Crowd via an HTTP
+      Proxy server, the HTTP Proxy Settings section of the Crowd Configuration
+      allows you to specify the host, port, and credentials for a HTTP Proxy
+      server. The HTTP Proxy Settings section is shown in <xref
+      linkend="fig-crowd-http-proxy" />.</para>
+
+      <figure floatstyle="" id="fig-crowd-http-proxy" label="">
+        <title>Crowd HTTP Proxy Settings</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/crowd_server-config-http-proxy.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/crowd_server-config-http-proxy.pdf"
+                       scalefit="0" security="" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section>
+      <title>Miscellaneous Settings</title>
+
+      <para>The miscellaneous settings section shown in <xref
+      linkend="fig-crowd-misc-settings" />, allows you to configure settings
+      that control the name of the Single Sign-on cookie and the various keys
+      that are used to retrieve values that relate to authentication and the
+      auth token. This dialog is only relevant if you have modified optional
+      Crowd settings in your
+      <filename>\${CROWD_HOME}/etc/crowd.properties</filename>. For more
+      information about customizing these options see the <ulink
+      url="http://confluence.atlassian.com/display/CROWD/The+crowd.properties+File">Atlassian
+      Crowd documentation</ulink>.</para>
+
+      <figure floatstyle="" id="fig-crowd-misc-settings" label="">
+        <title>Crowd Miscellaneous Settings</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/crowd_server-config-misc.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/crowd_server-config-misc.pdf"
+                       scalefit="0" security="" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+  </section>
+
+  <section>
+    <title>Configuring a Nexus Application in Crowd</title>
+
+    <para>To connect Nexus to Atlassian's Crowd, you will need to configure
+    Nexus as an application in Crowd. To do this, login to Crowd as a user
+    with Administrative rights, and click on the Applications tab. Once you
+    click on this tab, you should see two options under the Applications tab:
+    Search Applications and Add Application. Click on Add Application to
+    display the form shown in <xref linkend="fig-crowd-app" />, and create a
+    new application with the following values in the Details tab of the Add
+    Application form:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Application Type: Generic Application</para>
+      </listitem>
+
+      <listitem>
+        <para>Name: nexus</para>
+      </listitem>
+
+      <listitem>
+        <para>Description: Sonatype Nexus Professional</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Choose a password for this application that your Nexus instance will
+    use to authenticate with the Crowd server, and then click on the Next
+    button.</para>
+
+    <figure floatstyle="" id="fig-crowd-app" label="">
+      <title>Creating a Nexus Crowd Application</title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/crowd_new-app.png" />
+        </imageobject>
+
+        <imageobject role="print">
+          <imagedata align="center" fileref="figs/print/crowd_new-app.pdf"
+                     scalefit="0" security="" width="100%" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>Clicking on Next will advance the form to the Connection tab shown
+    in <xref linkend="fig-crowd-app-connection" />. In this tab you need to
+    configure the URL of the application and the remote IP address. <xref
+    linkend="fig-crowd-app-connection" />, shows the Connection form
+    configured for a local instance of Nexus. If you would configuring Crowd
+    and Nexus in a production environment, you would supply the URL that users
+    would use to load Nexus in a web browser and you would supply an IP
+    address which was not the loopback, 127.0.0.1 address. Once you have
+    completed the Connection form, click on Next to advance to the Directories
+    form.</para>
+
+    <figure floatstyle="" id="fig-crowd-app-connection" label="">
+      <title>Creating a Nexus Crowd Application Connection</title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/crowd_new-app-connection.png" />
+        </imageobject>
+
+        <imageobject role="print">
+          <imagedata align="center"
+                     fileref="figs/print/crowd_new-app-connection.pdf"
+                     scalefit="0" security="" width="100%" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>Clicking on Next advanced to the Directories form shown in <xref
+    linkend="fig-crowd-app-directories" />. In this example, the Nexus
+    application in Crowd is going to use the default "User Management"
+    directory. Click on the Next button to advance to the "Authorisation"
+    form.</para>
+
+    <figure floatstyle="" id="fig-crowd-app-directories" label="">
+      <title>Creating a Nexus Crowd Application Directories</title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/crowd_new-app-directories.png" />
+        </imageobject>
+
+        <imageobject role="print">
+          <imagedata align="center"
+                     fileref="figs/print/crowd_new-app-directories.pdf"
+                     scalefit="0" security="" width="100%" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>Clickin on the Next button advanced to the "Authorisation" form as
+    shown in <xref linkend="fig-crowd-app-authorization" />. If any of the
+    directories selected in the previous form contain groups, each group is
+    displayed on this form next to a checkbox. You can select "Allow all
+    users" for a directory, or you can select specific groups which are
+    allowed to authenticate to Crowd through the configured application. This
+    option would be used if you wanted to limit access to Nexus to specific
+    subgroups within a larger Crowd directory. If your entire organization is
+    stored in a single Crowd directory, you may want to limit Nexus access to
+    a Developers and Administrators group.</para>
+
+    <figure floatstyle="" id="fig-crowd-app-authorization" label="">
+      <title>Creating a Nexus Crowd Application Authorization</title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/crowd_new-app-authorization.png" />
+        </imageobject>
+
+        <imageobject role="print">
+          <imagedata align="center"
+                     fileref="figs/print/crowd_new-app-authorization.pdf"
+                     scalefit="0" security="" width="100%" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
 </chapter>
