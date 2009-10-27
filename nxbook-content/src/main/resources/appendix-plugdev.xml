@@ -40,7 +40,7 @@
 
     <para>The Nexus API is contained in a module named nexus-api. If you are
     developing a Nexus plugin, you will need to familiarize yourself with the
-    extension points that are defined in this project. </para>
+    extension points that are defined in this project.</para>
 
     <section>
       <title>Nexus Plugin API</title>
@@ -48,8 +48,8 @@
       <para>Nexus provides an extra module for plugin developers - the
       "nexus-plugin-api". This module provides some extra annotations for
       plugins developers, and it allows a plugin developer to implement a
-      plugin without having to know anything about Plexus or Nexus internals.
-      </para>
+      plugin without having to know anything about Plexus or Nexus
+      internals.</para>
 
       <para>The Plugin API uses the @Inject annotation, an emerging stadnard
       for dependency injection which allows Nexus plugins to be developed in a
@@ -108,7 +108,9 @@ public class SampleEventInspector
 
     public void inspect( Event&lt;?&gt; evt )
     {
-        System.out.println( "invoked with event: " + evt.toString() + " with sender " + evt.getEventSender().toString() );
+        System.out.println( "invoked with event: " + 
+              evt.toString() + " with sender " + 
+              evt.getEventSender().toString() );
     }
 }
 </programlisting>
@@ -120,12 +122,12 @@ public class SampleEventInspector
       interface in the nexus-api project has been marked with the
       @ExtensionPoint annotation. The plugin build takes the @ExtensionPoint,
       @Named, and @Inject annotations that may be present and generates a
-      plugin descriptor with is packaged in the plugin's JAR. </para>
+      plugin descriptor with is packaged in the plugin's JAR.</para>
 
       <para>When the plugin is present in Nexus during startup, the Nexus
       plugin manager reads the plugin metadata and instantiates the
       appropriate components. To implement a plugin, you simply implement some
-      of these interfaces. </para>
+      of these interfaces.</para>
     </section>
 
     <section>
@@ -185,7 +187,7 @@ public class SampleEventInspector
         the features it exposes are automatic for all plugins. When the Nexus
         plugin manager discovers resources in plugin JAR under the path
         "/static", the Plugin Manager will create a special "plugin
-        NexusResourceBundle" component on the fly. </para>
+        NexusResourceBundle" component on the fly.</para>
 
         <para>If you do not want the plugin manager to automatically add a
         resource bundle you can define your own resource bundle
@@ -406,7 +408,7 @@ public class SampleEventInspector
         </itemizedlist>
 
         <para>This extension component is able to intercept URLs routed in the
-        Nexus REST API layer. </para>
+        Nexus REST API layer.</para>
       </section>
 
       <section>
@@ -638,9 +640,11 @@ public class XYVirusScanner
     public boolean hasVirus( StorageFileItem file )
     {
         // DO THE JOB HERE
-        System.out.println( "Kung fu VirusScanner --- scanning for viruses on item: " + file.getPath() );
+        System.out.println( "Kung fu VirusScanner --- " +
+              "scanning for viruses on item: " + file.getPath() );
 
-        // simulating virus hit by having the filename contain the "infected" string
+        // simulating virus hit by having the filename 
+        // contain the "infected" string
         return file.getName().contains( "infected" );
     }
 
@@ -689,23 +693,28 @@ public class VirusScannerRequestProcessor
     // @Inject
     // private @Named("A") CommonDependency commonDependency;
 
-    public boolean process( Repository repository, ResourceStoreRequest request, Action action )
+    public boolean process( Repository repository, 
+                       ResourceStoreRequest request, Action action )
     {
         // Check dependency
-        // System.out.println( "VirusScannerRequestProcessor --- CommonDependency data: " + commonDependency.getData()
+        // System.out.println( "VirusScannerRequestProcessor " + 
+                      "--- CommonDependency data: " + 
+                      commonDependency.getData()
         // );
 
         // don't decide until have content
         return true;
     }
 
-    public boolean shouldProxy( ProxyRepository repository, ResourceStoreRequest request )
+    public boolean shouldProxy( ProxyRepository repository, 
+                                    ResourceStoreRequest request )
     {
         // don't decide until have content
         return true;
     }
 
-    public boolean shouldCache( ProxyRepository repository, AbstractStorageItem item )
+    public boolean shouldCache( ProxyRepository repository, 
+                                    AbstractStorageItem item )
     {
         if ( item instanceof StorageFileItem )
         {
@@ -716,8 +725,11 @@ public class VirusScannerRequestProcessor
 
             if ( hasVirus )
             {
-                applicationEventMulticaster.notifyEventListeners( new InfectedItemFoundEvent( item
-                    .getRepositoryItemUid().getRepository(), file ) );
+              applicationEventMulticaster
+                 .notifyEventListeners( 
+                     new InfectedItemFoundEvent( item
+                        .getRepositoryItemUid().getRepository(), 
+                        file ) );
             }
 
             return !hasVirus;
@@ -762,13 +774,16 @@ public class VirusScannerRepositoryCustomizer
     public boolean isHandledRepository( Repository repository )
     {
         // handle proxy reposes only
-        return repository.getRepositoryKind().isFacetAvailable( ProxyRepository.class );
+        return repository.getRepositoryKind()
+                    .isFacetAvailable( ProxyRepository.class );
     }
 
     public void configureRepository( Repository repository )
         throws ConfigurationException
     {
-        repository.getRequestProcessors().put( "virusScanner", virusScannerRequestProcessor );
+        repository.getRequestProcessors()
+              .put( "virusScanner", 
+                    virusScannerRequestProcessor );
     }
 
 }
@@ -800,7 +815,7 @@ public class VirusScannerRepositoryCustomizer
 
     <para>The NexusPD Maven plugin introduces a new project path (ie.
     src/main/static-resources). Static resources such as JS files, images, and
-    CSS which are referenced in </para>
+    CSS which are referenced in</para>
 
     <section>
       <title>The Nexus Plugin Descriptor</title>
@@ -820,7 +835,8 @@ public class VirusScannerRepositoryCustomizer
   &lt;artifactId&gt;nexus-sample-plugin&lt;/artifactId&gt;
   &lt;version&gt;1.0.0&lt;/version&gt;
   &lt;name&gt;Nexus Sample Plugin&lt;/name&gt;
-  &lt;description&gt;A Nexus Plugin to demonstrate plugin development for Sonatype Nexus.&lt;/description&gt;
+  &lt;description&gt;A Nexus Plugin to demonstrate plugin 
+       development for Sonatype Nexus.&lt;/description&gt;
   &lt;pluginSite&gt;http://nexus.sonatype.org/plugins&lt;/pluginSite&gt;
 
   &lt;requiredFeatures&gt;
@@ -828,11 +844,15 @@ public class VirusScannerRepositoryCustomizer
   &lt;/requiredFeatures&gt;
 
   &lt;plugin&gt;
-    &lt;implementation&gt;org.sample.plugin.SampleNexusPlugin&lt;/implementation&gt;
+    &lt;implementation&gt;
+      org.sample.plugin.SampleNexusPlugin
+    &lt;/implementation&gt;
     &lt;requirements&gt;
       &lt;requirement&gt;
         &lt;fieldName&gt;registry&lt;/fieldName&gt;
-        &lt;componentContract&gt;org.sonatype.nexus.proxy.registry.RepositoryRegistry&lt;/componentContract&gt;
+        &lt;componentContract&gt;
+          org.sonatype.nexus.proxy.registry.RepositoryRegistry
+        &lt;/componentContract&gt;
       &lt;/requirement&gt;
     &lt;/requirements&gt;
   &lt;/plugin&gt;
