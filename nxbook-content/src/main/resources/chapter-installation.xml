@@ -494,18 +494,22 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
     <para>When installing Nexus, you will often want to configure Nexus as a
     service. If you are on Windows, the Nexus distribution includes binaries
     that can work with the Windows Services subsystem and if you are on
-    another platform such as Linux, Nexus also includes scripts that can be
-    configured to start Nexus as a service. The following sections provide
-    instructions for configuring Nexus as a service.</para>
+    another platform such as GNU/Linux<footnote>
+        <para>While many refer to GNU/Linux as Linux, we've decided to use
+        GNU/Linux. For more information about GNU/Linux vs. Linux, see <ulink
+        url="http://en.wikipedia.org/wiki/GNU/Linux_naming_controversy">http://en.wikipedia.org/wiki/GNU/Linux_naming_controversy</ulink>.</para>
+      </footnote>, Nexus also includes scripts that can be configured to start
+    Nexus as a service. The following sections provide instructions for
+    configuring Nexus as a service.</para>
 
     <section id="install-sect-startup-scripts">
-      <title>Startup Scripts for Linux</title>
+      <title>Startup Scripts for GNU/Linux</title>
 
       <para>You can configure Nexus to start automatically, by copying the
       <filename>nexus</filename> script to the
-      <filename>/etc/init.d</filename> directory. On a Linux system (tested
-      with Redhat, Fedora, Ubuntu, or CentOS) perform the following operations
-      as the root user:</para>
+      <filename>/etc/init.d</filename> directory. On a GNU/Linux system
+      (tested with Redhat, Fedora, Ubuntu, or CentOS) perform the following
+      operations as the root user:</para>
 
       <orderedlist>
         <listitem>
@@ -591,7 +595,7 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
       </orderedlist>
 
       <figure id="fig-installing_bin-dir-l32">
-        <title>Script Directory for 32-bit Linux in
+        <title>Script Directory for 32-bit GNU/Linux in
         \${NEXUS_HOME}/bin/jsw</title>
 
         <mediaobject>
@@ -643,7 +647,7 @@ Starting Sonatype Nexus...
 $ <command>tail -f /usr/local/nexus/logs/wrapper.log</command></screen>
 
         <para>The second command adds nexus as a service to be started and
-        stopped with the <command>service</command> command and managed by
+        stopped with the <command>service</command> command and managed by the
         <command>chkconfig</command> command. <command>chkconfig</command>
         manages the symbolic links in <filename>/etc/rc[0-6].d</filename>
         which control the services to be started and stopped when the
@@ -651,7 +655,7 @@ $ <command>tail -f /usr/local/nexus/logs/wrapper.log</command></screen>
         command adds nexus to run-levels 3, 4, and 5. The service command
         starts Nexus, and the last command tails the
         <filename>wrapper.log</filename> to verify that Nexus has been started
-        successfully. If Nexus has started successfully you should see a
+        successfully. If Nexus has started successfully, you should see a
         message notifying you that Nexus is listening for
         <acronym>HTTP</acronym> connections on a port.</para>
       </section>
@@ -748,8 +752,8 @@ $ <command>tail -f /usr/local/nexus/logs/wrapper.log</command>
   <section id="install-sect-behind-proxy">
     <title>Running Nexus Behind a Proxy</title>
 
-    <para>This section is entirely optional. Nexus is based on Jetty which is
-    a very high-performance servlet container based on Java NIO. From a
+    <para>If you installed Nexus as a stand-alone application, Nexus is
+    running on a high-performance servlet container based on Java NIO. From a
     performance perspective, there is no reason for you not to run Nexus by
     itself without a proxy. Yet, more often than not, organizations run
     applications behind a proxy for security concerns and to consolidate
@@ -853,8 +857,8 @@ ProxyPreserveHost On
     \<filename>${TOMCAT_HOME}/webapps</filename>.</para>
 
     <note>
-      <para>When install Nexus as a <acronym>WAR</acronym> in an application
-      server or servlet container, it automatically creates a
+      <para>When installing Nexus as a <acronym>WAR</acronym> in an
+      application server or servlet container, it automatically creates a
       <filename>sonatype-work</filename> directory in
       <filename>~/sonatype-work</filename>. This directory contains all of the
       necessary configuration and repository storage for Nexus.</para>
@@ -1086,7 +1090,7 @@ ProxyPreserveHost On
           <term><filename>conf/</filename></term>
 
           <listitem>
-            <para>This directory contains the Nexus configuration, settings
+            <para>This directory contains the Nexus configuration. Settings
             that define the list of Nexus repositories, the logging
             configuration, the staging and procurement configuration, and the
             security settings are all captured in this directory.</para>
@@ -1099,7 +1103,7 @@ ProxyPreserveHost On
           <listitem>
             <para>Contains a Nexus index for all repositories and repository
             groups managed by Nexus. A Nexus index is a Lucene index which is
-            the standard for indexing and searching a Maven repository, Nexus
+            the standard for indexing and searching a Maven repository. Nexus
             maintains a local index for all repositories, and can also
             download a Nexus index from remote repositories.</para>
           </listitem>
@@ -1109,12 +1113,12 @@ ProxyPreserveHost On
           <term><filename>logs/</filename></term>
 
           <listitem>
-            <para>Stores the <filename>nexus.log</filename> file which is the
-            log file that contains information about a running instance of
-            Nexus. This directory also contains archived copies of Nexus log
-            files. Nexus log files are rotated every day. To reclaim disk
-            space, you can delete old log files from the
-            <filename>log/</filename> directory.</para>
+            <para>Stores the <filename>nexus.log</filename> file: the log file
+            that contains information about a running instance of Nexus. This
+            directory also contains archived copies of Nexus log files. Nexus
+            log files are rotated every day. To reclaim disk space, you can
+            delete old log files from the <filename>logs/</filename>
+            directory.</para>
           </listitem>
         </varlistentry>
 
@@ -1479,125 +1483,6 @@ ProxyPreserveHost On
       httpd to handle SSL, and <filename>jetty.xml</filename> contains the
       required Jetty configuration to configure Nexus to operate behind a
       proxy that is handling SSL.</para>
-    </section>
-
-    <section id="sect-installing-runtime-dir">
-      <title>Nexus Runtime Directory</title>
-
-      <para>This section details the contents of the
-      <filename>\${NEXUS_HOME}/runtime/apps/nexus</filename> directory that is
-      shown in <xref linkend="fig-installing_runtime-dir" />. This directory
-      contains the Nexus application, and you will rarely (if ever) need to
-      either know about or modify the contents of this directory.</para>
-
-      <figure id="fig-installing_runtime-dir">
-        <title>The Nexus Professional Runtime Directory</title>
-
-        <mediaobject>
-          <imageobject role="web">
-            <imagedata align="center"
-                       fileref="figs/web/installing_runtime-dir.png" />
-          </imageobject>
-
-          <imageobject role="print">
-            <imagedata align="center"
-                       fileref="figs/print/installing_runtime-dir.pdf"
-                       scalefit="0" width="100%" />
-          </imageobject>
-        </mediaobject>
-      </figure>
-
-      <para>The <filename>\${NEXUS_HOME}/runtime/apps/nexus</filename>
-      directory contains the following directories and files:</para>
-
-      <variablelist>
-        <varlistentry>
-          <term><filename>LICENSE.txt</filename></term>
-
-          <listitem>
-            <para>Contains a copy of the GNU Public License version 3.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term><filename>NOTICE.txt</filename></term>
-
-          <listitem>
-            <para>Contains required attribution statement for all open source
-            libraries used in Nexus.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>conf/</term>
-
-          <listitem>
-            <para>Contains configuration for the Nexus application. Even the
-            most advanced Nexus users will rarely have an occasion to change
-            the configuration contained in this directory. Most configurable
-            variables have been moved to the Sonatype Nexus Work directory as
-            described in <xref linkend="sect-installing-work-dir" /> or the
-            Nexus configuration directory described in <xref
-            linkend="sect-installing-conf-dir" />. The files contained in this
-            directory are:</para>
-
-            <variablelist>
-              <varlistentry>
-                <term><filename>ehcache.xml</filename></term>
-
-                <listitem>
-                  <para>This file controls the default caching mechanism used
-                  by Nexus. It defines the location of the disk store which is
-                  used to cache information in
-                  <filename>\${NEXUS_HOME}/runtime/tmp</filename> as well as
-                  the size and configuration of the default in-memory cache
-                  used by Nexus.</para>
-                </listitem>
-              </varlistentry>
-
-              <varlistentry>
-                <term><filename>log4j.properties</filename></term>
-
-                <listitem>
-                  <para>While there is a <filename>log4j.properties</filename>
-                  file in this directory, if you need to alter your Nexus
-                  application's logging settings, you should edit the
-                  <filename>log4j.properties</filename> file in
-                  <filename>sonatype-work/nexus/conf</filename>.</para>
-                </listitem>
-              </varlistentry>
-            </variablelist>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term><filename>lib/</filename></term>
-
-          <listitem>
-            <para>Contains all of the libraries required by the Nexus
-            installation.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term><filename>webapp/</filename></term>
-
-          <listitem>
-            <para>Contains the Nexus web application including the
-            <filename>web.xml</filename> and Javascript used to render the
-            Nexus user interface.</para>
-          </listitem>
-        </varlistentry>
-      </variablelist>
-
-      <warning>
-        <para>You will almost never has a good reason to alter the contents of
-        the Nexus application runtime directory under
-        <filename>${NEXUS_HOME}/runtime/apps/nexus</filename>. Anything and
-        everything that can be configured in Nexus has been externalized into
-        the Sonatype work directory in
-        <filename>sonatype-work/nexus/conf</filename>.</para>
-      </warning>
     </section>
   </section>
 </chapter>

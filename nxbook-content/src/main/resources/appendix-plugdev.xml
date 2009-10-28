@@ -1,0 +1,989 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="plugdev">
+  <title>Developing Nexus Plugins</title>
+
+  <para>Among the many benefits of using an technology with an open source
+  core is the ability to customize behavior and create extensions. To this
+  end, Sonatype has spent a great deal of time designing an intuitive Plugin
+  API that will allow you to take Nexus where you need it to go. This chapter
+  summarizes some of these extension points and presents a walk through of how
+  you would start to develop your own Nexus plugins.</para>
+
+  <para>Our community has already created a number of compelling and useful
+  plugins, some of which have been integrated into the set of plugins that are
+  distributed with both Nexus Open Source and Nexus Professional. Sonatype
+  tried to make the Plugin API as lightweight and extensible as possible with
+  the following goals in mind:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para>Providing a clear set of extension points for plugin
+      developers</para>
+    </listitem>
+
+    <listitem>
+      <para>Providing isolated plugin classpaths to avoid compatibility issues
+      between plugins and to prevent a plugin from disturbing another,
+      unrelated part of Nexus.</para>
+    </listitem>
+
+    <listitem>
+      <para>Giving developers the ability to load and unload Nexus plugins at
+      runtime</para>
+    </listitem>
+  </itemizedlist>
+
+  <section>
+    <title>Nexus Plugins</title>
+
+    <para>The Nexus API is contained in a module named nexus-api. If you are
+    developing a Nexus plugin, you will need to familiarize yourself with the
+    extension points that are defined in this project.</para>
+
+    <section>
+      <title>Nexus Plugin API</title>
+
+      <para>Nexus provides an extra module for plugin developers - the
+      "nexus-plugin-api". This module provides some extra annotations for
+      plugins developers, and it allows a plugin developer to implement a
+      plugin without having to know anything about Plexus or Nexus
+      internals.</para>
+
+      <para>The Plugin API uses the @Inject annotation, an emerging stadnard
+      for dependency injection which allows Nexus plugins to be developed in a
+      way that is container-neutral.</para>
+
+      <para>The Nexus Plugin API introduces some annotations to make things
+      easier:</para>
+
+      <programlisting>@Managed
+</programlisting>
+
+      <para>When a @Managed annotation is present on an interface, it marks
+      the interface as "component contract" (Plexus role). Any non-abstract
+      classes implementing it, will be made managed by current
+      container.</para>
+
+      <programlisting>@RepositoryType
+</programlisting>
+
+      <para>Used on interfaces, to mark it as new repository type, and to be
+      registered with other core repository types in Nexus Repository Type
+      Registry. It holds the basic information about the new type (the path
+      where to mount it).</para>
+
+      <programlisting>@RestResource
+</programlisting>
+
+      <para>Used on classes, to mark them as REST Resources.</para>
+    </section>
+
+    <section>
+      <title>Nexus Extension Points</title>
+
+      <para>The simplest Nexus plugin contain a single class,
+      SampleEventInjector, which contributes an EventInspector to Nexus
+      Application. This simple event inspector will do nothing more than print
+      a message every time it reads a message.</para>
+
+      <example>
+        <title>A Simple Event Inspector</title>
+
+        <programlisting>package org.sample.plugin;
+
+import javax.inject.Inject;
+
+import org.sonatype.nexus.proxy.events.EventInspector;
+import org.sonatype.plexus.appevents.Event;
+
+public class SampleEventInspector
+    implements EventInspector
+{
+    public boolean accepts( Event&lt;?&gt; evt )
+    {
+        return true;
+    }
+
+    public void inspect( Event&lt;?&gt; evt )
+    {
+        System.out.println( "invoked with event: " + 
+              evt.toString() + " with sender " + 
+              evt.getEventSender().toString() );
+    }
+}
+</programlisting>
+      </example>
+
+      <para>During the build of this nexus plugin, this class is compiled and
+      then scanned for concrete classes that implement extension point
+      interfaces defined in the following section. The EventInspector
+      interface in the nexus-api project has been marked with the
+      @ExtensionPoint annotation. The plugin build takes the @ExtensionPoint,
+      @Named, and @Inject annotations that may be present and generates a
+      plugin descriptor with is packaged in the plugin's JAR.</para>
+
+      <para>When the plugin is present in Nexus during startup, the Nexus
+      plugin manager reads the plugin metadata and instantiates the
+      appropriate components. To implement a plugin, you simply implement some
+      of these interfaces.</para>
+    </section>
+
+    <section>
+      <title>Nexus Plugin Extension Points</title>
+
+      <para>The following sections outline the available Nexus extension
+      points.</para>
+
+      <section>
+        <title>Nexus Plugin Extension</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface: org.sonatype.nexus.plugins.NexusPlugin</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>This extension component is meant to be used in Nexus plugins
+        only. If it is found in a plugin, it will be invoked during
+        install/uninstall/init phases of a plugin
+        installation/uninstallation/initialization. Typical usage would be a
+        need to perform some specific tasks on plugin install (ie. it uses
+        native code to do some magic and those needs to be copied somewhere,
+        register them with OS, etc).</para>
+      </section>
+
+      <section>
+        <title>Nexus Index HTML Customizer</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.plugins.rest.NexusIndexHtmlCustomizer</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>This extension is able to customize the "index.html" returned by
+        Nexus. Using this component, a plugin is able to add markup or
+        Javascript to the pages generated by the Nexus web application. Every
+        plugin that has a UI component uses this extension point to add
+        Javascript customizations to the interface.</para>
+      </section>
+
+      <section>
+        <title>Static Plugin Resources</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.plugins.rest.NexusResourceBundle</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>This extension gathers and publishes static resources over HTTP.
+        These resources are usually JS files, CSS files, images, etc. Plugin
+        developers do not need to use this extension directly since some of
+        the features it exposes are automatic for all plugins. When the Nexus
+        plugin manager discovers resources in plugin JAR under the path
+        "/static", the Plugin Manager will create a special "plugin
+        NexusResourceBundle" component on the fly.</para>
+
+        <para>If you do not want the plugin manager to automatically add a
+        resource bundle you can define your own resource bundle
+        implementation. The plugin manager will not add a resource bundle
+        if:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>no resources found on "/static" path within plugin
+            classpath, or</para>
+          </listitem>
+
+          <listitem>
+            <para>a user created component of NexusResourceBundle exists
+            within plugin</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>The "default plugin" resource bundle component uses MimeUtil
+        from core to select MIME types of resources found within plugin, and
+        will use same path to publish them (ie. in plugin JAR
+        "/static/image.png" will be published on
+        "http://nexushost/nexus/static/image.png").</para>
+      </section>
+
+      <section>
+        <title>Plugin Templates</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.templates.TemplateProvider</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Template provider is a component providing repository templates
+        to Nexus. Every plugin which provides a "new" repository type should
+        add a TemplateProvider as it is the only way to instantiate a
+        repository instance. The core of Nexus provides a "default" template
+        provider with templates for all core repository types, and all custom
+        repository plugins (P2, OBR) provide template providers for their
+        types.</para>
+      </section>
+
+      <section>
+        <title>Event Inspectors</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.proxy.events.EventInspector</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Event inspectors are used to inspect events in Nexus. One
+        example of where this extension point is used is the index generation.
+        To generate a Nexus index, there is an event insepct which listens for
+        RepositoryItemEvent subclasses and updates the index in response to
+        repository activity.</para>
+      </section>
+
+      <section>
+        <title>Content Generators</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.proxy.item.ContentGenerator</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>A content generator is a component that is able to generate
+        content dynamically. on the fly instead of just serving a static
+        resource. The content generator is registered to respond to a path
+        that corresponds to a file. When the resource is retrieved, Nexus
+        discards the file content and uses the registered content generator to
+        generate content. The Nexus Archetype plugin uses a content generator
+        to generate the archetype-catalog.xml. Every time a client requests
+        the archetype-catalog.xml, the archetype catalog is generated using
+        information from the index.</para>
+      </section>
+
+      <section>
+        <title>Content Classes</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.proxy.registry.ContentClass</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Content class controls the compatibility between repository
+        types. It defines the type of content that can be stored in a
+        repository, and it also affects how repositories can be grouped into
+        repository groups. Every plugin contributing a new repository type
+        should provide an instance of this extension point. Nexus has a
+        ContentClass implementation for every core supported repository type,
+        and the P2 and OBR plugins define custom ContentClass
+        implementations.</para>
+      </section>
+
+      <section>
+        <title>Storage Implementations</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.proxy.storage.local.LocalRepositoryStorage</para>
+          </listitem>
+
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.proxy.storage.remote.RemoteRepositoryStorage</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>A plugin developer can override the default file-based local
+        repository storage and the default remote HTTP repository storage
+        interface. If your plugin needs to stores repository artifacts and
+        information in something other than a filesystem, or if your remote
+        repository isn't accessible via HTTP, your plugin would provide an
+        implementation of one of these interfaces. Nexus provides one of the
+        each: a file-system LocalRepositoryStorage and CommonsHttpClient 3.x
+        based RemoteRepositoryStorage.</para>
+      </section>
+
+      <section>
+        <title>Repository Customization</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.plugins.RepositoryCustomizer</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>This extension component will be invoked during configuration of
+        every Repository instance, and may be used to add some "extra"
+        configuration to repositories The procurement plugin uses this
+        mechanism to "inject" RequestProcessor that will evaluate rules before
+        allowing execution of request.</para>
+      </section>
+
+      <section>
+        <title>Item and File Inspectors</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.proxy.attributes.StorageItemInspector</para>
+          </listitem>
+
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.proxy.attributes.StorageFileItemInspector</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Attribute storage ItemInspectors are able to "decorate" items in
+        repositories with custom attributes. Every file stored/cached/uploaded
+        in Nexus will be sent to these components for inspection and
+        potentially decoration. The StorageItemInspector will get all item
+        types for inspection (file, collections, links), while
+        StorageFileItemInspector will get only file items. Currently only one
+        ItemInspector is used in Nexus: the checksumming inspector, that
+        decorates all file items in Nexus with SHA1 checksum and stores it
+        into item attributes.</para>
+      </section>
+
+      <section>
+        <title>Nexus Feeds</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.rest.feeds.sources.FeedSource</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>To add new RSS feeds, a plugin may provide implementation of
+        this extension point. Nexus provides implementation for all the "core"
+        RSS feeds.</para>
+      </section>
+
+      <section>
+        <title>Nexus Tasks and Task Confguration</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.scheduling.NexusTask&lt;T&gt;</para>
+          </listitem>
+
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.tasks.descriptors.ScheduledTaskDescriptor</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>NexusTask is an extension point to implement new Nexus Scheduled
+        Tasks.</para>
+
+        <para>If a contributed task needs UI, then the plugin which provides
+        the NexusTask should provide a ScheduledTaskDescriptor which allows
+        the UI customization for the task creation and management
+        interface.</para>
+      </section>
+
+      <section>
+        <title>Application Customization</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.rest.NexusApplicationCustomizer</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>This extension component is able to intercept URLs routed in the
+        Nexus REST API layer.</para>
+      </section>
+
+      <section>
+        <title>Request Processing</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>Interface:
+            org.sonatype.nexus.proxy.repository.RequestProcessor</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>This extension point can affect how a repository reacts to an
+        item request.</para>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Using the Nexus Plugin Archetype</title>
+
+    <para>To create a new Nexus Plugin, you can use the Nexus Plugin Archetype
+    by running archetype:generate with the following identifiers:</para>
+
+    <variablelist>
+      <varlistentry>
+        <term>archetypeGroupId</term>
+
+        <listitem>
+          <para>org.sonatype.nexus.archetypes</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>archetypeArtifactId</term>
+
+        <listitem>
+          <para>nexus-plugin-archetype</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>archetypeVersion</term>
+
+        <listitem>
+          <para>1.0-SNAPSHOT</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>Once you run archetype:generate, you will be prompted for the
+    groupId, artifactId, version, and package name for the generated
+    project.</para>
+
+    <screen>$ <command>mvn archetype:generate -DarchetypeGroupId=org.sonatype.nexus.archetypes \
+      -DarchetypeArtifactId=nexus-plugin-archetype \
+      -DarchetypeVersion=1.0-SNAPSHOT</command>
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'archetype'.
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Maven Default Project
+[INFO]    task-segment: [archetype:generate] (aggregator-style)
+[INFO] ------------------------------------------------------------------------
+[INFO] Preparing archetype:generate
+[INFO] No goals needed for project - skipping
+[INFO] Setting property: resource.loader =&gt; 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound =&gt; 'false'.
+[INFO] [archetype:generate {execution: default-cli}]
+[INFO] Generating project in Interactive mode
+Define value for groupId: : org.sonatype.book.nexus
+Define value for artifactId: : sample-plugin
+Define value for version:  1.0-SNAPSHOT: : 
+Define value for package:  org.sonatype.book.nexus: : 
+Confirm properties configuration:
+nexus-version: 1.4.0-SNAPSHOT
+groupId: org.sonatype.book.nexus
+artifactId: sample-plugin
+version: 1.0-SNAPSHOT
+package: org.sonatype.book.nexus
+ Y: : 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 25 seconds
+[INFO] Finished at: Wed Oct 21 14:39:03 CDT 2009
+[INFO] Final Memory: 13M/80M
+[INFO] ------------------------------------------------------------------------
+</screen>
+
+    <para>Once the Archetype plugin has created the project, you will have a
+    project with the layout shown in <xref
+    linkend="fig-plugdev-project-layout" />.</para>
+
+    <figure id="fig-plugdev-project-layout">
+      <title>Layout of a Nexus Plugin Project</title>
+
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/plugdev_filesystem.png" />
+        </imageobject>
+
+        <imageobject role="print">
+          <imagedata align="center"
+                     fileref="figs/print/plugdev_filesystem.pdf" scalefit="0"
+                     width="100%" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>The generated project contains the following classes:</para>
+
+    <variablelist>
+      <varlistentry>
+        <term>org.sonatype.book.nexus.XYVirusScanner</term>
+
+        <listitem>
+          <para>An implementation of the VirusScanner Interface</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>org.sonatype.book.nexus.VirusScannerRequestProcessor</term>
+
+        <listitem>
+          <para>A class which customizes the request handling process in
+          Nexus</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>org.sonatype.book.nexus.VirusScannerRepositoryCustomizer</term>
+
+        <listitem>
+          <para>A class which customizes the repositories affected by the
+          VirusScanner</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>org.sonatype.book.nexus.VirusScanner</term>
+
+        <listitem>
+          <para>A VirusScanner interface described in .</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>org.sonatype.book.nexus.rest.HelloWorldPlexusResource</term>
+
+        <listitem>
+          <para>A REST resource</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>org.sonatype.book.nexus.events.InfectedItemFoundEvent</term>
+
+        <listitem>
+          <para>A simple event which is fired by the VirusScanner</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+
+  <section>
+    <title>Creating a Complex Plugin</title>
+
+    <para>In this section, we will step through a skeletal, sample project
+    that implements a virus scanner plugin for Nexus. This plugin will consist
+    of:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>A managed "virus scanner" component</para>
+      </listitem>
+
+      <listitem>
+        <para>A RequestProcessor that sends all "incoming" artifacts for
+        scanning</para>
+      </listitem>
+
+      <listitem>
+        <para>A repository customizer to inject a RequestProcessor to all
+        proxy repositories</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>We start with creating a @Managed component contract for the
+    VirusScanner. While this class could just as easily be a non-managed
+    component, this example uses the @Managed and @Singleton annotations to
+    demonstrate dependency injection.</para>
+
+    <example>
+      <title>VirusScanner Interface</title>
+
+      <programlisting>package org.sonatype.book.nexus;
+
+import javax.inject.Singleton;
+
+import org.sonatype.nexus.proxy.item.StorageFileItem;
+import org.sonatype.plugin.Managed;
+
+@Managed
+@Singleton
+public interface VirusScanner
+{
+    boolean hasVirus( StorageFileItem file );
+}</programlisting>
+    </example>
+
+    <para>Once we have the interface for VirusScanner, we need to define a
+    named instance XYVirusScanner which implements the interface. The
+    following example shows how the @Named annotation is used to assign a name
+    of "XY" to this implementation.</para>
+
+    <example>
+      <title>XYVirusScanner Implementation</title>
+
+      <programlisting>package org.sonatype.book.nexus;
+
+import javax.inject.Named;
+
+import org.sonatype.nexus.proxy.item.StorageFileItem;
+
+@Named( "XY" )
+public class XYVirusScanner
+    implements VirusScanner
+{
+    public boolean hasVirus( StorageFileItem file )
+    {
+        // DO THE JOB HERE
+        System.out.println( "Kung fu VirusScanner --- " +
+              "scanning for viruses on item: " + file.getPath() );
+
+        // simulating virus hit by having the filename 
+        // contain the "infected" string
+        return file.getName().contains( "infected" );
+    }
+
+}
+</programlisting>
+    </example>
+
+    <para>The next class is a request processor which virus scans an artifact
+    before it is cached locally. If a virus is found in an artifact, this
+    plugin will refuse to cache the artifact and trigger an event which will
+    signal that a virus was found in a file item. Note the use of @Named which
+    assigns the name "virusScanner" to this component. Also note the two uses
+    of @Inject. The first use of @Inject will fetch the default implementation
+    of ApplicaitonEventMulticaster, and the second use of @Inject will fetch
+    the "XY" virus scanner.</para>
+
+    <example>
+      <title>Virus Scanning Request Processor</title>
+
+      <programlisting>package org.sonatype.book.nexus;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.sonatype.book.nexus.events.InfectedItemFoundEvent;
+import org.sonatype.nexus.proxy.ResourceStoreRequest;
+import org.sonatype.nexus.proxy.access.Action;
+import org.sonatype.nexus.proxy.item.AbstractStorageItem;
+import org.sonatype.nexus.proxy.item.StorageFileItem;
+import org.sonatype.nexus.proxy.repository.ProxyRepository;
+import org.sonatype.nexus.proxy.repository.Repository;
+import org.sonatype.nexus.proxy.repository.RequestProcessor;
+import org.sonatype.plexus.appevents.ApplicationEventMulticaster;
+
+@Named( "virusScanner" )
+public class VirusScannerRequestProcessor
+    implements RequestProcessor
+{
+    @Inject
+    private ApplicationEventMulticaster applicationEventMulticaster;
+
+    @Inject
+    private @Named( "XY" )
+    VirusScanner virusScanner;
+
+    // @Inject
+    // private @Named("A") CommonDependency commonDependency;
+
+    public boolean process( Repository repository, 
+                       ResourceStoreRequest request, Action action )
+    {
+        // Check dependency
+        // System.out.println( "VirusScannerRequestProcessor " + 
+                      "--- CommonDependency data: " + 
+                      commonDependency.getData()
+        // );
+
+        // don't decide until have content
+        return true;
+    }
+
+    public boolean shouldProxy( ProxyRepository repository, 
+                                    ResourceStoreRequest request )
+    {
+        // don't decide until have content
+        return true;
+    }
+
+    public boolean shouldCache( ProxyRepository repository, 
+                                    AbstractStorageItem item )
+    {
+        if ( item instanceof StorageFileItem )
+        {
+            StorageFileItem file = (StorageFileItem) item;
+
+            // do a virus scan
+            boolean hasVirus = virusScanner.hasVirus( file );
+
+            if ( hasVirus )
+            {
+              applicationEventMulticaster
+                 .notifyEventListeners( 
+                     new InfectedItemFoundEvent( item
+                        .getRepositoryItemUid().getRepository(), 
+                        file ) );
+            }
+
+            return !hasVirus;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+}
+</programlisting>
+    </example>
+
+    <para>The last extension is RepositoryCustomizer, that simply injects our
+    virus scanner RequestProcessor into proxy repositories only (the only way
+    to get an artifact into Nexus from uncontrolled Internet. Local uploads
+    are considered "safe" for this example). Note how the request processor is
+    injected into this repository customizer with @Inject and @Named.</para>
+
+    <example>
+      <title>The Virus Scanner Repository Customizer</title>
+
+      <programlisting>package org.sonatype.book.nexus;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.sonatype.configuration.ConfigurationException;
+import org.sonatype.nexus.plugins.RepositoryCustomizer;
+import org.sonatype.nexus.proxy.repository.ProxyRepository;
+import org.sonatype.nexus.proxy.repository.Repository;
+import org.sonatype.nexus.proxy.repository.RequestProcessor;
+
+public class VirusScannerRepositoryCustomizer
+    implements RepositoryCustomizer
+{
+    @Inject
+    private @Named( "virusScanner" )
+    RequestProcessor virusScannerRequestProcessor;
+
+    public boolean isHandledRepository( Repository repository )
+    {
+        // handle proxy reposes only
+        return repository.getRepositoryKind()
+                    .isFacetAvailable( ProxyRepository.class );
+    }
+
+    public void configureRepository( Repository repository )
+        throws ConfigurationException
+    {
+        repository.getRequestProcessors()
+              .put( "virusScanner", 
+                    virusScannerRequestProcessor );
+    }
+
+}
+</programlisting>
+    </example>
+  </section>
+
+  <section>
+    <title>Nexus Plugin Descriptor Maven Plugin</title>
+
+    <para>Nexus plugins have a custom packaging "nexus-plugin" which is
+    introduced by the NexusPD Maven Plugin. A "nexus-plugin" packaged
+    plugin:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>is a plain JAR</para>
+      </listitem>
+
+      <listitem>
+        <para>has a META-INF/nexus/plugin.xml embedded Nexus Plugin Metadata
+        embedded</para>
+      </listitem>
+
+      <listitem>
+        <para>has static resources embedded into the plugin JAR</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>The NexusPD Maven plugin introduces a new project path (ie.
+    src/main/static-resources). Static resources such as JS files, images, and
+    CSS which are referenced in</para>
+
+    <section>
+      <title>The Nexus Plugin Descriptor</title>
+
+      <para>The Nexus Plugin Metadata is a descriptor of the Nexus plugin. The
+      descriptor is not Plexus-specific. It contains info which is gathered
+      gather by the NexusPD Maven plugin which scans all the classes in a
+      plugin project and creates this descriptor based on annotations.</para>
+
+      <example>
+        <title>A Nexus Plugin Descriptor</title>
+
+        <programlisting>&lt;nexusPlugin&gt;
+  &lt;modelVersion&gt;1.0.0&lt;/modelVersion&gt;
+
+  &lt;groupId&gt;org.sonatype.sample&lt;/groupId&gt;
+  &lt;artifactId&gt;nexus-sample-plugin&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+  &lt;name&gt;Nexus Sample Plugin&lt;/name&gt;
+  &lt;description&gt;A Nexus Plugin to demonstrate plugin 
+       development for Sonatype Nexus.&lt;/description&gt;
+  &lt;pluginSite&gt;http://nexus.sonatype.org/plugins&lt;/pluginSite&gt;
+
+  &lt;requiredFeatures&gt;
+    &lt;requiredFeature&gt;OSS&lt;/requiredFeature&gt;
+  &lt;/requiredFeatures&gt;
+
+  &lt;plugin&gt;
+    &lt;implementation&gt;
+      org.sample.plugin.SampleNexusPlugin
+    &lt;/implementation&gt;
+    &lt;requirements&gt;
+      &lt;requirement&gt;
+        &lt;fieldName&gt;registry&lt;/fieldName&gt;
+        &lt;componentContract&gt;
+          org.sonatype.nexus.proxy.registry.RepositoryRegistry
+        &lt;/componentContract&gt;
+      &lt;/requirement&gt;
+    &lt;/requirements&gt;
+  &lt;/plugin&gt;
+
+  &lt;extensions&gt;
+    &lt;extension&gt;
+      &lt;extensionPoint&gt;p:extensionPoint&lt;/extensionPoint&gt;
+      &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
+      &lt;implementation&gt;p:implementation&lt;/implementation&gt;
+      &lt;requirements&gt;
+        &lt;requirement&gt;
+          &lt;fieldName&gt;p:fieldName&lt;/fieldName&gt;
+          &lt;componentContract&gt;p:componentContract
+          &lt;/componentContract&gt;
+          &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
+        &lt;/requirement&gt;
+      &lt;/requirements&gt;
+    &lt;/extension&gt;
+    &lt;extension&gt;
+      &lt;extensionPoint&gt;p:extensionPoint&lt;/extensionPoint&gt;
+      &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
+      &lt;implementation&gt;p:implementation&lt;/implementation&gt;
+      &lt;requirements&gt;
+        &lt;requirement&gt;
+          &lt;fieldName&gt;p:fieldName&lt;/fieldName&gt;
+          &lt;componentContract&gt;p:componentContract
+          &lt;/componentContract&gt;
+          &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
+        &lt;/requirement&gt;
+      &lt;/requirements&gt;
+    &lt;/extension&gt;
+  &lt;/extensions&gt;
+
+  &lt;components&gt;
+    &lt;component&gt;
+      &lt;componentContract&gt;p:componentContract
+      &lt;/componentContract&gt;
+      &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
+      &lt;implementation&gt;p:implementation&lt;/implementation&gt;
+      &lt;requirements&gt;
+        &lt;requirement&gt;
+          &lt;fieldName&gt;p:fieldName&lt;/fieldName&gt;
+          &lt;componentContract&gt;p:componentContract
+          &lt;/componentContract&gt;
+          &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
+        &lt;/requirement&gt;
+      &lt;/requirements&gt;
+    &lt;/component&gt;
+    &lt;component&gt;
+      &lt;componentContract&gt;p:componentContract
+      &lt;/componentContract&gt;
+      &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
+      &lt;implementation&gt;p:implementation&lt;/implementation&gt;
+      &lt;requirements&gt;
+        &lt;requirement&gt;
+          &lt;fieldName&gt;p:fieldName&lt;/fieldName&gt;
+          &lt;componentContract&gt;p:componentContract
+          &lt;/componentContract&gt;
+          &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
+        &lt;/requirement&gt;
+      &lt;/requirements&gt;
+    &lt;/component&gt;
+  &lt;/components&gt;
+
+  &lt;resources&gt;
+    &lt;resource&gt;
+      &lt;resourcePath&gt;p:resourcePath&lt;/resourcePath&gt;
+      &lt;publishedPath&gt;p:publishedPath&lt;/publishedPath&gt;
+      &lt;contentType&gt;p:contentType&lt;/contentType&gt;
+    &lt;/resource&gt;
+    &lt;resource&gt;
+      &lt;resourcePath&gt;p:resourcePath&lt;/resourcePath&gt;
+      &lt;publishedPath&gt;p:publishedPath&lt;/publishedPath&gt;
+      &lt;contentType&gt;p:contentType&lt;/contentType&gt;
+    &lt;/resource&gt;
+  &lt;/resources&gt;
+
+&lt;/nexusPlugin&gt;
+</programlisting>
+      </example>
+    </section>
+  </section>
+
+  <section>
+    <title>Defining Custom Repository Types</title>
+
+    <para>When you need to introduce a custom repository type, you should
+    implement the Repository interface. The following example extends the
+    HostedRepository class and adds a repository type with the path prefix
+    "sample".</para>
+
+    <example>
+      <title>Creating a Custom Repository Type Interface</title>
+
+      <programlisting>package org.sample.plugin;
+
+import org.sonatype.nexus.plugins.RepositoryType;
+import org.sonatype.nexus.proxy.repository.HostedRepository;
+
+@RepositoryType( pathPrefix="sample" )
+public interface SampleRepository
+    extends HostedRepository
+{
+    String boo();
+}
+</programlisting>
+    </example>
+
+    <para>If you want to implement a custom repository type, you should
+    reference the nexus-proxy module as dependency which contains the
+    AbstractRepository class which is a useful superclass for repository
+    implementations. To implement the SampleRepository interface, you can then
+    extend the AbstractRepository as shown in the following example.</para>
+
+    <example>
+      <title>Creating a Custom Repository Type Implementation</title>
+
+      <programlisting>package org.sample.plugin;
+
+public class DefaultSampleRepository
+    extends AbstractRepository
+    implements SampleRepository
+{
+
+   .... implement it
+
+}
+</programlisting>
+    </example>
+
+    <para>Your newly introduced repository type will appear under
+    http://localhost:8081/nexus/content/sample/.</para>
+  </section>
+</chapter>

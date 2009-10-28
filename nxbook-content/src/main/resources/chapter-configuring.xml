@@ -78,7 +78,7 @@
         </mediaobject>
       </figure>
 
-      <figure>
+      <figure id="fig-configuring-pgp-keyservers">
         <title>Configuring PGP Keyserver Preferences</title>
 
         <mediaobject>
@@ -213,6 +213,109 @@
           </listitem>
         </varlistentry>
       </variablelist>
+
+      <section id="configuring-sect-automated-error">
+        <title>Configuring Automated Error Reporting Settings</title>
+
+        <para>Nexus can be configured to automatically file exception and
+        error reports with the Nexus project in the Sonatype issue tracker.
+        Activating this setting in your own Nexus installation helps to
+        improve Nexus as the development team will receive automatic error
+        reports if your Nexus instance experiences an error or a failure. The
+        Nexus Server configuration's Automated Error Reporting Settings
+        section is shown in <xref
+        linkend="fig-configuring-automated-error" />. This section accepts a
+        JIRA username and password, and allows you to configure Nexus to use
+        the default HTTP Proxy Settings when Nexus attempts to file an error
+        report with the Sonatype issue tracker.</para>
+
+        <figure id="fig-configuring-automated-error">
+          <title>Configuring the Automated Error Reporting</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/configuring_automated-error.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/configuring_automated-error.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>To sign up for an account on the Sonatype JIRA instance, go to
+        <ulink
+        url="http://issues.sonatype.org">http://issues.sonatype.org</ulink>.
+        Once you see the website shown in <xref
+        linkend="fig-configuring-sonatype-jira" />, click on the "Signup" link
+        below the Login form.</para>
+
+        <figure id="fig-configuring-sonatype-jira">
+          <title>The Sonatype Issue Tracker</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/configuring_automated-error-jira-home.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/configuring_automated-error-jira-home.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>Fill out the signup form shown in <xref
+        linkend="fig-configuring-sonatype-jira-signup" />, and choose a
+        username and password. This is the username and password you should
+        use in the Automated Error Reporting Settings section of the Server
+        configuration shown in <xref
+        linkend="fig-configuring-automated-error" />.</para>
+
+        <figure id="fig-configuring-sonatype-jira-signup">
+          <title>Signing Up for a Sonatype Issue Tracker Account</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/configuring_automated-error-jira-signup.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/configuring_automated-error-jira-signup.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+      </section>
+
+      <section id="config-sect-new-version">
+        <title>New Version Notification</title>
+
+        <para>Nexus can notify you of new versions of Nexus via the Nexus
+        interface. To enable this feature, check the Enable checkbox in the
+        New Version Notification section of the Nexus server settings as shown
+        in <xref linkend="fig-configuring-new-version" />.</para>
+
+        <figure id="fig-configuring-new-version">
+          <title>New Version Notification Settings</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/configuring_new-version.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/configuring_new-version.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+      </section>
     </section>
 
     <section id="config-sect-manage-repo">
@@ -353,6 +456,23 @@
             </imageobject>
           </mediaobject>
         </screenshot>
+      </figure>
+
+      <figure id="fig-repo-config-hosted">
+        <title>Proxy Configuration Access Settings for a Hosted
+        Repository</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/repository-manager_repository-config-3.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/repository-manager_repository-config-3.pdf"
+                       scalefit="0" width="100%" wordsize="" />
+          </imageobject>
+        </mediaobject>
       </figure>
 
       <para><xref linkend="fig-repo-config" /> shows the Repository
@@ -519,12 +639,19 @@
 
             <variablelist>
               <varlistentry>
-                <term>Allow Deployment</term>
+                <term>Deployment Policy</term>
 
                 <listitem>
-                  <para>If allow deployment is set to true, Nexus will allow
-                  Maven to deploy artifacts to this repository. This option is
-                  visible for Hosted repositories.</para>
+                  <para>This setting controls how a Hosted repository allows
+                  or disallows artifact deployment. If this policy is set to
+                  "Read Only", no deployment is allowed. If this policy is set
+                  to "Disable Redeploy", a client can only deply a particular
+                  artifact once and any attempt to redeploy an artifact will
+                  result in an error. If this policy is set to "Allow
+                  Redeploy", clients can deploy artifacts to this repository
+                  and overwrite the same artifact in subsequent deployments.
+                  This option is visible for Hosted repositories as shown in
+                  <xref linkend="fig-repo-config-hosted" />.</para>
                 </listitem>
               </varlistentry>
 
@@ -545,6 +672,18 @@
                   perform an Artifact Search in Nexus. If this setting is
                   false, the contents of the repository are excluded from a
                   search.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>Publish URL</term>
+
+                <listitem>
+                  <para>If this property is set to false, the the repository
+                  will not be published on a URL, and you will not be able to
+                  access this repository remotely. You would set this
+                  configuration property to false if you want to prevent
+                  clients for connecting to this repository directly.</para>
                 </listitem>
               </varlistentry>
             </variablelist>
@@ -695,6 +834,76 @@
         targets your Hosted repository and they can use the mirror metadata to
         configure their instance of Nexus to consume artifacts from mirrors of
         your Hosted repository.</para>
+      </section>
+
+      <section id="config-sect-repository-summary">
+        <title>Viewing Repository Summary Panel</title>
+
+        <para>The Repository Summary panel can be loaded by selecting a
+        Hosted, Proxy, or Virtual repository and then clicking on the Summary
+        tab. When viewing the Summary tab of a Hosted repository, as shown in
+        <xref linkend="fig-configuring-summary-hosted" />, you will also see
+        the Distribution Management settings which can be used to configure
+        Maven to publish artifacts to a Hosted repository.</para>
+
+        <figure id="fig-configuring-summary-hosted">
+          <title>Repository Summary Panel for a Hosted Repository</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/repository-manager_summary-hosted.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/repository-manager_summary-hosted.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>The Repository Summary panel for a Proxy repository, as shown in
+        <xref linkend="fig-configuring-summary-proxy" />, contains all of the
+        repository identifiers and configuration in addition to the size of
+        the local storage for the proxy repository and the URL of the remote
+        repository.</para>
+
+        <figure id="fig-configuring-summary-proxy">
+          <title>Repository Summary Panel for a Proxy Repository</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/repository-manager_summary-proxy.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/repository-manager_summary-proxy.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>The Repository Summary panel for a Virtual repository, as shown
+        in <xref linkend="fig-configuring-summary-virtual" />, displays
+        repository identifiers and the size of the Virtual repository on
+        disk.</para>
+
+        <figure id="fig-configuring-summary-virtual">
+          <title>Repository Summary Panel for a Virtual Repository</title>
+
+          <mediaobject>
+            <imageobject role="web" security="">
+              <imagedata fileref="figs/web/repository-manager_summary-virtual.png" />
+            </imageobject>
+
+            <imageobject role="print" security="">
+              <imagedata align="center"
+                         fileref="figs/print/repository-manager_summary-virtual.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
       </section>
     </section>
 
@@ -1122,19 +1331,19 @@
     <section id="config-sect-managing-security">
       <title>Managing Security</title>
 
-      <para>The latest release of Nexus has role-based access control (RBAC)
-      which gives administrators very fine-grained control over who can read
-      from a repository (or a subset of repositories), who can administer the
-      server, and who can deploy to repositories. The security model in Nexus
-      is also so flexible as to allow you to specify that only certain users
-      or roles can deploy and manage artifacts in a specific repository under
-      a specific groupId or asset class. The default configuration of Nexus
-      ships with three roles and three users with a standard set of
-      permissions that will make sense for most users. As your security
-      requirements evolve, you'll likely need to customize security settings
-      to create protected repositories for multiple departments, or
+      <para>Nexus has role-based access control (RBAC) which gives
+      administrators very fine-grained control over who can read from a
+      repository (or a subset of repositories), who can administer the server,
+      and who can deploy to repositories. The security model in Nexus is also
+      so flexible as to allow you to specify that only certain users or roles
+      can deploy and manage artifacts in a specific repository under a
+      specific <varname>groupId</varname> or asset class. The default
+      configuration of Nexus ships with four roles and four users with a
+      standard set of permissions that will make sense for most users. As your
+      security requirements evolve, you'll likely need to customize security
+      settings to create protected repositories for multiple departments, or
       development groups. Nexus provides a security model which can adapt to
-      almost anything.</para>
+      any scenario.</para>
 
       <para>Nexus' Role-based access control (RBAC) system is designed around
       the following four security concepts:</para>
@@ -1193,14 +1402,15 @@
       <section id="config-sect-managing-privileges">
         <title>Managing Privileges</title>
 
-        <para>Nexus has two types of privileges: application privileges which
-        cover actions a user can execute in Nexus and repository-target
+        <para>Nexus has three types of privileges: application privileges
+        which cover actions a user can execute in Nexus, repository target
         privileges which govern the level of access a user has to a particular
-        repository or repository target. Behind the scenes, a privilege is
-        related to a single REST operation and method like create, update,
-        delete, read.</para>
+        repository or repository target, and repository view privileges which
+        control whether a user can view a repository. Behind the scenes, a
+        privilege is related to a single REST operation and method like
+        create, update, delete, read.</para>
 
-        <figure>
+        <figure id="fig-configuring-privileges" label="">
           <title>Managing Security Privileges</title>
 
           <mediaobject>
@@ -1216,7 +1426,14 @@
           </mediaobject>
         </figure>
 
-        <figure>
+        <para>To create a new privilege, click on the Add... button in the
+        Privileges panel and choose Repository Target privilege. Creating a
+        privilege will load the New Repository Target Privilege form shown in
+        <xref linkend="fig-configuring-new-privilege" />. This form takes a
+        privilege name, a privilege description, the repository to target, and
+        a repository target.</para>
+
+        <figure floatstyle="" id="fig-configuring-new-privilege" label="">
           <title>Managing Security Privileges</title>
 
           <mediaobject>
@@ -1232,145 +1449,27 @@
           </mediaobject>
         </figure>
 
-        <para>Repository target privileges can apply to individual
-        repositories or repository targets. All of the permissions which ship
-        with Nexus target repository targets. To create a new repository
-        target privilege which targets a specific repository, click on the Add
-        button and select a repository from the repository drop down. The list
-        of application permissions are as follows. Application permissions
-        correspond to areas of the application to which a user has a specific
-        level of access (method). The available methods are create, read,
-        update, and delete.</para>
+        <para>Once you create a new privilege, it will create four underlying
+        privileges: create, delete, read, and update. The four privileges
+        created by the form in <xref
+        linkend="fig-configuring-new-privilege" /> are shown in <xref
+        linkend="fig-configuring-new-privileges" />.</para>
 
-        <itemizedlist>
-          <listitem>
-            <para>Administrator Privilege (ALL)</para>
-          </listitem>
+        <figure id="fig-configuring-new-privileges">
+          <title>Create, Delete, Read, and Update Privileges Created</title>
 
-          <listitem>
-            <para>Artifact Download</para>
-          </listitem>
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/repository-manager_security-privileges-3.png" />
+            </imageobject>
 
-          <listitem>
-            <para>Artifact Upload</para>
-          </listitem>
-
-          <listitem>
-            <para>Checksum Search</para>
-          </listitem>
-
-          <listitem>
-            <para>Clear Repository Cache</para>
-          </listitem>
-
-          <listitem>
-            <para>Configuration File</para>
-          </listitem>
-
-          <listitem>
-            <para>Login to UI</para>
-          </listitem>
-
-          <listitem>
-            <para>Logs</para>
-          </listitem>
-
-          <listitem>
-            <para>Nexus Remote Control</para>
-          </listitem>
-
-          <listitem>
-            <para>Read Repository Metadata</para>
-          </listitem>
-
-          <listitem>
-            <para>Read Repository Status</para>
-          </listitem>
-
-          <listitem>
-            <para>Rebuild Repository Attributes</para>
-          </listitem>
-
-          <listitem>
-            <para>Reindex</para>
-          </listitem>
-
-          <listitem>
-            <para>Repositories</para>
-          </listitem>
-
-          <listitem>
-            <para>Repository Groups</para>
-          </listitem>
-
-          <listitem>
-            <para>Repository Routes</para>
-          </listitem>
-
-          <listitem>
-            <para>Repository Targets</para>
-          </listitem>
-
-          <listitem>
-            <para>Repository Templates</para>
-          </listitem>
-
-          <listitem>
-            <para>RSS Feeds</para>
-          </listitem>
-
-          <listitem>
-            <para>Scheduled Tasks</para>
-          </listitem>
-
-          <listitem>
-            <para>Search Repositories</para>
-          </listitem>
-
-          <listitem>
-            <para>Server Settings</para>
-          </listitem>
-
-          <listitem>
-            <para>Server Status</para>
-          </listitem>
-
-          <listitem>
-            <para>Status</para>
-          </listitem>
-
-          <listitem>
-            <para>User Change Password</para>
-          </listitem>
-
-          <listitem>
-            <para>User Forgot Password</para>
-          </listitem>
-
-          <listitem>
-            <para>User Forgot User ID</para>
-          </listitem>
-
-          <listitem>
-            <para>User Privileges</para>
-          </listitem>
-
-          <listitem>
-            <para>User Reset Password</para>
-          </listitem>
-
-          <listitem>
-            <para>User Roles</para>
-          </listitem>
-
-          <listitem>
-            <para>Users</para>
-          </listitem>
-
-          <listitem>
-            <para>Wastebasket</para>
-          </listitem>
-        </itemizedlist>
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/repository-manager_security-privileges-3.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
       </section>
 
       <section id="config-sect-repo-targets">
@@ -1422,13 +1521,13 @@
       <section id="config-sect-managing-roles">
         <title>Managing Security Roles</title>
 
-        <para>Nexus ships with three roles: Nexus Administrator Role, Nexus
-        Anonymous Role, and Nexus Deployment Role. The administrator role
-        grants all privileges, the anonymous role grants read-only privileges,
-        and the deployment role grants read and update permissions for all
-        repositories.</para>
+        <para>Nexus ships with four roles: Nexus Administrator Role, Nexus
+        Anonymous Role, Nexus Developer Role, and Nexus Deployment Role. Click
+        on the Roles link under Security in the Nexus menu to show the list of
+        roles shown in <xref
+        linkend="fig-configuring-security-roles" />.</para>
 
-        <figure>
+        <figure id="fig-configuring-security-roles">
           <title>Managing Security Roles</title>
 
           <mediaobject>
@@ -1444,7 +1543,17 @@
           </mediaobject>
         </figure>
 
-        <figure>
+        <para>To create a new role, click on the Add... button and fill out
+        the New Nexus Role form shown in <xref
+        linkend="fig-configuring-creating-new-role" />. When creating a new
+        role, you will need to supply a role identifier, a role name, a
+        description, and a session timeout. Roles are comprised of other roles
+        and individual privileges, to assign a role or privilege to a role,
+        click on the role or privilege under Available Roles/Privileges and
+        drag the role or privilege to the Selected Roles/Privileges
+        list.</para>
+
+        <figure id="fig-configuring-creating-new-role" label="">
           <title>Managing Security Roles</title>
 
           <mediaobject>
@@ -1460,7 +1569,13 @@
           </mediaobject>
         </figure>
 
-        <figure>
+        <para>The built-in roles Nexus Administrator Role, Nexus Anonymous
+        Role, Nexus Deployment Role, and Nexus Developer Role are managed by
+        Nexus and cannot be edited or deleted. Selecting one of these built-in
+        roles will load the form shown in <xref
+        linkend="fig-configuring-builtin-role" />.</para>
+
+        <figure id="fig-configuring-builtin-role" label="">
           <title>Managing Security Roles</title>
 
           <mediaobject>
@@ -1471,6 +1586,27 @@
             <imageobject role="print">
               <imagedata align="center"
                          fileref="figs/print/repository-manager_security-roles-2.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>A Nexus role is comprised of other Nexus roles and individual
+        Nexus privileges. To view the component parts of a Nexus Role, select
+        the role in the Roles panel and then choose the Role Tree tab as shown
+        in <xref linkend="fig-configuring-role-tree" />.</para>
+
+        <figure id="fig-configuring-role-tree">
+          <title>Managing Security Roles</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/repository-manager_security-roles-4.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/repository-manager_security-roles-4.pdf"
                          scalefit="0" width="100%" />
             </imageobject>
           </mediaobject>
@@ -1497,7 +1633,7 @@
         can also assign or revoke specific roles or permissions for a
         particular user.</para>
 
-        <figure>
+        <figure id="fig-configuring-security-user">
           <title>Managing Users</title>
 
           <mediaobject>
@@ -1508,6 +1644,55 @@
             <imageobject role="print">
               <imagedata align="center"
                          fileref="figs/print/repository-manager_security-users.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>A user can be assigned one or more roles which in turn can
+        include references to other Nexus roles or to individual Nexus
+        privileges. To view a tree of assigned Nexus roles and privileges,
+        select the Role Tree for a particular user as shown in <xref
+        linkend="fig-configuring-security-user-role-tree" />.</para>
+
+        <figure id="fig-configuring-security-user-role-tree">
+          <title>Nexus User Role Tree</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/repository-manager_security-users-role-tree.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/repository-manager_security-users-role-tree.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>If you need to find out exactly how a particular user has been
+        granted a particular privilege, you can use the Privilege Trace pane
+        as shown in <xref
+        linkend="fig-configuring-security-user-priv-trace" />. The Privilege
+        Trace pane lists all of the privileges that have been granted to a
+        particular user. Clicking on a privilege loads a tree of roles that
+        grant that particular privilege to a user. If a user has been assigned
+        a specific privilege by more than one Role or Privilege assignment,
+        you will be able to see this reflected in the Role Containment
+        list.</para>
+
+        <figure id="fig-configuring-security-user-priv-trace">
+          <title>Nexus User Privilege Trace</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/repository-manager_security-users-privilege.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/repository-manager_security-users-privilege.pdf"
                          scalefit="0" width="100%" />
             </imageobject>
           </mediaobject>
@@ -1543,9 +1728,10 @@ nexus.configuration=\${runtime}/apps/nexus/conf/nexus.xml</programlisting>
       <title>Nexus Logging Configuration</title>
 
       <para>You can configure the format and level of logging from within the
-      Nexus interface. To do this, click on Log under the Administration menu
-      in the left-hand navigation menu. Clicking on this link will display the
-      panel shown in <xref linkend="fig-configuring-log-config" />.</para>
+      Nexus interface. To do this, click on Log Configuration under the
+      Administration menu in the left-hand navigation menu. Clicking on this
+      link will display the panel shown in <xref
+      linkend="fig-configuring-log-config" />.</para>
 
       <figure id="fig-configuring-log-config">
         <title>The Log Configuration Panel</title>

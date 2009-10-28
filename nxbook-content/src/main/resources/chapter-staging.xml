@@ -87,7 +87,7 @@
     the Staging Suite is available and ready to be configured.</para>
 
     <figure id="fig-staging-links">
-      <title>Enterprise Menu after Staging Suite Installation</title>
+      <title>.*Enterprise Menu after Staging Suite Installation</title>
 
       <mediaobject>
         <imageobject role="web">
@@ -241,16 +241,6 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Staging Repository Name Template and Id Template</term>
-
-          <listitem>
-            <para>When a new Staging Repository is created, the Name Template
-            and Id Template values are used to create a unique name and a
-            unique id for the temporary Staging Repository.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
           <term>Staging Repository Type</term>
 
           <listitem>
@@ -283,7 +273,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Close Notification Roles</term>
+          <term>Close Repository Notification Roles</term>
 
           <listitem>
             <para>After a developer has deployed a set of related release
@@ -300,7 +290,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Promotion Notifcation Roles</term>
+          <term>Promotion Repository Notifcation Roles</term>
 
           <listitem>
             <para>Once a staging repository has been closed and certified by a
@@ -310,6 +300,19 @@
             promoted or discarded. All users with the roles specified in this
             list will be notified when a staged repository is either promoted
             or discarded.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Promote Repository Staging Rulesets</term>
+
+          <listitem>
+            <para>This defines the rulesets which will be applied to a staging
+            repository on promotion. If the repository does not pass the rules
+            defined in the promotion rulesets, the promotion will fail with an
+            error message supplied by the failing rule. For more information
+            about rulesets, see <xref
+            linkend="staging-sect-rulesets" />.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -563,7 +566,7 @@ Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
     Clicking Staging Upload will show the panel shown in <xref
     linkend="fig-staging-artifact-upload" />.</para>
 
-    <figure id="fig-staging-artifact-upload">
+    <figure floatstyle="" id="fig-staging-artifact-upload">
       <title>Uploading a Staged Deployment in Nexus</title>
 
       <mediaobject>
@@ -584,25 +587,29 @@ Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
     selected an artifact, you can modify the classifier and the extension
     before clicking on the Add Artifact button. Once you have clicked on the
     Add Artifact button, you can then configure the source of the Group,
-    Artifact, Version (GAV) parameters. If the artifact you are uploading is a
-    JAR file that was created by Maven it will already have POM information
-    embedded in it, but if you are uploading a JAR from a vendor you will
-    likely need to set the Group Identifier, Artifact Identifier, and Version
-    manually. To do this, select GAV Parameters from the GAV Definition
-    dropdown at the top of this form. Selecting GAV Parameters will expose a
-    set of form fields which will let you set the Group, Artifact, Version,
-    and Packaging of the artifacts being uploaded. If you would prefer to set
-    the Group, Artifact, and Version from a POM file which was associated with
-    the uploaded artifact, select From POM in the GAV Definition dropdown.
-    Selecting From POM in this dropdown will expose a button labelled "Select
-    POM to Upload". Once a POM file has been selected for upload, the name of
-    the POM file will be displayed in the form field below this button.</para>
+    Artifact, Version (GAV) parameters.</para>
+
+    <para>If the artifact you are uploading is a JAR file that was created by
+    Maven it will already have POM information embedded in it, but if you are
+    uploading a JAR from a vendor you will likely need to set the Group
+    Identifier, Artifact Identifier, and Version manually. To do this, select
+    GAV Parameters from the GAV Definition dropdown at the top of this form.
+    Selecting GAV Parameters will expose a set of form fields which will let
+    you set the Group, Artifact, Version, and Packaging of the artifacts being
+    uploaded. If you would prefer to set the Group, Artifact, and Version from
+    a POM file which was associated with the uploaded artifact, select From
+    POM in the GAV Definition dropdown. Selecting From POM in this dropdown
+    will expose a button labelled "Select POM to Upload". Once a POM file has
+    been selected for upload, the name of the POM file will be displayed in
+    the form field below this button.</para>
 
     <para>The Staging Upload panel supports multiple artifacts with the same
     Group, Artifact, and Version identifiers. For example, if you need to
     upload multiple artifacts with different classifiers, you may do so by
-    clicking on Select Artifact(s) for Upload and Add Artifact multiple
-    times.</para>
+    clicking on Select Artifact(s) for Upload and Add Artifact multiple times.
+    This interface also accepts an Artifact Bundle which is a JAR that
+    contains more than one artifact, for more information about uploading
+    Artifact Bundles, see <xref linkend="bundles-sect-uploading" />.</para>
 
     <para>Once a staging artifact upload has been completely configured, click
     on Upload Artifact(s) button to begin the upload process. Nexus will
@@ -611,6 +618,143 @@ Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
     activated, a new staging repository will be created and can be managed
     using the procedures outlined in <xref
     linkend="staging-sect-managing-staging" />.</para>
+  </section>
+
+  <section>
+    <title>Managing Staging Rulesets</title>
+
+    <para>Nexus Professional has the ability to define staging rules that must
+    be satisfied before a staging repository can be promoted.</para>
+
+    <section id="staging-sect-rulesets">
+      <title>Managing Staging Rulesets</title>
+
+      <para>Staging Rulesets are groups of rules that are applied to a Staging
+      repository at promotion time. A staging repository associated with a
+      staging ruleset cannot be promoted until all of the rules associated
+      with the rulesets have been satisfied. This feature allows you to set
+      standards for your own hosted repositories, and it is the mechanism that
+      is used to guarantee the consistency of artifacts stored in the Central
+      Maven repository.</para>
+
+      <para>Nexus Professional contains the following rules:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Staging Javadoc Validation</term>
+
+          <listitem>
+            <para>The Staging Javadoc Validation rule will vefiy that every
+            project has an artifact with the javadoc classifier. If you
+            attempt to promote a staging repository which contains artifacts
+            not accompanied by "-javadoc.jar" artifacts, this validation rule
+            will fail.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Staging POM Validation</term>
+
+          <listitem>
+            <para>The Staging POM Validation rule will verify the following
+            properties of all POMs to be promoted:</para>
+
+            <itemizedlist>
+              <listitem>
+                <para>Project URL - <varname>project/url</varname></para>
+              </listitem>
+
+              <listitem>
+                <para>Project Licenses -
+                <varname>project/licenses</varname></para>
+              </listitem>
+
+              <listitem>
+                <para>Project SCM Information -
+                <varname>project/scm</varname></para>
+              </listitem>
+            </itemizedlist>
+
+            <para>If any of these POM elements are missing or empty, this
+            Staging Ruleset will cause a promotion to fail.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Staging Signature Validation</term>
+
+          <listitem>
+            <para>The Staging Signature Validation rule verifies that every
+            item in the repository has a valid PGP signature. If you attempt
+            to promot a staging repository which contains artifacts not
+            accompanied by valid PGP signature, this validation will
+            fail.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Staging Sources Validation</term>
+
+          <listitem>
+            <para>The Staging Sources Validation rule will vefiy that every
+            project has an artifact with the sources classifier. If you
+            attempt to promote a staging repository which contains artifacts
+            not accompanied by "-sources.jar" artifacts, this validation rule
+            will fail.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>To create a Staging Ruleset, click on the Staging Ruleset link in
+      the Nexus Menu. This will load the interface shown in <xref
+      linkend="fig-staging-rulesets" />. The Staging Ruleset panel is used to
+      define sets of rules that can be applied to Staging Profiles. <xref
+      linkend="fig-staging-rulesets" /> shows a ruleset which contains all
+      four predefined staging rules.</para>
+
+      <figure id="fig-staging-rulesets">
+        <title>Creating a Staging Ruleset</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/staging-rulesets.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/staging-rulesets.pdf" scalefit="0"
+                       width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section id="staging-sect-defining-rulesets">
+      <title>Defining Rulesets for Promotion</title>
+
+      <para>To define a ruleset to be used for promotion, click on Staging in
+      the Nexus menu and select a Staging Profile. Click on the Configuration
+      tab, and scroll down to the Promote Repository Staging Rulesets section
+      of the Staging Profile configuration as shown in <xref
+      linkend="fig-staging-associate-ruleset" />. The next time you attempt to
+      promote a staging repository that was created with this profile, Nexus
+      Professional was check that all of the rules in the associated rulesets
+      are being adhered to.<figure id="fig-staging-associate-ruleset" label="">
+          <title>Associating a Staging Ruleset with a Staging Profile</title>
+
+          <mediaobject>
+            <imageobject role="web">
+              <imagedata fileref="figs/web/staging-rulesets-associate.png" />
+            </imageobject>
+
+            <imageobject role="print">
+              <imagedata align="center"
+                         fileref="figs/print/staging-rulesets-associate.pdf"
+                         scalefit="0" width="100%" />
+            </imageobject>
+          </mediaobject>
+        </figure></para>
+    </section>
   </section>
 
   <section id="staging-sect-managing-staging">
