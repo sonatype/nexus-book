@@ -23,7 +23,8 @@
     Maven Site repository. This repository can be used to hold a
     Maven-generated web site. This chapter details the process of configuring
     a Maven Site repository and configuring a simple Maven project to publish
-    to this new repository.</para>
+    a Maven-generated project site to an instance of Nexus
+    Professional.</para>
   </section>
 
   <section>
@@ -32,8 +33,9 @@
     <para>In this chapter, you will be creating a simple Maven project with a
     simple web site that will be published to a Nexus Professional Maven Site
     repository. To create a new Maven project, use the archetype plugin's
-    archetype:generate goal. Run mvn archetype:generate on the command line,
-    and supply the following identifiers:</para>
+    <varname>archetype:generate</varname> goal. Run <command>mvn
+    archetype:generate</command> on the command line, and supply the following
+    identifiers:</para>
 
     <itemizedlist>
       <listitem>
@@ -89,8 +91,9 @@ package: org.sonatype.books.nexus
 [INFO] Final Memory: 13M/80M
 [INFO] ------------------------------------------------------------------------</screen>
 
-    <para>After running the archetype:generate command you will have a new
-    project in a sample-site/ subdirectory.</para>
+    <para>After running the <varname>archetype:generate</varname> command you
+    will have a new project in a <filename>sample-site/</filename>
+    subdirectory.</para>
   </section>
 
   <section>
@@ -136,9 +139,10 @@ package: org.sonatype.books.nexus
   &lt;/dependencies&gt;
 &lt;/project&gt;</screen>
 
-    <para>Add the following section to sample-site/pom.xml after the
-    dependencies element. This section will tell Maven where to publish the
-    Maven-generated project web site:</para>
+    <para>Add the following section to
+    <filename>sample-site/pom.xml</filename> after the dependencies element.
+    This section will tell Maven where to publish the Maven-generated project
+    web site:</para>
 
     <example id="ex-sites-dist-man">
       <title>Distribution Management for Site Deployment to Nexus</title>
@@ -158,9 +162,10 @@ package: org.sonatype.books.nexus
       Nexus instance.</para>
     </note>
 
-    <para>In addition to the distributionManagement element, you will want to
-    add the following build element that will configure Maven to use version
-    2.0.1 of the Maven Site plugin.</para>
+    <para>In addition to the <sgmltag>distributionManagement</sgmltag>
+    element, you will want to add the following <sgmltag>build</sgmltag>
+    element that will configure Maven to use version 2.0.1 of the Maven Site
+    plugin.</para>
 
     <example>
       <title>Configuring the Maven Site Plugin for Nexus Site
@@ -199,8 +204,9 @@ package: org.sonatype.books.nexus
     configure this, you will need to add credentials to your Maven Settings.
     Open up your <filename>~/.m2/settings.xml</filename> and add the following
     server configuration to the servers element. If you already have a servers
-    element, just add a new server element with the appropriate id, username,
-    and password.</para>
+    element, just add a new server element with the appropriate
+    <varname>id</varname>, <varname>username</varname>, and
+    <varname>password</varname>.</para>
 
     <example floatstyle="" id="ex-sites-deploy-credentials">
       <title>Configuring Deployment Credentials for Nexus Site
@@ -219,9 +225,9 @@ package: org.sonatype.books.nexus
 
     <note>
       <para><xref linkend="ex-sites-deploy-credentials" />, uses the default
-      deployment users and the default deployment user password. You will need
-      to configure the username and password to match the values expected
-      byyour Nexus installation.</para>
+      deployment user and the default deployment user password. You will need
+      to configure the username and password to match the values expected by
+      your Nexus installation.</para>
     </note>
   </section>
 
@@ -276,7 +282,7 @@ package: org.sonatype.books.nexus
     </figure>
 
     <para>After creating a new Maven Site repository, it should appear in the
-    listed of Nexus repositories as shown in <xref
+    list of Nexus repositories as shown in <xref
     linkend="fig-sites-newly-created" />. Note that the Repository Path shown
     in <xref linkend="fig-sites-newly-created" />, is the same as the
     repository path referenced in <xref linkend="ex-sites-dist-man" />.</para>
@@ -333,7 +339,7 @@ package: org.sonatype.books.nexus
     <para>Locate the "Repo: All Maven Site Repositories (Full Control)" role
     in the Available Roles list, click this role, and drag it over to the
     Selected Roles list. Once the role is in the Selected Roles list, click on
-    the Save button to update the roles for the deploymenet user. The
+    the Save button to update the roles for the deployment user. The
     deployment user will now have the ability to publish sites to a Maven Site
     repository.</para>
   </section>
@@ -395,7 +401,7 @@ http://localhost:8081/nexus/content/sites/site/ - Session: Disconnected
 [INFO] Final Memory: 35M/80M
 [INFO] ------------------------</screen>
 
-    <para>Once the site has been publish, you can load the site in a browser
+    <para>Once the site has been published, you can load the site in a browser
     by going to <ulink
     url="http://localhost:8081/nexus/content/sites/site/">http://localhost:8081/nexus/content/sites/site/</ulink>.</para>
 
