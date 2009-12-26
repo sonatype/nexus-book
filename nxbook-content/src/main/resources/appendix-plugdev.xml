@@ -570,15 +570,8 @@ package: org.sonatype.book.nexus
         <term>org.sonatype.book.nexus.VirusScanner</term>
 
         <listitem>
-          <para>A VirusScanner interface described in .</para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
-        <term>org.sonatype.book.nexus.rest.HelloWorldPlexusResource</term>
-
-        <listitem>
-          <para>A REST resource</para>
+          <para>A VirusScanner interface described in <xref
+          linkend="plugdev-sect-complex" />.</para>
         </listitem>
       </varlistentry>
 
@@ -590,9 +583,81 @@ package: org.sonatype.book.nexus
         </listitem>
       </varlistentry>
     </variablelist>
+
+    <section id="plugdev-sect-target-version">
+      <title>Set the Target Nexus Version</title>
+
+      <para>To set the target Nexus version of the new Nexus Plugin project,
+      you will need to edit this new project's POM. Open up the POM of your
+      Nexus Plugin and find the section that defines properties. You will need
+      to change the <varname>nexus-version</varname> property to target a
+      Nexus version. After creating a project with the Nexus Plugin archetype,
+      you will see a properties section of the POM that contains a
+      <varname>${nexusVersion}</varname> reference as follows:</para>
+
+      <programlisting>&lt;project&gt;
+  ...
+  &lt;properties&gt;
+    &lt;!-- Set the Nexus version here, against which you build the plugin --&gt;
+    &lt;nexus-version&gt;${nexusVersion}&lt;/nexus-version&gt;
+  &lt;/properties&gt;
+  ...
+&lt;/project&gt;</programlisting>
+
+      <para>To target a version of Nexus, change
+      <varname>${nexusVersion}</varname> to a Nexus version number. The
+      following program listing shows a properties section in the generated
+      POM which targets version 1.4.1 of Nexus.</para>
+
+      <programlisting>&lt;project&gt;
+  ...
+  &lt;properties&gt;
+    &lt;!-- Set the Nexus version here, against which you build the plugin --&gt;
+    &lt;nexus-version&gt;1.4.1&lt;/nexus-version&gt;
+  &lt;/properties&gt;
+  ...
+&lt;/project&gt;</programlisting>
+    </section>
+
+    <section id="plugdev-sect-building">
+      <title>Building a Nexus Plugin Project</title>
+
+      <para>To build your Nexus plugin project, just run <command>mvn
+      install</command> in the newly generated project directory. Once the
+      build is completed, your plugin's JAR will be available in the project's
+      <filename>target/</filename> directory.</para>
+
+      <para>The Nexus Plugin project, as created by the Nexus Plugin
+      archetype, depends on a number of artifacts which may not be available
+      from the Central Maven repository. If you experience missing artifacts
+      during your Nexus plugin project build, you should make sure that the
+      following repositories are added to your environment:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>The Sonatype Forge Repository: <ulink
+          url="http://repository.sonatype.org/content/groups/forge">http://repository.sonatype.org/content/groups/forge</ulink></para>
+        </listitem>
+
+        <listitem>
+          <para>The Codehaus Snapshot Repository: <ulink
+          url="http://snapshots.repository.codehaus.org">http://snapshots.repository.codehaus.org</ulink></para>
+        </listitem>
+      </itemizedlist>
+
+      <para>If you experience any difficulty with the build, you may also want
+      to remove the section of the generated POM that is labeled with the
+      #ITSet label.</para>
+
+      <para>If you are using Nexus, and you have configured your build to work
+      against a public group, you will want to make sure that you have added
+      both of the repositories listed above to your public group. You will
+      also want to make sure that the Repository Policy setting for the
+      Sonatype Forge Repository is set to "Release".</para>
+    </section>
   </section>
 
-  <section>
+  <section id="plugdev-sect-complex">
     <title>Creating a Complex Plugin</title>
 
     <para>In this section, we will step through a skeletal, sample project
@@ -836,122 +901,54 @@ public class VirusScannerRepositoryCustomizer
     src/main/static-resources). Static resources such as JS files, images, and
     CSS which are referenced in</para>
 
-    <section>
+    <section id="plugdev-sect-plugin-descriptor">
       <title>The Nexus Plugin Descriptor</title>
 
-      <para>The Nexus Plugin Metadata is a descriptor of the Nexus plugin. The
-      descriptor is not Plexus-specific. It contains info which is gathered
-      gather by the NexusPD Maven plugin which scans all the classes in a
-      plugin project and creates this descriptor based on annotations.</para>
+      <para>Every Nexus plugin has a plugin descriptor which is generated
+      during the build process for a plugin. This plugin descriptor is
+      packaged with the plugin JAR and can be found in
+      <varname>${basedir}/target/classes/META-INF/nexus/plugin.xml</varname>.</para>
 
       <example>
         <title>A Nexus Plugin Descriptor</title>
 
-        <programlisting>&lt;nexusPlugin&gt;
+        <programlisting>&lt;plugin&gt;
   &lt;modelVersion&gt;1.0.0&lt;/modelVersion&gt;
-
   &lt;groupId&gt;org.sonatype.sample&lt;/groupId&gt;
-  &lt;artifactId&gt;nexus-sample-plugin&lt;/artifactId&gt;
-  &lt;version&gt;1.0.0&lt;/version&gt;
-  &lt;name&gt;Nexus Sample Plugin&lt;/name&gt;
-  &lt;description&gt;A Nexus Plugin to demonstrate plugin 
-       development for Sonatype Nexus.&lt;/description&gt;
-  &lt;pluginSite&gt;http://nexus.sonatype.org/plugins&lt;/pluginSite&gt;
-
-  &lt;requiredFeatures&gt;
-    &lt;requiredFeature&gt;OSS&lt;/requiredFeature&gt;
-  &lt;/requiredFeatures&gt;
-
-  &lt;plugin&gt;
-    &lt;implementation&gt;
-      org.sample.plugin.SampleNexusPlugin
-    &lt;/implementation&gt;
-    &lt;requirements&gt;
-      &lt;requirement&gt;
-        &lt;fieldName&gt;registry&lt;/fieldName&gt;
-        &lt;componentContract&gt;
-          org.sonatype.nexus.proxy.registry.RepositoryRegistry
-        &lt;/componentContract&gt;
-      &lt;/requirement&gt;
-    &lt;/requirements&gt;
-  &lt;/plugin&gt;
-
-  &lt;extensions&gt;
-    &lt;extension&gt;
-      &lt;extensionPoint&gt;p:extensionPoint&lt;/extensionPoint&gt;
-      &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
-      &lt;implementation&gt;p:implementation&lt;/implementation&gt;
-      &lt;requirements&gt;
-        &lt;requirement&gt;
-          &lt;fieldName&gt;p:fieldName&lt;/fieldName&gt;
-          &lt;componentContract&gt;p:componentContract
-          &lt;/componentContract&gt;
-          &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
-        &lt;/requirement&gt;
-      &lt;/requirements&gt;
-    &lt;/extension&gt;
-    &lt;extension&gt;
-      &lt;extensionPoint&gt;p:extensionPoint&lt;/extensionPoint&gt;
-      &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
-      &lt;implementation&gt;p:implementation&lt;/implementation&gt;
-      &lt;requirements&gt;
-        &lt;requirement&gt;
-          &lt;fieldName&gt;p:fieldName&lt;/fieldName&gt;
-          &lt;componentContract&gt;p:componentContract
-          &lt;/componentContract&gt;
-          &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
-        &lt;/requirement&gt;
-      &lt;/requirements&gt;
-    &lt;/extension&gt;
-  &lt;/extensions&gt;
-
-  &lt;components&gt;
-    &lt;component&gt;
-      &lt;componentContract&gt;p:componentContract
-      &lt;/componentContract&gt;
-      &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
-      &lt;implementation&gt;p:implementation&lt;/implementation&gt;
-      &lt;requirements&gt;
-        &lt;requirement&gt;
-          &lt;fieldName&gt;p:fieldName&lt;/fieldName&gt;
-          &lt;componentContract&gt;p:componentContract
-          &lt;/componentContract&gt;
-          &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
-        &lt;/requirement&gt;
-      &lt;/requirements&gt;
-    &lt;/component&gt;
-    &lt;component&gt;
-      &lt;componentContract&gt;p:componentContract
-      &lt;/componentContract&gt;
-      &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
-      &lt;implementation&gt;p:implementation&lt;/implementation&gt;
-      &lt;requirements&gt;
-        &lt;requirement&gt;
-          &lt;fieldName&gt;p:fieldName&lt;/fieldName&gt;
-          &lt;componentContract&gt;p:componentContract
-          &lt;/componentContract&gt;
-          &lt;qualifier&gt;p:qualifier&lt;/qualifier&gt;
-        &lt;/requirement&gt;
-      &lt;/requirements&gt;
-    &lt;/component&gt;
-  &lt;/components&gt;
-
-  &lt;resources&gt;
-    &lt;resource&gt;
-      &lt;resourcePath&gt;p:resourcePath&lt;/resourcePath&gt;
-      &lt;publishedPath&gt;p:publishedPath&lt;/publishedPath&gt;
-      &lt;contentType&gt;p:contentType&lt;/contentType&gt;
-    &lt;/resource&gt;
-    &lt;resource&gt;
-      &lt;resourcePath&gt;p:resourcePath&lt;/resourcePath&gt;
-      &lt;publishedPath&gt;p:publishedPath&lt;/publishedPath&gt;
-      &lt;contentType&gt;p:contentType&lt;/contentType&gt;
-    &lt;/resource&gt;
-  &lt;/resources&gt;
-
-&lt;/nexusPlugin&gt;
+  &lt;artifactId&gt;sample-plugin&lt;/artifactId&gt;
+  &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+  &lt;name&gt;Nexus Plugin Archetype&lt;/name&gt;
+  &lt;applicationId&gt;nexus&lt;/applicationId&gt;
+  &lt;applicationEdition&gt;OSS&lt;/applicationEdition&gt;
+  &lt;applicationMinVersion&gt;1.4.0&lt;/applicationMinVersion&gt;
+&lt;/plugin&gt;
 </programlisting>
       </example>
+
+      <para>If your Nexus plugin has any dependencies, they will be included
+      in this plugin descriptor automatically. For example, if the Nexus
+      plugin you were developing had a dependency on commons-beanutils version
+      1.8.2, your plugin descriptor will incude the following
+      <sgmltag>classpathDependency</sgmltag> element:</para>
+
+      <programlisting>&lt;plugin&gt;
+  &lt;modelVersion&gt;1.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;org.sonatype.book.nexus&lt;/groupId&gt;
+  &lt;artifactId&gt;sample-plugin&lt;/artifactId&gt;
+  &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+  &lt;name&gt;Nexus Plugin Archetype&lt;/name&gt;
+  &lt;applicationId&gt;nexus&lt;/applicationId&gt;
+  &lt;applicationEdition&gt;OSS&lt;/applicationEdition&gt;
+  &lt;applicationMinVersion&gt;1.4.0&lt;/applicationMinVersion&gt;
+  &lt;classpathDependencies&gt;
+    &lt;classpathDependency&gt;
+      &lt;groupId&gt;commons-beanutils&lt;/groupId&gt;
+      &lt;artifactId&gt;commons-beanutils&lt;/artifactId&gt;
+      &lt;version&gt;1.8.2&lt;/version&gt;
+      &lt;type&gt;jar&lt;/type&gt;
+    &lt;/classpathDependency&gt;
+  &lt;/classpathDependencies&gt;
+&lt;/plugin&gt;</programlisting>
     </section>
   </section>
 
