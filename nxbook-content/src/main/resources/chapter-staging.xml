@@ -13,15 +13,23 @@
         <primary>Nexus plugin</primary>
 
         <secondary>staging plugin</secondary>
-      </indexterm>If you release artifacts to users or customers, you will
-    often need to test these releases before deploying them to externally
-    accessible repositories. Nexus Staging Suite allows an organization to
-    create a staging repository and to manage the promotion of artifacts from
-    a staging repository to a release repository. Nexus Staging Suite provides
-    an organization with a workflow for controlling releases.</para>
+      </indexterm>If you release software, you will often need to test a
+    release before deploying it to a production system or an externally
+    accessible repository. For example, if you are developing a large,
+    enterprise web application you may want to stage a release candidate to a
+    production system and perform a series of rigorous tests before a release
+    manager makes a decision to either return a system to development or
+    deploy a system to production.</para>
 
-    <section id="staging-sect-how">
-      <title>How the Staging Suite Works</title>
+    <para>The Nexus Staging Suite in Nexus Professional allows an organization
+    to create a temporary staging repository and to manage the promotion of
+    artifacts from a staging repository to a release repository. This ability
+    to create an isolated, release candidate repository that can discarded or
+    promoted makes it possible to support the decisions that go into
+    certifying a release.</para>
+
+    <section id="staging-sect-without">
+      <title>Releasing Software with a Staging Repository</title>
 
       <para><indexterm>
           <primary>staging</primary>
@@ -35,15 +43,6 @@
       artifact to a hosted repository. If there is a mistake in the release,
       often the only option available is to republish the artifacts to the
       release repository or deploy a new version of the artifacts.</para>
-
-      <para>While this is acceptable for many Nexus users, organizations and
-      enterprises with a QA cycle often need a temporary staging repository
-      for potential release candidates: a staging repository. With the Nexus
-      Staging Suite, an organization can automatically stage releases to a
-      temporary repository which can then be used to test and certify a set of
-      artifacts before they are published to a final release repository. This
-      temporary repository can then be promoted as a whole or dropped
-      depending on the results of testing.</para>
 
       <figure>
         <title>Without the Nexus Staging Suite</title>
@@ -61,17 +60,30 @@
         </mediaobject>
       </figure>
 
+      <para>While this is acceptable for some users, organizations and
+      enterprises with a QA cycle often need a temporary staging repository
+      for potential release candidates: a staging repository. With the Nexus
+      Staging Suite, an organization can automatically stage releases to a
+      temporary repository which can then be used to test and certify a set of
+      artifacts before they are published to a final release repository. This
+      temporary repository can then be promoted as a whole or dropped
+      depending on the results of testing.</para>
+    </section>
+
+    <section id="staging-sect-how">
+      <title>How the Staging Suite Works</title>
+
       <para>Here's how staging works in Nexus Professional:</para>
 
       <orderedlist>
         <listitem>
-          <para>A developer deploys an artfiact (or set of artifacts) to Nexus
-          Professional.</para>
+          <para>A developer deploys an artfiact (or a set of artifacts) to
+          Nexus Professional.</para>
         </listitem>
 
         <listitem>
           <para>The Staging Suite intercepts this deployment and matches the
-          path against a set of Staging Profiles.</para>
+          artifact's path against a set of Staging Profiles.</para>
         </listitem>
 
         <listitem>
@@ -94,7 +106,7 @@
       <para>Once the staging repository is closed, and the staging repository
       has been added to a Target repository group, the artifacts in the
       staging repository are then made available to developers or testers via
-      the repository group. Tests can be performed on the artifacts as if they
+      a repository group. Tests can be performed on the artifacts as if they
       were already published in a hosted repository. From this point, one of
       two things can happen to a staging repository:</para>
 
@@ -105,8 +117,9 @@
           <listitem>
             <para>A Nexus user can "promote" a staging repository and select a
             hosted repository to publish artifacts to. Promoting the
-            repository publishes all artifacts from the staging reposiotry to
-            a hosted repository and deletes the staging repository.</para>
+            repository publishes all artifacts from the staging repository to
+            a hosted repository and deletes the temporary staging
+            repository.</para>
           </listitem>
         </varlistentry>
 
@@ -116,7 +129,7 @@
           <listitem>
             <para>A Nexus user can "drop" a staging repository. Dropping a
             staging repository will remove it from any groups and delete the
-            staging repository.</para>
+            temporary staging repository.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -139,7 +152,7 @@
     </section>
   </section>
 
-  <section id="staging-sect-install">
+  <section id="staging-sect-using">
     <title>Using the Nexus Staging Suite</title>
 
     <para><indexterm>
@@ -153,7 +166,7 @@
     is available and ready to be configured.</para>
 
     <figure id="fig-staging-links">
-      <title>.*Enterprise Menu after Staging Suite Installation</title>
+      <title>Enterprise Menu after Staging Suite Installation</title>
 
       <mediaobject>
         <imageobject role="web">
@@ -261,6 +274,15 @@
       the Nexus menu, you will see a list of configured staging profiles.
       Clicking on Add will create a new Staging Profile and display the form
       shown in <xref linkend="fig-staging-edit-profile" />.</para>
+
+      <para>In the following figure, you are creating a Staging Profile using
+      the Repository Target defined in the previous section. This target will
+      match all artifacts under the com.sonatype.sample groupId (or
+      com/sonatype/sample path). This staging profile uses the "Maven2 Hosted
+      Release Repository" as a template for newly created temporary staging
+      repositories, and it will automatically add closed staging repositories
+      to both the Public Repositories group and the Public Snapshot
+      Repositories group.</para>
 
       <figure id="fig-staging-edit-profile">
         <title>Editing a Staging Profile</title>
