@@ -6,16 +6,21 @@
 
   <para><indexterm>
       <primary>LDAP</primary>
-    </indexterm>Nexus Professional adds a Lightweight Directory Access
-  Protocol (<acronym>LDAP</acronym>) Authentication realm which provides Nexus
-  with the capability to authenticate users against an <acronym>LDAP</acronym>
-  server. In addition to handling authentication, Nexus can be configured to
-  map Nexus roles to <acronym>LDAP</acronym> groups. If an
-  <acronym>LDAP</acronym> user is a member of a group that matches the ID of a
-  Nexus role, Nexus will grant that user the matching Nexus Role. In addition
-  to this highly configurable user and group mapping capability, Nexus can
-  augment <acronym>LDAP</acronym> group membership with Nexus-specific
-  user-role mapping.</para>
+    </indexterm>Nexus Open Source has a Lightweight Directory Access Protocol
+  (<acronym>LDAP</acronym>) Authentication realm which provides Nexus with the
+  capability to authenticate users against an <acronym>LDAP</acronym> server.
+  In addition to handling authentication, Nexus can be configured to map Nexus
+  roles to <acronym>LDAP</acronym> groups. If an <acronym>LDAP</acronym> user
+  is a member of a group that matches the ID of a Nexus role, Nexus will grant
+  that user the matching Nexus Role. In addition to this highly configurable
+  user and group mapping capability, Nexus can augment <acronym>LDAP</acronym>
+  group membership with Nexus-specific user-role mapping.</para>
+
+  <para>Nexus Professional offers LDAP support features for enterprise LDAP
+  deployments including the ability to cache authentication information,
+  support for multiple LDAP servers and backup mirrors, the ability to test
+  user logins, support for common user/group mapping templates, and the
+  ability to support more than one schema across multiple servers.</para>
 
   <section id="ldap-sect-enabling">
     <title>Enabling the LDAP Authentication Realm</title>
@@ -317,8 +322,8 @@
             <entry>Username</entry>
 
             <entry>Username of an <acronym>LDAP</acronym> User to connect (or
-            bind) with. This is a Distinguished Name of a user who has
-            administrative rights</entry>
+            bind) with. This is a Distinguished Name of a user who has read
+            access to all users and groups</entry>
           </row>
 
           <row valign="top">
@@ -871,7 +876,7 @@
       </table>
 
       <table id="tbl-ldap-posix-group-element">
-        <title>Group Element Mapping Configuration for posixAccount</title>
+        <title>Group Element Mapping Configuration for posixGroup</title>
 
         <tgroup cols="2">
           <thead>
@@ -1035,7 +1040,7 @@
       <para>The list of users in <xref
       linkend="fig-ldap-all-configured-users-initial" /> is a combination of
       all of the users in the Nexus default realm and all of the External
-      Users with role mappings. To explore these two sets of user, click on
+      Users with role mappings. To explore these two sets of users, click on
       the All Configured Users dropdown and choose "Default Realm Users". Once
       you select this, click in the search field and press Enter. Searching
       with a blank string in the Users panel will return all of the users of
@@ -1191,7 +1196,7 @@
 
       <para>Selecting External Role Mapping under Add... will show you a
       dialog which contains a dropdown of External Realms. Selecting an
-      external realm such as LDAP will then bring a up a list of roles managed
+      external realm such as LDAP will then bring up a list of roles managed
       by that external realm. The dialog shown in <xref
       linkend="fig-ldap-select-ext-role" /> shows the external realm LDAP
       selected and the role "svn" being selected to map to a Nexus
@@ -1238,8 +1243,258 @@
           </imageobject>
         </mediaobject>
       </figure>
+    </section>
+  </section>
 
-      <para></para>
+  <section id="ldap-sect-enterprise">
+    <title>Enterprise LDAP Support</title>
+
+    <para>The following sections outline Enterprise LDAP features which are
+    available in Nexus Professional.</para>
+
+    <section>
+      <title>Enterprise LDAP Failover Support</title>
+
+      <para>When an LDAP server fails, the applications authenticating against
+      it can also become unavailable. Because a central LDAP server is such a
+      critical resource, many large software enterprises will install a series
+      of primary and secondary LDAP servers to make sure that the organization
+      can continue to operate in the case of an unforeseen failure. Nexus
+      Professional’s Enterprise LDAP plugin now provides you with the ability
+      to define multiple LDAP servers for authentication. To configure
+      multiple LDAP servers, click on Enterprise LDAP under Security in the
+      Nexus application menu. You should see the Enterprise LDAP panel shown
+      in the following figure.</para>
+
+      <figure>
+        <title>Defining Multiple LDAP Servers in Nexus Professional</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/multiple-ldap-servers.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/multiple-ldap-servers.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>You can use the Backup Mirror setting for an LDAP repository. This
+      backup mirror is another LDAP server which will be consulted if the
+      original LDAP server cannot be reached. Nexus Professional assumes that
+      the backup mirror is a carbon copy of the original LDAP server, and it
+      will use the same user and group mapping configuration as the original
+      LDAP server. </para>
+
+      <para>Instead of using the backup mirror settings, you could also define
+      multiple LDAP backup mirrors in the list of configured LDAP servers
+      shown in the previous figure. When you configure more than one LDAP
+      server, Nexus Professional will consult the servers in the order they
+      are listed in this panel. If Nexus can’t authenticate against the first
+      LDAP server, Nexus Professional will move on to the next LDAP server
+      until it either reaches the end of the list or finds an LDAP server to
+      authenticate against.</para>
+
+      <figure>
+        <title>Use Multiple LDAP Servers in a Failover Scenario</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/ldap-backup.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center" fileref="figs/print/ldap-multiple.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>The feature just described is one way to increase the reliability
+      of your Nexus instance. In the previous case, both servers would have
+      the same user and group information. The secondary would be a mirror of
+      the primary. But, what if you wanted to connect to two LDAP servers that
+      contained different data? Nexus Professional also provides…</para>
+    </section>
+
+    <section>
+      <title>Support for Multiple Servers and LDAP Schemas</title>
+
+      <para>The same ability to list more than one LDAP server also allows you
+      to support multiple LDAP servers which may or may not contain the same
+      user authentication information. Assume that you had an LDAP server for
+      the larger organization which contained all of the user information
+      across all of the departments. Now assume that your own department
+      maintains a separate LDAP server which you use to supplement this larger
+      LDAP installation. Maybe your department needs to create new users that
+      are not a part of the larger organization, or maybe you have to support
+      the integration of two separate LDAP servers that use different schema
+      on each server.</para>
+
+      <para>A third possibility is that you need to support authentication
+      against different schema within the same LDAP server. This is a common
+      scenario for companies which have merged and whose infrastructures has
+      not yet been merged. To support multiple servers with different
+      user/group mappings or to support a single server with multiple
+      user/group mappings, you can configure these servers in the Enterprise
+      LDAP panel shown above. Nexus will iterate through each LDAP server
+      until it can successfully authenticate a user against an LDAP
+      server.</para>
+
+      <figure>
+        <title>Supporting Multiple LDAP Schemas with Nexus
+        Professional</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/ldap-multiple.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center" fileref="figs/print/ldap-backup.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section>
+      <title>Enterprise LDAP Performance Caching and Timeout</title>
+
+      <para>If you are constantly authenticating against a large LDAP server,
+      you may start to notice a significant performance degradation. With
+      Nexus Professional you can cache authentication information from LDAP.
+      To configure caching, create a new server in the Enterprise LDAP panel,
+      and scroll to the bottom of the Connect tab. You should see the
+      following input field which contains the number of seconds to cache the
+      results of LDAP queries.</para>
+
+      <figure>
+        <title>Setting the LDAP Query Cache Duration (in Seconds)</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/ldap-caching.png" />
+          </imageobject>
+
+          <imageobject>
+            <imagedata align="center" fileref="figs/print/ldap-caching.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>You will also see options to alter the connection timeout and
+      retry interval for an LDAP server. If you are configuring a number of
+      different LDAP servers with different user and group mappings, you will
+      want to make sure that you’ve configured low timeouts for LDAP servers
+      at the beginning of your Enterprise LDAP server list. If you do this
+      properly, it will take Nexus next to no time to iterate through the list
+      of configured LDAP servers.</para>
+
+      <figure>
+        <title>Setting the LDAP Connection Timeout (in Seconds)</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/ldap-timeout.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center" fileref="figs/print/ldap-timeout.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>We improved the overall caching in this release. The cache
+      duration is configurable and applies to authentication and
+      authorization, which translates into pure speed! Once you’ve configured
+      LDAP caching in Nexus Professional, authentication and other operations
+      that involve permissions and credentials once retrieved from an external
+      server will run in no time.</para>
+    </section>
+
+    <section>
+      <title>User and Group Templates</title>
+
+      <para>If you are configuring your Nexus Professional instance to connect
+      to an LDAP server there is a very good chance that your server follows
+      one of several, well-established standards. Nexus Professional’s LDAP
+      server configuration includes these widely used user and group mapping
+      templates which great simplify the setup and configuration of a new LDAP
+      server. To configure user and group mapping using a template, select a
+      LDAP server from the Enterprise LDAP panel, and choose the User and
+      Group Settings. You will see a User &amp; Group Templates section as
+      shown in the following figure.</para>
+
+      <figure>
+        <title>Using User &amp; Group Mapping Templates</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/ldap-templates.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center" fileref="figs/print/ldap-templates.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section>
+      <title>Testing a User Login</title>
+
+      <para>Nexus Professional provides you with the ability to test a user
+      login directly. To test a user login, go to the User and Group Settings
+      tab for a server listed in the Enterprise LDAP panel. Scroll to the
+      bottom of the form, and you should see a button named “Check
+      Login”.</para>
+
+      <figure>
+        <title>Testing a User Login</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/ldap-check-login.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/ldap-check-login.pdf" scalefit="0"
+                       width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>If you click on Check Login, you will then be presented with the
+      login credentials dialog shown below. You can use this dialog to login
+      as an LDAP user and test the user and group mapping configuration for a
+      particular server. This feature allows you to test user and group
+      mapping configuration directly. This feature allows you to quickly
+      diagnose and address difficult authentication and access control issues
+      via the administrative interface.</para>
+
+      <figure>
+        <title>Supply a User's Login Credentials</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/ldap-login-credentials.png" />
+          </imageobject>
+
+          <imageobject>
+            <imagedata align="center"
+                       fileref="figs/print/ldap-login-credentials.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
     </section>
   </section>
 </chapter>

@@ -13,15 +13,23 @@
         <primary>Nexus plugin</primary>
 
         <secondary>staging plugin</secondary>
-      </indexterm>If you release artifacts to users or customers, you will
-    often need to test these releases before deploying them to externally
-    accessible repositories. Nexus Staging Suite allows an organization to
-    create a staging repository and to manage the promotion of artifacts from
-    a staging repository to a release repository. Nexus Staging Suite provides
-    an organization with a workflow for controlling releases.</para>
+      </indexterm>If you release software, you will often need to test a
+    release before deploying it to a production system or an externally
+    accessible repository. For example, if you are developing a large,
+    enterprise web application you may want to stage a release candidate to a
+    production system and perform a series of rigorous tests before a release
+    manager makes a decision to either return a system to development or
+    deploy a system to production.</para>
 
-    <section id="staging-sect-how">
-      <title>How the Staging Suite Works</title>
+    <para>The Nexus Staging Suite in Nexus Professional allows an organization
+    to create a temporary staging repository and to manage the promotion of
+    artifacts from a staging repository to a release repository. This ability
+    to create an isolated, release candidate repository that can discarded or
+    promoted makes it possible to support the decisions that go into
+    certifying a release.</para>
+
+    <section id="staging-sect-without">
+      <title>Releasing Software with a Staging Repository</title>
 
       <para><indexterm>
           <primary>staging</primary>
@@ -31,16 +39,10 @@
       artifact to a Hosted repository such as the Release repository, this
       artifact is published to a hosted repository and is immediately made
       available - there is no oversight, there is no approval or certification
-      process. While this is acceptable for many Nexus users, organizations
-      and enterprises with a QA cycle often need a temporary staging
-      repository for potential release candidates: a staging repository. With
-      the Nexus Staging Suite, an organization can automatically stage
-      releases to temporary staging repositories which can then be used to
-      test and certify a set of artifacts before they are published to a final
-      release repository. The Staging Suite provides a mechanism for
-      administrators to publish sets of artifacts that can be promoted or
-      dropped depending on some release certification or testing
-      procedure.</para>
+      process. There is no chance to test the artifact before writing the
+      artifact to a hosted repository. If there is a mistake in the release,
+      often the only option available is to republish the artifacts to the
+      release repository or deploy a new version of the artifacts.</para>
 
       <figure>
         <title>Without the Nexus Staging Suite</title>
@@ -58,17 +60,79 @@
         </mediaobject>
       </figure>
 
-      <para>With the Staging Suite, when a developer deploys an artifact,
-      Nexus will consult a set of Staging Profiles and automatically intercept
-      the artifacts to be deployed. The Nexus Staging Suite intercepts the
-      initial deployment using a Repository Target and creates a new temporary
-      staging repository. The Staging Suite will then create a temporary,
-      read-only staging repository and notify the appropriate Nexus users that
-      a deployment has been staged. A staging administrator can then manage
-      the availability of the staging repository and accept or reject the
-      contents once they have been made available for testing. If the
-      artifacts in the temporary staging repository are promoted, these
-      artifacts are then published to the target repository.</para>
+      <para>While this is acceptable for some users, organizations and
+      enterprises with a QA cycle often need a temporary staging repository
+      for potential release candidates: a staging repository. With the Nexus
+      Staging Suite, an organization can automatically stage releases to a
+      temporary repository which can then be used to test and certify a set of
+      artifacts before they are published to a final release repository. This
+      temporary repository can then be promoted as a whole or dropped
+      depending on the results of testing.</para>
+    </section>
+
+    <section id="staging-sect-how">
+      <title>How the Staging Suite Works</title>
+
+      <para>Here's how staging works in Nexus Professional:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>A developer deploys an artfiact (or a set of artifacts) to
+          Nexus Professional.</para>
+        </listitem>
+
+        <listitem>
+          <para>The Staging Suite intercepts this deployment and matches the
+          artifact's path against a set of Staging Profiles.</para>
+        </listitem>
+
+        <listitem>
+          <para>If the path of the artifact activates a staging profile, a
+          temporary staging repository is created and the artifacts are
+          deployed to this repository.</para>
+        </listitem>
+
+        <listitem>
+          <para>Once the developer has deployed a set of artifacts to Nexus,
+          they will then "Close" the staging repository.</para>
+        </listitem>
+
+        <listitem>
+          <para>The Staging Suite will then add this temporary staging
+          repository to one or more Target Repository Groups.</para>
+        </listitem>
+      </orderedlist>
+
+      <para>Once the staging repository is closed, and the staging repository
+      has been added to a Target repository group, the artifacts in the
+      staging repository are then made available to developers or testers via
+      a repository group. Tests can be performed on the artifacts as if they
+      were already published in a hosted repository. From this point, one of
+      two things can happen to a staging repository:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Promote</term>
+
+          <listitem>
+            <para>A Nexus user can "promote" a staging repository and select a
+            hosted repository to publish artifacts to. Promoting the
+            repository publishes all artifacts from the staging repository to
+            a hosted repository and deletes the temporary staging
+            repository.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Drop</term>
+
+          <listitem>
+            <para>A Nexus user can "drop" a staging repository. Dropping a
+            staging repository will remove it from any groups and delete the
+            temporary staging repository.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
 
       <figure>
         <title>With Nexus Staging Suite</title>
@@ -88,22 +152,21 @@
     </section>
   </section>
 
-  <section id="staging-sect-install">
-    <title>Installing the Nexus Staging Suite</title>
+  <section id="staging-sect-using">
+    <title>Using the Nexus Staging Suite</title>
 
     <para><indexterm>
         <primary>staging</primary>
 
         <secondary>installation of</secondary>
-      </indexterm>If you installed Nexus Professional, the Nexus Staging Suite
-    is already installed. Just start Nexus and look for the Staging and
-    Staging Upload options in the left-hand navigation menu of the Nexus
-    interface. If you see these two links as shown in <xref
-    linkend="fig-staging-links" />, the Staging Suite is available and ready
-    to be configured.</para>
+      </indexterm>To use the Staging Suite in Nexus Professional, start Nexus
+    and look for the Staging, Staging Ruleset, and Staging Upload options in
+    the left-hand navigation menu of the Nexus interface. If you see these two
+    links as shown in <xref linkend="fig-staging-links" />, the Staging Suite
+    is available and ready to be configured.</para>
 
     <figure id="fig-staging-links">
-      <title>.*Enterprise Menu after Staging Suite Installation</title>
+      <title>Enterprise Menu after Staging Suite Installation</title>
 
       <mediaobject>
         <imageobject role="web">
@@ -126,60 +189,44 @@
         <primary>staging</primary>
 
         <secondary>configuration of</secondary>
-      </indexterm>The Nexus Staging Suite consists of two configurable parts:
-    Staging Profiles and Staging Repositories. Staging Profiles define the
-    rules by which artifact deployments are staged in Staging Repositories.
-    Staging Repositories are created as they are needed and are the primary
-    mechanism by which Nexus users can promote or discard the contents of a
-    staging repository to a hosted repository.</para>
+      </indexterm>Staging Profiles define the rules by which artifact
+    deployments are staged in Staging Repositories. Staging Repositories are
+    created as they are needed and are the primary mechanism by which Nexus
+    users can promote or discard the contents of a staging repository to a
+    hosted repository. A staging profile uses a Repository Target to match
+    artifacts as they are deployed, if a matching artifact is deployed to
+    Nexus, the Staging Suite will intercept this deployment and store the
+    artifact in a staging repository.</para>
 
-    <section id="staging-sect-deploy-role">
-      <title>Adding the Staging Deployer Role</title>
+    <para>The process for configuring a new Staging Profile is as
+    follows:</para>
 
-      <para><indexterm>
-          <primary>staging</primary>
+    <orderedlist>
+      <listitem>
+        <para>Configure a Repository Target to match artifacts under the
+        groupId you will be deploying artifacts to. If you are releasing all
+        of your software under the groupId com.example, you would configure a
+        target that matched the pattern ".*/com/example/.*".</para>
+      </listitem>
 
-          <secondary>staging deployer role</secondary>
-        </indexterm>To trigger a staged deployment, the deployment user needs
-      to have the "Staging: Deployer (admin)" role or a "Staging: Deployer"
-      role for a specific Staging Profile. When you create a Staging Profile,
-      Nexus will create a new "Staging: Deployer" role for a specific Staging
-      Profile. To configure the deployment user with this role, click on Users
-      under the Security menu in the Nexus menu. Once you see the Users panel,
-      click on the deployment user to edit this user's roles. If the Staging
-      Suite is installed, you should see the "Staging: Deployer (admin)" role
-      listed in Available Roles. Select the "Staging: Deployer (admin)" role
-      and then click the left arrow to add this role to the deployment user's
-      list of assigned roles.</para>
+      <listitem>
+        <para>Create a new Staging Profile using the target defined in the
+        previous step. When you configure this staging profile, you will be
+        defining a target repository group. When the Staging Suite intercepts
+        an artifact and places it in a staging repository, this staging
+        repository will be added to the target group.</para>
+      </listitem>
 
-      <figure id="fig-staging-assigning-role">
-        <title>Assigning the Staging Deployer Role to the deployment
-        user</title>
+      <listitem>
+        <para>Assign the appropriate Staging-specific roles to the appropriate
+        users. When you create a Staging Profile, Nexus also creates two new
+        roles that grant access and privileges to the repositories created by
+        this Staging Profile.</para>
+      </listitem>
+    </orderedlist>
 
-        <mediaobject>
-          <imageobject role="web">
-            <imagedata fileref="figs/web/staging_deployer-role.png" />
-          </imageobject>
-
-          <imageobject role="print">
-            <imagedata align="center"
-                       fileref="figs/print/staging_deployer-role.pdf"
-                       scalefit="0" width="100%" />
-          </imageobject>
-        </mediaobject>
-      </figure>
-
-      <para>Once the deployment user has the "Staging: Deployer (admin)" role,
-      you can then use this user to deploy to the staging URL and trigger any
-      Staging Profile. Without this permission, the deployment user would not
-      be able to publish a staged artifact. If you need to add a specific
-      permission to activate a single Staging Profile, you would select that
-      specific role in the Available Roles list shown in <xref
-      linkend="fig-staging-assigning-role" />. In this figure, note that there
-      are two "Staging: Deployer" roles: one for general administrative
-      permission to deploy to any staging profile, and another which targets a
-      specific staging profile.</para>
-    </section>
+    <para>The following sections provide a more detailed look at the process
+    of configuring a single staging profile in Nexus Professional.</para>
 
     <section id="staging-sect-define-target">
       <title>Configuring a Staging Target</title>
@@ -228,6 +275,15 @@
       Clicking on Add will create a new Staging Profile and display the form
       shown in <xref linkend="fig-staging-edit-profile" />.</para>
 
+      <para>In the following figure, you are creating a Staging Profile using
+      the Repository Target defined in the previous section. This target will
+      match all artifacts under the com.sonatype.sample groupId (or
+      com/sonatype/sample path). This staging profile uses the "Maven2 Hosted
+      Release Repository" as a template for newly created temporary staging
+      repositories, and it will automatically add closed staging repositories
+      to both the Public Repositories group and the Public Snapshot
+      Repositories group.</para>
+
       <figure id="fig-staging-edit-profile">
         <title>Editing a Staging Profile</title>
 
@@ -244,10 +300,10 @@
         </mediaobject>
       </figure>
 
-      <para>This form allows you to configure a profile, the configuration
-      element which is going to control which artifacts are intercepted and
-      used to create Staging Repositories. Staging profiles contain the
-      following fields:</para>
+      <para>This form allows you to configure a profile. Every profile has a
+      name, is associated with a Repository Target, and points to a template
+      to use when creating a new staging repository. The Staging Profile
+      configuration panel contains the following fields:</para>
 
       <variablelist>
         <varlistentry>
@@ -255,7 +311,10 @@
 
           <listitem>
             <para>The Name of the Staging Profile. This can be an arbitrary
-            value, it is just a convenience for the Nexus Administrator</para>
+            value. It is simply a convenience for the Nexus Administrator, and
+            it is also used to create Nexus roles that are used to grant
+            permissions to view and manipulate staging repositories created by
+            this profile.</para>
           </listitem>
         </varlistentry>
 
@@ -266,7 +325,7 @@
             <para>This is a reference to the target which we defined in <xref
             linkend="staging-sect-define-target" />. When a developer deploys
             an artifact to the Staging URL, the Staging Suite will check to
-            see if artifact matches the patterns defined in the Repository
+            see if the artifact matches the patterns defined in the Repository
             Target. The Target defines the "trigger" for the creation of a
             Staging Repository.</para>
           </listitem>
@@ -336,7 +395,19 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Promote Repository Staging Rulesets</term>
+          <term>Close Staging Repository Rulesets</term>
+
+          <listitem>
+            <para>This defines the rulesets which will be applied to a staging
+            repository before it can be closed. If the repository does not
+            pass the rules defined in the promotion rulesets, you will be
+            unable to close a staging repository. For more information about
+            rulesets, see <xref linkend="staging-sect-rulesets" />.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Promote Staging Repository Rulesets</term>
 
           <listitem>
             <para>This defines the rulesets which will be applied to a staging
@@ -353,6 +424,107 @@
       <xref linkend="fig-staging-edit-profile" />, you are ready to perform a
       test deployment to the Staging URL.</para>
     </section>
+
+    <section id="staging-sect-deploy-role">
+      <title>Adding the Staging Deployer Role</title>
+
+      <para><indexterm>
+          <primary>staging</primary>
+
+          <secondary>staging deployer role</secondary>
+        </indexterm>To perform a staged deployment, the user deploying the
+      artifact must have the "Staging: Deployer (admin)" role or a "Staging:
+      Deployer" role for a specific Staging Profile.</para>
+
+      <para>When you create a Staging Profile, Nexus will create two new Nexus
+      roles that grant permissions specific to that staging profile. If you
+      created the Staging profile from the previous section, Nexus would have
+      created two roles:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>"Staging: Repositories (Release Staging Profile)"</term>
+
+          <listitem>
+            <para>This role grants a user read and view access to the staging
+            repositories created by a specific staging profile.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>"Staging: Deployer (Release Staging Profile)"</term>
+
+          <listitem>
+            <para>This role grants all of the privileges from the Staging:
+            Repositories role and it grants the user permission to deploy
+            artifacts, close a staging repository, and promote a staging
+            repository.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>In addition to the profile-specific staging roles, the Staging
+      Suite also defines two universal roles which grant read-only or deployer
+      rights across all staging repositories. These roles are:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>"Staging: Repositories (admin)"</term>
+
+          <listitem>
+            <para>This role grants a user read and view access to all staging
+            repositories.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>"Staging: Deployer (admin)</term>
+
+          <listitem>
+            <para>This role grants a user all of the privileges from the
+            Staging: Repositories role and it grants the user permission to
+            deploy artifacts to any staging repository, close all staging
+            repositories, and promote all staging repositories.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>To configure the deployment user with the appropriate staging
+      role, click on Users under the Security menu in the Nexus menu. Once you
+      see the Users panel, click on the deployment user to edit this user's
+      roles. If the Staging Suite is installed, you should see the "Staging:
+      Deployer (admin)" role listed in Available Roles. Select the "Staging:
+      Deployer (admin)" role and then click the left arrow to add this role to
+      the deployment user's list of assigned roles.</para>
+
+      <figure id="fig-staging-assigning-role">
+        <title>Assigning the Staging Deployer Role to the deployment
+        user</title>
+
+        <mediaobject>
+          <imageobject role="web">
+            <imagedata fileref="figs/web/staging_deployer-role.png" />
+          </imageobject>
+
+          <imageobject role="print">
+            <imagedata align="center"
+                       fileref="figs/print/staging_deployer-role.pdf"
+                       scalefit="0" width="100%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>Once the deployment user has the "Staging: Deployer (admin)" role,
+      you can then use this user to deploy to the staging URL and trigger any
+      Staging Profile. Without this permission, the deployment user would not
+      be able to publish a staged artifact. If you need to add a specific
+      permission to activate a single Staging Profile, you would select that
+      specific role in the Available Roles list shown in <xref
+      linkend="fig-staging-assigning-role" />. In this figure, note that there
+      are two "Staging: Deployer" roles: one for general administrative
+      permission to deploy to any staging profile, and another which targets a
+      specific staging profile.</para>
+    </section>
   </section>
 
   <section id="staging-sect-deployment">
@@ -367,9 +539,14 @@
     linkend="staging-sect-define-target" />. If the Staging Suite is
     configured correctly, any deployment to the staging URL under the groupId
     com.sonatype.sample should be intercepted by the Staging Suite and placed
-    in a temporary staging repository. In this section, you will create a new
-    project using the Archetype plugin to test the Staging Profile created in
-    the previous section.</para>
+    in a temporary staging repository. Once this repository has been closed,
+    it will be made available in the Target Group you selected when you
+    configured the Staging Profile in <xref
+    linkend="staging-sect-config-profile" />.</para>
+
+    <para>In this section, you will create a new project using the Maven
+    Archetype plugin to test the Staging Profile you created in the previous
+    section.</para>
 
     <section id="staging-sect-creating">
       <title>Creating a New Project</title>
@@ -377,7 +554,7 @@
       <para>To create a new project run <command>mvn
       archetype:generate</command>. Running this at the command line will
       bring up a list of archetypes, choose the default
-      maven-archetype-quickstart or number 15, and use the identifier values
+      maven-archetype-quickstart or number 16, and use the identifier values
       listed in <xref linkend="tbl-staging-new-project" /> for the new
       project.</para>
 
@@ -435,7 +612,7 @@ Choose archetype:
    web application with Hibernate, Spring and JSF)
 ...
 41: internal -&gt; gmaven-archetype-mojo (Groovy mojo archetype)
-Choose a number:  (1/.../41) 15: : <command>15</command>
+Choose a number:  (1/.../41) 16: : <command>16</command>
 Define value for groupId: : <command>com.sonatype.sample</command>
 Define value for artifactId: : <command>staging-test</command>
 Define value for version:  1.0-SNAPSHOT: : <command>1.0</command>
@@ -618,7 +795,7 @@ Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
     </section>
   </section>
 
-  <section>
+  <section id="staging-sect-uploading-staged">
     <title>Uploading a Staged Deployment in Nexus</title>
 
     <para><indexterm>
@@ -667,7 +844,7 @@ Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
     uploaded. If you would prefer to set the Group, Artifact, and Version from
     a POM file which was associated with the uploaded artifact, select From
     POM in the GAV Definition dropdown. Selecting From POM in this dropdown
-    will expose a button labelled "Select POM to Upload". Once a POM file has
+    will expose a button labeled "Select POM to Upload". Once a POM file has
     been selected for upload, the name of the POM file will be displayed in
     the form field below this button.</para>
 
@@ -840,7 +1017,7 @@ Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
       Rulesets section of the Staging Profile configuration as shown in <xref
       linkend="fig-staging-associate-ruleset" />. The next time you attempt to
       promote a staging repository that was created with this profile, Nexus
-      Professional was check that all of the rules in the associated rulesets
+      Professional will check that all of the rules in the associated rulesets
       are being adhered to.<figure id="fig-staging-associate-ruleset">
           <title>Associating a Staging Ruleset with a Staging Profile</title>
 
@@ -971,7 +1148,7 @@ Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
       </figure>
     </section>
 
-    <section id="staging-sect-using">
+    <section id="staging-sect-using-repository">
       <title>Using the Staging Repository</title>
 
       <para><indexterm>
@@ -1179,7 +1356,7 @@ Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
 
     <itemizedlist>
       <listitem>
-        <para>Finish a Staging Repository</para>
+        <para>Close a Staging Repository</para>
       </listitem>
 
       <listitem>
@@ -1435,7 +1612,7 @@ Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
     </section>
 
     <section>
-      <title>Finishing an Open Staging Repository for Your Project</title>
+      <title>Closing a Staging Repository</title>
 
       <para><indexterm>
           <primary>staging</primary>
