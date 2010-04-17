@@ -41,8 +41,8 @@
    ################################################### -->
 
     <!-- Paper type, no headers on blank pages, no double sided printing -->
-    <xsl:param name="page.height" select="'9.681in'"/>
-    <xsl:param name="page.width" select="'7.444in'"/>
+    <xsl:param name="page.height" select="'11.00in'"/>
+    <xsl:param name="page.width" select="'8.5in'"/>
     <xsl:param name="headers.on.blank.pages">0</xsl:param>
     <xsl:param name="footers.on.blank.pages">0</xsl:param>
 
@@ -53,10 +53,10 @@
     <xsl:param name="body.margin.bottom">0.4in</xsl:param>
     <xsl:param name="region.after.extent">0.3in</xsl:param>
 
-	<xsl:param name="page.margin.bottom" select="'0.75in'" />
-	<xsl:param name="page.margin.top" select="'0.75in'" />
-	<xsl:param name="page.margin.inner" select="'0.875in'" />
-	<xsl:param name="page.margin.outer" select="'0.875in'" />
+	<xsl:param name="page.margin.bottom" select="'0.50in'" />
+	<xsl:param name="page.margin.top" select="'0.50in'" />
+	<xsl:param name="page.margin.inner" select="'0.60in'" />
+	<xsl:param name="page.margin.outer" select="'0.60in'" />
 
     <xsl:param name="body.start.indent" select="'0pt'" />
 
@@ -211,7 +211,7 @@
    ################################################### -->
 
     <!-- The table width should be adapted to the paper size -->
-    <xsl:param name="default.table.width">5.25in</xsl:param>
+    <xsl:param name="default.table.width">6.80in</xsl:param>
 
     <!-- Some padding inside tables -->
     <xsl:attribute-set name="table.cell.padding">
