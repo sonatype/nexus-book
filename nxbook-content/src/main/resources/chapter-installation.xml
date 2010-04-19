@@ -108,11 +108,10 @@
           <primary>Nexus Professional</primary>
 
           <secondary>evaluation</secondary>
-        </indexterm>evaluation license, you will be redirected to a page which
-      will start the download of the Nexus Professional distribution. Nexus is
-      available as a <acronym>ZIP</acronym> and a Gzip'd
-      <acronym>TAR</acronym> file under the file names
-      <filename>${nexus.bundle.name}.zip</filename> and
+        </indexterm>evaluation license, you will be sent an email with a link
+      to download the Nexus Professional distribution. Nexus is available as a
+      <acronym>ZIP</acronym> and a Gzip'd <acronym>TAR</acronym> file under
+      the file names <filename>${nexus.bundle.name}.zip</filename> and
       <filename>${nexus.bundle.name}.tgz</filename>.</para>
 
       <figure id="fig-installing_pro-dl">
@@ -349,6 +348,68 @@ $ <command>ln -s ${nexus.version.name} nexus</command></screen>
       to
       <filename>sonatype-work/nexus/conf/log4j.properties</filename>.</para>
     </note>
+
+    <section id="installation-sect-upgrading-160">
+      <title>Upgrading to Nexus 1.6</title>
+
+      <para>Sonatype has changed the location of configuration files for the
+      Java Service Wrapper startup scripts. You can see these differences if
+      you list the contents of <filename>\${NEXUS_HOME}/bin/jsw</filename>. On
+      a Nexus 1.5 installation you would see this:</para>
+
+      <screen>/usr/local/nexus-professional-webapp-1.5.0 $ <command>ls ./bin/jsw/</command>
+jsw-license/         linux-x86-64/        solaris-sparc-64/
+linux-ppc-64/        macosx-universal-32/ solaris-x86-32/
+linux-x86-32/        solaris-sparc-32/    windows-x86-32/</screen>
+
+      <para>Now, on a Nexus 1.6 installation, the same directory contains
+      different configuration folders and platform options:</para>
+
+      <screen>/usr/localnexus-professional-webapp-1.6.0 $ <command>ls ./bin/jsw/</command>
+conf/                linux-x86-32/        solaris-sparc-32/
+lib/                 linux-x86-64/        solaris-sparc-64/
+license/             macosx-universal-32/ solaris-x86-32/
+linux-ppc-64/        macosx-universal-64/ windows-x86-32/</screen>
+
+      <para>If you are upgrading from a Nexus 1.5 instance to a Nexus 1.6
+      instance you will need to make sure that you are using the latest
+      "nexus" script in the appropriate platform folder. If you previously
+      installed Nexus on a Linux system and copied the
+      <filename>./bin/jsw/(platform)/nexus</filename> startup script to the
+      <filename>/etc/init.d</filename> directory you will need to make sure
+      that you copy the newer version of this nexus script (or create a
+      symbolic link to the newer version of the script).</para>
+
+      <para>If you've made customizations to your startup script, you will
+      need to replace your customized startup script with the script from
+      Nexus 1.6. The important configuration parameter to update is
+      <varname>WRAPPER_CONF</varname>. In a Nexus 1.5 installation, the
+      <varname>WRAPPER_CONF</varname> has the following value:</para>
+
+      <screen>WRAPPER_CONF="../../../conf/wrapper.conf"</screen>
+
+      <para>This should be changed to the following value in Nexus 1.6:</para>
+
+      <screen>WRAPPER_CONF="../conf/wrapper.conf"</screen>
+
+      <warning>
+        <para>It is not appropriate copy your existing
+        <filename>wrapper.conf</filename> over the new
+        <filename>wrapper.conf</filename> in 1.6.0. Sonatype has made
+        significant changes to the configuration parameters and paths which
+        are configured in the new <filename>wrapper.conf</filename>. If you
+        have a customized wrapper.conf file, Sonatype recommends that you
+        compare the existing file with the new
+        <filename>wrapper.conf</filename> file shipped with Nexus 1.6.0 and
+        merge each customization manually.</para>
+      </warning>
+
+      <para>In addition to this simple configuration change, you should also
+      take note of the additional platform now available in the
+      <filename>./bin/jsw</filename> directory: macosx-universal-64. If you
+      are running Nexus on a 64-bit OSX platform, you should start using this
+      startup script instead of macosx-universal-32.</para>
+    </section>
   </section>
 
   <section id="install-sect-running">
