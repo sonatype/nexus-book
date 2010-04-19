@@ -352,10 +352,10 @@ $ <command>ln -s ${nexus.version.name} nexus</command></screen>
     <section id="installation-sect-upgrading-160">
       <title>Upgrading to Nexus 1.6</title>
 
-      <para>We've changed the location of configuration files for the Java
-      Service Wrapper startup scripts. You can see these differences if you
-      list the contents of <filename>\${NEXUS_HOME}/bin/jsw</filename>. On a
-      Nexus 1.5 installation you would see this:</para>
+      <para>Sonatype has changed the location of configuration files for the
+      Java Service Wrapper startup scripts. You can see these differences if
+      you list the contents of <filename>\${NEXUS_HOME}/bin/jsw</filename>. On
+      a Nexus 1.5 installation you would see this:</para>
 
       <screen>/usr/local/nexus-professional-webapp-1.5.0 $ <command>ls ./bin/jsw/</command>
 jsw-license/         linux-x86-64/        solaris-sparc-64/
@@ -380,8 +380,9 @@ linux-ppc-64/        macosx-universal-64/ windows-x86-32/</screen>
       that you copy the newer version of this nexus script (or create a
       symbolic link to the newer version of the script).</para>
 
-      <para>If you've made customizations to your startup script, the
-      important configuration parameter to update is
+      <para>If you've made customizations to your startup script, you will
+      need to replace your customized startup script with the script from
+      Nexus 1.6. The important configuration parameter to update is
       <varname>WRAPPER_CONF</varname>. In a Nexus 1.5 installation, the
       <varname>WRAPPER_CONF</varname> has the following value:</para>
 
@@ -390,6 +391,18 @@ linux-ppc-64/        macosx-universal-64/ windows-x86-32/</screen>
       <para>This should be changed to the following value in Nexus 1.6:</para>
 
       <screen>WRAPPER_CONF="../conf/wrapper.conf"</screen>
+
+      <warning>
+        <para>It is not appropriate copy your existing
+        <filename>wrapper.conf</filename> over the new
+        <filename>wrapper.conf</filename> in 1.6.0. Sonatype has made
+        significant changes to the configuration parameters and paths which
+        are configured in the new <filename>wrapper.conf</filename>. If you
+        have a customized wrapper.conf file, Sonatype recommends that you
+        compare the existing file with the new
+        <filename>wrapper.conf</filename> file shipped with Nexus 1.6.0 and
+        merge each customization manually.</para>
+      </warning>
 
       <para>In addition to this simple configuration change, you should also
       take note of the additional platform now available in the
