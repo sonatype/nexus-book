@@ -3,13 +3,22 @@
   <parent>
 	<groupId>org.sonatype.nexusbook</groupId>
 	<artifactId>nxbook-parent</artifactId>
-	<version>2.2.1</version>
+	<version>2.2</version>
   </parent>
-  <artifactId>nxbook-eclipse</artifactId>
+  <artifactId>nxbook-html</artifactId>
   <packaging>jar</packaging>
-  <name>Repository Management with Nexus (Eclipse Book)</name>
+  <name>Repository Management with Nexus (HTML)</name>
   <description>A book about Sonatype Nexus</description>
   <build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>html_chunk.xsl</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.cjcook</groupId>
@@ -39,19 +48,29 @@
 				</dependencies>
 				<executions>
 					<execution>
-						<id>generate-eclipse</id>
+						<id>generate-html</id>
 						<phase>compile</phase>
 						<goals>
-							<goal>generate-eclipse</goal>
+							<goal>generate-html</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
+					<htmlCustomization>${basedir}/target/classes/html_chunk.xsl</htmlCustomization>
 					<sourceDirectory>${basedir}/target/docbook</sourceDirectory>
-					<targetDirectory>${basedir}/target/eclipse</targetDirectory>
+					<targetDirectory>${basedir}/target/html</targetDirectory>
 					<includes>book-nexus.xml</includes>
 					<xincludeSupported>true</xincludeSupported>
-					<imgSrcPath>${basedir}/target/docbook/</imgSrcPath>
+					<chunkedOutput>true</chunkedOutput>
+					<chunkSectionDepth>1</chunkSectionDepth>
+					<postProcess>
+						<copy todir="${project.build.directory}/html/images">
+							<fileset dir="${basedir}/src/main/resources/images" />
+						</copy>
+						<copy todir="${project.build.directory}/html/figs/web">
+							<fileset dir="target/docbook/figs/web" />
+						</copy>
+					</postProcess>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -76,14 +95,22 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+				  <classesDirectory>${basedir}/target/html</classesDirectory>
+				</configuration>
+			</plugin>
 		</plugins>
+
   </build>
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>nxbook-content</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>nxbook-content</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 
 </project>
