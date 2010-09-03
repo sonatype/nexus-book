@@ -442,10 +442,10 @@
             </varlistentry>
 
             <varlistentry>
-              <term>Central Maven Repository</term>
+              <term>Maven Central Repository</term>
 
               <listitem>
-                <para>This is the central Maven repository (for releases).
+                <para>This is the central repository (for releases).
                 http://repo1.maven.org/maven2/</para>
               </listitem>
             </varlistentry>
@@ -687,7 +687,7 @@
                 setting for one of the proxy repositories that ship with
                 Nexus, change the option, save the repository, and then
                 re-index the repository. Once this is done, artifact search
-                will return every artifact available on the Central Maven
+                will return every artifact available on the Maven Central
                 repository.</para>
               </listitem>
             </varlistentry>
@@ -1118,7 +1118,7 @@
     combine multiple repositories and other repository groups in a single URL.
     Nexus ships with two groups: public and public-snapshots. The public group
     combines the three hosted repositories: 3rd Party, Releases, and Snapshots
-    with the Central Maven repository. The public-snapshots repository
+    with the Maven Central repository. The public-snapshots repository
     combines the Apache Snapshots and Codehaus Snapshots repositories.
     <indexterm>
         <primary>Apache Maven</primary>
@@ -1161,10 +1161,10 @@
     in the list than snapshot repositories so that LATEST and RELEASE versions
     are merged appropriately. We also recommend placing repositories with a
     higher probability of matching the majority of artifacts higher in this
-    list. If most of your artifacts are going to be retrieved from the Central
-    Maven Repository, putting Central higher in this list than a smaller, more
-    focused repository is going to be better for performance as Nexus is not
-    going to interrogate the smaller remote repository for as many missing
+    list. If most of your artifacts are going to be retrieved from the Maven
+    Central Repository, putting Central higher in this list than a smaller,
+    more focused repository is going to be better for performance as Nexus is
+    not going to interrogate the smaller remote repository for as many missing
     artifacts.</para>
   </section>
 
@@ -1308,7 +1308,7 @@
     com.somecompany, and if you deploy internally generated artifacts to the
     Releases and Snapshots repositories, this Route will make sure that Nexus
     doesn't waste time trying to resolve these artifacts from public Maven
-    repositories like the Central Maven Repository or the Apache Snapshots
+    repositories like the Maven Central Repository or the Apache Snapshots
     repository.</para>
 
     <para><indexterm>
@@ -1344,8 +1344,8 @@
     the <indexterm>
         <primary>public repository</primary>
 
-        <secondary>Central Maven</secondary>
-      </indexterm>Central Maven repository from all searches for your own
+        <secondary>Maven Central</secondary>
+      </indexterm>Maven Central repository from all searches for your own
     organization's hosted artifacts. If you are deploying your own artifacts
     to Nexus under a <varname>groupId</varname> of
     <varname>org.mycompany</varname>, and if you are not deploying these
@@ -1369,69 +1369,33 @@
   </section>
 
   <section id="config-sect-scheduled-services">
-    <title>Managing Scheduled Services</title>
+    <title>Managing Scheduled Tasks</title>
 
     <para><indexterm>
-        <primary>scheduled service</primary>
+        <primary>scheduled task</primary>
 
         <secondary>management of</secondary>
       </indexterm>Nexus allows you to schedule tasks that will be applied to
     all repositories or to specific repositories on a configurable schedule.
-    You can create the following kinds of scheduled services:</para>
+    You can create the following kinds of scheduled tasks:</para>
 
     <variablelist>
       <varlistentry>
         <term><indexterm>
-            <primary>scheduled service</primary>
+            <primary>scheduled task</primary>
 
-            <secondary>removing snapshots</secondary>
-          </indexterm>Remove Snapshots from a Repository</term>
+            <secondary>download indexes</secondary>
+          </indexterm>Download Indexes</term>
 
         <listitem>
-          <para>Often, you will want to remove snapshots from a snapshot
-          repository to preserve storage space. When you create a scheduled
-          service to remove snapshots, you can specify:</para>
-
-          <itemizedlist>
-            <listitem>
-              <para>Minimum Snapshots to preserve in a repository</para>
-            </listitem>
-
-            <listitem>
-              <para>Snapshot Retention (in days)</para>
-            </listitem>
-
-            <listitem>
-              <para>Whether snapshots should be removed if an artifact has
-              been released</para>
-            </listitem>
-          </itemizedlist>
+          <para>This scheduled task will cause Nexus to download indexes from
+          remote repositories.</para>
         </listitem>
       </varlistentry>
 
       <varlistentry>
         <term><indexterm>
-            <primary>scheduled service</primary>
-
-            <secondary>clear cache</secondary>
-          </indexterm><indexterm>
-            <primary>clearing cache</primary>
-          </indexterm>Clear Repository Caches</term>
-
-        <listitem>
-          <para>Nexus maintains information about a proxied remote repository
-          to avoid unnecessary network traffic. Clear cache simply expires the
-          artifacts so next time they are requested, Nexus will recheck the
-          remote. This scheduled job clears all cached information about a
-          remote repository stored in your installation of Nexus, and forces
-          Nexus to retrieve artifacts and information from the remote
-          repository.</para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
-        <term><indexterm>
-            <primary>scheduled service</primary>
+            <primary>scheduled task</primary>
 
             <secondary>empty trash</secondary>
           </indexterm><indexterm>
@@ -1448,14 +1412,14 @@
 
       <varlistentry>
         <term><indexterm>
-            <primary>scheduled service</primary>
+            <primary>scheduled task</primary>
 
             <secondary>evict unused items</secondary>
           </indexterm>Evict Unused Proxied Items From Repository Caches</term>
 
         <listitem>
-          <para>Use it or lose it. This scheduled service tells Nexus to get
-          rid of all proxied items which haven't been "used" (referenced or
+          <para>Use it or lose it. This scheduled task tells Nexus to get rid
+          of all proxied items which haven't been "used" (referenced or
           retrieved by a client). This can be a good job to run if you are try
           to conserve storage space. In this service you can specify the
           number of days over which Nexus will look for activity before making
@@ -1465,7 +1429,7 @@
 
       <varlistentry>
         <term><indexterm>
-            <primary>scheduled service</primary>
+            <primary>scheduled task</primary>
 
             <secondary>optimize repository index</secondary>
           </indexterm>Optimize Repository Index</term>
@@ -1480,7 +1444,7 @@
 
       <varlistentry>
         <term><indexterm>
-            <primary>scheduled service</primary>
+            <primary>scheduled task</primary>
 
             <secondary>publish index</secondary>
           </indexterm><indexterm>
@@ -1497,7 +1461,7 @@
 
       <varlistentry>
         <term><indexterm>
-            <primary>scheduled service</primary>
+            <primary>scheduled task</primary>
 
             <secondary>purge timeline</secondary>
           </indexterm><indexterm>
@@ -1510,7 +1474,7 @@
           <para>Nexus maintains a lot of data that relates to the interaction
           between itself, proxied remote repositories, and clients on Nexus.
           While this information can be important for purposes of auditing, it
-          can also take up storage space. Using this scheduled service you can
+          can also take up storage space. Using this scheduled task you can
           tell Nexus to periodically purge this information. (See note about
           deletion.)</para>
         </listitem>
@@ -1518,13 +1482,13 @@
 
       <varlistentry>
         <term><indexterm>
-            <primary>scheduled service</primary>
+            <primary>scheduled task</primary>
 
             <secondary>rebuild attributes</secondary>
           </indexterm>Rebuild Repository Attributes</term>
 
         <listitem>
-          <para>This scheduled service tells Nexus to walk every file in a
+          <para>This scheduled task tells Nexus to walk every file in a
           repository and gather information like checksums and file contents
           for every file.</para>
         </listitem>
@@ -1532,7 +1496,7 @@
 
       <varlistentry>
         <term><indexterm>
-            <primary>scheduled service</primary>
+            <primary>scheduled task</primary>
 
             <secondary>reindex repositories</secondary>
           </indexterm><indexterm>
@@ -1546,7 +1510,36 @@
 
       <varlistentry>
         <term><indexterm>
-            <primary>scheduled service</primary>
+            <primary>scheduled task</primary>
+
+            <secondary>removing snapshots</secondary>
+          </indexterm>Remove Snapshots from a Repository</term>
+
+        <listitem>
+          <para>Often, you will want to remove snapshots from a snapshot
+          repository to preserve storage space. When you create a scheduled
+          task to remove snapshots, you can specify:</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>Minimum Snapshots to preserve in a repository</para>
+            </listitem>
+
+            <listitem>
+              <para>Snapshot Retention (in days)</para>
+            </listitem>
+
+            <listitem>
+              <para>ffWhether snapshots should be removed if an artifact has
+              been released</para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><indexterm>
+            <primary>scheduled task</primary>
 
             <secondary>synchronize shadow</secondary>
           </indexterm>Synchronize Shadow Repository</term>
@@ -1577,12 +1570,12 @@
     "Advanced" which will allow you to supply your own cron expression to
     specify when the job should execute.</para>
 
-    <para>To create a new scheduled service, click on Scheduled Services under
-    the Administration menu, and click on the Add button. This will bring up
-    the screen shown in <xref linkend="fig-repomap-scheduled" />.</para>
+    <para>To create a new scheduled task, click on Scheduled Tasks under the
+    Administration menu, and click on the Add button. This will bring up the
+    screen shown in <xref linkend="fig-repomap-scheduled" />.</para>
 
     <figure id="fig-repomap-scheduled">
-      <title>Managing Nexus Scheduled Services</title>
+      <title>Managing Nexus Scheduled Tasks</title>
 
       <mediaobject>
         <imageobject role="web">
@@ -1598,7 +1591,7 @@
     </figure>
 
     <section>
-      <title>Managing Configuration Backups with a Scheduled Service</title>
+      <title>Managing Configuration Backups with a Scheduled Task</title>
 
       <para><indexterm>
           <primary>Nexus administration</primary>
@@ -1606,9 +1599,9 @@
           <secondary>configuration backups</secondary>
         </indexterm><indexterm>
           <primary>configuration backup</primary>
-        </indexterm>Nexus Professional includes a scheduled service which
-      allows you to create automated, scheduled backups of your Nexus
-      configuration. This scheduled job will archive the contents of the
+        </indexterm>Nexus Professional includes a scheduled task which allows
+      you to create automated, scheduled backups of your Nexus configuration.
+      This scheduled job will archive the contents of the
       sonatype-work/nexus/conf directory. <xref
       linkend="fig-configuring-schedule-conf-backup" /> shows a scheduled
       configuration backup job configured to backup the contents of the Nexus
@@ -2081,72 +2074,72 @@ work=\${runtime}/work
 webapp=\${runtime}/apps/nexus/webapp
 nexus.configuration=\${runtime}/apps/nexus/conf/nexus.xml</programlisting>
     </example>
+  </section>
 
-    <section id="configuring-sect-log">
-      <title>Nexus Logging Configuration</title>
+  <section id="configuring-sect-log">
+    <title>Nexus Logging Configuration</title>
 
-      <para><indexterm>
-          <primary>log configuration</primary>
-        </indexterm><indexterm>
-          <primary>Nexus administration</primary>
+    <para><indexterm>
+        <primary>log configuration</primary>
+      </indexterm><indexterm>
+        <primary>Nexus administration</primary>
 
-          <secondary>log configuration</secondary>
-        </indexterm>You can configure the format and level of logging from
-      within the Nexus interface. To do this, click on Log Configuration under
-      the Administration menu in the left-hand navigation menu. Clicking on
-      this link will display the panel shown in <xref
-      linkend="fig-configuring-log-config" />.</para>
+        <secondary>log configuration</secondary>
+      </indexterm>You can configure the format and level of logging from
+    within the Nexus interface. To do this, click on Log Configuration under
+    the Administration menu in the left-hand navigation menu. Clicking on this
+    link will display the panel shown in <xref
+    linkend="fig-configuring-log-config" />.</para>
 
-      <figure id="fig-configuring-log-config">
-        <title>The Log Configuration Panel</title>
+    <figure id="fig-configuring-log-config">
+      <title>The Log Configuration Panel</title>
 
-        <mediaobject>
-          <imageobject role="web">
-            <imagedata fileref="figs/web/repository-manager_log-config.png" />
-          </imageobject>
+      <mediaobject>
+        <imageobject role="web">
+          <imagedata fileref="figs/web/repository-manager_log-config.png" />
+        </imageobject>
 
-          <imageobject role="print">
-            <imagedata align="center"
-                       fileref="figs/print/repository-manager_log-config.pdf"
-                       scalefit="0" width="100%" />
-          </imageobject>
-        </mediaobject>
-      </figure>
+        <imageobject role="print">
+          <imagedata align="center"
+                     fileref="figs/print/repository-manager_log-config.pdf"
+                     scalefit="0" width="100%" />
+        </imageobject>
+      </mediaobject>
+    </figure>
 
-      <para>From this panel you can configure the following logging
-      configuration properties:</para>
+    <para>From this panel you can configure the following logging
+    configuration properties:</para>
 
-      <variablelist>
-        <varlistentry>
-          <term>Root Logger Level</term>
+    <variablelist>
+      <varlistentry>
+        <term>Root Logger Level</term>
 
-          <listitem>
-            <para>This controls how verbose the Nexus logging will be. If set
-            to DEBUG, Nexus will be very verbose printing all log messages
-            include debugging statements. If set to ERROR, Nexus will be far
-            less verbose only printing out a log statement if Nexus encounters
-            an error.</para>
-          </listitem>
-        </varlistentry>
+        <listitem>
+          <para>This controls how verbose the Nexus logging will be. If set to
+          DEBUG, Nexus will be very verbose printing all log messages include
+          debugging statements. If set to ERROR, Nexus will be far less
+          verbose only printing out a log statement if Nexus encounters an
+          error.</para>
+        </listitem>
+      </varlistentry>
 
-        <varlistentry>
-          <term>File Appender Pattern</term>
+      <varlistentry>
+        <term>File Appender Pattern</term>
 
-          <listitem>
-            <para>This field controls the format of each log line. This
-            field's format corresponds to the format expected by a Log4J
-            PatternAppender. For more information about this format, refer to
-            the <ulink
-            url="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html">Javadoc
-            for Log4J's PatternAppender</ulink>.</para>
-          </listitem>
-        </varlistentry>
-      </variablelist>
+        <listitem>
+          <para>This field controls the format of each log line. This field's
+          format corresponds to the format expected by a Log4J
+          PatternAppender. For more information about this format, refer to
+          the <ulink
+          url="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html">Javadoc
+          for Log4J's PatternAppender</ulink>.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
 
-      <para>The other configuration parameters: Root Logger Appenders and File
-      Append Location, are not editable in this release of Sonatype
-      Nexus.</para>
-    </section>
+    <para>The other configuration parameters: Root Logger Appenders and File
+    Append Location, are not editable in this release of Sonatype
+    Nexus.</para>
   </section>
 
   <section id="configuring-sect-plugin-console">

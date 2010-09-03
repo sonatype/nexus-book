@@ -594,7 +594,7 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
 
               <secondary>downloading remote</secondary>
             </indexterm>Nexus ships with three important proxy repositories
-          for the Central Maven Repository, Apache Snapshot Repository, and
+          for the Maven Central Repository, Apache Snapshot Repository, and
           the Codehaus Snapshot Repository. Each of these repositories
           contains thousands (or tens of thousands) of artifacts and it would
           be impractical to download the entire contents of each. To that end,
@@ -645,8 +645,11 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
               <secondary>default password</secondary>
             </indexterm>The deployment user's password defaults to
           <varname>deployment123</varname>. Change this password to make sure
-          that no one else is deploying artifacts to your Nexus
-          installation.</para>
+          that only authorized developers can deploy artifacts to your Nexus
+          installation. To change the deployment password: log in as an
+          administrator, click on Security to expand the Security menu, then
+          click on Users. You should then see a list of users. Right-click on
+          the deployment user and select "Set Password".</para>
         </listitem>
       </varlistentry>
 
@@ -784,6 +787,17 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
               to nexus</para>
             </listitem>
           </itemizedlist>
+
+          <note>
+            <para>If you set the "RUN_AS_USER" variable, you'll have to change
+            the "pid" directory to point to a directory where this user has
+            read/write permissions. In most Linux distributions, /var/run is
+            only writable by root. The properties that would need to be added
+            to customize the PID file location is "wrapper.pid". For more
+            information about this property and how it would be configured in
+            wrapper.conf, see: <ulink
+            url="http://wrapper.tanukisoftware.com/doc/english/properties.html">http://wrapper.tanukisoftware.com/doc/english/properties.html</ulink></para>
+          </note>
         </listitem>
       </orderedlist>
 
@@ -990,11 +1004,10 @@ $ <command>tail -f /usr/local/nexus/logs/wrapper.log</command>
 
     <orderedlist>
       <listitem>
-        <para>Edit <filename>plexus.xml</filename> in
+        <para>Edit <filename>plexus.properties</filename> in
         <filename>\${NEXUS_HOME}/conf</filename>. You'll see an element named
-        <sgmltag>webappInfos</sgmltag> which contains the relevant elements.
-        Change the <sgmltag>contextPath</sgmltag> element from "/nexus" to
-        "/"</para>
+        <sgmltag>webapp-context-path</sgmltag>. Change this value from
+        "/nexus" to "/"</para>
       </listitem>
 
       <listitem>
@@ -1346,7 +1359,8 @@ ProxyPreserveHost On
             Nexus configuration, this directory is going to contain a number
             of ZIP archives that contain snapshots of Nexus configuration.
             Each ZIP file contains the contents of the
-            <filename>conf/</filename> directory.</para>
+            <filename>conf/</filename> directory. (Automated backups are a
+            feature of Nexus Professional.)</para>
           </listitem>
         </varlistentry>
 
