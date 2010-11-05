@@ -4,6 +4,7 @@
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
+                xmlns:d="http://docbook.org/ns/docbook"
                 version="1.0">
 
     <xsl:import href="urn:docbkx:stylesheet"/>
@@ -102,6 +103,11 @@
                                         or ($chunk.tocs.and.lots != 0
                                             and $nav.context != 'toc')
                                         or ($next and $navig.showtitles != 0)"/>
+        <xsl:variable name="chapterCommercial" select="./d:chapterinfo/d:subjectset/d:subject/d:subjectterm = 'commercial'"/>
+        <xsl:variable name="ancestorChapterCommercial" select="ancestor::d:chapter/d:chapterinfo/d:subjectset/d:subject/d:subjectterm = 'commercial'"/>
+
+        <xsl:variable name="sectionCommercial" select="./d:sectioninfo/d:subjectset/d:subject/d:subjectterm = 'commercial'"/>
+        <xsl:variable name="ancestorSectionCommercial" select="ancestor::d:section/d:sectioninfo/d:subjectset/d:subject/d:subjectterm = 'commercial'"/>
         <xsl:if test="$suppress.navigation = '0' and $suppress.footer.navigation = '0'">
             <div class="navheader">
                 <xsl:if test="$row1 or $row2">
@@ -171,6 +177,14 @@
                 </xsl:if>
             </div>
         </xsl:if>
+        <xsl:if test="$chapterCommercial or $ancestorChapterCommercial">
+          <p>This chapter covers features exclusively available in <a href="http://www.sonatype.com/nexus-professional.html">Nexus Professional</a>.</p>
+        </xsl:if>
+        <xsl:if test="$sectionCommercial or $ancestorSectionCommercial">
+          <p>This chapter covers features exclusively available in <a href="http://www.sonatype.com/nexus-professional.html">Nexus Professional</a>.</p>
+        </xsl:if>
+
+
     </xsl:template>
     <xsl:param name="navig.showtitles">1</xsl:param>
     <xsl:template name="footer.navigation">
