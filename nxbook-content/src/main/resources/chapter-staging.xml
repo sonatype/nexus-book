@@ -148,8 +148,8 @@
 
           <listitem>
             <para>If your Nexus installation contains Build Promotion
-            profiles, you will also see an option to Promote a staging
-            repository to a Build Promotion Group. When you promote a stanging
+            profiles, you will also see an option to "promote" a staging
+            repository to a Build Promotion Group. When you promote a staging
             repository you can expose the contents of that staging repository
             via additional groups. Build Promotion profiles are explained in
             detail in the next section.</para>
@@ -293,7 +293,7 @@
     created as they are needed and are the primary mechanism by which Nexus
     users can promote or discard the contents of a staging repository to a
     hosted repository. A staging profile uses a Repository Target to match
-    artifacts as they are deployed, if a matching artifact is deployed to
+    artifacts as they are deployed. If a matching artifact is deployed to
     Nexus, the Staging Suite will intercept this deployment and store the
     artifact in a staging repository.</para>
 
@@ -305,7 +305,7 @@
         <para>Configure a Repository Target to match artifacts under the
         groupId you will be deploying artifacts to. If you are releasing all
         of your software under the groupId com.example, you would configure a
-        target that matched the pattern ".*/com/example/.*".</para>
+        target that matches the pattern ".*/com/example/.*".</para>
       </listitem>
 
       <listitem>
@@ -313,7 +313,7 @@
         previous step. When you configure this staging profile, you will be
         defining a target repository group. When the Staging Suite intercepts
         an artifact and places it in a staging repository, this staging
-        repository will be added to the target group.</para>
+        repository will be added to the specified target repository group.</para>
       </listitem>
 
       <listitem>
@@ -328,7 +328,7 @@
     of configuring a single staging profile in Nexus Professional.</para>
 
     <section id="staging-sect-define-target">
-      <title>Configuring a Staging Target</title>
+      <title>Configuring a Repository Target</title>
 
       <para><indexterm>
           <primary>staging</primary>
@@ -336,7 +336,7 @@
           <secondary>configuring targets</secondary>
         </indexterm>The Staging Suite intercepts deployments to repository
       targets. For example, if you wanted to intercept all deployments to the
-      com.sonatype.sample groupId, you would create a Repository Target call
+      com.sonatype.sample groupId, you would create a Repository Target called
       the "Sample Target" with a pattern expression of
       "<varname>.*/com/sonatype/sample/.*</varname>". Do this by clicking on
       "Repository Targets" in the left-hand navigation menu in Nexus and then
@@ -371,7 +371,7 @@
       defining a set of rules which will control the way in which Nexus
       intercepts an artifact deployment. When you click on Staging Profiles in
       the Nexus menu, you will see a list of configured staging profiles.
-      Clicking on Add will display the dropdown menu shown in <xref
+      Clicking on Add... will display the dropdown menu shown in <xref
       linkend="fig-staging-add-staging-profile" />.</para>
 
       <figure id="fig-staging-add-staging-profile">
@@ -395,14 +395,14 @@
       linkend="fig-staging-edit-profile" />.</para>
 
       <para><xref linkend="fig-staging-edit-profile" /> defines a Staging
-      Profile using a Repository Target configured in <xref
+      Profile using the Repository Target configured in <xref
       linkend="staging-sect-define-target" />. This target will match all
-      artifacts under the <varname>com.sonatype.sample</varname> group ID (or
+      artifacts under the <varname>com.sonatype.sample</varname> groupId (or
       the <filename>com/sonatype/sample</filename> repository path). This
-      staging profile uses the "Maven2 Hosted Release Repository" as a
+      staging profile uses the "Maven2 (hosted, release)" as a
       template for newly created temporary staging repositories, and it will
-      automatically add closed staging repositories to both the Public
-      Repositories group and the Public Snapshot Repositories group.</para>
+      automatically add closed staging repositories to the Public
+      Repositories group.</para>
 
       <figure id="fig-staging-edit-profile">
         <title>Editing a Staging Profile</title>
@@ -456,9 +456,8 @@
 
           <listitem>
             <para>Defines a template for the temporary staging repository. The
-            current version of Nexus Professional only allows for a single
-            option in this dropdown "Default Release Hosted Repository
-            Template"</para>
+            current version of Nexus Professional provides with the options
+            "Maven2 (hosted, release)" and "Maven1 (hosted, release)".</para>
           </listitem>
         </varlistentry>
 
@@ -482,7 +481,7 @@
             <para>Staged artifacts are stored in a temporary staging
             repository which is made available via Target Groups. Once a
             staged deployment has been successfully tested, artifacts
-            contained in the temporary staging repository are published to a
+            contained in the temporary staging repository are promoted to a
             hosted repository. The Release Repository setting configures the
             target release repository for this staging profile.</para>
           </listitem>
@@ -493,7 +492,8 @@
 
           <listitem>
             <para>Nexus can create staging repositories for repositories of
-            type maven1, maven2, and Eclipse P2 repositories. This chapter
+            type maven1, maven2, and Eclipse P2 repositories. This value is
+            automatically selected based on the chosen template. This chapter
             only deals with maven2 repository types.</para>
           </listitem>
         </varlistentry>
@@ -502,15 +502,15 @@
           <term>Target Groups</term>
 
           <listitem>
-            <para>When a Staging Repository is "Closed" and is made available
+            <para>When a Staging Repository is "closed" and is made available
             to users and developers involved in the testing process, the
-            temporary Staging Repository is added to a Repository Group. This
-            field defines that group.</para>
+            temporary Staging Repository is added to one or more Repository
+            Groups. This field defines those groups.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term>Close Repository Notification Roles</term>
+          <term>Close Repository Notification Settings</term>
 
           <listitem>
             <para>After a developer has deployed a set of related release
@@ -518,50 +518,67 @@
             further artifacts can be deployed to the same staging repository.
             A repository would be closed when a developer is satisfied that a
             collection of staged artifacts is ready to be certified by a
-            manager or a quality assurance resource. The Close Notification
-            Role contains all Roles which should be notified of a staging
-            repository being closed. All Nexus users in the specified Role
-            will be notified via email that a staging repository has been
-            closed.</para>
+            manager or a quality assurance resource. In this setting, it
+            is possible to define email addresses and Roles which should
+            be notified of a staging repository being closed. A notification
+            email will be sent to all specified email addresses, as well as
+            all Nexus users in the specified roles, informing that a staging
+            repository has been closed. It is also possible to select that
+            the creator of the staging repository receives this notification.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term>Promotion Repository Notification Roles</term>
+          <term>Promotion Repository Notification Settings</term>
 
           <listitem>
-            <para>Once a staging repository has been closed and certified by a
-            whoever is responsible for testing and checking a staged release,
-            it can then be promoted or discarded. This list of roles defines
-            the roles that need to be notified that a repository has been
-            promoted or discarded. All users with the roles specified in this
-            list will be notified when a staged repository is either promoted
-            or discarded.</para>
+            <para>Once a closed staging repository has been certified by whoever
+            is responsible for testing and checking a staged release, it can
+            then be promoted (published) or dropped (discarded). In this setting,
+            it is possible define email addresses and Roles which should
+            be notified of a staging repository being promoted. A notification
+            email will be sent to all specified email addresses, as well as
+            all Nexus users in the specified roles, informing that a staging
+            repository has been promoted. It is also possible to select that
+            the creator of the staging repository receives this notification.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term>Close Staging Repository Rulesets</term>
+          <term>Drop Repository Notification Settings</term>
+
+          <listitem>
+            <para>In this setting, it is possible define email addresses and
+            Roles which should be notified of a staging repository being dropped.
+            A notification email will be sent to all specified email addresses,
+            as well as all Nexus users in the specified roles, informing that a
+            staging repository has been dropped. It is also possible to select
+            that the creator of the staging repository receives this
+            notification.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Close Repository Staging Rulesets</term>
 
           <listitem>
             <para>This defines the rulesets which will be applied to a staging
-            repository before it can be closed. If the repository does not
-            pass the rules defined in the promotion rulesets, you will be
-            unable to close a staging repository. For more information about
-            rulesets, see <xref linkend="staging-sect-rulesets" />.</para>
+            repository before it can be closed. If the staging repository does
+            not pass the rules defined in the specified rulesets, you will be
+            unable to close it. For more information about rulesets, see
+            <xref linkend="staging-sect-rulesets" />.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term>Promote Staging Repository Rulesets</term>
+          <term>Promote Repository Staging Rulesets</term>
 
           <listitem>
             <para>This defines the rulesets which will be applied to a staging
-            repository on promotion. If the repository does not pass the rules
-            defined in the promotion rulesets, the promotion will fail with an
-            error message supplied by the failing rule. For more information
-            about rulesets, see <xref
-            linkend="staging-sect-rulesets" />.</para>
+            repository on promotion. If the staging repository does not pass the
+            rules defined in the specified rulesets, the promotion will fail with
+            an error message supplied by the failing rule. For more information
+            about rulesets, see <xref linkend="staging-sect-rulesets" />.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -662,7 +679,7 @@
 
           <secondary>staging deployer role</secondary>
         </indexterm>To perform a staged deployment, the user deploying the
-      artifact must have the "Staging: Deployer (admin)" role or a "Staging:
+      artifact must have the "Staging: Deployer (admin)" role or the "Staging:
       Deployer" role for a specific Staging Profile.</para>
 
       <para>When you create a Staging Profile, Nexus will create two new Nexus
@@ -686,8 +703,8 @@
           <listitem>
             <para>This role grants all of the privileges from the Staging:
             Repositories role and it grants the user permission to deploy
-            artifacts, close a staging repository, and promote a staging
-            repository.</para>
+            artifacts, close a staging repository, and promote or drop a
+            staging repository created by a specific staging profile.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -713,7 +730,7 @@
             <para>This role grants a user all of the privileges from the
             Staging: Repositories role and it grants the user permission to
             deploy artifacts to any staging repository, close all staging
-            repositories, and promote all staging repositories.</para>
+            repositories, and promote or drop all staging repositories.</para>
           </listitem>
         </varlistentry>
       </variablelist>
