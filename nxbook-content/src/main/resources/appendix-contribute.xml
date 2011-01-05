@@ -29,8 +29,7 @@
     (CLA).</para>
 
     <para>To download the CLA from the following URL: <ulink
-    url="http://www.sonatype.org/SonatypeCLA.pdf">http://www.sonatype.org/SonatypeCLA.pdf</ulink>
-    </para>
+    url="http://www.sonatype.org/SonatypeCLA.pdf">http://www.sonatype.org/SonatypeCLA.pdf</ulink></para>
 
     <para>Once you have completed and signed this document, you can fax it to:
     (650) 472-9197</para>
@@ -139,8 +138,8 @@
           some of the more "ergonomic" approaches to using this tool, see
           James Elliott's <ulink
           url="http://www.xml.com/pub/a/2007/06/20/getting-productive-with-xmlmind.html">"Getting
-          Productive with XMLmind"</ulink> article on the O'Reilly site.
-          </para>
+          Productive with XMLmind"</ulink> article on the O'Reilly
+          site.</para>
 
           <para>If you are new to Docbook, you will need to invest a day or
           two experimenting with key shortcuts. Don't approach this tool as
@@ -187,7 +186,7 @@
 
         <listitem>
           <para>Many of the diagrams in this book have been generated using a
-          OSX-specific tool named Omnigraffle. </para>
+          OSX-specific tool named Omnigraffle.</para>
 
           <para>If you are interested in helping us create diagrams don't feel
           compelled to purchase a copy of Omnigraffle. Send us a rough outline
@@ -268,5 +267,127 @@ $ <command>mvn clean install</command>
 ...5-10 minutes of Maven build output...</screen>
       </step>
     </procedure>
+
+    <warning>
+      <para>This project makes use of both the <sgmltag>repositories</sgmltag>
+      and <sgmltag>pluginRepositories</sgmltag> element in the top-level POM.
+      If you have configured your Maven Settings to point to Nexus, you may
+      need to add the repositories listed in this POM to your Nexus
+      group.</para>
+    </warning>
+
+    <para>Once the Maven build has completed, you can then access the
+    following build artifacts:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>The Nexus Book PDF can be found in
+        <filename>nxbook-pdf/target</filename></para>
+      </listitem>
+
+      <listitem>
+        <para>The Nexus Book ePub can be found in
+        <filename>nxbook-epub/target</filename></para>
+      </listitem>
+
+      <listitem>
+        <para>The Nexus Book HTML can be found in
+        <filename>nxbook-html/target</filename></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Book Project Layout</title>
+
+    <para>The Nexus book is a multi-module project which contains the
+    following projects:</para>
+
+    <variablelist>
+      <varlistentry>
+        <term>nxbook-content</term>
+
+        <listitem>
+          <para>This project contains all of the book's source code and
+          figures in <filename>src/main/resources</filename>. If you need to
+          update the book's DocBook XML, you will find all of the Docbook XML
+          in <filename>src/main/resources</filename>, and if you are
+          manipulating figures, you will find these images under the
+          <filename>src/main/resources/figs</filename> directory. The build
+          output for this project is a JAR which contains the DocBook XML
+          source and the figures.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>nxbook-examples</term>
+
+        <listitem>
+          <para>Since the Nexus book does not contain any example-driven
+          content, this project is more of a placeholder for future
+          expansion.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>nxbook-html</term>
+
+        <listitem>
+          <para>This project contains the HTML-specific XSL stylesheets and
+          project configuration to apply the DocBook XSL stylesheets to the
+          DocBook source content from nxbook-content. This project also
+          contains some HTML-specific admonition graphics. The customization
+          stylesheet and graphics are found in
+          <filename>src/main/resources</filename>.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>nxbook-pdf</term>
+
+        <listitem>
+          <para>This project contains the PDF-specific XSL stylesheets, any
+          pre-print assets such as covers, and any additional PDFs which are
+          combined to produce the final, electronic output. All images, PDFs,
+          and stylesheets can be found in
+          <filename>src/main/resources</filename>.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>nxbook-epub</term>
+
+        <listitem>
+          <para>This project contains the ePub-specific XSL stylesheets. The
+          ePub specific stylesheets can be found in
+          <filename>src/main/resources</filename>.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>nxbook-site</term>
+
+        <listitem>
+          <para>This project combines all of the book projects into a single,
+          deployable site and is only meant to be published by internal
+          Sonatype resources. When the books are published, the build uses the
+          Site plugin to perform a deployment using the Maven SSH
+          Wagon.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+
+  <section>
+    <title>Subscribing to the Book Developers List</title>
+
+    <para>Sonatype maintains a Book Developers mailing list as a single
+    mailing list for contributors, authors, and editors working on any of our
+    Sonatype Open Books. This is a high volume list which contains both
+    discussion and automated emails from GitHub and our Sonatype Matrix
+    continuous integration server.</para>
+
+    <para>To subscribe to this mailing list, send and email to: <ulink
+    url="mailto:book-dev-subscribe@sonatype.org">book-dev-subscribe@sonatype.org</ulink></para>
   </section>
 </appendix>
