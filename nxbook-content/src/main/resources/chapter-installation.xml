@@ -154,7 +154,7 @@
 
           <secondary>Java Development Kit (JDK)</secondary>
         </indexterm>Java Development Kit (JDK) installation, and it can be run
-      with the latest version of Sun's JDK or Java 5 or Java 6. To download
+      with the latest version of Sun's JDK for Java 5 or Java 6. To download
       the latest release of the Sun JDK, go to <ulink
       url="http://developers.sun.com/downloads/"><indexterm>
           <primary>Java</primary>
@@ -272,7 +272,7 @@ $ <command>ln -s ${nexusopen.version.name} nexus</command></screen>
         </indexterm>Installing Nexus is straightforward, unpack the Nexus web
       application archive in a directory. If you are installing Nexus on a
       local workstation to give it a test run, you can install it in your home
-      directory or whenever you like; Nexus doesn't have any hard coded
+      directory or wherever you like; Nexus doesn't have any hard coded
       directories, it will run from any directory. If you downloaded the
       <acronym>ZIP</acronym> archive, run:</para>
 
@@ -292,7 +292,7 @@ $ <command>ln -s ${nexusopen.version.name} nexus</command></screen>
       book assumes that Nexus is installed in
       <filename>/usr/local/${nexus.version.name}</filename> with a symbolic
       link <filename>/usr/local/nexus</filename> to the nexus directory. Using
-      a symbolic link nexus/ to a directory which holds a specific version of
+      a symbolic link nexus to a directory which holds a specific version of
       Nexus is a common practice that makes it easier to upgrade to a newer
       version of Nexus.</para>
 
@@ -334,9 +334,11 @@ $ <command>ln -s ${nexus.version.name} nexus</command></screen>
     installation. To upgrade Nexus, unpack the Nexus archive in the directory
     which contains the existing Nexus installation. Once the archive is
     unpacked, the new Nexus application directory should be a sibling to your
-    existing <filename>sonatype-work/</filename> directory. When you start the
-    new instance of Nexus it will read the existing repository configuration
-    from the <filename>sonatype-work/</filename> directory.</para>
+    existing <filename>sonatype-work/</filename> directory. If you have defined
+    a symbolic link for the version of Nexus to use, change that to point at
+    the new Nexus application directory. When you start the new instance of
+    Nexus it will read the existing repository configuration from the
+    <filename>sonatype-work/</filename> directory.</para>
 
     <note>
       <para>If you are upgrading from a Nexus 1.2 release to a Nexus 1.3
@@ -424,7 +426,7 @@ linux-ppc-64/        macosx-universal-64/ windows-x86-32/</screen>
 
         <secondary>running</secondary>
       </indexterm>When you start Nexus, you are starting a web server on the
-    default port of <varname>localhost:8081</varname>. Nexus runs within a
+    default port of <varname>0.0.0.0:8081</varname>. Nexus runs within a
     servlet container called <indexterm>
         <primary>Jetty</primary>
       </indexterm>Jetty and it is started with a native service wrapper called
@@ -450,18 +452,19 @@ linux-ppc-64/        macosx-universal-64/ windows-x86-32/</screen>
     <command>nexus start</command>, and then we tail the
     <filename>wrapper.log</filename> in
     <filename>\${NEXUS_HOME}/logs</filename>. Nexus will initialize itself and
-    print a message that it is listening on
-    <varname>localhost:8081</varname>.</para>
+    print a message stating what IP address and port it is listening on.</para>
 
     <screen>$ <command>cd /usr/local/nexus</command>
 $ <command>ls ./bin/jsw/</command>
-aix-ppc-32/          linux-ppc-64/        solaris-sparc-32/
-aix-ppc-64/          linux-x86-32/        solaris-sparc-64/
-hpux-parisc-32/      linux-x86-64/        solaris-x86-32/
-hpux-parisc-64/      macosx-universal-32/ windows-x86-32/
+conf/                linux-x86-64/        solaris-x86-32/
+lib/                 macosx-universal-32/ windows-x86-32/
+license/             macosx-universal-64/ windows-x86-64/
+linux-ppc-64/        solaris-sparc-32/
+linux-x86-32/        solaris-sparc-64/
 $ <command>chmod -R a+x bin</command>
-$ <command>./bin/jsw/macosx-universal-32/nexus start</command>
-Nexus Repository Manager...
+$ <command>./bin/jsw/macosx-universal-64/nexus start</command>
+Starting Nexus Repository Manager...
+Started Nexus Repository Manager.
 $ <command>tail -f logs/wrapper.log</command> 
 INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
 </screen>
@@ -579,7 +582,7 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
             </indexterm>Nexus can send username and password recovery emails,
           to enable this feature, you will need to configure Nexus with a SMTP
           Host and Port as well as any necessary authentication parameters
-          that Nexus needs to connect to a mail server. To configure the SMTP
+          that Nexus needs to connect to the mail server. To configure the SMTP
           settings, load the server configuration dialog shown in <xref
           linkend="fig-nexus-server-config" />.</para>
         </listitem>
@@ -594,11 +597,11 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
 
               <secondary>downloading remote</secondary>
             </indexterm>Nexus ships with three important proxy repositories
-          for the Maven Central Repository, Apache Snapshot Repository, and
-          the Codehaus Snapshot Repository. Each of these repositories
+          for the Maven Central repository, Apache Snapshot repository, and
+          the Codehaus Snapshot repository. Each of these repositories
           contains thousands (or tens of thousands) of artifacts and it would
           be impractical to download the entire contents of each. To that end,
-          most repositories maintain a Lucene index which catalogs the entire
+          most repositories maintain an index which catalogs the entire
           contents and provides for fast and efficient searching. Nexus uses
           these remote indexes to search for artifacts, but we've disabled the
           index download as a default setting. To download remote
@@ -606,23 +609,24 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
 
           <orderedlist>
             <listitem>
-              <para>Click on Repositories under the Administration menu and
-              change Download Remote Indexes to true for the three proxy
-              repositories. You'll need to load the dialog shown in <xref
-              linkend="fig-repo-config" /> for each of the three
-              repositories.</para>
+              <para>Click on Repositories under the Administration menu in
+              the left-hand side of the browser window.</para>
             </listitem>
 
             <listitem>
-              <para>Right-click on each proxy repository and select Re-index.
-              This will trigger Nexus to download the remote index
-              files.</para>
+              <para>Select each of the three proxy repositories and change
+              Download Remote Indexes to true in the Configuration tab.
+              You'll need to load the dialog shown in <xref
+              linkend="fig-repo-config" /> for each of the three
+              repositories.</para>
             </listitem>
           </orderedlist>
 
-          <para>It might take Nexus a few minutes to download the entire
-          index, but once you have it, you'll be able to search the entire
-          contents of the Maven repository.</para>
+          <para>This will trigger Nexus to re-index these repositories, during
+          which the remote index files will be downloaded. It might take Nexus
+          a few minutes to download the entire index, but once you have it,
+          you'll be able to search the entire contents of the Maven
+          repository.</para>
 
           <para>Once you've enabled remote index downloads, you still won't be
           able to browse the complete contents of a remote repository.
