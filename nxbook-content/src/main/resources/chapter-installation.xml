@@ -334,11 +334,11 @@ $ <command>ln -s ${nexus.version.name} nexus</command></screen>
     installation. To upgrade Nexus, unpack the Nexus archive in the directory
     which contains the existing Nexus installation. Once the archive is
     unpacked, the new Nexus application directory should be a sibling to your
-    existing <filename>sonatype-work/</filename> directory. If you have defined
-    a symbolic link for the version of Nexus to use, change that to point at
-    the new Nexus application directory. When you start the new instance of
-    Nexus it will read the existing repository configuration from the
-    <filename>sonatype-work/</filename> directory.</para>
+    existing <filename>sonatype-work/</filename> directory. If you have
+    defined a symbolic link for the version of Nexus to use, change that to
+    point at the new Nexus application directory. When you start the new
+    instance of Nexus it will read the existing repository configuration from
+    the <filename>sonatype-work/</filename> directory.</para>
 
     <note>
       <para>If you are upgrading from a Nexus 1.2 release to a Nexus 1.3
@@ -350,68 +350,6 @@ $ <command>ln -s ${nexus.version.name} nexus</command></screen>
       to
       <filename>sonatype-work/nexus/conf/log4j.properties</filename>.</para>
     </note>
-
-    <section id="installation-sect-upgrading-160">
-      <title>Upgrading to Nexus 1.6</title>
-
-      <para>Sonatype has changed the location of configuration files for the
-      Java Service Wrapper startup scripts. You can see these differences if
-      you list the contents of <filename>\${NEXUS_HOME}/bin/jsw</filename>. On
-      a Nexus 1.5 installation you would see this:</para>
-
-      <screen>/usr/local/nexus-professional-webapp-1.5.0 $ <command>ls ./bin/jsw/</command>
-jsw-license/         linux-x86-64/        solaris-sparc-64/
-linux-ppc-64/        macosx-universal-32/ solaris-x86-32/
-linux-x86-32/        solaris-sparc-32/    windows-x86-32/</screen>
-
-      <para>Now, on a Nexus 1.6 installation, the same directory contains
-      different configuration folders and platform options:</para>
-
-      <screen>/usr/localnexus-professional-webapp-1.6.0 $ <command>ls ./bin/jsw/</command>
-conf/                linux-x86-32/        solaris-sparc-32/
-lib/                 linux-x86-64/        solaris-sparc-64/
-license/             macosx-universal-32/ solaris-x86-32/
-linux-ppc-64/        macosx-universal-64/ windows-x86-32/</screen>
-
-      <para>If you are upgrading from a Nexus 1.5 instance to a Nexus 1.6
-      instance you will need to make sure that you are using the latest
-      "nexus" script in the appropriate platform folder. If you previously
-      installed Nexus on a Linux system and copied the
-      <filename>./bin/jsw/(platform)/nexus</filename> startup script to the
-      <filename>/etc/init.d</filename> directory you will need to make sure
-      that you copy the newer version of this nexus script (or create a
-      symbolic link to the newer version of the script).</para>
-
-      <para>If you've made customizations to your startup script, you will
-      need to replace your customized startup script with the script from
-      Nexus 1.6. The important configuration parameter to update is
-      <varname>WRAPPER_CONF</varname>. In a Nexus 1.5 installation, the
-      <varname>WRAPPER_CONF</varname> has the following value:</para>
-
-      <screen>WRAPPER_CONF="../../../conf/wrapper.conf"</screen>
-
-      <para>This should be changed to the following value in Nexus 1.6:</para>
-
-      <screen>WRAPPER_CONF="../conf/wrapper.conf"</screen>
-
-      <warning>
-        <para>It is not appropriate copy your existing
-        <filename>wrapper.conf</filename> over the new
-        <filename>wrapper.conf</filename> in 1.6.0. Sonatype has made
-        significant changes to the configuration parameters and paths which
-        are configured in the new <filename>wrapper.conf</filename>. If you
-        have a customized wrapper.conf file, Sonatype recommends that you
-        compare the existing file with the new
-        <filename>wrapper.conf</filename> file shipped with Nexus 1.6.0 and
-        merge each customization manually.</para>
-      </warning>
-
-      <para>In addition to this simple configuration change, you should also
-      take note of the additional platform now available in the
-      <filename>./bin/jsw</filename> directory: macosx-universal-64. If you
-      are running Nexus on a 64-bit OSX platform, you should start using this
-      startup script instead of macosx-universal-32.</para>
-    </section>
   </section>
 
   <section id="install-sect-running">
@@ -452,7 +390,8 @@ linux-ppc-64/        macosx-universal-64/ windows-x86-32/</screen>
     <command>nexus start</command>, and then we tail the
     <filename>wrapper.log</filename> in
     <filename>\${NEXUS_HOME}/logs</filename>. Nexus will initialize itself and
-    print a message stating what IP address and port it is listening on.</para>
+    print a message stating what IP address and port it is listening
+    on.</para>
 
     <screen>$ <command>cd /usr/local/nexus</command>
 $ <command>ls ./bin/jsw/</command>
@@ -582,8 +521,8 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
             </indexterm>Nexus can send username and password recovery emails,
           to enable this feature, you will need to configure Nexus with a SMTP
           Host and Port as well as any necessary authentication parameters
-          that Nexus needs to connect to the mail server. To configure the SMTP
-          settings, load the server configuration dialog shown in <xref
+          that Nexus needs to connect to the mail server. To configure the
+          SMTP settings, load the server configuration dialog shown in <xref
           linkend="fig-nexus-server-config" />.</para>
         </listitem>
       </varlistentry>
@@ -609,14 +548,14 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
 
           <orderedlist>
             <listitem>
-              <para>Click on Repositories under the Administration menu in
-              the left-hand side of the browser window.</para>
+              <para>Click on Repositories under the Administration menu in the
+              left-hand side of the browser window.</para>
             </listitem>
 
             <listitem>
               <para>Select each of the three proxy repositories and change
-              Download Remote Indexes to true in the Configuration tab.
-              You'll need to load the dialog shown in <xref
+              Download Remote Indexes to true in the Configuration tab. You'll
+              need to load the dialog shown in <xref
               linkend="fig-repo-config" /> for each of the three
               repositories.</para>
             </listitem>
@@ -1664,22 +1603,6 @@ ProxyPreserveHost On
             never be changed as all configurable values have been removed from
             this file and placed in
             <filename>plexus.properties</filename>.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term><filename>wrapper.conf</filename></term>
-
-          <listitem>
-            <para><indexterm>
-                <primary>Java Service Wrapper</primary>
-
-                <secondary>configuration</secondary>
-              </indexterm>Contains configuration for the Java Service Wrapper.
-            This file contains options that are passed to the JVM, the size of
-            the JVM heap, and maximum size of any log files created by the
-            Java Service Wrapper. If you need to affect the JVM or the way in
-            which Nexus is started, this file you should change.</para>
           </listitem>
         </varlistentry>
 
