@@ -19,6 +19,7 @@ find ./orig -name "*.png" | \
             -compose DstOver -composite -compose Over \
             ./print/`basename $0 .png`.pdf'
 
+exit 0
 
 
 
