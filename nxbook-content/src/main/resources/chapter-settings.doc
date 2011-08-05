@@ -1,0 +1,217 @@
+== Managing Maven Settings
+
+
+[[settings-sect-intro]]
+=== Introduction
+
+Nexus Professional allows you to define templates for Maven
+Settings and use Nexus as a way to distribute updates to a global Maven
+Settings template. When you move an organization to a repository manager
+such as Nexus, one of the constant challenges is keeping everyone's Maven
+Settings synchronized. If a Nexus administrator makes a change which
+requires every developer to modify his or her ~/.m2/settings.xml file,
+this feature can be used to manage the distribution of Maven Settings
+changes to the entire organization. Once you have defined a Maven Settings
+template in Nexus Professional, developers can then use the Nexus Maven
+plugin to retrieve the new Maven Settings file directly from Nexus
+Professional.
+
+
+
+[[settings-sect-install]]
+=== Manage Maven Settings Templates
+
+To manage Maven Settings templates, click on Maven Settings
+in the Enterprise section of the Nexus menu on the left side of the Nexus
+UI. Clicking on Maven Settings will load the panel shown in <xref
+linkend="fig-settings-maven-settings" />.
+
+
+[[fig-settings-maven-settings]]
+.The Maven Settings Panel
+image:figs/web/settings_managing-templates.png[]
+
+The Maven Settings panel allows you to add, delete, and edit a Maven
+Settings template. The default template has an id of "default" and is
+read-only, it contains the recommended settings for a standard Nexus
+installation. To create a new Maven Settings template, click on the Add...
+button and select "Settings Template". Once the new template is created,
+assign a name to the template and click the Save button.
+
+To edit a template, click on a template that is not read
+only, and edit the template in the Maven Settings panel. Once you are
+finished editing the template, click Save to save the template. When
+editing the template, the following variables are available:
+
+\${baseurl}:: This variable will be replaced with the base URL of the
+Nexus installation.
+
+\${userId}:: This variable will be replaced with the user id of the
+user that is generating a Maven Settings file from this template.
+
+
+To preview a Maven Settings template, click on the Template URL in
+the table of Maven Settings templates. Clicking on this URL will load a
+dialog window which contains the Maven Settings file generated from this
+template. This rendered view of the Maven Settings template will have all
+variable references replaced using the current context of the user:
+\${baseurl} will be replaced with the Base URL of the current Nexus
+installation, and \${userId} will be replaced with the user id of the
+current user.
+
+=== Downloading Maven Settings with the Nexus Maven Plugin</title>
+
+Once you have defined a set of Maven templates, you can use
+the Nexus Maven plugin to distribute changes to the Maven Settings file to
+the entire organization.
+
+==== Running the Nexus Maven Plugin
+
+To invoke goals in the Nexus Maven plugin, you will want to add
+the appropriate plugin group to your Maven settings file. Add the
+org.sonatype.plugins groupId to ~/.m2/settings.xml as shown in <xref
+linkend="ex-settings-nexus-plugin-group" />.
+
+[[ex-settings-nexus-plugin-group]]
+.Adding org.sonatype.plugins to pluginGroups in Maven Settings
+----
+<settings>
+  ...
+  <pluginGroups>
+    <pluginGroup>org.sonatype.plugins</pluginGroup>
+  </pluginGroups>
+  ...
+</settings>
+----
+
+NOTE: It might seem ironic that you need to update your Maven Settings
+to take advantage of a plugin which will be used to manage your Maven
+Settings file. Adding this plugin definition is a task that only needs
+to be completed once to add the appropriate plugin group for the Nexus
+Maven plugin. Once you have successfully configured your Maven
+Settings, you will be replacing your Maven Settings with templates
+from Nexus Professional. Every default template in Nexus Professional
+adds the org.sonatype.plugins group to the pluginGroups, and it is
+essential that you make sure that any new, custom templates also
+include this plugin group definition. Otherwise, there is a chance
+that a developer could update his or her Maven Settings and lose the
+ability to use the Nexus Maven plugin.  </note>
+
+Adding the org.sonatype.plugins group to your Maven Settings will
+allow you to run the following goals from the Nexus Maven Plugin:
+
+settings-download:: This goal downloads a Maven Settings
+template from Nexus Professional and stores it on a local
+machine. This goal can be configured to update a user's
+~/.m2/settings.xml file or the global configuration file which is
+stored the Maven installation directory. If you are replacing a Maven
+Settings file, this goal can also be configured to make a backup of an
+existing Maven Settings file.
+
+Once you have configured the pluginGroup in your Maven Settings
+file, you can run the Nexus Maven plugin from the command line.
+
+----
+$ mvn nexus:settings-download
+----
+
+==== Configuring Nexus Maven Plugin for Settings Management
+
+The Settings Management goal in the Nexus Maven plugin requires
+security credentials and a base URL for the Nexus server you are
+interacting with. You can specify security credentials by supplying a
+username and password or by supplying a server id that corresponds to
+a server in your Maven Settings (~/.m2/settings.xml). The common
+configuration parameters and security configuration properties are:
+
+
+nexusURL:: Points to the Nexus server installation's base URL. If you
+have installed Nexus on your local machine, this would be
+http://localhost:8081/nexus/ </listitem> </varlistentry>
+
+username:: Username to use for authenticating to Nexus. Default value
+is \${user.name}.
+
+password:: Password to use for authenticating to Nexus
+
+serverAuthId:: You should specify either username and password or the
+serverAuthId. If you specify a value for serverAuthId, the Nexus Maven
+plugin is going to look at the contents of your
+<filename>~/.m2/settings.xml</filename> file and use the username and
+password from a server definition.
+
+In most cases a valid user login will be required to access your
+settings templates. By default, if you don't specify the nexusURL and
+password parameters, the plugin will prompt you for them. If you don't
+specify the username parameter, the Java System property
+<varname>\${user.name}</varname> will be used.
+
+In addition to these security options, all of the Maven
+Settings management goal has the following configuration
+parameters:
+
+verboseDebug:: If verboseDebug is set to true Maven will print out
+debug messages that detail the plugin's interaction with Nexus.
+
+backupFormat:: When backing up an existing settings.xml file, use this
+date format in conjunction with SimpleDateFormat to construct a new
+filename of the form: settings.xml.$(format). Datestamps are used for
+backup copies of the settings.xml to avoid overwriting previously
+backed up settings files. This protects against the case where the
+download mojo is used multiple times with incorrect settings, where
+using a single static backup-file name would destroy the original,
+pre-existing settings. Default value is: yyyyMMdd_HHmmss.
+
+destination:: The standard destination where the downloaded
+settings.xml template should be saved. If the destination is "global",
+the Nexus Maven plugin will save the Maven Settings file to
+\${M2_HOME}/conf. Is the destination is "user", the Nexus Maven plugin
+will save the Maven Settings file to ~/.m2/settings.xml. If the target
+parameter is set, it will override this value. Default value is: user.
+</listitem> </varlistentry>
+
+doBackup:: If true and there is a pre-existing settings.xml file in
+the way of this download, backup the file to a datestamped filename,
+where the specific format of the datestamp is given by the
+backupFormat parameter. Default value is: true.
+
+encoding:: Use this parameter to define a non-default encoding for the
+settings file.
+
+target:: If set, ignore the standard location given by the destination
+parameter, and use this file location to save the settings template
+instead. If this file exists, it will be backed up using the same
+logic as the standard locations (using the doBackup and backupFormat
+parameters).
+
+url:: The full URL of a settings template available from a particular
+Nexus Professional instance. If missing, the mojo will prompt for this
+value.
+
+==== Downloading Maven Settings
+
+To download Maven Settings from Nexus Profession, you will
+need to know the URL of the Maven Settings template. If you omit this
+URL on the command-line, the Nexus Maven plugin will prompt you for a
+URL when it is executed:
+
+----
+$ mvn nexus:settings-download
+[INFO] [nexus:settings-download]
+Settings Template URL: \
+.../nexus/service/local/templates/settings/default/content
+[INFO] Existing settings backed up to: \
+/Users/tobrien/.m2/settings.xml.20090408_204422
+[INFO] Settings saved to: /Users/tobrien/.m2/settings.xml
+----
+
+Alternatively, you can specify the username, password, and URL on
+the command line.
+
+----
+$ export NX_URL="http://localhost:8080/nexus/"
+$ mvn nexus:settings-download \
+-Durl=\${NX_URL}/service/local/templates/settings/default/content \
+-Dusername=admin \
+-Dpassword=admin123</screen>
+----
