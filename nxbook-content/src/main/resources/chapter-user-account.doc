@@ -1,0 +1,145 @@
+== User Account Plugin
+
+Nexus Professional's User Account Plugin allows anonymous users to
+sign-up for a Nexus account without administrative intervention.  This
+"self-serve" capability for user account creation is especially
+important when an open source project is using Nexus as a primary
+means for distribution. In such an environment, there may be hundreds
+of Nexus users who all need a basic level of read-only access, and
+making these users wait for an administrator to create an account
+makes little sense. In such a setting, anyone can create an account,
+activate the account via a verification email, and then access a
+repository with a default, read-only level of access which you can
+define.
+
+[[user-account-sect-installation]]
+=== Installing the User Account Plugin
+
+When you downloaded Nexus Professional, you also download a few
+optional plugins including the User Account plugin. This plugin is
+located in the \${NEXUS_HOME}/runtime/apps/nexus/optional-plugins
+directory under nexus-user-account-plugin-${nexus.version}. To install
+this plugin in Nexus:
+
+* Copy the nexus-user-account-plugin-${nexus.version}/ directory from
+\${NEXUS_HOME}/runtime/apps/nexus/optional-plugins to
+\${SONATYPE_WORK}/nexus/plugin-repository
+
+* Once the optional User Account plugin has been copied to the
+plugin-repository/ directory, restart Nexus and the User Account
+plugin will be installed.
+
+[[user-account-sect-configuring]]
+=== Configuring the User Account Plugin
+
+To configure the User Account Plugin, click on Server under the
+Administration section of the Nexus menu, and scroll down to the
+section named "User Sign Up". The User Sign Up section is shown in
+<xref linkend="fig-user-account-user-sign-up-preference" />.
+
+[[fig-user-account-user-sign-up-preference]]
+.Configuring the User Account Plugin
+image:figs/web/user-account_user-sign-up-preference.png[]
+
+To activate the User Sign Up feature, set the "User Sign Up" feature
+to "On". This will expose a "Sign Up" link next to the "Log In" link
+in the Nexus user interface. The Selected Roles in this configuration
+section are the default roles assigned to users who successfully
+signed up for an account.
+
+[[user-account-sect-sign-up]]
+=== Signing Up for an Account
+
+Once User Sign Up has been activated via the Server settings as shown
+in <xref linkend="user-account-sect-configuring" />, users will see a
+Sign Up link next to the Log In link in the Nexus interface. This Sign
+Up link can be seen in the upper right-hand corner of <xref
+linkend="fig-user-account-sign-up-link" />.
+
+[[fig-user-account-sign-up-link]]
+.Sign Up Link Available for All Nexus Users
+image:figs/web/user-account_sign-up-link.png[]
+
+Clicking on this Sign Up link will display the Nexus Sign Up dialog
+shown in <xref linkend="fig-user-account-sign-up-form" />. This form
+accepts a username, password, the full name of the new user, and an
+email account. It also asks the users to type in some text from a
+captcha form element. If a user cannot read the text in the captcha,
+they can click on the captcha to refresh it with new text.
+
+[[fig-user-account-sign-up-form]]
+.Nexus Sign Up Form
+image:figs/web/user-account_sign-up-form.png[]
+
+Once the new user clicks on the Sign Up button, they will receive a
+confirmation dialog which instructs them to check for an activation
+email.
+
+[[fig-user-account-sign-up-confirm]]
+.Nexus Sign Up Confirmation
+image:figs/web/user-account_sign-up-succeed.png[]
+
+The user will then receive an email containing an activation
+link. When a user signs up for a Nexus account, the newly created
+account is disabled until they click on the activation link contained
+in this email. A sample of the activation email is shown in <xref
+linkend="fig-user-account-activation-email" />.
+
+[[fig-user-account-activation-email]]
+.Nexus Activation Email
+image:figs/web/user-account_activation-email.png[]
+
+NOTE: The example activation email in <xref
+linkend="fig-user-account-activation-email" />, points to
+localhost:8081. You can change this URL by changing the Base URL
+setting in the Application Server Settings section of the Server
+configuration.  To change this setting, click on the Server link under
+Administration in the Nexus menu.
+
+[[user-account-sect-manual-activate]]
+=== Manual Activation of New Users
+
+If a user does not receive the activation email after signing up for a
+new account, an Administrator may need to manually activate a new
+user. To do this, go to the list of Nexus users by clicking on the
+Users link under Security in the Nexus menu. Locate and select the new
+user in the list of Nexus users, and change the Status from Disabled
+to Enabled as shown in <xref linkend="fig-user-account-activation" />.
+
+[[fig-user-account-activation]]
+.Nexus Activation Email
+image:figs/web/user-account_sign-up-admin-activate.png[]
+
+[[user-account-sect-default-user]]
+=== Modifying Default User Permissions
+
+The default user permissions in the User Sign Up feature only includes
+"UI: Base UI Privileges". If a user signs up with just this simple
+permission, the only thing they will be able to do is login, change
+their password, and logout. <xref linkend="fig-user-account-base-ui"
+/>, shows the interface a user would see after logging in with only
+the base UI privileges.
+
+[[fig-user-account-base-ui]]
+.User Interface with only the Base UI Privileges
+image:figs/web/user-account_sign-up-default-permissions.png[]
+
+To provide some sensible default permissions, click on the Server
+under the Administration section of the Nexus menu and scroll down to
+the User Sign Up section of the Server settings. Make sure that the
+selected default roles for new users contain some ability to browse,
+search, and view repositories.
+
+[[fig-user-account-default-roles]]
+.Selecting Default Roles for New Users
+image:figs/web/user-account_sign-up-more-default-permissions.png[]
+
+WARNING: <xref linkend="fig-user-account-default-roles" /> shows a
+default User Sign Up role containing the Nexus Deployment Role. If
+your server were available to the public this wouldn't be a wise
+default role as it would allow anyone to sign up for an account,
+activate an account, and start publishing artifacts to hosted
+repositories with little or no oversight. Such a default role may only
+make sense if you are running an internal, corporate instance of Nexus
+Professional and you are comfortable granting any developer in the
+organization deployment permissions.
