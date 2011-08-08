@@ -7,7 +7,6 @@
                 xmlns:d="http://docbook.org/ns/docbook"
                 version="1.0">
 
-    <xsl:import href="urn:docbkx:stylesheet"/>
     <!--###################################################
                      HTML Settings
     ################################################### -->
