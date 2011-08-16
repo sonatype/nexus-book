@@ -84,11 +84,10 @@ automatically download a Nexus index from all remote repositories
 which create a Nexus index. Nexus will also automatically expose a
 Nexus index for any hosted repositories you create.
 
-Scheduled Tasks:: Nexus Open Source has the concept of scheduled tasks
-- periodic jobs which take care of various repository management tasks
+Scheduled Tasks:: Nexus Open Source has the concept of scheduled tasks: periodic jobs which take care of various repository management tasks
 such as deleting old snapshots, evicting unused items, and publishing
 repository indexes.
-  
+
 REST Services:: Nexus Open Source is based on a series of REST
 services, and when you are using the Nexus web front-end UI, you are
 really just interacting with a set of REST service. Because of this
@@ -119,8 +118,8 @@ the Open Source Initiative (OSI) here:
 http://opensource.org/licenses/agpl-v3.html
 
 The Nexus Indexer is made available under the Eclipse Public License
--v 1.0. The text of this license is available from the Open Source
-Initiative (OSI) here:
+version 1.0. The text of this license is available from the Open
+Source Initiative (OSI) here:
 http://www.opensource.org/licenses/eclipse-1.0.php
 
 [[intro-sect-pro]]
@@ -1364,7 +1363,7 @@ $ ln -s nexus-oss-webapp-1.9.2 nexus
 Although it isn't required for Nexus to run, you may want to set an
 environment variable NEXUS_HOME in your environment which
 points to the installation directory of Nexus. This chapter will refer
-to this location as \${NEXUS_HOME}
+to this location as $NEXUS_HOME
 
 The Nexus installation directory nexus-oss-webapp-1.9.2 has a
 sibling directory named sonatype-work. This directory contains all of
@@ -1375,7 +1374,7 @@ to the nexus installation directory; if you installed nexus in
 /usr/local directory would also contain a sonatype-work subdirectory
 containing all of the content and configuration. The location of the
 sonatype-work directory can be customized by altering the nexus-work
-property in \${NEXUS_HOME}/conf/plexus.properties
+property in $NEXUS_HOME/conf/plexus.properties
 
 [[install-sect-pro]]
 ==== Installing Nexus Professional
@@ -1419,7 +1418,7 @@ $ ln -s nexus-professional-webapp-1.9.2 nexus
 Although it isn't required for Nexus to run, you may want to set an
 environment variable NEXUS_HOME in your environment which points to
 the installation directory of Nexus. This chapter will refer to this
-location as \${NEXUS_HOME}. The Nexus installation directory
+location as $NEXUS_HOME. The Nexus installation directory
 nexus-professional-webapp-1.9.2 has a sibling directory named
 sonatype-work. This directory contains all of the repository and
 configuration data for Nexus and is stored outside of the Nexus
@@ -1451,14 +1450,14 @@ Java Service Wrapper]. This service wrapper can be configured to run
 Nexus as a Windows service or a Unix daemon. To start Nexus, you will
 need to find the appropriate startup script for your platform. To see
 the list of available platforms, list the contents of the
-\${NEXUS_HOME}/bin/jsw
+$NEXUS_HOME/bin/jsw
 
 The following example listing starts Nexus using the script for Mac
-OSX. First we list the contents of the \${NEXUS_HOME}/bin/jsw to show
+OSX. First we list the contents of the $NEXUS_HOME/bin/jsw to show
 you the available platforms, then we make the contents of the bin
 directory executable with chmod. The Mac OS X wrapper is started with
 a call to nexus start, and then we tail the wrapper.log in
-\${NEXUS_HOME}/logs. Nexus will initialize itself and print a message
+$NEXUS_HOME/logs. Nexus will initialize itself and print a message
 stating what IP address and port it is listening on.
 
 ----
@@ -1591,9 +1590,9 @@ script to the /etc/init.d directory. On a GNU/Linux system (tested
 with Redhat, Fedora, Ubuntu, or CentOS) perform the following
 operations as the root user:
 
-. Copy either \${NEXUS_HOME}/bin/jsw/linux-ppc-64/nexus,
-  \${NEXUS_HOME}/bin/jsw/linux-x86-32/nexus, or
-  \${NEXUS_HOME}/bin/jsw/linux-x86-64/nexus to /etc/init.d/nexus
+. Copy either $NEXUS_HOME/bin/jsw/linux-ppc-64/nexus,
+  $NEXUS_HOME/bin/jsw/linux-x86-32/nexus, or
+  $NEXUS_HOME/bin/jsw/linux-x86-64/nexus to /etc/init.d/nexus
 
 . Make the /etc/init.d/nexus script executable - chmod 755
   /etc/init.d/nexus
@@ -1610,16 +1609,16 @@ operations as the root user:
 .. Add a variable PLATFORM which contains either linux-x86-32,
               linux-x86-64, or linux-ppc-64
 
-. Change WRAPPER_CMD to \${NEXUS_HOME}/bin/jsw/\${PLATFORM}/wrapper
+. Change WRAPPER_CMD to $NEXUS_HOME/bin/jsw/$PLATFORM/wrapper
 
-. Change WRAPPER_CONF to \${NEXUS_HOME}/bin/jsw/conf/wrapper.conf
+. Change WRAPPER_CONF to $NEXUS_HOME/bin/jsw/conf/wrapper.conf
 
 . Change PIDDIR to /var/run
 
 . Add a JAVA_HOME variable which points to your local Java
   installation
 
-. Add a \${JAVA_HOME}/bin to the PATH
+. Add a $JAVA_HOME/bin to the PATH
 
 . (Optional) Set the RUN_AS_USER to "nexus". If you do this, you will
   need to:
@@ -1647,13 +1646,13 @@ and that you have Java installed in /usr/java/latest
 
 ----
 JAVA_HOME=/usr/java/latest
-PATH=\${PATH}:\${JAVA_HOME}/bin
+PATH=$PATH:$JAVA_HOME/bin
 APP_NAME="nexus"
 APP_LONG_NAME="Sonatype Nexus"
 NEXUS_HOME=/usr/local/nexus
 PLATFORM=linux-x86-64
-WRAPPER_CMD="\${NEXUS_HOME}/bin/jsw/\${PLATFORM}/wrapper"
-WRAPPER_CONF="\${NEXUS_HOME}/bin/jsw/conf/wrapper.conf"
+WRAPPER_CMD="$NEXUS_HOME/bin/jsw/${PLATFORM}/wrapper"
+WRAPPER_CONF="$NEXUS_HOME/bin/jsw/conf/wrapper.conf"
 PRIORITY=
 PIDDIR="/var/run"
 #RUN_AS_USER=nexus
@@ -1715,7 +1714,7 @@ Let's assume that you wanted to host Nexus behind Apache HTTPd at the
 URL http://www.somecompany.com. To do this, you'll need to change the
 context path that Nexus is served from.
 
-. Edit plexus.properties in \${NEXUS_HOME}/conf. You'll see an element
+. Edit plexus.properties in $NEXUS_HOME/conf. You'll see an element
   named webapp-context-path. Change this value from "/nexus" to "/"
 
 . Restart Nexus and Verify that it is available on
@@ -1744,7 +1743,7 @@ ProxyPreserveHost On
 
 If you just wanted to continue to serve Nexus at the /nexus context
 path, you would not change the contextPath in
-\${NEXUS_HOME}/conf/plexus.xml and you would include the context path
+$NEXUS_HOME/conf/plexus.xml and you would include the context path
 in your ProxyPass and ProxyPassReverse
 
 ----
@@ -1773,14 +1772,14 @@ application server is going to vary for each specific
 application. Often, this installation process is as simple as dropping
 a WAR file in a special directory and restarting the container. For
 example, to install the Nexus WAR in Tomcat, drop the
-nexus-webapp-1.6.0.war file in \${TOMCAT_HOME}/webapps and restart
+nexus-webapp-1.6.0.war file in $TOMCAT_HOME/webapps and restart
 your Tomcat instance. Assuming that Tomcat is configured on port 8080
 once Tomcat is started, Nexus will be available on
 http://localhost:8080/nexus-webapp-1.6.0.
 
 If you would like a less verbose URL, copy nexus-webapp-1.6.0.war to a
 file named nexus.war before copying the distribution to
-\${TOMCAT_HOME}/webapps
+$TOMCAT_HOME/webapps
 
 NOTE: When installing Nexus as a WAR in an application server or
 servlet container, it automatically creates a sonatype-work directory
@@ -2038,7 +2037,7 @@ which can be used to customize the behavior of the Jetty servlet
 container:
 
 jetty.xml:: contains a jetty.xml sample with no customizations. This
-sample file listens on the \${application-port} defined in
+sample file listens on the "application-port" defined in
 plexus.properties
 
 jetty-ajp.xml:: Contains a jetty.xml sample which will configure Nexus
@@ -2047,8 +2046,8 @@ are proxying your Nexus server with web server which understands the
 AJP protocol such as Apache httpd with the mod_proxy_ajp module.
 
 jetty-dual-ports-with-ssl.xml:: Contains a jetty.xml sample which
-configures Nexus to listen on both the \${application-port} and
-\${application-port-ssl} (as defined in plexus.properties). This
+configures Nexus to listen on both the "application-port" and
+"application-port-ssl" (as defined in plexus.properties). This
 sample configuration also contains the SSL redirect rule.
 
 jetty-faster-windows.xml:: Contains a jetty.xml sample which
@@ -2069,7 +2068,7 @@ Apache httpd server using mod_ssl you would use this configuration to
 configure the Jetty RewriteHandler
 
 jetty-ssl.xml:: Contains a jetty.xml sample which will only serve SSL
-encrypted content from \${application-port} (as defined in
+encrypted content from "application-port" (as defined in
 plexus.properties
 
 The conf/examples/proxy-https/ directory contains two files:
@@ -2711,7 +2710,7 @@ viewer to diagnose problems with Nexus.
 
 nexus.xml:: This XML file contains most of the configuration data for
 your instance of Nexus. It is stored in
-\${NEXUS_HOME}/runtime/apps/nexus/conf/nexus.xml
+$NEXUS_HOME/runtime/apps/nexus/conf/nexus.xml
 
 log4j.properties:: This file controls the logging facility of Nexus
 using the standard Log4J property file syntax. To edit the format or
@@ -3681,22 +3680,22 @@ image::figs/web/repository-manager_security-users-privilege.png[scale=60]
 
 By default, Nexus listens on port 8081. You can change this
 port, by changing the value in
-\${NEXUS_HOME}/conf/plexus.properties this file is
+$NEXUS_HOME/conf/plexus.properties this file is
 shown in <<ex-plexus-props>>. To change the port, stop
 Nexus, change the value of applicationPort in this
 file, and then restart Nexus. Once you do this, you should see a log
-statement in \${NEXUS_HOME}/logs/wrapper.log telling
+statement in $NEXUS_HOME/logs/wrapper.log telling
 you that Nexus is listening on the altered port.
 
 [[ex-plexus-props]]
 .Contents of conf/plexus.properties
 ----
 applicationPort=8081
-runtime=\${basedir}/runtime
-apps=\${runtime}/apps
-work=\${runtime}/work
-webapp=\${runtime}/apps/nexus/webapp
-nexus.configuration=\${runtime}/apps/nexus/conf/nexus.xml
+runtime=${basedir}/runtime
+apps=${runtime}/apps
+work=${runtime/work
+webapp=${runtime}/apps/nexus/webapp
+nexus.configuration=${runtime}/apps/nexus/conf/nexus.xml
 ----
 
 [[confignx-sect-log]]
@@ -3822,9 +3821,8 @@ image::figs/web/ldap_loading_ldap_configuration_panel.png[scale=60]
 
 Clicking on the LDAP Configuration link will load the LDAP
 Configuration panel as shown in <<fig-ldap-connection-authentication>>
-and <<fig-ldap-user-mapping>>.  The
-following sections outline the configuration options available in the
-LDAP Configuration Panel.
+and <<fig-ldap-user-mapping>>.  The following sections outline the
+configuration options available in the LDAP Configuration Panel.
 
 [[ldap-sect-connect-auth]]
 === Connection and Authentication
@@ -3840,46 +3838,28 @@ corresponds to your organization's top-level domain components such as
 [[fig-ldap-connection-authentication]]
 image::figs/web/ldap_configure_connection_and_authentication.png[scale=60]
 
-<<tbl-ldap-connection-config>> and
-<<tbl-ldap-authentication-config>> contain detailed descriptions of
-the configuration fields in both the Connection and Authentication
-sections of the LDAP Configuration panel.
+<<tbl-ldap-connection-config>> and <<tbl-ldap-authentication-config>>
+contain detailed descriptions of the configuration fields in both the
+Connection and Authentication sections of the LDAP Configuration
+panel.
 
 [[tbl-ldap-connection-config]]
 .Connection Configuration for LDAP Integration
+[cols="2,5",options="header"]
 |====
-|Field Name|Description|
-|Protocol|
-Valid values in this dropdown are ldap
-and ldaps which correspond to the Lightweight
-Directory Access Protocol and the Lightweight Directory Access
-Protocol over SSL
-
-|Hostname|
-The hostname or IP address of the
-LDAP
-
-|Port|
-The port on which the LDAP server is
-listening. Port 389 is the default port for the
-ldap protocol, and port 636 is the default port
-for the ldaps
-
-|Search Base|
-The search base is the Distinguished Name
-(DN) to be appended to the
-LDAP. The search base
-usually corresponds to the domain name of an organization. For
-example, the search base on the Sonatype LDAP
-server is "dc=sonatype,dc=com"
+|Field Name|Description
+|Protocol| Valid values in this dropdown are ldap and ldaps which correspond to the Lightweight Directory Access Protocol and the Lightweight Directory Access Protocol over SSL
+|Hostname| The hostname or IP address of the LDAP
+|Port|The port on which the LDAP server is listening. Port 389 is the default port for the ldap protocol, and port 636 is the default port for the ldaps
+|Search Base| The search base is the Distinguished Name (DN) to be appended to the LDAP. The search base usually corresponds to the domain name of an organization. For example, the search base on the Sonatype LDAP server is "dc=sonatype,dc=com"
 |====
 
 [[tbl-ldap-authentication-config]]
 .Authentication Configuration for LDAP Integration
+[cols="2,5",options="header"]
 |====
-|Field Name|Description|
+|Field Name|Description
 |Authentication Method|
-
 Nexus provides four distinct authentication methods to be used when
 connecting to the LDAP Server:
 
@@ -3922,7 +3902,7 @@ Password for an Administrative LDAP User
 |====
 
 [[ldap-sect-user-group-mapping]]
-===User and Group Mapping
+=== User and Group Mapping
 
 The LDAP Configuration panel also contains sections to manage User
 Element Mapping and Group Element Mapping as shown in <<fig-ldap-user-mapping>>.
@@ -3936,8 +3916,9 @@ and <<tbl-ldap-group-element-config>>.
 
 [[tbl-ldap-user-element-config]]
 .User Element Mapping Configuration for LDAP Integration
+[cols="2,5",options="header"]
 |====
-|Field Name|Description|
+|Field Name|Description
 |Base DN|
 
 Corresponds to the Base DN containing user entries. This DN
@@ -4004,8 +3985,9 @@ server.
 
 [[tbl-ldap-group-element-config]]
 .Group Element Mapping Configuration for LDAP Integration
+[cols="2,5",options="header"]
 |====
-|Field Name|Description|
+|Field Name|Description
 |Group Type|
 
 Groups are generally one of two types in
@@ -4071,10 +4053,10 @@ Attribute and it is used by Nexus to extract a username from this
 attribute. For example, if the Group Member Attribute has the
 format "uid=brian,ou=users,dc=sonatype,dc=com",
 then the Group Member Format would be
-"uid=\${username},ou=users,dc=sonatype,dc=com".
+"uid=$username,ou=users,dc=sonatype,dc=com".
 If the Group Member Attribute had the format
 "brian", then the Group Member Format would be
-"\${username}". This field is visible if Static
+"$username". This field is visible if Static
 Groups is selected.
 
 |Member of Attribute|
@@ -4104,36 +4086,39 @@ When mapping users and groups to an Active Directory
 installation, try the common configuration values listed in <<tbl-ldap-ad-user-element>> and <<tbl-ldap-ad-group-element>>.
 
 .Connection and Authentication Configuration for Active Directory
+[cols="2,5",options="header"]
 |====
-|Configuration Element|Configuration Value|
-|Protocol|ldap|
-|Hostname|Hostname of Active Directory Server|
-|Port|389 (or port of AD server)|
-|Search Base|DC=yourcompany,DC=com (customize for your organization)|
-|Authentication|Simple Authentication|
-|Username|CN=Administrator,CN=Users,DC=yourcompany,DC=com|
+|Configuration Element|Configuration Value
+|Protocol|ldap
+|Hostname|Hostname of Active Directory Server
+|Port|389 (or port of AD server)
+|Search Base|DC=yourcompany,DC=com (customize for your organization)
+|Authentication|Simple Authentication
+|Username|CN=Administrator,CN=Users,DC=yourcompany,DC=com
 |====
 
 [[tbl-ldap-ad-user-element]]
 .User Element Mapping Configuration for Active Directory
+[cols="2,5",options="header"]
 |====
-|Configuration Element|Configuration Value|
-|Base DN|cn=users|
-|User Subtree|false|
-|Object Class|user|
-|User ID Attribute|sAMAccountName|
-|Real Name Attribute|cn|
-|E-Mail Attribute|mail|
-|Password Attribute|(Not Used)|
-|Password Encoding|Crypt|
+|Configuration Element|Configuration Value
+|Base DN|cn=users
+|User Subtree|false
+|Object Class|user
+|User ID Attribute|sAMAccountName
+|Real Name Attribute|cn
+|E-Mail Attribute|mail
+|Password Attribute|(Not Used)
+|Password Encoding|Crypt
 |====
 
 [[tbl-ldap-ad-group-element]]
 .Group Element Mapping Configuration for Active Directory
+[cols="2,5",options="header"]
 |====
-|Configuration Element|Configuration Value|
-|Group Type|Dynamic Groups|
-|Member Of Attribute|memberOf|
+|Configuration Element|Configuration Value
+|Group Type|Dynamic Groups
+|Member Of Attribute|memberOf
 |====
 
 [[fig-ldap-microsoft-ad]] 
@@ -4152,33 +4137,35 @@ posixAccount, try the common configuration values listed in <<tbl-ldap-posix-use
 
 [[tbl-ldap-posix-user-element]]
 .User Element Mapping Configuration for posixAccount
+[cols="2,5",options="header"]
 |====
-|Configuration Element|Configuration Value|
-|Base DN|(Not Standard)|
-|User Subtree|false|
-|Object Class|posixAccount|
-|User ID Attribute|sAMAccountName|
-|Real Name Attribute|uid|
-|E-Mail Attribute|mail|
-|Password Attribute|(Not Used)|
-|Password Encoding|(Not Used)|
+|Configuration Element|Configuration Value
+|Base DN|(Not Standard)
+|User Subtree|false
+|Object Class|posixAccount
+|User ID Attribute|sAMAccountName
+|Real Name Attribute|uid
+|E-Mail Attribute|mail
+|Password Attribute|(Not Used)
+|Password Encoding|(Not Used)
 |====
 
 [[tbl-ldap-posix-group-element]]
 .Group Element Mapping Configuration for posixGroup
+[cols="2,5",options="header"]
 |====
-|Configuration Element|Configuration Value|
-|Group Type|Static Groups|
-|Base DN|(Not Standard)|
-|Group Subtree|false|
-|Object Class|posixGroup|
-|Group ID Attribute|cn|
-|Group Member Attribute|memberUid|
-|Group Member Format|\${username}|
+|Configuration Element|Configuration Value
+|Group Type|Static Groups
+|Base DN|(Not Standard)
+|Group Subtree|false
+|Object Class|posixGroup
+|Group ID Attribute|cn
+|Group Member Attribute|memberUid
+|Group Member Format|${username}
 |====
 
 [[ldap-sect-mapping-roles-ldap]]
-===Mapping Roles to LDAP Users
+=== Mapping Roles to LDAP Users
 
 Once User and Group Mapping has been configured, you can start
 verifying how LDAP users and groups are mapped to Nexus Roles. If a
@@ -5305,12 +5292,13 @@ for the new project.
 
 [[tbl-staging-new-project]]
 .Identifiers for New Project
+[cols="2,5",options="header"]
 |====
-|Identifier|Value|
-|groupId|com.sonatype.sample|
-|artifactId|staging-test|
-|version|1.0|
-|package|com.sonatype.sample|
+|Identifier|Value
+|groupId|com.sonatype.sample
+|artifactId|staging-test
+|version|1.0
+|package|com.sonatype.sample
 |====
 
 If the archetype generate goal is executed successfully, you
@@ -5917,7 +5905,7 @@ have installed Nexus on your local machine, this would be
 http://localhost:8081/nexus/
 
 username:: Username to use for authenticating to Nexus. Default value
-is \${user.name}.
+is $user.name.
 
 password:: Password to use for authenticating to Nexus
 
@@ -5931,7 +5919,7 @@ In most cases a valid user login will be required to access your
 staging information. By default, if you don't specify the nexusUrl and
 password parameters, the plugin will prompt you for them. If you don't
 specify the username parameter, the Java System property
-\${user.name}
+$user.name
 
 In addition to these security options, all of the staging goals
 have a common configuration property which controls the logging
@@ -6161,10 +6149,10 @@ only, and edit the template in the Maven Settings panel. Once you are
 finished editing the template, click Save to save the template. When
 editing the template, the following variables are available:
 
-\${baseurl}:: This variable will be replaced with the base URL of the
+baseurl:: This variable will be replaced with the base URL of the
 Nexus installation.
 
-\${userId}:: This variable will be replaced with the user id of the
+userId:: This variable will be replaced with the user id of the
 user that is generating a Maven Settings file from this template.
 
 To preview a Maven Settings template, click on the Template URL in
@@ -6172,8 +6160,8 @@ the table of Maven Settings templates. Clicking on this URL will load a
 dialog window which contains the Maven Settings file generated from this
 template. This rendered view of the Maven Settings template will have all
 variable references replaced using the current context of the user:
-\${baseurl} will be replaced with the Base URL of the current Nexus
-installation, and \${userId} will be replaced with the user id of the
+$baseurl will be replaced with the Base URL of the current Nexus
+installation, and $userId will be replaced with the user id of the
 current user.
 
 [[settings-sect-downloading]]
@@ -6246,7 +6234,7 @@ have installed Nexus on your local machine, this would be
 http://localhost:8081/nexus/
 
 username:: Username to use for authenticating to Nexus. Default value
-is \${user.name}.
+is $user.name.
 
 password:: Password to use for authenticating to Nexus
 
@@ -6260,7 +6248,7 @@ In most cases a valid user login will be required to access your
 settings templates. By default, if you don't specify the nexusURL and
 password parameters, the plugin will prompt you for them. If you don't
 specify the username parameter, the Java System property
-\${user.name} will be used.
+$user.name will be used.
 
 In addition to these security options, all of the Maven
 Settings management goal has the following configuration
@@ -6281,7 +6269,7 @@ pre-existing settings. Default value is: yyyyMMdd_HHmmss.
 destination:: The standard destination where the downloaded
 settings.xml template should be saved. If the destination is "global",
 the Nexus Maven plugin will save the Maven Settings file to
-\${M2_HOME}/conf. Is the destination is "user", the Nexus Maven plugin
+$M2_HOME/conf. Is the destination is "user", the Nexus Maven plugin
 will save the Maven Settings file to ~/.m2/settings.xml. If the target
 parameter is set, it will override this value. Default value is: user.
 
@@ -6326,7 +6314,7 @@ the command line.
 ----
 $ export NX_URL="http://localhost:8080/nexus/"
 $ mvn nexus:settings-download \
--Durl=\${NX_URL}/service/local/templates/settings/default/content \
+-Durl=${NX_URL}/service/local/templates/settings/default/content \
 -Dusername=admin \
 -Dpassword=admin123</screen>
 ----
@@ -6906,13 +6894,13 @@ define.
 
 When you downloaded Nexus Professional, you also download a few
 optional plugins including the User Account plugin. This plugin is
-located in the \${NEXUS_HOME}/runtime/apps/nexus/optional-plugins
+located in the $NEXUS_HOME/runtime/apps/nexus/optional-plugins
 directory under nexus-user-account-plugin-1.9.2. To install
 this plugin in Nexus:
 
 * Copy the nexus-user-account-plugin-1.9.2/ directory from
-\${NEXUS_HOME}/runtime/apps/nexus/optional-plugins to
-\${SONATYPE_WORK}/nexus/plugin-repository
+$NEXUS_HOME/runtime/apps/nexus/optional-plugins to
+$SONATYPE_WORK/nexus/plugin-repository
 
 * Once the optional User Account plugin has been copied to the
 plugin-repository/ directory, restart Nexus and the User Account
@@ -7045,13 +7033,13 @@ http://www.atlassian.com/software/crowd/
 
 When you downloaded Nexus Professional, you also download a few
 optional plugins including the Nexus Crowd plugin. This plugin is
-located in the ${NEXUS_HOME}/runtime/apps/nexus/optional-plugins
+located in the $NEXUS_HOME/runtime/apps/nexus/optional-plugins
 directory under security-crowd-realm-1.9.2. To
 install this plugin in Nexus:
 
 * Copy the security-crowd-realm-1.9.2/ directory from
-\${NEXUS_HOME}/runtime/apps/nexus/optional-plugins to
-\${SONATYPE_WORK}/nexus/plugin-repository
+$NEXUS_HOME/runtime/apps/nexus/optional-plugins to
+$SONATYPE_WORK/nexus/plugin-repository
 
 * Once the optional User Account plugin has been copied to the
 plugin-repository/ directory, restart Nexus and the User Account
@@ -7146,7 +7134,7 @@ that control the name of the Single Sign-on cookie and the various
 keys that are used to retrieve values that relate to authentication
 and the auth token. This dialog is only relevant if you have modified
 optional Crowd settings in your
-\${CROWD_HOME}/etc/crowd.properties. For more information about
+$CROWD_HOME/etc/crowd.properties. For more information about
 customizing these options see the http://confluence.atlassian.com/display/CROWD/The+crowd.properties+File[Atlassian
 Crowd documentation]
 
@@ -7983,7 +7971,7 @@ Nexus Plugin and find the section that defines properties. You will
 need to change the nexus-version property to target a Nexus
 version. After creating a project with the Nexus Plugin archetype, you
 will see a properties section of the POM that contains a
-${nexusVersion}
+"nexusVersion".
 
 ----
 <project>
@@ -7996,7 +7984,7 @@ ${nexusVersion}
 </project>
 ----
 
-To target a version of Nexus, change ${nexusVersion} to a Nexus
+To target a version of Nexus, change "nexusVersion" to a Nexus
 version number. The following program listing shows a properties
 section in the generated POM which targets version 1.4.1 of Nexus.
 
@@ -8255,7 +8243,7 @@ and CSS which are referenced in
 Every Nexus plugin has a plugin descriptor which is generated during
 the build process for a plugin. This plugin descriptor is packaged
 with the plugin JAR and can be found in
-${basedir}/target/classes/META-INF/nexus/plugin.xml
+$basedir/target/classes/META-INF/nexus/plugin.xml
 
 .A Nexus Plugin Descriptor
 ----
@@ -8411,7 +8399,7 @@ section and install the Nexus Migration Plugin.
 The following screen listing shows a series of commands which can be
 used to install the Nexus Migration plugin into an existing Nexus
 installation. This listing assumes that the environment variable
-\${NEXUS_HOME} points to an existing Nexus
+$NEXUS_HOME points to an existing Nexus
 installation. Download the Nexus Migration plugin, copy the
 distribution archive to the Nexus installation folder, and unpack
 it. This archive will install the necessary applications and plugins
@@ -8432,8 +8420,8 @@ Saving to: 'nexus-migration-plugin-packaging-1.5-webapp.zip'
 
 2009-03-14 15:03:52 (406 KB/s) - \
 `nexus-migration-plugin-packaging-1.5-webapp.zip' saved [280179/280179]
-$ cp nexus-migration-plugin-packaging-1.5-webapp.zip \${NEXUS_HOME}
-$ cd \${NEXUS_HOME}
+$ cp nexus-migration-plugin-packaging-1.5-webapp.zip ${NEXUS_HOME}
+$ cd ${NEXUS_HOME}
 $ unzip nexus-migration-plugin-packaging-1.5-webapp.zip
 Archive:  nexus-migration-plugin-packaging-1.5-webapp.zip
 creating: runtime/
@@ -8719,7 +8707,7 @@ The configuration for these mappings is stored in
 sonatype-work/nexus/conf/mapping.xml. This is an XML file which was
 configured during the import that maps the old Artifactory repository
 identifiers to the new Nexus repository identifiers. The Artifactory
-Bridge web application is configured in \${NEXUS_HOME}/conf/plexus.xml
+Bridge web application is configured in $NEXUS_HOME/conf/plexus.xml
 contains a reference to the web application and also configures the
 context-path /artifactory
 
@@ -9045,7 +9033,7 @@ Versions/1.6.0/Home/lib/security/jssecacerts
 ==== Configuring Nexus Startup
 
 Once both sets of SSL certificates are imported to your keystore, you
-can modify the Nexus \${NEXUS_HOME}/conf/wrapper.conf file
+can modify the Nexus $NEXUS_HOME/conf/wrapper.conf file
 to inject the JSSE system properties necessary to use these
 certificates, as seen below.
 
@@ -9109,7 +9097,7 @@ certificates in a form that Jetty can use. Pay particular attention to
 steps 1-3, and the section at the bottom called Password Issues.
 
 The jetty-util jar and the main Jetty jar can be found in
-\${NEXUS_HOME}/runtime/apps/lib/nexus. The command line used to import
+$NEXUS_HOME/runtime/apps/lib/nexus. The command line used to import
 an OpenSSL key+cert in PKCS12 format is:
 
 ----
@@ -9143,7 +9131,7 @@ file, with the same password.
 ==== Configure Nexus/Jetty to Use the New Keystore
 
 NOTE: A jetty.xml with the modifications in this section can be found
-in \${NEXUS_HOME}/conf/examples/jetty-ssl.xml, inside your Nexus
+in $NEXUS_HOME/conf/examples/jetty-ssl.xml, inside your Nexus
 distribution.
 
 Modify the https://docs.sonatype.com/display/NX/Jetty+Configuration#JettyConfiguration-Equivalentbasejetty.xml[nexus-equivalent jetty.xml]
@@ -9212,7 +9200,7 @@ httpd, you could configure mod_rewrite to automatically redirect
 browsers to the SSL port, or you can configure Jetty to perform this
 redirection. To do this in Jetty you use a custom rewrite rule for
 Jetty that is bundled with Nexus, inside the plexus-jetty6 library
-found in \${NEXUS_HOME}/runtime/apps/nexus/lib
+found in $NEXUS_HOME/runtime/apps/nexus/lib
 
 To enable this feature, configure Jetty to serve SSL directly as
 demonstrated in <<ssl-sect-ssl-direct>>. After you
@@ -9301,7 +9289,7 @@ section just above the line with stopAtShutdown in it:
 </Set>
 ----
 
-Modify \${NEXUS_HOME}/conf/plexus.properties
+Modify $NEXUS_HOME/conf/plexus.properties
 and add a new property, application-port-ssl. This will
 allow you to customize both the SSL and non-SSL ports
 independently:
