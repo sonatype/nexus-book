@@ -3414,7 +3414,14 @@ purposes of auditing, it can also take up storage space. Using this
 scheduled task you can tell Nexus to periodically purge this
 information. (See note about deletion.)
 
-Re-index Repositories:: This service tells Nexus to re-index a repository.
+Repair Repositories Index:: In certain cases it might be required to
+remove the internal index as well as the published ones of a repository.
+This task does that and then rebuilds the internal index by first
+trying to download remote indexes (if a proxy repository), then scanning
+the local storage and updating the internal index accordingly. Lastly,
+the index is published for the repository as well. There should be no
+need to schedule this task. But when upgrading Nexus, the upgrade
+instructions may sometimes include a manual step of executing this task.
 
 Remove Snapshots from Repository:: Often, you will want to remove
 snapshots from a snapshot repository to preserve storage space.  Note
@@ -3438,10 +3445,19 @@ of 3.
 Whether snapshots should be removed if an artifact has been released -
 If your Nexus repository also contains a release repository, you can
 configure Nexus to remove all SNAPSHOT artifacts once an artifact has
-been released.
+been released.</itemizedlist>
 
 Synchronize Shadow Repository:: This service synchronizes a shadow (or
 virtual) repository with its master repository.
+
+Update Repositories Index:: If files are deployed directly to a
+repository's local storage (not deployed through Nexus), you will need
+to instruct Nexus to update it's index. When executing this task, Nexus
+will update its index by first downloading remote indexes (if a proxy
+repository) and then scan the local storage to index the new files.
+Lastly, the index is published for the repository as well. Normally,
+there should be no need to schedule this task. One possible except
+would be if files are deployed directly to the local storage regularly.
 
 NOTE: The Evict and Purge actions do not delete data from the Nexus
 working directory. They simply move data to be cleared or evicted to a
