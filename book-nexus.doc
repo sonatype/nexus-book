@@ -6165,9 +6165,34 @@ entire organization.
 
 ==== Running the Nexus Maven Plugin
 
-To invoke goals in the Nexus Maven plugin, you will want to add
-the appropriate plugin group to your Maven settings file. Add the
-org.sonatype.plugins groupId to ~/.m2/settings.xml as shown in <<ex-settings-nexus-plugin-group>>.
+To invoke goals in the Nexus Maven plugin, you will initially have to
+use a fully qualified groupId and artifactId as shown in
+<<ex-qualified-nexus-plugin>>.
+
+[[ex-qualified-nexus-plugin]]
+.Invoking the Nexus Maven Plugin goal settings-download with a fully qualified groupId and artifactId
+----
+mvn org.sonatype.plugins:nexus-maven-plugin:settings-download
+----
+
+To be able to invoke the plugin with the simple identifier "nexus" as
+shown in <<ex-short-nexus-plugin>>, you have to add the appropriate
+plugin group to your Maven Settings file as shown in
+<<ex-settings-nexus-plugin-group>>. An initial invocation of the
+settings-download goal will update your settings file, with a template
+from Nexus Professional. Every default template in Nexus Professional
+adds the org.sonatype.plugins group to the pluginGroups, so you will
+not have to do this manually. It is essential that you make sure that
+any new, custom templates also include this plugin group
+definition. Otherwise, there is a chance that a developer could update
+his or her Maven Settings and lose the ability to use the Nexus Maven
+plugin with the short identifier
+
+[[ex-short-nexus-plugin]]
+.Invoking the Nexus Maven Plugin goal settings-download with a short identifier
+----
+mvn nexus:settings-download
+----
 
 [[ex-settings-nexus-plugin-group]]
 .Adding org.sonatype.plugins to pluginGroups in Maven Settings
@@ -6181,46 +6206,13 @@ org.sonatype.plugins groupId to ~/.m2/settings.xml as shown in <<ex-settings-nex
 </settings>
 ----
 
-NOTE: It might seem ironic that you need to update your Maven Settings
-to take advantage of a plugin which will be used to manage your Maven
-Settings file. Adding this plugin definition is a task that only needs
-to be completed once to add the appropriate plugin group for the Nexus
-Maven plugin. Once you have successfully configured your Maven
-Settings, you will be replacing your Maven Settings with templates
-from Nexus Professional. Every default template in Nexus Professional
-adds the org.sonatype.plugins group to the pluginGroups, and it is
-essential that you make sure that any new, custom templates also
-include this plugin group definition. Otherwise, there is a chance
-that a developer could update his or her Maven Settings and lose the
-ability to use the Nexus Maven plugin.
-
-Alternatively you can invoke the Nexus Maven Plugin with a fully
-qualified groupId as shown in <<ex-qualified-nexus-plugin>> and
-therefore avoid the necessity to edit the settings file
-
-[[ex-qualified-nexus-plugin]]
-.Invoking the Nexus Maven Plugin goal settings-download with a fully qualified goupId
-----
-mvn org.sonatype.plugins:nexus-maven-plugin:settings-download
-----
-
-Adding the org.sonatype.plugins group to your Maven Settings will
-allow you to run the following goals from the Nexus Maven Plugin:
-
-settings-download:: This goal downloads a Maven Settings
-template from Nexus Professional and stores it on a local
+The "settings-download" goal of the Nexus Maven Plugin downloads a
+Maven Settings file from Nexus Professional and stores it on a local
 machine. This goal can be configured to update a user's
 ~/.m2/settings.xml file or the global configuration file which is
-stored the Maven installation directory. If you are replacing a Maven
-Settings file, this goal can also be configured to make a backup of an
-existing Maven Settings file.
-
-Once you have configured the pluginGroup in your Maven Settings
-file, you can run the Nexus Maven plugin from the command line.
-
-----
-$ mvn nexus:settings-download
-----
+stored in the Maven installation directory. If you are replacing a
+Maven Settings file, this goal can be configured to make a backup of
+an existing Maven Settings file.
 
 ==== Configuring Nexus Maven Plugin for Settings Management
 
@@ -6295,13 +6287,13 @@ value.
 
 ==== Downloading Maven Settings
 
-To download Maven Settings from Nexus Profession, you will
+To download Maven Settings from Nexus Professional, you will
 need to know the URL of the Maven Settings template. If you omit this
 URL on the command-line, the Nexus Maven plugin will prompt you for a
 URL when it is executed:
 
 ----
-$ mvn nexus:settings-download
+$ mvn org.sonatype.plugins:nexus-maven-plugin:settings-download
 [INFO] [nexus:settings-download]
 Settings Template URL: \
 .../nexus/service/local/templates/settings/default/content
@@ -6314,8 +6306,8 @@ Alternatively, you can specify the username, password, and URL on
 the command line.
 
 ----
-$ export NX_URL="http://localhost:8080/nexus/"
-$ mvn nexus:settings-download \
+$ export NX_URL="http://localhost:8081/nexus/"
+$ mvn org.sonatype.plugins:nexus-maven-plugin:settings-download \
 -Durl=${NX_URL}/service/local/templates/settings/default/content \
 -Dusername=admin \
 -Dpassword=admin123</screen>
