@@ -84,7 +84,8 @@ automatically download a Nexus index from all remote repositories
 which create a Nexus index. Nexus will also automatically expose a
 Nexus index for any hosted repositories you create.
 
-Scheduled Tasks:: Nexus Open Source has the concept of scheduled tasks: periodic jobs which take care of various repository management tasks
+Scheduled Tasks:: Nexus Open Source has the concept of scheduled tasks:
+periodic jobs which take care of various repository management tasks
 such as deleting old snapshots, evicting unused items, and publishing
 repository indexes.
 
@@ -1468,7 +1469,9 @@ $ tail -f logs/wrapper.log
 INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
 ----
 
-At this point, Nexus will be running and listening on all IP addresses (0.0.0.0) that are configured for the current host on port 8081. To use Nexus, fire up a web browser and type in the URL: http://localhost:8081/nexus
+At this point, Nexus will be running and listening on all IP addresses
+(0.0.0.0) that are configured for the current host on port 8081. To use
+Nexus, fire up a web browser and type in the URL: http://localhost:8081/nexus
 
 While we use "localhost" throughout this book, you may need to use the
 IP Loopback Address of "127.0.0.1" or the IP address assigned to the
@@ -2890,7 +2893,8 @@ file an error report with the Sonatype issue tracker.
 image::figs/web/configuring_automated-error.png[scale=60]
 
 To sign up for an account on the Sonatype JIRA instance, go to
-http://issues.sonatype.org. Once you see the web site shown in <<fig-configuring-sonatype-jira>>, click on the "Signup" link
+http://issues.sonatype.org. Once you see the web site shown in
+<<fig-configuring-sonatype-jira>>, click on the "Signup" link
 below the Login form.  
 
 [[fig-configuring-sonatype-jira]]
@@ -3410,13 +3414,16 @@ purposes of auditing, it can also take up storage space. Using this
 scheduled task you can tell Nexus to periodically purge this
 information. (See note about deletion.)
 
-Rebuild Repository Attributes:: This scheduled task tells Nexus to
-walk every file in a repository and gather information like checksums
-and file contents for every file.
+Repair Repositories Index:: In certain cases it might be required to
+remove the internal index as well as the published ones of a repository.
+This task does that and then rebuilds the internal index by first
+trying to download remote indexes (if a proxy repository), then scanning
+the local storage and updating the internal index accordingly. Lastly,
+the index is published for the repository as well. There should be no
+need to schedule this task. But when upgrading Nexus, the upgrade
+instructions may sometimes include a manual step of executing this task.
 
-Re-index Repositories:: This service tells Nexus to re-index a repository.
-
-Remove Snapshots from a Repository:: Often, you will want to remove
+Remove Snapshots from Repository:: Often, you will want to remove
 snapshots from a snapshot repository to preserve storage space.  Note
 that configuring and running this job is not enough to reclaim disk
 space.  You will also need to configure a scheduled job to empty the
@@ -3438,10 +3445,19 @@ of 3.
 Whether snapshots should be removed if an artifact has been released -
 If your Nexus repository also contains a release repository, you can
 configure Nexus to remove all SNAPSHOT artifacts once an artifact has
-been released.
+been released.</itemizedlist>
 
 Synchronize Shadow Repository:: This service synchronizes a shadow (or
 virtual) repository with its master repository.
+
+Update Repositories Index:: If files are deployed directly to a
+repository's local storage (not deployed through Nexus), you will need
+to instruct Nexus to update it's index. When executing this task, Nexus
+will update its index by first downloading remote indexes (if a proxy
+repository) and then scan the local storage to index the new files.
+Lastly, the index is published for the repository as well. Normally,
+there should be no need to schedule this task. One possible except
+would be if files are deployed directly to the local storage regularly.
 
 NOTE: The Evict and Purge actions do not delete data from the Nexus
 working directory. They simply move data to be cleared or evicted to a
@@ -3788,7 +3804,8 @@ image::figs/web/ldap_moving_ldap_realm_over.png[scale=60]
 Next, click on the Save button in the Server configuration panel. To
 make sure that your Nexus instance attempts to authenticate against
 LDAP first, click on the OSS LDAP Authentication Realm in the Selected
-Realms list and drag it to the top of the list as shown in <<fig-ldap-move-realm-to-top>>. This will ensure that Nexus will consult the LDAP Server before it
+Realms list and drag it to the top of the list as shown in <<fig-ldap-move-realm-to-top>>.
+This will ensure that Nexus will consult the LDAP Server before it
 consults the other Authentication Realms.
 
 NOTE: Nexus will continue to fall-back to the Xml Authenticating Realm
@@ -3936,11 +3953,8 @@ this field should be true.
 
 This value defaults to inetOrgPerson
 which is a standard object class defined in http://www.faqs.org/rfcs/rfc2798.html[RFC 2798].
-inetOrgPerson contains standard fields such
-as mail,
-uid. Other possible
-values are posixAccount or a custom
-class.
+inetOrgPerson contains standard fields such as mail, uid. Other
+possible values are posixAccount or a custom class.
 
 |User ID Attribute|
 
@@ -4075,7 +4089,8 @@ image::figs/web/ldap_dynamic_groups.png[scale=60]
 === Mapping Users and Groups with Active Directory
 
 When mapping users and groups to an Active Directory
-installation, try the common configuration values listed in <<tbl-ldap-ad-user-element>> and <<tbl-ldap-ad-group-element>>.
+installation, try the common configuration values listed in
+<<tbl-ldap-ad-user-element>> and <<tbl-ldap-ad-group-element>>.
 
 .Connection and Authentication Configuration for Active Directory
 [cols="2,5",options="header"]
@@ -4125,7 +4140,8 @@ to port 389 might lead to errors.
 === Mapping Users and Groups with posixAccount
 
 When mapping users and groups to LDAP entries of type
-posixAccount, try the common configuration values listed in <<tbl-ldap-posix-user-element>> and <<tbl-ldap-posix-group-element>>.
+posixAccount, try the common configuration values listed in
+<<tbl-ldap-posix-user-element>> and <<tbl-ldap-posix-group-element>>.
 
 [[tbl-ldap-posix-user-element]]
 .User Element Mapping Configuration for posixAccount
@@ -4577,8 +4593,8 @@ what artifacts can be referenced by a large development team.
 If you installed Nexus Professional, the Nexus Procurement Suite is
 already installed. Just start Nexus and look for the Artifact
 Procurement option in the left-hand navigation menu of the Nexus
-interface. If you see the Artifact Procurement link as shown in <<fig-procure-links>>, the Procurement Suite is available and
-ready to be configured.
+interface. If you see the Artifact Procurement link as shown in <<fig-procure-links>>,
+the Procurement Suite is available and ready to be configured.
 
 [[fig-procure-links]]
 .Artifact Procurement in the Nexus Menu
@@ -4638,8 +4654,8 @@ a minute to a few minutes. The size of the remote index for Maven
 Central is on the order of 30 MB. To check on the status of the remote
 index download, click on System Feeds under Views in the Nexus
 menu. Click on the last feed to see a list of "System Changes in
-Nexus". If you see a log entry like the one highlighted in <<fig-procure-system-feed>>, Nexus has successfully
-downloaded the Remote Index from Maven Central.
+Nexus". If you see a log entry like the one highlighted in <<fig-procure-system-feed>>,
+Nexus has successfully downloaded the Remote Index from Maven Central.
 
 [[fig-procure-system-feed]]
 .Verification that the Remote Index has been Downloaded
@@ -5132,7 +5148,7 @@ well as all Nexus users in the specified roles, informing that a
 staging repository has been closed. It is also possible to select that
 the creator of the staging repository receives this notification.
 
-Promotion Repository Notification Settings:: Once a closed staging
+Promote Repository Notification Settings:: Once a closed staging
 repository has been certified by whoever is responsible for testing
 and checking a staged release, it can then be promoted (published) or
 dropped (discarded). In this setting, it is possible define email
@@ -5408,10 +5424,11 @@ in <<ex-staging-deployment-credentials>>.
 </settings>
 ----
 
-Note that the server identifier listed in <<ex-staging-deployment-credentials>> matches the server
-identifier listed in <<ex-staging-dist-management>>. The deployment credential listed in <<ex-staging-deployment-credentials>> contains the default
-password for the Nexus deployment user - deployment123. You should
-change this password to match the deployment password for your Nexus
+Note that the server identifier listed in <<ex-staging-deployment-credentials>>
+matches the server identifier listed in <<ex-staging-dist-management>>.
+The deployment credential listed in <<ex-staging-deployment-credentials>>
+contains the default password for the Nexus deployment user - deployment123.
+You should change this password to match the deployment password for your Nexus
 installation.
 
 [[staging-sect-deploy-staged]]
@@ -5563,9 +5580,10 @@ contains artifacts not accompanied by "-sources.jar" artifacts, this
 validation rule will fail.
 
 To create a Staging Ruleset, click on the Staging Ruleset link in
-the Nexus Menu. This will load the interface shown in <<fig-staging-rulesets>>. The Staging Ruleset panel is used to
-define sets of rules that can be applied to Staging Profiles. <<fig-staging-rulesets>> shows a ruleset which contains all
-four predefined staging rules.
+the Nexus Menu. This will load the interface shown in <<fig-staging-rulesets>>.
+The Staging Ruleset panel is used to define sets of rules that can be
+applied to Staging Profiles. <<fig-staging-rulesets>> shows a ruleset
+which contains all four predefined staging rules.
 
 [[fig-staging-rulesets]]
 .Creating a Staging Ruleset
@@ -5577,7 +5595,8 @@ image::figs/web/staging-rulesets.png[scale=60]
 To define a ruleset to be used for promotion, click on
 Staging in the Nexus menu and select a Staging Profile. Click on the
 Configuration tab, and scroll down to the Promote Repository Staging
-Rulesets section of the Staging Profile configuration as shown in <<fig-staging-associate-ruleset>>. The next time you attempt to
+Rulesets section of the Staging Profile configuration as shown in
+<<fig-staging-associate-ruleset>>. The next time you attempt to
 promote a staging repository that was created with this profile, Nexus
 Professional will check that all of the rules in the associated rulesets
 are being adhered to.
@@ -5589,7 +5608,8 @@ image::figs/web/staging-rulesets-associate.png[scale=60]
 [[staging-sect-managing-staging]]
 === Managing Staging Repositories in Nexus
 
-Once you complete the process outlined in <<staging-sect-deployment>>, you will then have an automatically
+Once you complete the process outlined in <<staging-sect-deployment>>,
+you will then have an automatically
 generated Staging Repository. In this section, you will walk through the
 process of managing staging repositories. Once a staging repository has
 been created, there are two steps in the lifecycle of a staging
@@ -5824,8 +5844,8 @@ image::figs/web/multiple-promotion-release.png[scale=60]
 [[staging-sect-managing-plugin]]
 === Managing Staging Repositories with the Nexus Maven Plugin
 
-You can do everything that was described in <<staging-sect-managing-staging>> with the Nexus Maven Plugin.
-Using the Nexus Maven Plugin you can:
+You can do everything that was described in <<staging-sect-managing-staging>>
+with the Nexus Maven Plugin. Using the Nexus Maven Plugin you can:
 
 * Close a Staging Repository
 * Promote a Staging Repository
@@ -7125,7 +7145,8 @@ image::figs/web/crowd_server-config-http-proxy.png[scale=60]
 
 ==== Miscellaneous Settings
 
-The miscellaneous settings section shown in <<fig-crowd-misc-settings>>, allows you to configure settings
+The miscellaneous settings section shown in <<fig-crowd-misc-settings>>,
+allows you to configure settings
 that control the name of the Single Sign-on cookie and the various
 keys that are used to retrieve values that relate to authentication
 and the auth token. This dialog is only relevant if you have modified
@@ -7143,7 +7164,8 @@ image::figs/web/crowd_server-config-misc.png[scale=60]
 
 Once you have configured Nexus to connect to Crowd, you must select
 the Crowd authorization realm from the list of available realms in
-your Nexus Server settings. <<fig-crowd-activate-realm>>, shows the Security settings section in the Nexus Server
+your Nexus Server settings. <<fig-crowd-activate-realm>>, shows the
+Security settings section in the Nexus Server
 configuration. To load the Nexus server configuration panel, click on
 Server under Administration in the Nexus menu. Drag Crowd from the
 list of available realms to the list of selected realms and then save
@@ -7161,8 +7183,9 @@ Nexus as an application in Crowd. To do this, login to Crowd as a user
 with Administrative rights, and click on the Applications tab. Once
 you click on this tab, you should see two options under the
 Applications tab: Search Applications and Add Application. Click on
-Add Application to display the form shown in <<fig-crowd-app>>, and create a new application with the
-following values in the Details tab of the Add Application form:
+Add Application to display the form shown in <<fig-crowd-app>>, and
+create a new application with the following values in the Details tab
+of the Add Application form:
 
 * Application Type: Generic Application
 
@@ -7191,10 +7214,10 @@ Directories form.
 .Creating a Nexus Crowd Application Connection
 image::figs/web/crowd_new-app-connection.png[scale=60]
 
-Clicking on Next advances to the Directories form shown in <<fig-crowd-app-directories>>. In this example, the Nexus
-application in Crowd is going to use the default "User Management"
-directory. Click on the Next button to advance to the "Authorisation"
-form.
+Clicking on Next advances to the Directories form shown in <<fig-crowd-app-directories>>.
+In this example, the Nexus application in Crowd is going to use the
+default "User Management" directory. Click on the Next button to advance
+to the "Authorisation" form.
 
 [[fig-crowd-app-directories]]
 .Creating a Nexus Crowd Application Directories
@@ -7269,8 +7292,8 @@ Selecting External User Role Mapping will show the dialog shown in
 image::figs/web/crowd_find-external-user.png[scale=60]
 
 Once you locate the Crowd user that you want to add a Nexus Role
-to... You can use the configuration panel shown in <<fig-crowd-assign-user-role>>, to add a Role to the
-Crowd-managed "brian" user.
+to... You can use the configuration panel shown in <<fig-crowd-assign-user-role>>,
+to add a Role to the Crowd-managed "brian" user.
 
 [[fig-crowd-assign-user-role]]
 .Adding a Nexus Role to a Crowd User
@@ -7446,17 +7469,18 @@ image::figs/web/bundles-upload-link.png[scale=60]
 
 Selecting the Staging Upload link will load the Staging Upload
 dialog. Choose Artifact Bundle form the Upload Mode dropdown the
-Staging Upload panel will switch to the form shown in <<fig-bundles-staging-upload>>. Click on Select Bundle to
-Upload... and then select the JAR that was created with the Maven
-Repository plugin used in the previous sections. Once a bundle is
-selected, click on Upload Bundle.
+Staging Upload panel will switch to the form shown in <<fig-bundles-staging-upload>>.
+Click on Select Bundle to Upload... and then select the JAR that was
+created with the Maven Repository plugin used in the previous sections.
+Once a bundle is selected, click on Upload Bundle.
 
 [[fig-bundles-staging-upload]]
 .Uploading an Artifact Bundle
 image::figs/web/bundles-staging-upload.png[scale=60]
 
 After uploading the Artifact Bundle, click on the Staging link in the
-Enterprise section of the Nexus menu as shown in <<fig-bundles-upload-link>>. Click on Staging will load a
+Enterprise section of the Nexus menu as shown in <<fig-bundles-upload-link>>.
+Click on Staging will load a
 list of all the defined staging profiles. Click on the first default
 profiles named "Release Staging Profile", and you should see that the
 Staging Artifact Upload created and closed a new staging repository as
@@ -7472,9 +7496,9 @@ image::figs/web/bundles-staged-bundle.png[scale=60]
 To promote a staging repository, right click on the closed repository
 shown in <<fig-bundles-staged-bundle>>, and select
 "Promote". Once you select promote, Nexus will present the Promote
-Staged Repository dialog shown in <<fig-bundles-stage-promote>>. Select the repository that you
-want to published the staging repository to, and click on the Promote
-button.
+Staged Repository dialog shown in <<fig-bundles-stage-promote>>. Select
+the repository that you want to published the staging repository to, and
+click on the Promote button.
 
 [[fig-bundles-stage-promote]]
 .Promoting a Staged Repository
@@ -8389,7 +8413,8 @@ downloading nexus-migration-plugin-packaging-1.5-webapp.zip.
 
 NOTE: This section assumes that you have just downloaded and installed
 Nexus Open Source or Nexus Professional. If you haven't installed
-Nexus, you should make a bookmark for this section and jump to <<install>>. Once you have installed Nexus, return to this
+Nexus, you should make a bookmark for this section and jump to <<install>>.
+Once you have installed Nexus, return to this
 section and install the Nexus Migration Plugin.
 
 The following screen listing shows a series of commands which can be
@@ -8753,8 +8778,8 @@ image::figs/web/archiva-managed-repositories.png[scale=60]
 To migrate this Managed repository to a Nexus Hosted repository, you
 will need to find the directory in which Archiva stores all of the
 repository artifacts. to do this, click on the Edit link listed next
-to the name of the repository you want to migrate as shown in <<fig-archiva-managed>>. Click on Edit should load the form
-shown in <<fig-archiva-managed-edit>>.
+to the name of the repository you want to migrate as shown in <<fig-archiva-managed>>.
+Click on Edit should load the form shown in <<fig-archiva-managed-edit>>.
 
 [[fig-archiva-managed-edit]]
 .Editing an Archiva Managed Repository
@@ -8771,7 +8796,8 @@ old Archiva Managed Repository to your new Nexus Hosted Repository.
 Next, create a new Nexus repository with the same identifier and Name
 as the old Archiva Managed Repository. To do this, log into Nexus as
 an administrative user, click on Repositories in the left-hand Nexus
-navigation menu, and then click on the Add dropdown as shown in <<fig-archiva-new-nexus-hosted>>. Select "Hosted Repository"
+navigation menu, and then click on the Add dropdown as shown in
+<<fig-archiva-new-nexus-hosted>>. Select "Hosted Repository"
 and then fill out the Repository ID and Repository Name to match the
 name of the old Archiva repository. If you are migrating a Snapshot
 repository, select a Repository Policy of Snapshot, and if you are
@@ -8856,8 +8882,8 @@ of remote repositories as shown in <<fig-archiva-browsing-remote>>.
 image::figs/web/archiva-remote-repositories.png[scale=60]
 
 Defining a proxy repository in Archiva involves associating one of the
-remote repositories defined in <<fig-archiva-browsing-remote>> with one of the Managed
-Repositories defined in <<fig-archiva-managed>>. Once
+remote repositories defined in <<fig-archiva-browsing-remote>> with one
+of the Managed Repositories defined in <<fig-archiva-managed>>. Once
 you do this, requests for artifacts from the managed repository will
 also query the remote repository. If an artifact is found in the
 remote repository, it will be retrieved and stored in the managed
@@ -8872,7 +8898,8 @@ image::figs/web/archiva-proxy-connectors.png[scale=60]
 
 Click on the Edit Icon (or Pencil) next to second Proxy Connector
 listed in <<fig-archiva-proxy-connectors>>, this will
-then load the settings form for this proxy connector shown in <<fig-archiva-proxy-connector-settings>>. You should use the
+then load the settings form for this proxy connector shown in
+<<fig-archiva-proxy-connector-settings>>. You should use the
 settings for this proxy connect to configure your new Nexus Proxy
 repository.
 
@@ -8885,8 +8912,10 @@ Connector in Archiva, log into Nexus as an administrative user, and
 click on Repositories in the left-hand Nexus menu. Once you can see a
 list of Nexus repositories, click on Add... and select Proxy
 Repository from the dropdown of repository types. In the New Proxy
-Repository form (shown in <<fig-archiva-nx-create-proxy>>) populate the repository ID, repository Name, and use the remote
-URL that was displayed in <<fig-archiva-browsing-remote>>. You will need to create a remote repository for every proxy
+Repository form (shown in <<fig-archiva-nx-create-proxy>>) populate
+the repository ID, repository Name, and use the remote
+URL that was displayed in <<fig-archiva-browsing-remote>>. You will
+need to create a remote repository for every proxy
 connector that was defined in Archiva.
 
 [[fig-archiva-nx-create-proxy]]
@@ -8912,11 +8941,11 @@ repository. In , Archiva defined three patterns that were used to
 filter artifacts available from the proxy connector. These three
 patterns were "javax/**", "com/sun/**", and "org/jvnet/**". To
 recreate this behavior in Nexus, define three Routes which will be
-applied to the group you configured in <<fig-archiva-proxy-to-group>>. To create a route, log in as
-an administrative user, and click on Routes under the Administration
-menu in the left-hand Nexus menu. Click on Add.. and add three
-inclusive routes that will apply to the repository group you
-configured in <<fig-archiva-proxy-to-group>>.
+applied to the group you configured in <<fig-archiva-proxy-to-group>>.
+To create a route, log in as an administrative user, and click on Routes
+under the Administration menu in the left-hand Nexus menu. Click on
+Add.. and add three inclusive routes that will apply to the repository
+group you configured in <<fig-archiva-proxy-to-group>>.
 
 .Defining Nexus Repository Groups
 image::figs/web/archiva-nx-repo-routes.png[scale=60]
