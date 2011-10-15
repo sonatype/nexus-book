@@ -1692,6 +1692,48 @@ Starting Sonatype Nexus...
 $ tail -f /usr/local/nexus/logs/wrapper.log
 ----
 
+====  Running Nexus as a Service on Mac OS X
+
+The standard way to run a service on Mac OS X is by using launchd,
+which uses plist files for configuration. An example plist file for
+Nexus in shown <<ex-nexus-plist>>.
+
+[[ex-nexus-plist]]
+.A sample com.sonatype.nexus.plist file
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.sonatype.nexus</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/nexus/bin/jsw/macosx-universal-64/nexus</string>
+        <string>console</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>
+
+----
+
+After saving the file as "com.sonatype.nexus.plist" in
+/Library/LaunchDaemons/ you have to change the owner ship and access
+rights.
+
+----
+sudo chown root:wheel /Library/LaunchDaemons/com.sonatype.nexus.plist
+sudo chmod 644 /Library/LaunchDaemons/com.sonatype.nexus.plist
+----
+
+With this setup Nexus will start as a service at boot time. To
+manually start it after the configuration you can use
+----
+sudo launchctl load /Library/LaunchDaemons/com.sonatype.nexus.plist
+----
+
 [[install-sect-proxy]]
 === Running Nexus Behind a Proxy
 
