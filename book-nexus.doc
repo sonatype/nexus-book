@@ -7891,7 +7891,7 @@ Interface: org.sonatype.nexus.plugins.RepositoryCustomizer
 
 This extension component will be invoked during configuration of
 every Repository instance, and may be used to add some "extra"
-configuration to repositories The procurement plugin uses this
+configuration to repositories. The procurement plugin uses this
 mechanism to "inject" RequestProcessor that will evaluate rules before
 allowing execution of request.
 
@@ -7907,7 +7907,7 @@ repositories with custom attributes. Every file stored/cached/uploaded
 in Nexus will be sent to these components for inspection and
 potentially decoration. The StorageItemInspector will get all item
 types for inspection (file, collections, links), while
-StorageFileItemInspector will get only file items. Currently only one
+StorageFileItemInspector will only get file items. Currently only one
 ItemInspector is used in Nexus: the checksumming inspector, that
 decorates all file items in Nexus with SHA1 checksum and stores it
 into item attributes.
@@ -7969,34 +7969,50 @@ $ mvn archetype:generate -DarchetypeGroupId=org.sonatype.nexus.archetypes \
 -DarchetypeArtifactId=nexus-plugin-archetype \
 -DarchetypeVersion=1.2
 [INFO] Scanning for projects...
-[INFO] Searching repository for plugin with prefix: 'archetype'.
+[INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
-[INFO] Building Maven Default Project
-[INFO]    task-segment: [archetype:generate] (aggregator-style)
+[INFO] Building Maven Stub Project (No POM) 1
 [INFO] ------------------------------------------------------------------------
-[INFO] Preparing archetype:generate
-[INFO] No goals needed for project - skipping
-[INFO] Setting property: resource.loader => 'classpath'.
-[INFO] Setting property: resource.manager.logwhenfound => 'false'.
-[INFO] [archetype:generate {execution: default-cli}]
+[INFO] 
+[INFO] >>> maven-archetype-plugin:2.1:generate (default-cli) @ standalone-pom >>>
+[INFO] 
+[INFO] <<< maven-archetype-plugin:2.1:generate (default-cli) @ standalone-pom <<<
+[INFO] 
+[INFO] --- maven-archetype-plugin:2.1:generate (default-cli) @ standalone-pom ---
 [INFO] Generating project in Interactive mode
-Define value for groupId: : org.sonatype.book.nexus
-Define value for artifactId: : sample-plugin
-Define value for version:  1.0-SNAPSHOT: : 
-Define value for package:  org.sonatype.book.nexus: : 
+[INFO] Archetype repository missing. Using the one from [org.sonatype.nexus.archetypes:nexus-plugin-archetype:1.2] found in catalog remote
+Define value for property 'groupId': : org.sonatype.book.nexus
+Define value for property 'artifactId': : sample-plugin
+Define value for property 'version':  1.0-SNAPSHOT: : 
+Define value for property 'package':  org.sonatype.book.nexus: : 
+[INFO] Using property: nexusVersion = 1.4.1
 Confirm properties configuration:
-nexus-version: 1.4.0-SNAPSHOT
 groupId: org.sonatype.book.nexus
 artifactId: sample-plugin
 version: 1.0-SNAPSHOT
 package: org.sonatype.book.nexus
-Y: : 
+nexusVersion: 1.4.1
+ Y: : 
+[INFO] ----------------------------------------------------------------------------
+[INFO] Using following parameters for creating project from Archetype: nexus-plugin-archetype:1.2
+[INFO] ----------------------------------------------------------------------------
+[INFO] Parameter: groupId, Value: org.sonatype.book.nexus
+[INFO] Parameter: artifactId, Value: sample-plugin
+[INFO] Parameter: version, Value: 1.0-SNAPSHOT
+[INFO] Parameter: package, Value: org.sonatype.book.nexus
+[INFO] Parameter: packageInPathFormat, Value: org/sonatype/book/nexus
+[INFO] Parameter: package, Value: org.sonatype.book.nexus
+[INFO] Parameter: version, Value: 1.0-SNAPSHOT
+[INFO] Parameter: nexusVersion, Value: 1.4.1
+[INFO] Parameter: groupId, Value: org.sonatype.book.nexus
+[INFO] Parameter: artifactId, Value: sample-plugin
+[INFO] project created from Archetype in dir: /Users/anders/dev/sample-plugin
 [INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESSFUL
+[INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 25 seconds
-[INFO] Finished at: Wed Oct 21 14:39:03 CDT 2009
-[INFO] Final Memory: 13M/80M
+[INFO] Total time: 54.206s
+[INFO] Finished at: Thu Oct 27 11:12:13 CEST 2011
+[INFO] Final Memory: 7M/265M
 [INFO] ------------------------------------------------------------------------
 ----
 
@@ -8027,28 +8043,14 @@ which is fired by the VirusScanner
 [[plugdev-sect-target-version]]
 === Set the Target Nexus Version
 
-To set the target Nexus version of the new Nexus Plugin project, you
-will need to edit this new project's POM. Open up the POM of your
-Nexus Plugin and find the section that defines properties. You will
-need to change the nexus-version property to target a Nexus
-version. After creating a project with the Nexus Plugin archetype, you
-will see a properties section of the POM that contains a
-"nexusVersion".
+When creating a new Nexus Plugin project with the Nexus Plugin
+archetype, a default target Nexus version will be set. To change the
+target Nexus version of the new Nexus Plugin project, you will need
+to edit the project's POM.
 
-----
-<project>
-  ...
-  <properties>
-    <!-- Set the Nexus version here, against which you build the plugin -->
-    <nexus-version>${nexusVersion}</nexus-version>
-  </properties>
-  ...
-</project>
-----
-
-To target a version of Nexus, change "nexusVersion" to a Nexus
-version number. The following program listing shows a properties
-section in the generated POM which targets version 1.4.1 of Nexus.
+Open up the POM of your Nexus Plugin and find the section that defines
+properties. Here you can change the value of the nexus-version property
+to target a specific Nexus version.
 
 ----
 <project>
@@ -8061,12 +8063,23 @@ section in the generated POM which targets version 1.4.1 of Nexus.
 </project>
 ----
 
+It is also possible to override the archetype's default value of this property
+during the creation of a new project. To do that, you would set the
+"nexusVersion" system property value on the command-line:
+
+----
+$ mvn archetype:generate -DarchetypeGroupId=org.sonatype.nexus.archetypes \
+-DarchetypeArtifactId=nexus-plugin-archetype \
+-DarchetypeVersion=1.2 \
+-DnexusVersion=1.9.2
+----
+
 [[plugdev-sect-building]]
 === Building a Nexus Plugin Project
 
 To build your Nexus plugin project, just run mvn install in the newly
 generated project directory. Once the build is completed, your
-plugin's JAR will be available in the project's target/
+plugin's JAR will be available in the project's target/ folder.
 
 The Nexus Plugin project, as created by the Nexus Plugin archetype,
 depends on a number of artifacts which may not be available from the
