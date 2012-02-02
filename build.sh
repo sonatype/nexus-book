@@ -1,5 +1,9 @@
 #!/bin/bash
 
+cd figs
+./convert.sh
+cd ..
+
 mkdir -p target/images
 mkdir -p target/figs
 
