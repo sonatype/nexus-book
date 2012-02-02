@@ -6287,6 +6287,66 @@ You can find more information about this Mojo https://repository.sonatype.org/co
 [[insight]]
 == Sonatype Insight Integration
 
+////
+Questions: 
+- Is this part of pro only or also OSS
+- How much general bla bla about insight do we want in here? I am
+  keeping this super limited at this stage since it does not really
+  belong here imho and is on the website anyway
+////
+
+http://sonatype.com/Products/Sonatype-Insight[Sonatype Insight] is a separate product that provides tools to monitor
+and manage license, quality and security data about artifacts used in
+your software development life cycle. 
+
+The Nexus Insight Integration provides access to a limited subset of
+the available data in Insight right in your Nexus server. The Insight
+server is part of the Central Repository and exposes data about the
+artifacts there including license information, security vulnerability
+data and other statistics.
+
+To gather data from the Insight server about the artifacts in your
+Nexus instance you have to click the Analyze button in the Quality
+column of the list of Repositories displayed in
+<<fig-insight-repo-list-quality>>. In order to be able to do that you
+have to be logged in as an administrator.
+
+[[fig-insight-repo-list-quality]]
+.The Repositories List with Different Quality Status Indicators
+image::figs/web/insight-repo-list-quality.png[scale=60]
+
+Once the data gathering analysis is completed the Quality column will
+display the number of security and license issues found. Hovering your
+mouse pointer of that value will display the Insight summary data in a
+pop up window. A sample window is displayed in
+<<fig-insight-summary-pop-up>>.
+
+[[fig-insight-summary-pop-up]]
+.A Summary Window of Insight Data  
+image::figs/web/insight-summary-pop-up.png[scale=50]
+
+At the bottom of the pop up window you find a button to disable the
+analysis for this repository as well as button to access the detailed
+report. The detailed report will show up in another tab in the main
+area of the Nexus user interface.
+
+The detailed report contains the same overview data for security and
+license information at the top. Below a drop down for Security and
+License information allows you to toggle between two lists displaying
+further details. Both lists have a filter for each column at the
+bottom of the list that allows you to narrow down the number of rows
+in the table and therefore find specific entries easily.
+
+The security list contains columns for x, y and z. The x column is a
+link to the security warning referenced and commonly links a specific
+entry in http://osvdb.org[the Open Source Vulnerability Database] or
+http://cvs.mitre.org[the Common Vulnerabilities and Exposures] list.
+
+The license list contains columns that detail the license information
+found in pom file as well as the source code and columns for the GAV
+parameters identifying the artifact.
+
+////
 
 Repository Health Awareness
 Avoid risks by identifying problematic components. New reports identify licensing, security and quality information about every component in the repo.
@@ -6388,9 +6448,8 @@ Alerts about new vulnerabilities
 
 understand obligations of using different OSS licenses
 
-[[fig-insight-repo-list-quality]]
-.The Repositories List with Different Quality Status Indicators
-image::figs/web/insight-repo-list-quality.png[scale=60]
+////
+
 
 [[settings]]
 == Managing Maven Settings
@@ -6913,10 +6972,13 @@ your project setup and configuration files. Removing a package will
 clean up any changes as required.
 
 Question: Does staging work with NuGet? If yes we need subsection below
+no
 
 Question: Does procurement work with NuGet? if yes we need subsection below
+no
 
 Question: Is there the differentiation of snapshot vs release artifacts and repositories? 
+no snapshot, but  multiple versions as release
 
 === NuGet Proxy Repositories
 
@@ -6937,11 +6999,24 @@ Repository
 
 set up a Virtual repository as NuGet Shadow Repository
 
+shadow a maven2 repo as a nuget repo
+
+
 === Deploying Packages to NuGet Hosted Repositories
 
 How to create a package.. at least a pointer to external docu
  
 How do you deploy your own package
+
+api key required also for hosted repo
+
+command line for uploads
+
+or gui tool
+
+nexus ui upload tab,
+
+nuget local
 
 === Integration of Nexus NuGet Repositories in Visual Studio
 
