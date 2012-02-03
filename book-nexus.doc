@@ -3854,15 +3854,16 @@ port at which the server will be available. The default address of
 default port number of 0 will trigger usage of a random available port
 number. With the Advertised URI field it is possible to configure a
 specific address to be broadcasted by the proxy to the message
-receiving smart proxy clients enabling e.g. proxying via external http
-proxy servers. (TODO is this correct? .. I am just guessing here)
+receiving smart proxy clients enabling e.g. usage of a publically
+available fully qualified hostname including the domain or also just
+usage of an externally reachable IP number.
 
 The Status field below the form will show the current status of the
 Smart Proxy including the full address and port.
 
-The Public Key field displays the key identifying this server instance. The key
-can be should be used to authenticate this server as a trusted smart
-proxy provider or recipient .
+The Public Key field displays the key identifying this server
+instance. The key can be should be used to authenticate this server as
+a trusted smart proxy provider or recipient .
 
 To configure a two Nexus repository servers as trusted Smart Proxies,
 you add the Public Key of the other server in the Trusted Certificates
@@ -7131,30 +7132,55 @@ image::figs/web/nuget-group.png[scale=60]
 
 === Deploying Packages to NuGet Hosted Repositories
 
-How to create a package.. at least a pointer to external docu
- 
-How do you deploy your own package
+In order to authenicate a client against a NuGet repository NuGet uses
+an API key for deployment requests. These keys are generated separately
+on-request from a user account on the NuGet gallery and can be
+re-generated at any time. At regeneration all previous keys generated
+for that user are invalid.
 
-api key required also for hosted repo
+==== Creating a NuGet API-Key
 
-command line for uploads
+For usage with Nexus, API keys are only needed when packages are going
+to be deployed. Therefore API key generation is by default is not available. 
 
-or gui tool
+A user that should be able to create an API key has to be given the
+role Nexus API-Key Access role in the Users Security administratin
+user interface.
 
-nexus ui upload tab,
+In addition the NuGet API-Key Realm has to be activated. To do this
+simply add the realm to the selected realms in the Security Settings
+section of the Server Administration.
 
-nuget local
+Once this is set up you can view as well as reset the current Personal API Key in the 
+NuGet Gallery tab of any NuGet proxy or hosted repository as visibile in <<fig-nuget-api-key>>
+
+[[fig-nuget-api-key]] 
+.Viewing and Resetting the NuGet API Key in the NuGet Gallery Configuration Tab
+image::figs/web/nuget-api-key.png[scale=60]
+
+==== Creating a Package for Deployment
+
+todo, mostly links to external docu
+
+==== Deployment with the NuPkg Upload User Interface
+
+todo 
+
+==== Command line based Deployment to a Nexus NuGet Hosted Repository
+
+Todo, mostly pointers to external docs
 
 === Integration of Nexus NuGet Repositories in Visual Studio
 
-can you create a group of NuGet repos and then somehow expose that in
-VS?
+A few screenshots and a bit of docu, but more ref to external docs
 
-how do you configure this all for VS usage
+=== Conclusion and Outlook
 
-what about command line or CI server builds?
+Package mgt for .net combined with the power of a repo server like nexus
 
+useful for command line as well as IDE based builds
 
+also used in CI server builds via command line build..
 
 [[sites]]
 == Deploying Sites to Nexus
