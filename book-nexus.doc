@@ -7041,36 +7041,93 @@ solution. NuGet copies everything and makes any required changes to
 your project setup and configuration files. Removing a package will
 clean up any changes as required.
 
-Question: Does staging work with NuGet? If yes we need subsection below
-no
-
-Question: Does procurement work with NuGet? if yes we need subsection below
-no
-
-Question: Is there the differentiation of snapshot vs release artifacts and repositories? 
-no snapshot, but  multiple versions as release
-
 === NuGet Proxy Repositories
 
-set up a new proxy repository and set up the Provider as NuGet Proxy
-Repository
+To proxy an external NuGet repository you simply create a new Proxy
+Repository as documented in <<confignx-sect-manage-repo>>. The
+Provider has to be set to NuGet. The Remote Storage Location has to be
+set to the API URL of the repository want to proxy. The URL for the
+main NuGet.org repository is
 
-how do you proxy the nuget gallery? do you need to do that? I guess
-yes..
+----
+http://nuget.org/api/v2/
+----
 
-are there other external repos worth proxying
+The repository configuration for a NuGet proxy repository has an
+additional tab titled NuGet Gallery as visible in
+<<fig-nuget-gallery-package-source>>, which displays the Nexus URL at which
+the repository is available as a NuGet repository. 
+
+[[fig-nuget-gallery-package-source]]
+.NuGet Gallery with Package Source URL
+image::figs/web/nuget-gallery-package-source.png[scale=60]
+
+A complete configuration for proxying nuget.org is visible in
+<<fig-nuget-proxy-org>>.
+
+[[fig-nuget-proxy-org]]
+.NuGet Proxy Repository Configuration for nuget.org
+image::figs/web/nuget-proxy-org.png[scale=60]
+
+When creating a NuGet Proxy Repository a Scheduled Task is
+automatically created to download the index data about the content of
+the remote NuGet repository. This task is available in the Scheduled
+Tasks administration section and by default created for a daily
+schedule. To modify the task access it via the Administration panel in
+the left hand navigation area and the Scheduled Tasks menu item. A
+user interface as displayed in <<fig-nuget-scheduled-task>> will allow
+you to adjust the task as desired.
+
+[[fig-nuget-scheduled-task]]
+.NuGet Proxy Repository Scheduled Task
+image::figs/web/nuget-scheduled-task.png[scale=60]
 
 === NuGet Hosted Repositories
 
-set up a new hosted repository and set up the Provider as NuGet Hosted
-Repository
+A hosted repository for NuGet can be used to upload your own
+packages as well as third party packages. It is good practice to
+create two separate hosted repositories for these purposes.
+
+To create a NuGet hosted repository simply create a new Hosted
+Repository and set the Provider to NuGet. A sample configuration for an
+internal releases NuGet hosted repository is displayed in
+<<fig-nuget-hosted-releases-configuration>>.
+
+[[fig-nuget-hosted-releases-configuration]]
+.Example Configuration for a NuGet Hosted Repository for Release Packages
+image::figs/web/nuget-hosted-releases-configuration.png[scale=60]
+
+Besides the NuGet Gallery tab the configuration for the repository has
+a NuPkg Upload tab as displayed in <<fig-nuget-hosted-nupkg-upload>>,
+that allows you to manually upload one or multiple packages.
+
+[[fig-nuget-hosted-nupkg-upload]]
+.The NuPkg Upload Panel for a Hosted NuGet Repository
+image::figs/web/nuget-hosted-nupkg-upload.png[scale=60]
+
 
 === NuGet Shadow Repositories
 
-set up a Virtual repository as NuGet Shadow Repository
+If you have deployed NuGet packages to a Maven repository in the past
+or you need to expose some Java artifacts to NuGet you can do that by
+creating a Virtual repository and setting the Format to NuGet Shadow
+Repository.
 
-shadow a maven2 repo as a nuget repo
+=== NuGet Group Repositories
 
+A repository group allows you to expose the aggregated content of
+multiple proxy and hosted repositories with one URL to your
+tools. This is possible for NuGet repositories by creating a new
+Repository Group with the Format set to NuGet.
+
+A typical useful example would be to group the proxy repository that
+proxies nuget.org, a internal release NuGet hosted repository and a
+third party Nuget hosted repository. The configuration for such a
+setup is displayed in <<fig-nuget-group>>.
+
+[[fig-nuget-group]]
+.A Public Nuget Group Combining a Proxy and Two Hosted Repositories
+image::figs/web/nuget-group.png[scale=60]
 
 === Deploying Packages to NuGet Hosted Repositories
 
