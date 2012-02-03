@@ -3826,16 +3826,18 @@ servers, this polling can result in significant traffic and a
 performance hit for all involved servers.
 
 The Smart Proxy feature replaces this constant polling approach with a
-Publish-Subscribe based messaging approach, that results in a
-signficantly improved performance. With Smart Proxy enabled the
-repositories involved will be able to keep their content in sync
-without sacrificing performance. This in turn allows collocating proxy
-servers with the involved development teams reducing build times and
-improving availability and performance of the used repository
-servers. The payoff grows with the number of involved Nexus servers in
-the network.
+Publish-Subscribe based messaging approach between Nexus instances
+sharing a mutual trust. That results in a signficantly improved
+performance. 
 
-=== Enabling Smart Proxy
+With Smart Proxy enabled the repositories involved will be able to
+keep their content in sync without sacrificing performance. This in
+turn allows collocating proxy servers with the involved development
+teams reducing build times and improving availability and performance
+of the used repository servers. The payoff grows with the number of
+involved Nexus servers in the network.
+
+=== Enabling Smart Proxy Publishing
 
 In order to enable the Smart Proxy feature on your Nexus instance, you
 need to navigate to the global Smart Proxy configuration screen. It is
@@ -3848,55 +3850,103 @@ displayed in <<fig-smart-proxy-global-config>>.
 image::figs/web/smart-proxy-global-config.png[scale=60]
 
 The Network Settings section allows you to enable the Smart Proxy
-server with a checkbox. In addition you can configure the address and
-port at which the server will be available. The default address of
-0.0.0.0 will cause the proxy to be available under all addresses. The
-default port number of 0 will trigger usage of a random available port
-number. With the Advertised URI field it is possible to configure a
-specific address to be broadcasted by the proxy to the message
-receiving smart proxy clients enabling e.g. usage of a publically
-available fully qualified hostname including the domain or also just
-usage of an externally reachable IP number.
+server with a checkbox. This will need to be enabled on all servers
+that will publish events in the smart proxy network.  
+
+In addition you can configure the address and port at which the server
+will be available. The default address of 0.0.0.0 will cause the proxy
+to be available under all addresses. The default port number of 0 will
+trigger usage of a random available port number. 
+
+With the Advertised URI field it is possible to configure a specific
+address to be broadcasted by the proxy to the message receiving smart
+proxy clients enabling e.g. usage of a publically available fully
+qualified hostname including the domain or also just usage of an
+externally reachable IP number.
 
 The Status field below the form will show the current status of the
 Smart Proxy including the full address and port.
 
 The Public Key field displays the key identifying this server
-instance. The key can be should be used to authenticate this server as
-a trusted smart proxy provider or recipient .
+instance. 
 
-To configure a two Nexus repository servers as trusted Smart Proxies,
-you add the Public Key of the other server in the Trusted Certificates
-configuration section with a meaningful description and start the
-Smart Proxy on both servers. This will establish a trusted connection
-between the two Nexus instances. 
+=== Establishing Trust
+
+For smart proxy to work, the servers publishing as well as subscribing
+to events identify themselves with the Public Key. This key has to be
+registered with the other servers in the Trusted Certificates section
+of the Smart Proxy configuration screen.  
+
+To configure two Nexus repository servers as trusted Smart Proxies,
+you copy the Public Key from the Certificate filed of the other server
+in the Trusted Certificates configuration section by adding a new
+certificate with a meaningful description as displayed in
+<<fig-smart-proxy-copy-certificate>> and
+<<fig-smart-proxy-add-certificate>>.
+
+[[fig-smart-proxy-copy-certificate]]
+.Copying a Certificate
+image::figs/web/smart-proxy-copy-certificate.png[scale=60]
+
+[[fig-smart-proxy-add-certificate]]
+.Adding a Trusted Certificate
+image::figs/web/smart-proxy-add-certificate.png[scale=60]
 
 === Repository Specific Smart Proxy Configuration
 
-Once Smart Proxy has been configured and started as described above,
+Once Smart Proxy has been configured and enabled as described above,
 you have to configure, which repositories' content should be
 synchronized between the servers. This is done in the Repositories
-administration interface in a separate configuration tab called titled Smart
+administration interface in a separate configuration tab titled Smart
 Proxy.
 
-To enable Smart Proxy to Publish changes to a hosted or virtual
-repository, you have to select the checkbox in the Publish section
-labelled Publish Updates and displayed in
-<<fig-smart-proxy-repo-list-hosted>> and press save.
+On the publishing Nexus server you have to enable Smart Proxy on the
+desired hosted, virtual or proxy repositories in the repository
+configuration. This is accomplished by selecting the Publish Updates
+checkbox in the Publish section of the Smart Proxy configuration for a
+specific repository as displayed in
+<<fig-smart-proxy-repo-list-hosted>> and pressing save.
 
 [[fig-smart-proxy-repo-list-hosted]]
 .Smart Proxy Settings for a Hosted Repository
 image::figs/web/smart-proxy-repo-list-hosted.png[scale=60]
 
-A second Nexus instance should have the hosted repository of the first
-server configured as Proxy Repository. The Smart Proxy configuration
-for this repository displayed in <<fig-smart-proxy-repo-list-proxy>>
-allows you to activate the Receive Updates checkbox in the Subscribe
-configuration section.
+On the Nexus instance subscribing to the publishing server you have to
+create a new proxy repository to hold the synchronized artifacts. The
+Smart Proxy configuration for this repository displayed in
+<<fig-smart-proxy-repo-list-proxy>> allows you to activate the Receive
+Updates checkbox in the Subscribe configuration section.
 
 [[fig-smart-proxy-repo-list-proxy]]
 .Smart Proxy Settings for a Proxy Repository
 image::figs/web/smart-proxy-repo-list-proxy.png[scale=60]
+
+With a working trust established between the publishing and
+subscribing Nexus servers the smart proxy configuration of the proxy
+repository on the subscribing Nexus will display connection status as
+displayed in <<fig-smart-proxy-subscribe-connected>>.
+
+[[fig-smart-proxy-subscribe-connected]]
+.Subscription with Smart Proxy Connected
+image::figs/web/smart-proxy-subscribe-connected.png[scale=60]
+
+=== Smart Proxy Messages
+
+Smart proxy messages are started with an initial handshake via
+http. After successful handshake messages are sent in the middlware
+layer using Java Message Service JMS.
+ 
+The following events are broadcasted via smart proxy.
+
+- a new artifact has been deployed
+- an artifact has been deleted
+- an artifact has been changed
+- repository cache or a part of it has been cleared
+- smart proxy publishing has been enabled or disabled
+
+On the recipient side this will cause the changes to be applied
+mimicking what happened on the master. If smart proxy is disabled the
+subscription will be stopped.
 
 === Example Setup
 
@@ -3916,15 +3966,16 @@ To configure Smart Proxy between these three servers you have to
 - add the public key of Server B as trusted certificate to Server A and Server T
 - add the public key of Server T as trusted certificate to Server A and Server B
 - set up the third party repository on Server T to publish updates
-- set up a third party proxy repository on Server A and Server B and
+- set up a new third party proxy repository on Server A and Server B and
   configure it to receive updates from Server T
-- set up a snapshot and a release proxy repository on Server A that
+- set up a new snapshot and a new release proxy repository on Server A that
   proxies Server B
-- set up a snapshot and a release proxy repository on Server B that
+- set up a new snapshot and a new release proxy repository on Server B that
   proxies Server
+- add all the new proxy repositories to the public group on Server A and Server B
 - configure the snapshot and release hosted repositories on Server A
   and Server B to publish updates
-- configure the snapshot and release proxy repositories on Server A
+- configure the new snapshot and new release proxy repositories on Server A
   and Server B to receive updates
 
 With this setup the snapshot and release repositories of both servers
