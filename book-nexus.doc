@@ -1084,7 +1084,7 @@ the most impact on collaboration within an organization.
 To understand the benefits of hosting an internal repository, you have
 to understand the concept of managing binary software artifacts.
 Software development teams are very familiar with the idea of a source
-code repository or a source code management tool. Versioning control
+code repository or a source code management tool. Version control
 systems such as Subversion, Clearcase, Git, and CVS provide solid
 tools for managing the various source artifacts that comprise a
 complex enterprise application, and developers are comfortable
@@ -1367,7 +1367,7 @@ to the nexus installation directory; if you installed nexus in
 /usr/local directory would also contain a sonatype-work sub-directory
 containing all of the content and configuration. The location of the
 sonatype-work directory can be customized by altering the nexus-work
-property in '+++$NEXUS_HOME/conf/plexus.properties+++'
+property in '+++$NEXUS_HOME/conf/nexus.properties+++'
 
 [[install-sect-pro]]
 ==== Installing Nexus Professional
@@ -1507,7 +1507,7 @@ password recovery emails, to enable this feature, you will need to
 configure Nexus with a SMTP Host and Port as well as any necessary
 authentication parameters that Nexus needs to connect to the mail
 server. To configure the SMTP settings, load the server configuration
-dialogue shown in <<fig-nexus-server-config>>.
+dialog shown in <<fig-nexus-server-config>>.
 
 Step 3: Enable Remote Index Downloads:: Nexus ships with three
 important proxy repositories for the Maven Central repository, Apache
@@ -1525,7 +1525,7 @@ download remote indexes:
 
 . Select each of the three proxy repositories and change Download
   Remote Indexes to true in the Configuration tab. You'll need to load
-  the dialogue shown in <<fig-repo-config>> for each of
+  the dialog shown in <<fig-repo-config>> for each of
   the three repositories.
 
 This will trigger Nexus to re-index these repositories, during which
@@ -1751,7 +1751,7 @@ Let's assume that you wanted to host Nexus behind Apache HTTPd at the
 URL http://www.somecompany.com. To do this, you'll need to change the
 context path that Nexus is served from.
 
-. Edit plexus.properties in '+++$NEXUS_HOME/conf+++'. You'll see an element
+. Edit nexus.properties in '+++$NEXUS_HOME/conf+++'. You'll see an element
   named webapp-context-path. Change this value from "/nexus" to "/"
 
 . Restart Nexus and Verify that it is available on
@@ -1861,7 +1861,7 @@ click on Upload.
 image::figs/web/repository-manager_license.png[scale=60] 
 
 Once you have selected a license and uploaded it to Nexus, Nexus
-Professional will display a dialogue box with the Nexus Professional
+Professional will display a dialog box with the Nexus Professional
 End-user License Agreement as shown in <<fig-installation-eula>>. If
 you agree with the terms and conditions, click on "I Agree".
 
@@ -1870,7 +1870,7 @@ you agree with the terms and conditions, click on "I Agree".
 image::figs/web/installing_license_eula.png[scale=60] 
 
 Once you have agreed to the terms and conditions contained in the End
-User License Agreement, Nexus Professional will then display a dialogue
+User License Agreement, Nexus Professional will then display a dialog
 box confirming the installation of a Nexus Professional license as
 shown in <<fig-installation-license-upload-config>>.
 
@@ -1880,19 +1880,19 @@ image::figs/web/installing_license_uploaded.png[scale=60]
 
 If you need to move your Nexus Professional license, you can click on
 the "Uninstall License" button at the bottom of the Licensing
-Panel. Clicking on this button will show the dialogue in
+Panel. Clicking on this button will show the dialog in
 <<fig-installation-config-uninstall>> which confirms that you want to
 uninstall a license.
 
 [[fig-installation-config-uninstall]]
-.Uninstall License Confirmation Dialogue
+.Uninstall License Confirmation Dialog
 image::figs/web/installing_uninstall_license.png[scale=60]
 
-Clicking Yes in this dialogue box will uninstall the license from Nexus
-Professional and display another dialogue which confirms that the
+Clicking Yes in this dialog box will uninstall the license from Nexus
+Professional and display another dialog which confirms that the
 license has been successfully uninstalled.
 
-.License Uninstall Completed Dialogue
+.License Uninstall Completed Dialog
 image::figs/web/installing_uninstall_completed.png[scale=60]
 
 ==== Evaluation Expiration
@@ -1921,7 +1921,7 @@ sonatype-work/
 
 The Sonatype Work directory is installed as a sibling to the nexus
 application directory, and the location of this directory can be
-configured via the plexus.properties file which is described in
+configured via the nexus.properties file which is described in
 <<sect-installing-conf-dir>>. <<fig-installing_work-dir>> shows the
 Sonatype Nexus work directory with the conf/
 
@@ -2053,7 +2053,7 @@ are loaded from the classpath. It is unlikely that even the most
 advanced Nexus users will ever need to customize the contents of this
 file.
 
-plexus.properties:: This file contains configuration variables which
+nexus.properties:: This file contains configuration variables which
 control the behaviour of Plexus and the Jetty servlet container. If you
 are customizing the port and host that Nexus will listen to, you would
 change the application-port and application-host properties defined in
@@ -2064,7 +2064,7 @@ in this configuration file.
 plexus.xml:: Defines the class names and configuration of components
 which are loaded by Plexus at start-up. This file should never be
 changed as all configurable values have been removed from this file
-and placed in plexus.properties
+and placed in nexus.properties
 
 jetty.xml:: If this file is present in the conf/ directory, it will be
 used to configure Jetty.
@@ -2075,7 +2075,7 @@ container:
 
 jetty.xml:: contains a jetty.xml sample with no customizations. This
 sample file listens on the "application-port" defined in
-plexus.properties
+nexus.properties
 
 jetty-ajp.xml:: Contains a jetty.xml sample which will configure Nexus
 to listen on an AJP port 8009. This configuration can be used if you
@@ -2084,7 +2084,7 @@ AJP protocol such as Apache httpd with the mod_proxy_ajp module.
 
 jetty-dual-ports-with-ssl.xml:: Contains a jetty.xml sample which
 configures Nexus to listen on both the "application-port" and
-"application-port-ssl" (as defined in plexus.properties). This
+"application-port-ssl" (as defined in nexus.properties). This
 sample configuration also contains the SSL redirect rule.
 
 jetty-faster-windows.xml:: Contains a jetty.xml sample which
@@ -2106,7 +2106,7 @@ configure the Jetty RewriteHandler
 
 jetty-ssl.xml:: Contains a jetty.xml sample which will only serve SSL
 encrypted content from "application-port" (as defined in
-plexus.properties
+nexus.properties
 
 The conf/examples/proxy-https/ directory contains two files:
 apache2.conf and jetty.xml contains sample mod_proxy directives to
@@ -3730,7 +3730,7 @@ image::figs/web/repository-manager_security-users-privilege.png[scale=60]
 
 By default, Nexus listens on port 8081. You can change this
 port, by changing the value in
-'+++$NEXUS_HOME/conf/plexus.properties+++' this file is
+'+++$NEXUS_HOME/conf/nexus.properties+++' this file is
 shown in <<ex-plexus-props>>. To change the port, stop
 Nexus, change the value of applicationPort in this
 file, and then restart Nexus. Once you do this, you should see a log
@@ -3738,7 +3738,7 @@ statement in '+++$NEXUS_HOME/logs/wrapper.log+++' telling
 you that Nexus is listening on the altered port.
 
 [[ex-plexus-props]]
-.Contents of conf/plexus.properties
+.Contents of conf/nexus.properties
 ----
 applicationPort=8081
 runtime=${basedir}/runtime
@@ -9833,7 +9833,7 @@ running Nexus 1.9.2.
 
 * Any custom Jetty configuration must be contained in the
 '+++$(NEXUS_HOME)/conf/jetty.xml+++' file, or else in the location referenced
-by the jetty.xml property in '+++$(NEXUS_HOME)/conf/plexus.properties+++' (in
+by the jetty.xml property in '+++$(NEXUS_HOME)/conf/nexus.properties+++' (in
 case you've customized this location).
 
 * While the instructions below will work with Nexus Open Source, these
@@ -9926,14 +9926,14 @@ has a default configuration that many people would more naturally
 associate with non-SSL connections. You may wish to modify this port
 to something like 8443, or even 443 (if you have root access from
 which to start Nexus). To change this property, modify the
-'+++$(basedir)/conf/plexus.properties+++'
+'+++$(basedir)/conf/nexus.properties+++'
 
 NOTE: You may wish to enable both types of connections, with
 appropriate rewrite rules between them. Such a configuration is beyond
 the scope of this section; if you're interested, please refer to the
 http://docs.codehaus.org/display/JETTY/Jetty+Wiki[Jetty Wiki] for some
 information to get you started. Additionally, you may need to add
-extra port properties to the plexus.properties configuration file to
+extra port properties to the nexus.properties configuration file to
 accommodate both SSL and non-SSL connections.
 
 [[ssl-sect-redirecting]]
@@ -10042,7 +10042,7 @@ section just above the line with stopAtShutdown in it:
 </Set>
 ----
 
-Modify $NEXUS_HOME/conf/plexus.properties
+Modify $NEXUS_HOME/conf/nexus.properties
 and add a new property, application-port-ssl. This will
 allow you to customize both the SSL and non-SSL ports
 independently:
