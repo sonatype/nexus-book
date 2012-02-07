@@ -1530,31 +1530,34 @@ indexing that need to be changed for your installation to be useful
 (and secure). After installing and running Nexus, you need to make
 sure that you complete the following tasks:
 
-Step 1: Change the Administrative Password and Email Address:: The
-administrative password defaults to admin123. The first thing you
+==== Step 1: Change the Administrative Password and Email Address
+
+The administrative password defaults to admin123. The first thing you
 should do to your new Nexus installation is change this password. To
 change the administrative password login as "admin" with the password
 "admin123", and click on Change Password under the Security menu in
 the left-hand side of the browser window. For more detailed
 instructions, see <<using-sect-changing-password>>.
 
-Step 2: Configure the SMTP Settings:: Nexus can send user-name and
-password recovery emails, to enable this feature, you will need to
-configure Nexus with a SMTP Host and Port as well as any necessary
-authentication parameters that Nexus needs to connect to the mail
-server. To configure the SMTP settings, load the server configuration
-dialog shown in <<fig-nexus-server-config>>.
+==== Step 2: Configure the SMTP Settings
 
-Step 3: Enable Remote Index Downloads:: Nexus ships with three
-important proxy repositories for the Maven Central repository, Apache
-Snapshot repository, and the Codehaus Snapshot repository. Each of
-these repositories contains thousands (or tens of thousands) of
-artifacts and it would be impractical to download the entire contents
-of each. To that end, most repositories maintain an index which
-catalogues the entire contents and provides for fast and efficient
-searching. Nexus uses these remote indexes to search for artifacts,
-but we've disabled the index download as a default setting. To
-download remote indexes:
+ Nexus can send user-name and password recovery emails, to enable this
+feature, you will need to configure Nexus with a SMTP Host and Port as
+well as any necessary authentication parameters that Nexus needs to
+connect to the mail server. To configure the SMTP settings, load the
+server configuration dialog shown in <<fig-nexus-server-config>>.
+
+==== Step 3: Enable Remote Index Downloads
+
+Nexus ships with three important proxy repositories for the Maven
+Central repository, Apache Snapshot repository, and the Codehaus
+Snapshot repository. Each of these repositories contains thousands (or
+tens of thousands) of artifacts and it would be impractical to
+download the entire contents of each. To that end, most repositories
+maintain an index which catalogues the entire contents and provides
+for fast and efficient searching. Nexus uses these remote indexes to
+search for artifacts, but we've disabled the index download as a
+default setting. To download remote indexes:
 
 . Click on Repositories under the Administration menu in the
   left-hand side of the browser window.
@@ -1577,25 +1580,28 @@ will not show in the repository tree when you are browsing a
 repository. When browsing a repository, you will only be shown
 artifacts which have been downloaded from the remote repository.
 
-Step 4: Change the Deployment Password:: The deployment user's
-password defaults to deployment123. Change this password to make sure
-that only authorized developers can deploy artifacts to your Nexus
-installation. To change the deployment password: log in as an
-administrator, click on Security to expand the Security menu, then
-click on Users. You should then see a list of users. Right-click on
-the deployment user and select "Set Password".
+==== Step 4: Change the Deployment Password
 
-Step 5: Install Professional License (Nexus Professional Only):: If
-you are running Nexus Professional and you have purchased a license
+The deployment user's password defaults to deployment123. Change this
+password to make sure that only authorized developers can deploy
+artifacts to your Nexus installation. To change the deployment
+password: log in as an administrator, click on Security to expand the
+Security menu, then click on Users. You should then see a list of
+users. Right-click on the deployment user and select "Set Password".
+
+==== Step 5: Install Professional License (Nexus Professional Only)
+
+If you are running Nexus Professional and you have purchased a license
 from Sonatype, you will need to upload your license. This license will
 be emailed to you after you have purchased Nexus Professional from
-http://store.sonatype.com.  To
-load the License tab, click on Licensing under the Enterprise menu in
-the Nexus application menu. For more information about installing a
-Nexus Professional license file, see <<install-sect-licensing>>.
+http://store.sonatype.com.  To load the License tab, click on
+Licensing under the Enterprise menu in the Nexus application menu. For
+more information about installing a Nexus Professional license file,
+see <<install-sect-licensing>>.
 
-Step 6: If necessary, set the LANG Environment Variable:: If your
-Nexus instance needs to store configuration and data using an
+==== Step 6: If necessary, set the LANG Environment Variable
+
+If your Nexus instance needs to store configuration and data using an
 international character set, you should set the LANG environment
 variable. The Java Runtime will adapt to the value of the LANG
 environment variable and ensure that configuration data is saved using
@@ -1607,49 +1613,32 @@ Ubuntu read https://help.ubuntu.com/community/Locale
 [[install-sect-service]]
 === Configuring Nexus as a Service
 
-When installing Nexus, you will often want to configure Nexus as a
-service. If you are on Windows, the Nexus distribution includes
-binaries that can work with the Windows Services subsystem and if you
-are on another platform such as GNU/Linux Nexus also includes scripts
-that can be configured to start Nexus as a service. The following
-sections provide instructions for configuring Nexus as a service.
+When installing Nexus for production usage you should configure Nexus as a
+service, so it starts back up after server reboots. The following
+sections provide instructions for configuring Nexus as a service or daemon on .
+various operating systems.
 
 ==== Start-up Scripts for GNU/Linux
 
 You can configure Nexus to start automatically, by copying the nexus
-script to the /etc/init.d directory. On a GNU/Linux system (tested
-with Red Hat, Fedora, Ubuntu, or CentOS) perform the following
-operations as the root user:
+script to the /etc/init.d directory. On a Linux system 
+perform the following operations as the root user:
 
-. Copy either '+++$NEXUS_HOME/bin/jsw/linux-ppc-64/nexus+++',
-  '+++$NEXUS_HOME/bin/jsw/linux-x86-32/nexus+++', or
-  '+++$NEXUS_HOME/bin/jsw/linux-x86-64/nexus+++' to /etc/init.d/nexus
+. Copy either '+++$NEXUS_HOME/bin/nexus+++' to /etc/init.d/nexus
 
 . Make the /etc/init.d/nexus script executable - chmod 755
   /etc/init.d/nexus
 
 . Edit this script changing the following variables:
 
-.. Change APP_NAME
+.. Change NEXUS_HOME to the absolute folder location e.g. 
++++ NEXUS_HOME="/usr/local/nexus"+++
 
-.. Change APP_LONG_NAME to "Sonatype Nexus"
+.. Optionally change PIDDIR to /var/run
 
-.. Add a variable NEXUS_HOME which points to your Nexus installation
-   directory
-
-.. Add a variable PLATFORM which contains either linux-x86-32,
-              linux-x86-64, or linux-ppc-64
-
-. Change WRAPPER_CMD to '+++$NEXUS_HOME/bin/jsw/$PLATFORM/wrapper+++'
-
-. Change WRAPPER_CONF to '+++$NEXUS_HOME/bin/jsw/conf/wrapper.conf+++'
-
-. Change PIDDIR to /var/run
-
-. Add a JAVA_HOME variable which points to your local Java
-  installation
-
-. Add a '+++$JAVA_HOME/bin+++' to the PATH
+.. If Java is not on the default path for the user running Nexus, add
+a JAVA_HOME variable which points to your local Java installation and 
+add a '+++$JAVA_HOME/bin+++' to the PATH
 
 . (Optional) Set the RUN_AS_USER to "nexus". If you do this, you will
   need to:
@@ -1666,28 +1655,6 @@ root. The properties that would need to be added to customize the PID
 file location is "wrapper.pid". For more information about this
 property and how it would be configured in wrapper.conf, see:
 http://wrapper.tanukisoftware.com/doc/english/properties.html
-
-.Script Directory for 32-bit GNU/Linux 
-image::figs/web/installing_bin-dir-l32.png[scale=60]
-
-At the end of this you should have a file in /etc/init.d/nexus which
-starts with a series of configuration properties which look something
-like this (assuming that you've installed Nexus in /usr/local/nexus
-and that you have Java installed in /usr/java/latest
-
-----
-JAVA_HOME=/usr/java/latest
-PATH=$PATH:$JAVA_HOME/bin
-APP_NAME="nexus"
-APP_LONG_NAME="Sonatype Nexus"
-NEXUS_HOME=/usr/local/nexus
-PLATFORM=linux-x86-64
-WRAPPER_CMD="$NEXUS_HOME/bin/jsw/${PLATFORM}/wrapper"
-WRAPPER_CONF="$NEXUS_HOME/bin/jsw/conf/wrapper.conf"
-PRIORITY=
-PIDDIR="/var/run"
-#RUN_AS_USER=nexus
-----
 
 ===== Add Nexus as a Service on Red Hat, Fedora, and CentOS
 
@@ -1745,7 +1712,7 @@ Nexus in shown <<ex-nexus-plist>>.
     <string>com.sonatype.nexus</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/local/nexus/bin/jsw/macosx-universal-64/nexus</string>
+        <string>/usr/local/nexus</string>
         <string>console</string>
     </array>
     <key>RunAtLoad</key>
