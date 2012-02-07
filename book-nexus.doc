@@ -1422,19 +1422,24 @@ repository and configuration data for Nexus and is stored outside of
 the Nexus installation directory to make it easier to upgrade to a
 newer version of Nexus.
 
+TIP: On Windows you should install Nexus into +++Program Files+++.
+
 [[install-sect-upgrading]]
 === Upgrading Nexus
 
 Since Nexus separates its configuration and data storage from the
 application, it is easy to upgrade an existing Nexus installation. To
 upgrade Nexus, unpack the Nexus archive in the directory which
-contains the existing Nexus installation. Once the archive is
-unpacked, the new Nexus application directory should be a sibling to
-your existing sonatype-work/ directory. If you have defined a symbolic
-link for the version of Nexus to use, change that to point at the new
-Nexus application directory. When you start the new instance of Nexus
-it will read the existing repository configuration from the
-sonatype-work/
+contains the existing Nexus installation. Once the archive is unpacked
+the new Nexus application directory should be a sibling to your
+existing sonatype-work/ directory. If you have defined a symbolic link
+for the version of Nexus to use, stop the server and change that to
+point at the new Nexus application directory. When you start the new
+instance of Nexus it will read the existing repository configuration
+from the sonatype-work.
+
+TIP: Depending on the version you upgrade from and to some maintenance
+tasks like rebuilding the internal indices can be necessary.
 
 [[install-sect-running]]
 === Running Nexus
@@ -1444,29 +1449,22 @@ port of 0.0.0.0:8081. Nexus runs within a servlet container called
 Jetty and it is started with a native service wrapper called the
 http://wrapper.tanukisoftware.org/doc/english/introduction.html[Tanuki
 Java Service Wrapper]. This service wrapper can be configured to run
-Nexus as a Windows service or a Unix daemon. To start Nexus, you will
-need to find the appropriate start-up script for your platform. To see
-the list of available platforms, list the contents of the
-'+++$NEXUS_HOME/bin/jsw+++'
-
-The following example listing starts Nexus using the script for Mac
-OSX. First we list the contents of the '+++$NEXUS_HOME/bin/jsw+++' to show
-you the available platforms, then we make the contents of the bin
-directory executable with chmod. The Mac OS X wrapper is started with
-a call to nexus start, and then we tail the wrapper.log in
-'+++$NEXUS_HOME/logs+++'. Nexus will initialize itself and print a message
-stating what IP address and port it is listening on.
+Nexus as a Windows service or a Unix daemon. Nexus ships with generic
+startup scripts for Unix-like platforms called +++nexus+++ and for
+Windows platforms called +++nexus.bat+++ in the +++$NEXUS_HOME/bin+++
+folder. To start Nexus on a Unix-like platform like Linux, MacOSX or Solaris use
 
 ----
-$ cd /usr/local/nexus
-$ ls ./bin/jsw/
-conf/                linux-x86-64/        solaris-x86-32/
-lib/                 macosx-universal-32/ windows-x86-32/
-license/             macosx-universal-64/ windows-x86-64/
-linux-ppc-64/        solaris-sparc-32/
-linux-x86-32/        solaris-sparc-64/
-$ chmod -R a+x bin
-$ ./bin/jsw/macosx-universal-64/nexus start
+cd /usr/local/nexus
+./bin/nexus start
+----
+
+Similarly starting on Windows can be done with the nexus.bat
+file. When executed you should see a feedback message and can then
+follow the start-up process viewing the log file
++++logs/wrapper.log+++ changes.  Nexus will initialize itself and
+print a message stating what IP address and port it is listening on.
+----
 Starting Nexus Repository Manager...
 Started Nexus Repository Manager.
 $ tail -f logs/wrapper.log 
@@ -1474,21 +1472,55 @@ INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
 ----
 
 At this point, Nexus will be running and listening on all IP addresses
-(0.0.0.0) that are configured for the current host on port 8081. To use
-Nexus, fire up a web browser and type in the URL: http://localhost:8081/nexus
+(0.0.0.0) that are configured for the current host on port 8081. To
+use Nexus, fire up a web browser and type in the URL
+http://localhost:8081/nexus and you should see the Nexus user
+interface as displayed in <<fig-installing-nexus-default-screen>>
 
 While we use "localhost" throughout this book, you may need to use the
 IP Loopback Address of "127.0.0.1" or the IP address assigned to the
 machine running Nexus. Click on the "Log In" link in the upper
-right-hand corner of the web page, and you should see the login
-dialogue. THE DEFAULT NEXUS USERNAME AND PASSWORD IS "admin" AND
-"admin123".
+right-hand corner of the web page, and you should see the login dialog
+displayed in <<fig-installing-nexus-login-dialog>>. 
 
-.Default Nexus Administrative Credentials (admin/admin123)
-image::figs/web/installation_default-admin.png[scale=60]
+TIP: The default administrator username and password combination is
+"admin" and "admin123".
 
-.Nexus Application Window (default login/password is admin/admin123)
-image::figs/web/repository-manager_nexus-login.png[scale=60]
+[[fig-installing-nexus-default-screen]]
+.Nexus Application Window
+image::figs/web/installing-nexus-default-screen.png[scale=60]
+
+[[fig-installing-nexus-login-dialog]]
+.Nexus Login Dialog (default login/password is admin/admin123)
+image::figs/web/installing-nexus-login-dialog.png[scale=60]
+
+
+The files from Java Service Wrapper used for the start up process can
+be found in +++$NEXUS_HOME/bin/jsw+++ and are separated into generic
+files like the +++wrapper.conf+++ configuration file in conf and platform
+specific files. A full list of directories follows:
+
+----
+$ cd /usr/local/nexus/jsw
+$ ls -1                                                                             
+conf
+lib
+license
+linux-ppc-64
+linux-x86-32
+linux-x86-64
+macosx-universal-32
+macosx-universal-64
+solaris-sparc-32
+solaris-sparc-64
+solaris-x86-32
+windows-x86-32
+windows-x86-64
+----
+
+TIP: The start-up script +++nexus+++ also support the common service
+commands +++stop+++, +++restart+++, +++status+++, +++console+++ and
++++dump+++.
 
 [[install-sect-repoman-post-install]]
 === Post-Install Checklist
