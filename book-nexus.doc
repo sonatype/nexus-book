@@ -7132,12 +7132,14 @@ packages. With the NuGet Gallery a repository of open source libraries
 and tools is available and the need for repository management arises.
 
 Nexus supports the NuGet repository format for hosted and proxy
-repositories. This allows you to improve collaboration and control
-while speeding up .NET development facilitating open source libraries
-and sharing of internal artifacts across teams. When you standardize
-on a single repository for all your development and use it for
-internal artifacts as well you will get all the benefits of Nexus when
-working in the .NET architecture.
+repositories. Nexus also supports aggregation of NuGet repositories
+and conversion of other repositories containing ".nupkg" artifacts
+to the NuGet format. This allows you to improve collaboration and
+control while speeding up .NET development facilitating open source
+libraries and sharing of internal artifacts across teams. When you
+standardize on a single repository for all your development and use it
+for internal artifacts as well you will get all the benefits of Nexus
+when working in the .NET architecture.
 
 To share a library or tool with NuGet you create a NuGet package and
 store it in the Nexus based NuGet repository. Similarly you can use
@@ -7156,7 +7158,7 @@ clean up any changes as required.
 To proxy an external NuGet repository you simply create a new Proxy
 Repository as documented in <<confignx-sect-manage-repo>>. The
 Provider has to be set to NuGet. The Remote Storage Location has to be
-set to the API URL of the repository want to proxy. 
+set to the source URL of the repository you want to proxy.
 
 A complete configuration for proxying nuget.org is visible in
 <<fig-nuget-proxy-org>>.
@@ -7165,14 +7167,14 @@ A complete configuration for proxying nuget.org is visible in
 .NuGet Proxy Repository Configuration for nuget.org
 image::figs/web/nuget-proxy-org.png[scale=60]
 
-The URL for the main NuGet.org repository is
+The source URL for the main NuGet.org repository is
 
 ----
 http://nuget.org/api/v2/
 ----
 
 The repository configuration for a NuGet proxy repository has an
-additional tab titled NuGet Gallery as visible in
+additional tab titled NuGet as visible in
 <<fig-nuget-gallery-package-source>>, which displays the Nexus URL at which
 the repository is available as a NuGet repository. 
 
@@ -7196,7 +7198,12 @@ desired.
 .NuGet Proxy Repository Scheduled Task
 image::figs/web/nuget-scheduled-task.png[scale=60]
 
-Deleting the proxy repository will remove this scheduled task as well.
+The default task incrementally downloads information about the latest
+version of published packages. If you want details about all versions
+you can select the Fetch All Versions checkbox, save the updated
+configuration and manually trigger the Scheduled Task.
+
+Deleting the proxy repository will remove the scheduled task.
 
 === NuGet Hosted Repositories
 
@@ -7213,7 +7220,7 @@ internal releases NuGet hosted repository is displayed in
 .Example Configuration for a NuGet Hosted Repository for Release Packages
 image::figs/web/nuget-hosted-releases-configuration.png[scale=60]
 
-Besides the NuGet Gallery tab the configuration for the repository has
+Besides the NuGet tab the configuration for the repository has
 a NuPkg Upload tab as displayed in <<fig-nuget-hosted-nupkg-upload>>,
 that allows you to manually upload one or multiple packages.
 
@@ -7221,21 +7228,29 @@ that allows you to manually upload one or multiple packages.
 .The NuPkg Upload Panel for a Hosted NuGet Repository
 image::figs/web/nuget-hosted-nupkg-upload.png[scale=60]
 
+The NuGet feed is immediately updated as packages are deployed or deleted
+from the host repository. If for some reason you ever need to rebuild the
+feed for a hosted NuGet repository you can manually schedule a Rebuild
+NuGet Feed task.
 
 === NuGet Virtual Repositories
 
 If you have deployed NuGet packages to a Maven repository in the past
-or you need to expose some Java artifacts to NuGet you can do that by
-creating a Virtual repository and setting the Format to NuGet Shadow
-Repository. The setup displayed in <<fig-nuget-virtual-releases>>
-shows a virtual repository set up to expose the content of the regular
-Releases repository used for Java artifacts exposed as a NuGet
-repository, so that NuGet can access the content of the releases
-repository.
+you can expose them to Visual Studio by creating a Virtual repository
+and setting the Format to NuGet Shadow Repository. The setup displayed in
+<<fig-nuget-virtual-releases>> shows a virtual repository set up to expose
+the content of the regular Maven  Releases repository in the form of a
+NuGet repository, so that NuGet can access any NuGet packages deployed
+to the releases repository.
 
 [[fig-nuget-virtual-releases]]
-.A Virtual NuGet Repository for the Java Releases Repository
+.A Virtual NuGet Repository for the Maven Releases Repository
 image::figs/web/nuget-virtual-releases.png[scale=60]
+
+The NuGet feed is immediately updated as packages are deployed or deleted
+from the shadowed repository. If for some reason you ever need to rebuild
+the feed for a virtual NuGet repository you can manually schedule a Synchronize
+Shadow Repository task.
 
 === NuGet Group Repositories
 
@@ -7269,23 +7284,23 @@ for that user are invalid.
 
 For usage with Nexus, API keys are only needed when packages are going
 to be deployed. Therefore API key generation is by default not exposed
-in the user interface to normal users. Only user with the Deployer role
+in the user interface to normal users. Only users with the Deployer role
 have access to the API keys.
 
-Other user that should be able to access and create an API key have to be
-given the role Nexus API-Key Access role in the Users Security
-administration user interface.
+Other users that should be able to access and create an API key have to be
+given the Nexus API-Key Access role in the Users Security administration
+user interface.
 
 In addition the NuGet API-Key Realm has to be activated. To do this,
 simply add the realm to the selected realms in the Security Settings
 section of the Server Administration.
 
 Once this is set up you can view, as well as reset, the current
-Personal API Key in the NuGet Gallery tab of any NuGet proxy or hosted
+Personal API Key in the NuGet tab of any NuGet proxy or hosted
 repository as visible in <<fig-nuget-api-key>>
 
 [[fig-nuget-api-key]] 
-.Viewing and Resetting the NuGet API Key in the NuGet Gallery Configuration Tab
+.Viewing and Resetting the NuGet API Key in the NuGet Configuration Tab
 image::figs/web/nuget-api-key.png[scale=60]
 
 ==== Creating a Package for Deployment
