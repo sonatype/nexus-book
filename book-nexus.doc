@@ -1391,17 +1391,24 @@ the nexus-work property in '+++$NEXUS_HOME/conf/nexus.properties+++'
 === Upgrading Nexus
 
 Since Nexus separates its configuration and data storage from the
-application, it is easy to upgrade an existing Nexus installation. To
-upgrade Nexus, unpack the Nexus archive in the directory which
-contains the existing Nexus installation. Once the archive is unpacked,
-the new Nexus application directory should be a sibling to your
-existing sonatype-work/ directory. If you have defined a symbolic link
-for the version of Nexus to use, stop the server and change that to
-point at the new Nexus application directory. When you start the new
-instance of Nexus it will read the existing repository configuration
-from the sonatype-work. Depending on the version you upgrade from and
-to some maintenance tasks like rebuilding the internal indices can be
-necessary.
+application, it is easy to upgrade an existing Nexus installation. 
+
+To upgrade Nexus, unpack the Nexus archive in the directory which
+contains the existing Nexus installation. Once the archive is
+unpacked, the new Nexus application directory should be a sibling to
+your existing sonatype-work/ directory. 
+
+If you have defined a symbolic link for the version of Nexus to use,
+stop the server and change that to point at the new Nexus application
+directory. When you start the new instance of Nexus it will read the
+existing repository configuration from the sonatype-work. Depending on
+the version you upgrade from and to some maintenance tasks like
+rebuilding the internal indices can be necessary.
+
+If you are using any additional plugins the new version you downloaded
+may contain a newer version of the plugin. Simply copy the new version
+as documented in <<install-additional-plugins>> and remove the old
+version before you restart Nexus.
 
 NOTE: The same upgrade process can be used to change from the open
 source to the professional version of Nexus.
@@ -1587,7 +1594,7 @@ only the required access righs. The following sections provide
 instructions for configuring Nexus as a service or daemon on .
 various operating systems.
 
-==== Start-up Scripts for Linux
+==== Running as a Service on Linux
 
 You can configure Nexus to start automatically, by copying the nexus
 script to the /etc/init.d directory. On a Linux system 
@@ -1649,7 +1656,7 @@ the wrapper.log to verify that Nexus has been started successfully. If
 Nexus has started successfully, you should see a message notifying you
 that Nexus is listening for HTTP
 
-===== Add Nexus as a Service on Ubuntu
+===== Add Nexus as a Service on Ubuntu and Debian
 
 The process for setting Nexus up as a service on Ubuntu differs
 slightly from the process used on a Red Hat variant. Instead of running
@@ -1664,7 +1671,7 @@ Starting Sonatype Nexus...
 $ tail -f /usr/local/nexus/logs/wrapper.log
 ----
 
-====  Running Nexus as a Service on Mac OS X
+====  Running as a Service on Mac OS X
 
 The standard way to run a service on Mac OS X is by using launchd,
 which uses plist files for configuration. An example plist file for
@@ -1706,7 +1713,8 @@ manually start it after the configuration you can use
 ----
 sudo launchctl load /Library/LaunchDaemons/com.sonatype.nexus.plist
 ----
-==== Running Nexus as a Service on Windows
+
+==== Running as a Service on Windows
 
 For the start-up script for nexus on Windows platforms is
 +++bin/nexus.bat+++. Besides the standard commands for starting and
@@ -1885,34 +1893,44 @@ thirty day evaluation period, Nexus Professional will revert back to
 Nexus Open Source. To reactivate Nexus Professional after the end of
 your evaluation period, contact a Sonatype sales representative at
 sales@sonatype.com
-
+ 
 [[install-sect-dirs]]
-=== Sonatype Nexus Directories
+=== Nexus Directories
 
 The following sections describe the various directories that are a
 part of any Nexus installation. When you install Nexus Open Source or
 Nexus Professional, you are creating two directories: a directory
-which contains the Nexus runtime and application, and a directory
-which contains your own configuration and data. When you upgrade to a
-newer version of Nexus, you replace the Nexus application directory
-and retain all of your own custom configuration and repository data in
-sonatype-work/
+which contains the Nexus runtime and application often symlinked as
+nexus and a directory which contains your own configuration and data -
+sonatype-work/nexus. When you upgrade to a newer version of Nexus, you
+replace the Nexus application directory and retain all of your own
+custom configuration and repository data in sonatype-work/
 
 [[sect-installing-work-dir]]
-==== Sonatype Nexus Work Directory
+==== Sonatype Work Directory
 
-The Sonatype Work directory is installed as a sibling to the nexus
-application directory, and the location of this directory can be
-configured via the nexus.properties file which is described in
-<<sect-installing-conf-dir>>. <<fig-installing_work-dir>> shows the
-Sonatype Nexus work directory with the conf/
+The Sonatype Work directory sonatype-work is installed as a sibling to
+the nexus application directory, and the location of this directory
+can be configured via the nexus.properties file which is described in
+<<sect-installing-conf-dir>>. <<fig-installing-sonatype-work-tree>>
+shows the Sonatype Nexus work directory with some of its
+sub-directories.
 
-[[fig-installing_work-dir]]
-.The Sonatype Nexus Work Directory
-image::figs/web/installing_work-dir.png[scale=60]
+[[fig-installing-sonatype-work-tree]]
+.The Sonatype Work Directory
+image::figs/web/installing-sonatype-work-tree.png[scale=60]
 
-The Sonatype Nexus work directory contains the following
-sub-directories:
+The Sonatype Work Nexus directory sonatype-work/nexus/ contains a
+number of sub-directories. Depending on the plugins installed and used
+some directories may or may be not present in your installation:
+
+access/:: This directory contains a log of all IP addresses
+accessing Nexus. The data can be viewed by clicking on Active Users
+Report in the Administration - Licensing tab in the Nexus user
+interface.
+
+aether-local-repository/:: This holds temporary files created when
+running Maven dependency queries in the user interface.
 
 backup/:: If you have configured a scheduled job to backup Nexus
 configuration, this directory is going to contain a number of ZIP
@@ -1920,10 +1938,22 @@ archives that contain snapshots of Nexus configuration.  Each ZIP file
 contains the contents of the conf/ directory. (Automated backups are a
 feature of Nexus Professional.)
 
+broker/:: The broker directory and its sub-directories contains the
+storage backend for the Smart Proxy messaging component.
+
 conf/:: This directory contains the Nexus configuration.  Settings
 that define the list of Nexus repositories, the logging configuration,
 the staging and procurement configuration, and the security settings
 are all captured in this directory.
+
+conf/keystore/:: Contains the automatically generated key used to
+identify this Nexus instance for Smart Proxy usage
+
+error-report-bundles/:: Contains the bundled archives of data
+assembled for problem reporting.
+
+health-check/:: Holds cached reports from the repository health check
+plugin of the Sonatype Insight integration.
 
 indexer/:: Contains a Nexus index for all repositories and repository
 groups managed by Nexus. A Nexus index is a Lucene index which is the
@@ -1936,9 +1966,15 @@ instance of Nexus. This directory also contains archived copies of
 Nexus log files. Nexus log files are rotated every day. To reclaim
 disk space, you can delete old log files from the logs/
 
+nuget/:: Contains the database supporting queries against NuGet
+repositories used for .NET package support in Nexus.
+
 p2/:: If you are using the P2 repository management features of Nexus
 Professional, this directory contains a local cache of P2 repository
 artifacts.
+
+plugin-repository/:: This directory contains any additionally
+installed plugins.
 
 proxy/:: Stores data about the files contained in a remote
 repository. Each proxy repository has a sub-directory in the
@@ -1981,12 +2017,22 @@ in this directory are altered by the Nexus administrative user
 interface. While you can change the configuration settings contained
 in these files with a text editor, Sonatype recommends that you modify
 the contents of these files using the Nexus administrative user
-interface.
+interface. Depending on your Nexus version and the installed plugins
+the complete list of files may differ slightly.
 
-log4j.properties:: Contains Log4J configuration, if you need to
-customize the detail of log messages, the frequency of log file
-rotation, or if you want to connect your own, custom Log4J appenders,
-you would alter this configuration file.
+broker.groovy:: A groovy script for configuring low level properties
+for Smart Proxy.
+
+capabilities.xml:: Further Smart Proxy backend configuration.
+
+healthcheck.properties:: Configuration for the Sonatype Insight
+integration.
+
+log4j.properties, logback.properties, lopback.xml and logback-*.xml::
+Contains logging configuration. If you need to customize the detail of
+log messages, the frequency of log file rotation, or if you want to
+connect your own, custom Log4J appenders, you would alter this
+configuration file.
 
 lvo-plugin.xml:: Contains configuration for the latest version
 plugin. This XML file contains the location of the properties file
@@ -2005,28 +2051,22 @@ OSGi Bundle repository plugin in Nexus Professional.
 procurement.xml:: Contains configuration for the Nexus Procurement
 plugin in Nexus Professional.
 
-security.xml:: Contains security information about users and roles in
-Nexus.
+security-configuration.xml:: Contains global security configuration. 
 
-staging.xml:: Contains configuration for the Nexus Staging plugin in
+security.xml:: Contains security configuration about users and roles.
+
+staging.xml:: Contains configuration for the Nexus Staging Plugin in
 Nexus Professional.
 
 [[sect-installing-conf-dir]]
 ==== Nexus Configuration Directory
 
-After installing Nexus Professional, you will have a
-nexus-professional-webapp-1.9.2/ directory and a sonatype-work/
-directory, and after installing Nexus Open Source, you will have a
-nexus-webapp-1.9.2/ directory and a sonatype-work/ directory. This
-section details the contents of the conf directory that is shown in
-<<fig-installing_conf-dir>>. This directory contains configuration for
-the Jetty servlet container. You will only need to modify the files in
-this directory if you are customizing the configuration of Jetty
-servlet container, or the behaviour of the scripts that start Nexus.
-
-[[fig-installing_conf-dir]]
-.Nexus Professional Configuration Directory
-image::figs/web/installing_conf-dir.png[scale=60]
+After installing Nexus and creating the nexus symlink as described
+earlier, your nexus folder contains another conf directory. This
+directory contains configuration for the Jetty servlet container. You
+will only need to modify the files in this directory if you are
+customizing the configuration of Jetty servlet container, or the
+behaviour of the scripts that start Nexus.
 
 The files and folders contained in this directory are:
 
@@ -2036,17 +2076,13 @@ advanced Nexus users will ever need to customize the contents of this
 file.
 
 nexus.properties:: This file contains configuration variables which
-control the behaviour of Plexus and the Jetty servlet container. If you
+control the behaviour of Nexus and the Jetty servlet container. If you
 are customizing the port and host that Nexus will listen to, you would
 change the application-port and application-host properties defined in
 this file. If you wanted to customize the location of the Sonatype
 work directory, you would modify the value of the nexus-work property
-in this configuration file.
-
-plexus.xml:: Defines the class names and configuration of components
-which are loaded by Plexus at start-up. This file should never be
-changed as all configurable values have been removed from this file
-and placed in nexus.properties
+in this configuration file. Changing nexus-webapp-context-path allows
+you to configure the server context path Nexus will be available at.
 
 jetty.xml:: If this file is present in the conf/ directory, it will be
 used to configure Jetty.
@@ -2093,6 +2129,26 @@ nexus.properties
 The conf/examples/proxy-https/ directory contains two files:
 apache2.conf and jetty.xml contains sample mod_proxy directives to
 configure Apache httpd to handle SSL.
+
+[[install-additional-plugins]]
+=== Installing Additional Plugins
+
+Nexus Open Source and Nexus Professional are built using a plugin
+architecture, where Professional simply includes additional
+plugins. Besides the default installed plugins you can install optional
+plugins shipped with Nexus as well as plugins you or somebody else
+created.
+
+Optional plugins can be found in the directory
++++$NEXUS_HOME/nexus/WEB-INF/optional-plugins+++.
+
+To install the plugin, simply copy the desired plugin directory into
++++sonatype-work/nexus/plugin-repository+++.
+
+After a restart of Nexus the new plugin will be active and ready
+to use. Upgrades are done by simply copying over the newer plugin and
+removing the older one.
+
 
 [[config]]
 == Configuring Maven to Use Nexus
