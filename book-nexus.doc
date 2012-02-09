@@ -7143,8 +7143,8 @@ http://nuget.org/api/v2/
 
 The repository configuration for a NuGet proxy repository has an
 additional tab titled NuGet as visible in
-<<fig-nuget-gallery-package-source>>, which displays the Nexus URL at which
-the repository is available as a NuGet repository. 
+<<fig-nuget-gallery-package-source>>, which displays the Nexus URL at
+which the repository is available as a NuGet repository.
 
 [[fig-nuget-gallery-package-source]]
 .NuGet Gallery with Package Source URL
@@ -7239,6 +7239,28 @@ image::figs/web/nuget-group.png[scale=60]
 Using the Repository Path of the repository group as your NuGet
 repository URL in your client tool will give you access to the
 packages in all three repositories with one URL.
+
+=== Accessing Packages in Repositories and Groups
+
+Once you have set up you hosted and proxy repositories for NuGet
+packages and potentially created a group you can access them with the
+nuget tool on the command line. Copy the Package Source url from the
+NuGet tab of the repository/group configuration you want to access and
+add it to nuget on the command line with e.g.:
+
+----
+nuget sources add -name NuGetNexus -source http://localhost:8081/nexus/service/local/nuget/nuget-public
+----
+
+Replace localhost with the public hostname or url of your Nexus server
+and nuget-public with the name of the repository you want to
+proxy. Ideally this will be your NuGet group.
+
+After this source was added you can list the available packages with 
+----
+nuget list
+----
+
 
 === Deploying Packages to NuGet Hosted Repositories
 
