@@ -1288,9 +1288,9 @@ evaluation form].
 Fill out the form and then check your email account for download
 instructions. After filling out a brief contact form and agreeing to
 the evaluation license, you will be sent an email with a link to
-download the Nexus Professional distribution. Nexus is available as a
-ZIP file under the file names nexus-professional-webapp-1.9.2-bundle.zip and
-nexus-professional-webapp-1.9.2-bundle.tgz
+download the Nexus Professional distribution. Nexus is available as
+archive files nexus-professional-webapp-2.0.0-bundle.zip and
+nexus-professional-webapp-2.0.0-bundle.tar.gz.
 
 [[install-sect-install]]
 === Installing Nexus
@@ -1310,16 +1310,17 @@ http://www.oracle.com/technetwork/java/javase/downloads/index.html ,
 and download the latest Java 6 or Java 7 JDK.
 
 
-====  Installing Nexus Open Source
+====  Installing Nexus
 
-The following instructions are for installing Nexus Open Source as a
-stand-alone server. Nexus comes bundled with a Jetty instance which
-listens to all configured IP addresses on a host (0.0.0.0) and runs on
-port 8081 by default. If you would like to run Nexus Open Source as a
-web application in an existing application server or servlet
-container, please refer to the instructions in <<install-sect-as-a-war>>.
+The following instructions are for installing Nexus Open Source or
+Nexus Professional as a stand-alone server. Nexus comes bundled with a
+Jetty instance which listens to all configured IP addresses on a host
+(0.0.0.0) and runs on port 8081 by default. If you would like to run
+Nexus as a web application in an existing application server or
+servlet container, please refer to the instructions in
+<<install-sect-as-a-war>>.
 
-Installing Nexus Open Source is straightforward. Unpack the Nexus web
+Installing Nexus is straightforward. Unpack the Nexus web
 application archive in a directory. If you are installing Nexus on a
 local workstation to give it a test run, you can install it in your
 home directory or wherever you like; Nexus doesn't have any hard coded
@@ -1335,6 +1336,13 @@ And, if you download the GZip'd TAR archive, run:
 $ tar xvzf nexus-oss-webapp-2.0.0-bundle.tar.gz
 ----
 
+For Nexus professional the equivalent commands would be 
+
+----
+$ unzip nexus-professional-webapp-2.0.0-bundle.zip
+$ tar xvzf nexus-professional-webapp-2.0.0-bundle.tar.gz
+----
+
 NOTE: There are some known incompatibilities with the version of tar
 provided by Solaris and the gzip tar format. If you are installing
 Nexus on Solaris, you must use the GNU tar application, or you will
@@ -1342,11 +1350,11 @@ end up with corrupted files.
 
 NOTE: If you are installing Nexus on a server, you might want to use a
 directory other than your home directory. On a Unix machine, this book
-assumes that Nexus is installed in
-/usr/local/nexus-oss-webapp-2.0.0 with a symbolic link
-/usr/local/nexus to the nexus directory. Using a generic symbolic link
-nexus to a specific version is a common practice which makes it easier
-to upgrade when a newer version of Nexus is made available.
+assumes that Nexus is installed in /usr/local/nexus-oss-webapp-2.0.0
+with a symbolic link /usr/local/nexus to the nexus directory. Using a
+generic symbolic link nexus to a specific version is a common practice
+which makes it easier to upgrade when a newer version of Nexus is made
+available.
 
 ----
 $ sudo cp nexus-oss-webapp-2.0.0-bundle.tar.gz /usr/local
@@ -1360,69 +1368,24 @@ environment variable NEXUS_HOME in your environment which
 points to the installation directory of Nexus. This chapter will refer
 to this location as '+++$NEXUS_HOME+++'
 
+NOTE: On Windows you should install Nexus outside +++Program Files+++
+to avoid problems with Windows file registry virtualization. If you
+plan to run Nexus as a specific user you could install into
+AppData/Local directory of that users home directory. Otherwise simply
+go with e.g. C:\\nexus or thing similar.
+
 The Nexus installation directory nexus-oss-webapp-2.0.0 has a sibling
 directory named sonatype-work. This directory contains all of the
 repository and configuration data for Nexus and is stored outside of
 the Nexus installation directory to make it easier to upgrade to a
 newer version of Nexus.
 
- By default, this directory is always a sibling to the nexus
+By default, this directory is always a sibling to the nexus
 installation directory; if you installed nexus in /usr/local directory
 would also contain a sonatype-work sub-directory with a nested nexus
 directory containing all of the content and configuration. The
 location of the sonatype-work directory can be customized by altering
 the nexus-work property in '+++$NEXUS_HOME/conf/nexus.properties+++'
-
-[[install-sect-pro]]
-==== Installing Nexus Professional
-
-The following instructions are for installing Nexus Professional as a
-stand-alone server. Nexus Professional is bundled with a Jetty
-instance which listens to all configured IP addresses on a host
-(0.0.0.0) and runs on port 8081 by default.
-
-Installing Nexus is straightforward, unpack the Nexus web application
-archive in a directory. If you are installing Nexus on a local
-workstation to give it a test run, you can install it in your home
-directory or wherever you like; Nexus doesn't have any hard coded
-directories, it will run from any directory. If you downloaded the ZIP
-
-----
-$ unzip nexus-professional-webapp-2.0.0-bundle.zip
-----
-
-And, if you download the GZip'd TAR archive, run:
-
-----
-$ tar xvzf nexus-professional-webapp-2.0.0-bundle.tgz
-----
-
-If you are installing Nexus on a server, you might want to use a
-directory other than your home directory. On a Unix machine, this book
-assumes that Nexus is installed in /usr/local/nexus-professional-webapp-2.0.0
-with a symbolic link /usr/local/nexus to the nexus directory. Using a
-symbolic link nexus to a directory which holds a specific version of
-Nexus is a common practice that makes it easier to upgrade to a newer
-version of Nexus.
-
-----
-$ sudo cp nexus-professional-webapp-2.0.0-bundle.tar.gz /usr/local
-$ cd /usr/local
-$ sudo tar xvzf nexus-professional-webapp-2.0.0-bundle.tar.gz
-$ ln -s nexus-professional-webapp-2.0.0 nexus
-----
-
-Although it isn't required for Nexus to run, you may want to set an
-environment variable NEXUS_HOME in your environment which points to
-the installation directory of Nexus. This chapter will refer to this
-location as '+++$NEXUS_HOME+++'. The Nexus installation directory
-nexus-professional-webapp-2.0.0 has a sibling directory named
-sonatype-work. The nexus sub-directory with it contains all of the
-repository and configuration data for Nexus and is stored outside of
-the Nexus installation directory to make it easier to upgrade to a
-newer version of Nexus.
-
-TIP: On Windows you should install Nexus into +++Program Files+++.
 
 [[install-sect-upgrading]]
 === Upgrading Nexus
@@ -1430,16 +1393,18 @@ TIP: On Windows you should install Nexus into +++Program Files+++.
 Since Nexus separates its configuration and data storage from the
 application, it is easy to upgrade an existing Nexus installation. To
 upgrade Nexus, unpack the Nexus archive in the directory which
-contains the existing Nexus installation. Once the archive is unpacked
+contains the existing Nexus installation. Once the archive is unpacked,
 the new Nexus application directory should be a sibling to your
 existing sonatype-work/ directory. If you have defined a symbolic link
 for the version of Nexus to use, stop the server and change that to
 point at the new Nexus application directory. When you start the new
 instance of Nexus it will read the existing repository configuration
-from the sonatype-work.
+from the sonatype-work. Depending on the version you upgrade from and
+to some maintenance tasks like rebuilding the internal indices can be
+necessary.
 
-TIP: Depending on the version you upgrade from and to some maintenance
-tasks like rebuilding the internal indices can be necessary.
+NOTE: The same upgrade process can be used to change from the open
+source to the professional version of Nexus.
 
 [[install-sect-running]]
 === Running Nexus
