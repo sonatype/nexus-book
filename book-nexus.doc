@@ -2242,44 +2242,48 @@ repository to the public group.
 
 To add a repository, log into Nexus as an Administrator, and click on
 the Repositories link in the left-hand navigation menu in the
-Views/Repositories section. Clicking on this link should bring up a
-window that lists all of the repositories which Nexus knows
-about. You'll then want to create a new proxy repository. To do this,
-click on the Add link that is directly above the list of
-repositories. When you click the Add button, click the down arrow
-directly to the right of the word Add, this will show a drop-down
-which has the options: Hosted Repository, Proxy Repository, Virtual
-Repository, and Repository Group. Since you are creating a proxy
-repository, click on Proxy Repository.
+Views/Repositories section as displayed in
+<<fig-repository-manager-add-repository-dropdown>>.
 
-.Creating a New Nexus Proxy Repository
+Clicking on this link should bring up a window that lists all of the
+repositories which Nexus knows about. You'll then want to create a new
+proxy repository. To do this, click on the Add link that is directly
+above the list of repositories. When you click the Add button, click
+the down arrow directly to the right of the word Add, this will show a
+drop-down which has the options: Hosted Repository, Proxy Repository,
+Virtual Repository, and Repository Group. Since you are creating a
+proxy repository, click on Proxy Repository.
+
+[[fig-repository-manager-add-repository-dropdown]]
+.Creating a New Proxy Repository
 image::figs/web/repository-manager_add-repository-dropdown.png[scale=60]
 
 Once you do this, you will see a screen resembling
 <<fig-add-repo>>. Populate the required fields Repository ID and the
-Repository Name with "caja" and "Google Caja". Set the Repository
-Policy to "Release", and the Remote Storage Location to
-http://google-caja.googlecode.com/svn/maven
+Repository Name. The Repository ID will be part of the URL used to
+access the repository, so it is recommended to avoid characters that
+could cause problems. Set the Repository Policy to "Release", and the
+Remote Storage Location to the public URL of the repository you want
+to proxy.
+
 
 [[fig-add-repo]]
-.Adding a Nexus Repository
+.Configuring a Proxy Repository
 image::figs/web/repository-manager_add-repository.png[scale=60]
 
 Once you've filled out this screen, click on the Save
-button. Nexus will then be configured with the caja proxy
-repository. Do the same thing for the oauth repository. Create a
-repository with the Repository ID of oauth, with a Release policy, and
-the Remote Storage Location of http://oauth.googlecode.com/svn/code/maven
+button. Nexus will then be configured to proxy the repository.
 
 [[config-sect-repo-group]]  
 === Adding a Repository to a Group
 
-Next you will need to add both of these new repositories to the public
-Nexus Group. To do this, click on the Repositories link in the
-left-hand navigation menu in the Views/Repositories section. Nexus
+Next you will need to add the new repository to the Public
+RepositoriesNexus Group. To do this, click on the Repositories link in
+the left-hand navigation menu in the Views/Repositories section. Nexus
 lists Groups and Repositories in the same list so click on the public
-group.  After clicking on the public group, you should see the Browse
-and Configuration tabs in the lower half of the Nexus window.
+group.  After clicking on the Public Repositories group, you should
+see the Browse and Configuration tabs in the lower half of the Nexus
+window.
 
 NOTE: If you click on a repository or a group in the Repositories list
 and you do not see the Configuration tab, this is because your Nexus
@@ -2294,16 +2298,13 @@ like <<fig-add-to-group>>.
 .Adding New Repositories to a Nexus Group
 image::figs/web/repository-manager_add-to-group.png[scale=60]
 
-To add the two new repositories to the public Nexus Group, find the
-repositories in the Available Repositories list on the right, click on
+To add the new repository to the public group, find the
+repository in the Available Repositories list on the right, click on
 the repository you want to add and drag it to the left to the Ordered
 Group Repositories list. Once the repository is in the Ordered Group
 Repositories list you can click and drag the repository within that
 list to alter the order in which a repository will be searched for a
-matching artifact. Once the Google Caja and Google OAuth project
-repositories are added to the public Nexus Group, you should be able
-to build Apache Shindig and watch Maven download the Caja and OAuth
-artifacts from the respective repositories.
+matching artifact. 
 
 NOTE: Nexus makes use of an interesting Javascript widget library
 named http://extjs.com/[ExtJS]. ExtJS provides for a number of
@@ -2311,19 +2312,20 @@ interesting UI widgets that allow for rich interaction like the
 drag-drop UI for adding repositories to a group and reordering the
 contents of a group.
 
-In the last few sections, you encountered a situation where you needed
-to add two custom repositories to a build in order to download two
-libraries (Google Caja and Google OAuth) which are not available in
-the Maven Central repository. If you were not using a repository
-manager, you would have added these repositories to the repository
-element of your project's POM, or you would have asked all of your
-developers to modify ~/.m2/settings.xml to reference two new
-repositories. Instead, you used the Nexus repository manager to add
-the two repositories to the public group. If all of the developers are
-configured to point to the public group in Nexus, you can freely swap
-in new repositories without asking your developers to change local
-configuration, and you've gained a certain amount of control over
-which repositories are made available to your development team.
+In the last few sections, you learned how to add a new custom
+repositories to a build in order to download artifacts which are not
+available in the Maven Central repository.
+
+If you were not using a repository manager, you would have added these
+repositories to the repository element of your project's POM, or you
+would have asked all of your developers to modify ~/.m2/settings.xml
+to reference two new repositories. Instead, you used the Nexus
+repository manager to add the two repositories to the public group. If
+all of the developers are configured to point to the public group in
+Nexus, you can freely swap in new repositories without asking your
+developers to change local configuration, and you've gained a certain
+amount of control over which repositories are made available to your
+development team.
 
 [[using]]
 == Using Nexus
