@@ -1485,9 +1485,9 @@ windows-x86-32
 windows-x86-64
 ----
 
-TIP: The start-up script +++nexus+++ also support the common service
+TIP: The start-up script +++nexus+++ supports the common service
 commands +++stop+++, +++restart+++, +++status+++, +++console+++ and
-+++dump+++.
++++dump+++. 
 
 [[install-sect-repoman-post-install]]
 === Post-Install Checklist
@@ -1539,9 +1539,10 @@ the remote index files will be downloaded. It might take Nexus a few
 minutes to download the entire index, but once you have it, you'll be
 able to search the entire contents of the Maven repository.
 
-Once you've enabled remote index downloads, you still won't be able to browse the complete contents of a remote repository. Downloading the
-remote index allows you to search for artifacts in a repository, but
-until you download those artifacts from the remote repository they
+Once you've enabled remote index downloads, you still will not be able
+to browse the complete contents of a remote repository. Downloading
+the remote index allows you to search for artifacts in a repository,
+but until you download those artifacts from the remote repository they
 will not show in the repository tree when you are browsing a
 repository. When browsing a repository, you will only be shown
 artifacts which have been downloaded from the remote repository.
@@ -1580,9 +1581,11 @@ Ubuntu read https://help.ubuntu.com/community/Locale
 === Configuring Nexus as a Service
 
 When installing Nexus for production usage you should configure Nexus
-as a service, so it starts back up after server reboots. The following
-sections provide instructions for configuring Nexus as a service or
-daemon on .  various operating systems.
+as a service, so it starts back up after server reboots. It is good
+practice to run that service or daemon as a specific user that has
+only the required access righs. The following sections provide
+instructions for configuring Nexus as a service or daemon on .
+various operating systems.
 
 ==== Start-up Scripts for Linux
 
@@ -1699,9 +1702,17 @@ sudo chmod 644 /Library/LaunchDaemons/com.sonatype.nexus.plist
 
 With this setup Nexus will start as a service at boot time. To
 manually start it after the configuration you can use
+
 ----
 sudo launchctl load /Library/LaunchDaemons/com.sonatype.nexus.plist
 ----
+==== Running Nexus as a Service on Windows
+
+For the start-up script for nexus on Windows platforms is
++++bin/nexus.bat+++. Besides the standard commands for starting and
+stopping the service it has the additional commands +++install+++ and
++++uninstall+++. Running these commands with elevated privileges will
+set up the service for you or remove it as desired.
 
 [[install-sect-proxy]]
 === Running Nexus Behind a Proxy
