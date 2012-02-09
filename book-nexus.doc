@@ -1370,7 +1370,7 @@ to this location as '+++$NEXUS_HOME+++'
 
 NOTE: On Windows you should install Nexus outside +++Program Files+++
 to avoid problems with Windows file registry virtualization. If you
-plan to run Nexus as a specific user you could install into
+plan to run Nexus as a specific user you could install into the
 AppData/Local directory of that users home directory. Otherwise simply
 go with e.g. C:\\nexus or thing similar.
 
@@ -1462,8 +1462,10 @@ image::figs/web/installing-nexus-login-dialog.png[scale=60]
 
 The files from Java Service Wrapper used for the start up process can
 be found in +++$NEXUS_HOME/bin/jsw+++ and are separated into generic
-files like the +++wrapper.conf+++ configuration file in conf and platform
-specific files. A full list of directories follows:
+files like the +++wrapper.conf+++ configuration file in conf and a
+number of libraries in +++lib+++. The platform specific directories
+are available for backwards compatibility with older versions only and
+should not be used. . A full list of directories follows:
 
 ----
 $ cd /usr/local/nexus/jsw
@@ -1506,7 +1508,7 @@ instructions, see <<using-sect-changing-password>>.
 
 ==== Step 2: Configure the SMTP Settings
 
- Nexus can send user-name and password recovery emails, to enable this
+Nexus can send user-name and password recovery emails, to enable this
 feature, you will need to configure Nexus with a SMTP Host and Port as
 well as any necessary authentication parameters that Nexus needs to
 connect to the mail server. To configure the SMTP settings, load the
@@ -1537,8 +1539,7 @@ the remote index files will be downloaded. It might take Nexus a few
 minutes to download the entire index, but once you have it, you'll be
 able to search the entire contents of the Maven repository.
 
-Once you've enabled remote index downloads, you still won't be able to
-browse the complete contents of a remote repository. Downloading the
+Once you've enabled remote index downloads, you still won't be able to browse the complete contents of a remote repository. Downloading the
 remote index allows you to search for artifacts in a repository, but
 until you download those artifacts from the remote repository they
 will not show in the repository tree when you are browsing a
@@ -1578,12 +1579,12 @@ Ubuntu read https://help.ubuntu.com/community/Locale
 [[install-sect-service]]
 === Configuring Nexus as a Service
 
-When installing Nexus for production usage you should configure Nexus as a
-service, so it starts back up after server reboots. The following
-sections provide instructions for configuring Nexus as a service or daemon on .
-various operating systems.
+When installing Nexus for production usage you should configure Nexus
+as a service, so it starts back up after server reboots. The following
+sections provide instructions for configuring Nexus as a service or
+daemon on .  various operating systems.
 
-==== Start-up Scripts for GNU/Linux
+==== Start-up Scripts for Linux
 
 You can configure Nexus to start automatically, by copying the nexus
 script to the /etc/init.d directory. On a Linux system 
@@ -1719,8 +1720,9 @@ Let's assume that you wanted to host Nexus behind Apache HTTPd at the
 URL http://www.somecompany.com. To do this, you'll need to change the
 context path that Nexus is served from.
 
-. Edit nexus.properties in '+++$NEXUS_HOME/conf+++'. You'll see an element
-  named webapp-context-path. Change this value from "/nexus" to "/"
+. Edit nexus.properties in '+++$NEXUS_HOME/conf+++'. You'll see an
+  element named nexus-webapp-context-path. Change this value from
+  "/nexus" to "/"
 
 . Restart Nexus and Verify that it is available on
   http://localhost:8081/
@@ -1740,16 +1742,15 @@ ProxyPreserveHost On
   ServerName www.somecompany.com 
   ServerAdmin admin@somecompany.com 
   ProxyPass / http://localhost:8081/
-  ProxyPassReverse / http://localhost:8081/
+  ProxyPassReverse / http://localfhost:8081/
   ErrorLog logs/somecompany/nexus/error.log 
   CustomLog logs/somecompany/nexus/access.log common 
 </VirtualHost>
 ----
 
 If you just wanted to continue to serve Nexus at the /nexus context
-path, you would not change the contextPath in
-'+++$NEXUS_HOME/conf/plexus.xml+++' and you would include the context path
-in your ProxyPass and ProxyPassReverse
+path, you would not change the nexus-webapp-context-path in and you
+would include the context path in your ProxyPass and ProxyPassReverse
 
 ----
   ProxyPass /nexus/ http://localhost:8081/nexus/
@@ -1766,30 +1767,32 @@ please see http://httpd.apache.org
 
 The Nexus Open Source WAR has been successfully tested in Tomcat,
 Jetty, and Resin. If you need to run Nexus under Glassfish, please see
-<<install-sect-war-gf>>. To download the Nexus Open
-Source WAR, go to http://nexus.sonatype.org/using/download.html.
-Click on the Download Site link and then download the Nexus WAR. Once
-you have downloaded the Nexus Open Source WAR, you can install it in a
-servlet container or application server.
+<<install-sect-war-gf>>. To download the Nexus Open Source WAR, go to
+http://nexus.sonatype.org/using/download.html.  Click on the Download
+Site link and then download the Nexus WAR. Once you have downloaded
+the Nexus Open Source WAR, you can install it in a servlet container
+or application server.
 
 The process for installing a WAR in an servlet container or
 application server is going to vary for each specific
 application. Often, this installation process is as simple as dropping
 a WAR file in a special directory and restarting the container. For
 example, to install the Nexus WAR in Tomcat, drop the
-nexus-webapp-1.6.0.war file in '+++$TOMCAT_HOME/webapps+++' and restart
-your Tomcat instance. Assuming that Tomcat is configured on port 8080
-once Tomcat is started, Nexus will be available on
-http://localhost:8080/nexus-webapp-1.6.0.
+nexus-webapp-2.0.0.war file in '+++$TOMCAT_HOME/webapps+++' and
+restart your Tomcat instance. Assuming that Tomcat is configured on
+port 8080 once Tomcat is started, Nexus will be available on
+http://localhost:8080/nexus-webapp-2.0.0
 
-If you would like a less verbose URL, copy nexus-webapp-1.6.0.war to a
+If you would like a less verbose URL, copy nexus-webapp-2.0.0.war to a
 file named nexus.war before copying the distribution to
 '+++$TOMCAT_HOME/webapps+++'
 
 NOTE: When installing Nexus as a WAR in an application server or
 servlet container, it automatically creates a sonatype-work directory
-in ~/sonatype-work. This directory contains all of the necessary
-configuration and repository storage for Nexus.
+in the home directory of the user running the application server. This
+directory contains all of the necessary configuration and repository
+storage for Nexus.
+
 
 [[install-sect-war-gf]]
 ==== Running the Nexus WAR in Glassfish
@@ -9701,7 +9704,7 @@ pair. Some notes about the location of the key-store and default
 key-store passwords:
 
 * If you are using the default JSSE key-store locations on either a
-GNU/Linux or OS X platform, you must run the commands below as the
+Linux or OS X platform, you must run the commands below as the
 root user. You can do this either by changing to the root user (su -),
 or by using the sudo command: sudo [command].
 
