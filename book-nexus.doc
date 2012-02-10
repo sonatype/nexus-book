@@ -1405,10 +1405,14 @@ existing repository configuration from the sonatype-work. Depending on
 the version you upgrade from and to some maintenance tasks like
 rebuilding the internal indices can be necessary.
 
-If you are using any additional plugins, the new version of Nexus you
-downloaded may contain a newer version of the plugin. Simply copy the
-new version as documented in <<install-additional-plugins>> and remove
-the old version before you restart Nexus.
+If you are using any additional plugins supplied by Sonatype, the new
+version of Nexus you downloaded will contain a newer version of the
+plugin. Be sure to copy the new version from the optional-plugins
+folder to the plugin-repository folder as documented in
+<<install-additional-plugins>> and restart Nexus.
+
+Externally supplied plugins are updated by simply replacing the folder
+with the plugin with the new version.
 
 NOTE: The same upgrade process can be used to change from the open
 source to the professional version of Nexus.
@@ -1974,7 +1978,8 @@ Professional, this directory contains a local cache of P2 repository
 artifacts.
 
 plugin-repository/:: This directory contains any additionally
-installed plugins.
+installed plugins from third parties as documented in
+<<install-additional-plugins>>.
 
 proxy/:: Stores data about the files contained in a remote
 repository. Each proxy repository has a sub-directory in the
@@ -2139,13 +2144,17 @@ plugins. Besides the default installed plugins you can install optional
 plugins shipped with Nexus as well as plugins you or somebody else
 created.
 
-Optional plugins can be found in the directory
-+++$NEXUS_HOME/nexus/WEB-INF/optional-plugins+++.
+Optional plugins supplied by Sonatype can be found in the directory
++++$NEXUS_HOME/nexus/WEB-INF/optional-plugins+++. To install any of
+these simply copy the folder containing the desired plugin into
++++$NEXUS_HOME/nexus/WEB-INF/plugin-repository+++
 
-To install the plugin, simply copy the desired plugin directory into
+Plugins supplied by third parties like the
+http://code.google.com/p/nexus-yum-plugin/[Nexus Yum Plugin] and
+others, are installed by copying the folder with the plugin code into
 +++sonatype-work/nexus/plugin-repository+++.
 
-After a restart of Nexus the new plugin will be active and ready
+After a restart of Nexus the new plugins will be active and ready
 to use. Upgrades are done by simply copying over the newer plugin and
 removing the older one.
 
