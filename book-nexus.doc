@@ -1523,7 +1523,8 @@ Nexus can send user-name and password recovery emails, to enable this
 feature, you will need to configure Nexus with a SMTP Host and Port as
 well as any necessary authentication parameters that Nexus needs to
 connect to the mail server. To configure the SMTP settings, load the
-server configuration dialog shown in <<fig-nexus-server-config>>.
+server configuration dialog shown in
+<<fig-config-administration-smtp>>.
 
 ==== Step 3: Enable Remote Index Downloads
 
@@ -1751,7 +1752,8 @@ context path that Nexus is served from.
   http://localhost:8081/
 
 . Clear the Base URL in Nexus as shown in
-  <<fig-nexus-server-config-3>> under Application Server Settings.
+  <<fig-config-administration-application-server>> under Application
+  Server Settings.
 
 At this point, edit the HTTPd configuration file for the
 www.somecompany.com virtual host. Include the following to expose
@@ -2821,9 +2823,6 @@ image::figs/web/configuring-generate-report.png[scale=60]
 [[confignx]]
 == Configuring Nexus
 
-[[confignx-sect-intro]]
-=== Configuring Nexus
-
 Many of the configuration screens shown in this section are only
 available to administrative users. Nexus allows the admin user to
 customize the list of repositories, create repository groups, customize
@@ -2837,54 +2836,56 @@ In a production installation of Nexus, you'll probably want
 to customize the administrative password to something other than
 "admin123", and you might want to override the default directories that
 Nexus uses to store repository data. To do this, log in as the
-administrative user and click on Server under Configuration in the
-left-hand navigation menu. The server configuration screen is shown in
-<<fig-nexus-server-config>> and <<fig-nexus-server-config-2>>.
+administrative user and click on Server under Administration in the
+left-hand navigation menu as visible in <<fig-config-administration-menu>>. 
 
-[[fig-nexus-server-config]]
-.Nexus Server Configuration (File, SMTP, and HTTP Config)
-image::figs/web/repository-manager_server-settings.png[scale=60]
+[[fig-config-administration-menu]]
+.Administration Menu in the Left Hand Panel
+image::figs/web/config-administration-menu.png[scale=60]
 
-[[fig-nexus-server-config-2]]
-.Nexus Server Configuration (Security Settings, Anonymous Access)
-image::figs/web/repository-manager_server-settings-2.png[scale=60]
+The server configuration screens subsections are documented in the
+following.
 
-[[fig-nexus-server-config-3]]
-.Nexus Server Configuration (App Server and HTTP Proxy Config)
-image::figs/web/repository-manager_server-settings-3.png[scale=60]
+==== SMTP Settings
 
-.Configuring PGP Key server Preferences
-image::figs/web/configuring_pgp-keyserver.png[scale=60]
- 
-This screen allows you to change:
+Nexus sends email to users who need to recover user names and
+password. To do this, you'll need to configure the SMTP server
+settings in this dialog. This section of the form takes an SMTP Host
+and Port as well as other parameters relating to SMTP authentication
+and encryption. You can also change the From: header of an email from
+Nexus.
 
-SMTP Settings:: Nexus sends email to users who need to recover
-user names and password. To do this, you'll need to configure the SMTP
-server settings in this dialog. This section of the form takes an SMTP
-Host and Port as well as other parameters relating to SMTP
-authentication and encryption. You can also change the From: header of
-an email from Nexus.
+[[fig-config-administration-smtp]]
+.Administration SMTP Settings
+image::figs/web/config-administration-smtp.png[scale=60]
 
-User Agent:: This is the identifier which Nexus uses when it is making an
-HTTP request. You may want to change this if
-Nexus needs to use an HTTP Proxy, and the Proxy
-will only work if the User Agent is set to a specific value.
+==== HTTP Request Settings
 
-Additional URL:: This is a list of extra parameters to place on a
-GET request to a remote repository. You could use
-this to add identifying information to requests.
+The HTTP Request Settings allow you to configure the identifier which
+Nexus uses when it is making an HTTP request. You may want to change
+this if Nexus needs to use an HTTP Proxy, and the Proxy will only work
+if the User Agent is set to a specific value.
 
-Request Timeout:: The amount of time Nexus will wait for a request to succeed
-when interacting with an external, remote repository.
+You can also add extra parameters to place on a GET request to a
+remote repository. You could use this to add identifying information
+to requests.
 
-Request Retry Attempts:: The number of times Nexus will retry a failed
-HTTP
+The amount of time Nexus will wait for a request to succeed when
+interacting with an external, remote repository can be configured with
+the Request Timeout and Request Retry Attempts settings.
 
-Security Settings:: You can choose to enable or disable security, enable
-or disable anonymous access, and set the username and password for
-anonymous access. If you choose to enable security, you are telling
-Nexus to enforce role-based access control to enforce read and write
-access to repositories.
+[[fig-config-administration-http]]
+.Administration HTTP Request Settings
+image::figs/web/config-administration-http.png[scale=60]
+
+
+==== Security Settings
+
+You can choose to enable or disable security, enable or disable
+anonymous access, and set the username and password for anonymous
+access. If you choose to enable security, you are telling Nexus to
+enforce role-based access control to enforce read and write access to
+repositories.
 
 The anonymous username and password is used to integrate with
 other realms that may need a special username for anonymous access.
@@ -2893,9 +2894,53 @@ authorize when someone makes an anonymous request. You would change
 the anonymous username to "guest" if you wanted to integrate Nexus
 with Microsoft's Active Directory.
 
-Application Server Settings:: This section allows you to change the
-Base URL for your Nexus installation. It is used when generating links
-in emails and RSS feeds. The Sonatype Nexus repository is available on
+[[fig-config-administration-security]]
+.Administration Security Settings
+image::figs/web/config-administration-security.png[scale=60]
+
+
+==== Error Reporting Settings
+
+Nexus can be configured to automatically file exception and error
+reports with the Nexus project in the Sonatype issue tracker.
+Activating this setting in your own Nexus installation helps to
+improve Nexus as the development team will receive automatic error
+reports if your Nexus instance experiences an error or a failure. The
+Nexus Server configuration's Automated Error Reporting Settings
+section is shown in <<fig-config-administration-error-reporting>>. This section
+accepts a JIRA username and password, and allows you to configure
+Nexus to use the default HTTP Proxy Settings when Nexus attempts to
+file an error report with the Sonatype issue tracker.
+
+[[fig-config-administration-error-reporting]]
+.Administration Error Reporting Settings
+image::figs/web/config-administration-error-reporting.png[scale=60]
+
+To sign up for an account on the Sonatype JIRA instance, go to
+http://issues.sonatype.org. Once you see the web site shown in
+<<fig-configuring-sonatype-jira>>, click on the "Signup" link below
+the Login form.
+
+[[fig-configuring-sonatype-jira]]
+.Sonatype Issue Tracker 
+image::figs/web/configuring_automated-error-jira-home.png[scale=60]
+
+Fill out the sign-up form shown in
+<<fig-configuring-sonatype-jira-signup>>, and choose a username and
+password. This is the username and password you should use in the
+Automated Error Reporting Settings section of the Server configuration
+shown in <<fig-config-administration-error-reporting>>.
+
+[[fig-configuring-sonatype-jira-signup]]
+.Signing Up for a Sonatype Issue Tracker Account
+image::figs/web/configuring_automated-error-jira-signup.png[scale=60]
+
+
+==== Application Server Settings
+
+This section allows you to change the Base URL for your Nexus
+installation. It is used when generating links in emails and RSS
+feeds. The Sonatype Nexus repository is available on
 http://respository.sonatype.org, and it makes use of this Base URL
 field to ensure that links in emails and RSS feeds point to the
 correct URL. If you are hosting Nexus behind a proxy server and you
@@ -2904,67 +2949,57 @@ the "Force Base URL" checkbox. If the Force Base URL is not checked,
 Nexus will craft URLs in HTTP responses based on the request URL, but
 it will use the Base URL when it is generating emails.
 
-HTTP Proxy Settings:: There are a number of HTTP Proxy settings for
-Nexus installations which need to be configured to use an HTTP
-Proxy. You can specify a host, port, and a number of authentication
-options which might be required by your proxy server.
+[[fig-config-administration-application-server]]
+.Administration Application Server Settings
+image::figs/web/config-administration-application-server.png[scale=60]
 
-PGP Key Server Information:: Nexus Professional uses a PGP Key Server
-to retrieve PGP keys when validating artifact signatures. To add a new
-Key Server URL, enter the URL in the Key Server URL field and click on
-the Add button. To remove a Key Server URL, click on the URL you wish
-to remove from the list and click on the Remove button. Key Servers
-are consulted in the order that they are listed in the Key Server URLs
-list, to reorder your Key Server URLs, click and drag a URL in the Key
-Server URLs list.
+==== Default HTTP Proxy Settings
 
-[[confignx-sect-auto-error]]
-=== Configuring Automated Error Reporting Settings
+If you Nexus instance needs to reach public repositories like the
+Central Repository via a proxy server, you can configure one or
+multiple servers in this settings section.
 
-Nexus can be configured to automatically file exception and error
-reports with the Nexus project in the Sonatype issue tracker.
-Activating this setting in your own Nexus installation helps to
-improve Nexus as the development team will receive automatic error
-reports if your Nexus instance experiences an error or a failure. The
-Nexus Server configuration's Automated Error Reporting Settings
-section is shown in <<fig-configuring-automated-error>>. This section
-accepts a JIRA username and password, and allows you to configure
-Nexus to use the default HTTP Proxy Settings when Nexus attempts to
-file an error report with the Sonatype issue tracker.
+There are a number of HTTP Proxy settings for Nexus installations
+which need to be configured to use an HTTP Proxy. You can specify a
+host, port, and a number of authentication options which might be
+required by your proxy server.
 
-[[fig-configuring-automated-error]]
-.Configuring the Automated Error Reporting
-image::figs/web/configuring_automated-error.png[scale=60]
+[[fig-config-administration-http-prxy]]
+.Administration Default HTTP Proxy Settings
+image::figs/web/config-administration-http-proxy.png[scale=60]
 
-To sign up for an account on the Sonatype JIRA instance, go to
-http://issues.sonatype.org. Once you see the web site shown in
-<<fig-configuring-sonatype-jira>>, click on the "Signup" link
-below the Login form.  
+==== System Notification Settings
 
-[[fig-configuring-sonatype-jira]]
-.Sonatype Issue Tracker 
-image::figs/web/configuring_automated-error-jira-home.png[scale=60]
+[[fig-config-administration-system-notification]]
+.Administration System Notification Settings
+image::figs/web/config-administration-system-notification.png[scale=60]
 
-Fill out the sign-up form shown in <<fig-configuring-sonatype-jira-signup>>, and choose a
-username and password. This is the username and password you should
-use in the Automated Error Reporting Settings section of the Server
-configuration shown in <<fig-configuring-automated-error>>.
-
-[[fig-configuring-sonatype-jira-signup]]
-.Signing Up for a Sonatype Issue Tracker Account
-image::figs/web/configuring_automated-error-jira-signup.png[scale=60]
-
-[[confignx-sect-new-version]]
-=== New Version Notification
+==== New Version Availability
 
 Nexus can notify you of new versions of Nexus via the Nexus
 interface. To enable this feature, check the Enable checkbox in the
 New Version Notification section of the Nexus server settings as shown
-in <<fig-configuring-new-version>>.
+in <<fig-config-administration-new-version>>.
 
-[[fig-configuring-new-version]]
-.New Version Notification Settings
-image::figs/web/configuring_new-version.png[scale=60]
+[[fig-config-administration-new-version]]
+.Administration New Version Availability
+image::figs/web/config-administration-new-version.png[scale=60]
+
+
+==== PGP Key Server Information
+
+Nexus Professional uses a PGP Key Server to retrieve PGP keys when
+validating artifact signatures. To add a new Key Server URL, enter the
+URL in the Key Server URL field and click on the Add button. To remove
+a Key Server URL, click on the URL you wish to remove from the list
+and click on the Remove button. Key Servers are consulted in the order
+that they are listed in the Key Server URLs list, to reorder your Key
+Server URLs, click and drag a URL in the Key Server URLs list.
+
+[[fig-config-administration-pgp-key-server]]
+.Administration PGP Key Server Information
+image::figs/web/config-administration-pgp-key-server.png[scale=60]
+
 
 [[confignx-sect-manage-repo]]
 === Managing Repositories
