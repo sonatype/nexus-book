@@ -3872,14 +3872,18 @@ new artifacts in the proxied remote repositories. This adds additional
 network traffic that in many cases will just be a response from the
 remote server indicating that there are no changes.
 
-This constant polling approach is fine for smaller deployment even
-though performance is impacted by this behaviour. Depending on your
-proxy timeout settings this polling won't actually result in updated
-artifacts as soon as they become available upstream either. With the
-increased usage of Nexus in globally distributed teams or used by
-projects that span multiple organizations, each with their own Nexus
-instance hosting their own artifacts as well as proxying the other
-servers, this polling can result in significant traffic and a
+This polling approach is fine for smaller deployment even though
+performance is impacted by this behaviour. Depending on your proxy
+timeout settings this polling won't actually result in updated
+artifacts as soon as they become available upstream either.  If you
+try to support distributed instances, the only way you are going to
+achieve assurance that everything is up to date is by setting you
+expiration times to zero and constantly polling.
+
+With the increased usage of Nexus in globally distributed teams or
+used by projects that span multiple organizations, each with their own
+Nexus instance hosting their own artifacts as well as proxying the
+other servers, this polling can result in significant traffic and a
 performance hit for all involved servers.
 
 The Smart Proxy feature replaces this constant polling approach with a
