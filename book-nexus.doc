@@ -3109,24 +3109,22 @@ repository (such as central) in a different location.
 Remote Repository Access:: This section tells Nexus where to look for
 and how to interact with the remote Maven repository being proxied.
 
-Remote Storage Location:: This is the URL of the remote Maven
+Remote Storage Location;; This is the URL of the remote Maven
 repository.
 
-Download Remote Indexes (Not shown in figure):: This field controls
-the downloading of the remote indexes. Currently only central has an
-index at http://repo1.maven.org/maven2/.index.
+Download Remote Indexes;; This field controls the downloading of the
+remote indexes. Currently only central has an index at
+http://repo1.maven.org/maven2/.index. If enabled, Nexus will download
+the index and use that for its searches as well as serve that up to
+any clients which ask for the index (like m2eclipse). The default for
+new proxy repositories is enabled, but all of the default repositories
+included in Nexus have this option disabled. To change this setting
+for one of the proxy repositories that ship with Nexus, change the
+option, save the repository, and then re-index the repository. Once
+this is done, artifact search will return every artifact available on
+the Maven Central repository.
 
-If enabled, Nexus will download the index and use that for its
-searches as well as serve that up to any clients which ask for the
-index (like m2eclipse). The default for new proxy repositories is
-enabled, but all of the default repositories included in Nexus have
-this option disabled. To change this setting for one of the proxy
-repositories that ship with Nexus, change the option, save the
-repository, and then re-index the repository. Once this is done,
-artifact search will return every artifact available on the Maven
-Central repository.
-
-Auto Blocking Enabled:: If Auto blocking active is set to true, Nexus
+Auto Blocking Enabled;; If Auto blocking active is set to true, Nexus
 will automatically block a proxy repository if the remote repository
 becomes unavailable. While a proxy repository is blocked, artifacts
 will still be served to clients from a local cache, but Nexus will not
@@ -3134,19 +3132,18 @@ attempt to locate an artifact in a remote repository. Nexus will
 periodically retest the remote repository and unblock the repository
 once it becomes available.
 
-File Content Validation:: If set to true, Nexus will perform a
+File Content Validation;; If set to true, Nexus will perform a
 lightweight check on the content of downloaded files. This will
 prevent invalid content to be stored and proxied by Nexus, which
 otherwise can happen in cases where the remote repository (or some
 proxy between Nexus and the remote repository) for example returns an
 HTML page instead of the requested file.
 
-Checksum Policy:: Sets the checksum policy for a remote
+Checksum Policy;; Sets the checksum policy for a remote
 repository. This option is set to Warn by
 default. The possible values of this setting are:
 
 * Ignore - Ignore the checksums entirely
-
 * Warn - Print a warning in the log if a checksum is not correct
 
 * StrictIfExists - Refuse to cache an artifact if the calculated
@@ -3156,13 +3153,13 @@ perform this check if the checksum file is present.
 * Strict - Refuse to cache an artifact if the calculated checksum is
 inconsistent or if there is no checksum for an artifact.
 
-Authentication:: This section allows you to set a Username, Password,
+Authentication;; This section allows you to set a Username, Password,
 NT LAN Host, and NT Lan Manager Domain for a remote repository.
 
 Access Settings:: This section configures access settings for a
 repository.
 
-Deployment Policy:: This setting controls how a Hosted repository
+Deployment Policy;; This setting controls how a Hosted repository
 allows or disallows artifact deployment. If this policy is set
 to "Read Only", no deployment is allowed. If this policy is
 set to "Disable Redeploy", a client can only deploy a
@@ -3173,15 +3170,15 @@ repository and overwrite the same artifact in subsequent
 deployments. This option is visible for Hosted repositories as
 shown in <<fig-repo-config-hosted>>.
 
-Allow File Browsing:: When set to true, users can browse the contents
+Allow File Browsing;; When set to true, users can browse the contents
 of the repository with a web browser.
 
-Include in Search:: When set to true, this repository is search when
+Include in Search;; When set to true, this repository is search when
 you perform an Artifact Search in Nexus. If this setting is
 false, the contents of the repository are excluded from a
 search.
 
-Publish URL:: If this property is set to false, the repository will
+Publish URL;; If this property is set to false, the repository will
 not be published on a URL, and you will not be able to access
 this repository remotely. You would set this configuration
 property to false if you want to prevent clients for
@@ -3191,20 +3188,20 @@ Expiration Settings:: Nexus maintains a local cache of artifacts and
 metadata, you can configure expiration parameters for a proxy
 repository. The expiration settings are:
 
-Not Found Cache TTL:: If Nexus fails to locate an artifact, it will
+Not Found Cache TTL;; If Nexus fails to locate an artifact, it will
 cache this result for a given number of minutes. In other words, if
 Nexus can't find an artifact in a remote repository, it will not
 repeated attempt to resolve this artifact until the Not Found Cache
 TTL time has been exceeded. The default for this setting is 1440
 minutes (or 24 hours).
 
-Artifact Max Age:: Tells Nexus when that maximum age of an artifact is
+Artifact Max Age;; Tells Nexus when that maximum age of an artifact is
 before it retrieves a new version from the remote repository.
 The default for this setting is -1 for a repository with a
 Release policy and 1440 for a repository with Snapshot
 policy.
 
-Metadata Max Age:: Nexus retrieves metadata from the remote
+Metadata Max Age;; Nexus retrieves metadata from the remote
 repository. It will only retrieve updates to metadata after the
 Metadata Max Age has been exceeded. The default value for this setting
 is 1440 minutes (or 24 hours).
@@ -3450,33 +3447,42 @@ result of applying the inclusive route and apply the exclusive route
 to that list of repositories. The resulting list is then searched for
 a matching artifact.
 
-One straightforward use of routes is to create a route that excludes the
-Maven Central repository from all searches for your own organization's
-hosted artifacts. If you are deploying your own artifacts to Nexus
-under a groupId of org.mycompany, and if you are not deploying these
-artifacts to a public repository, you can create a rule that tells
-Nexus not to interrogate Central for your own organization's
-artifacts. This will improve performance because Nexus will not need
-to communicate with a remote repository when it serves your own
-organization's artifacts. In addition to the performance benefits,
-excluding Central from searches for your own artifacts will reduce
-needless queries to the public repositories.
+One straightforward use of routes is to create a route that excludes
+the Maven Central repository from all searches for your own
+organization's hosted artifacts. If you are deploying your own
+artifacts to Nexus under a groupId of org.mycompany, and if you are
+not deploying these artifacts to a public repository, you can create a
+rule that tells Nexus not to interrogate Central for your own
+organization's artifacts. This will improve performance because Nexus
+will not need to communicate with a remote repository when it serves
+your own organization's artifacts. In addition to the performance
+benefits, excluding Central from searches for your own artifacts will
+reduce needless queries to the public repositories.
 
 To summarize, there are creative possibilities with Routes that the
-designers of Nexus may not have anticipated, but we advise you to proceed
-with caution if you start relying on conflicting or overlapping Routes.
-Use Routes sparingly, and use course URL patterns, as Nexus evolves there
-will be more features which allow for more fine grained rules to allow you
-to prohibit requests for specific artifacts and specific versions of
-artifacts. Remember that routes are only applied to Nexus Groups, routes
-are not used when an artifact is requested from a specific
-repository.
+designers of Nexus may not have anticipated, but we advise you to
+proceed with caution if you start relying on conflicting or
+overlapping Routes.  Use Routes sparingly, and use course URL
+patterns, as Nexus evolves there will be more features which allow for
+more fine grained rules to allow you to prohibit requests for specific
+artifacts and specific versions of artifacts. Remember that routes are
+only applied to Nexus Groups, routes are not used when an artifact is
+requested from a specific repository.
 
 [[confignx-sect-managing-tasks]]
 === Managing Scheduled Tasks
 
 Nexus allows you to schedule tasks that will be applied to all
-repositories or to specific repositories on a configurable schedule.
+repositories or to specific repositories on a configurable
+schedule. Use the Scheduled Tasks menu item in the Administration menu
+visible in <<fig-config-administration-menu>> to access the screen
+shown in <<fig-repomap-scheduled>>, that allows you to manage your
+Scheduled Tasks.
+
+[[fig-repomap-scheduled]]
+.Managing Nexus Scheduled Tasks
+image::figs/web/repository-manager_schedule-service.png[scale=60]
+
 You can create the following kinds of scheduled tasks:
 
 Download Indexes:: This scheduled task will cause Nexus to download
@@ -3513,13 +3519,14 @@ scheduled task you can tell Nexus to periodically purge this
 information. (See note about deletion.)
 
 Repair Repositories Index:: In certain cases it might be required to
-remove the internal index as well as the published ones of a repository.
-This task does that and then rebuilds the internal index by first
-trying to download remote indexes (if a proxy repository), then scanning
-the local storage and updating the internal index accordingly. Lastly,
-the index is published for the repository as well. There should be no
-need to schedule this task. But when upgrading Nexus, the upgrade
-instructions may sometimes include a manual step of executing this task.
+remove the internal index as well as the published ones of a
+repository.  This task does that and then rebuilds the internal index
+by first trying to download remote indexes (if a proxy repository),
+then scanning the local storage and updating the internal index
+accordingly. Lastly, the index is published for the repository as
+well. There should be no need to schedule this task. But when
+upgrading Nexus, the upgrade instructions may sometimes include a
+manual step of executing this task.
 
 Remove Snapshots from Repository:: Often, you will want to remove
 snapshots from a snapshot repository to preserve storage space.  Note
@@ -3572,22 +3579,18 @@ Repository. A service can be scheduled to run once at a specific date
 and time, or periodically once every Day, Week, or Month. If none of
 these options suit your specific needs, you can select a recurrence of
 "Advanced" which will allow you to supply your own cron expression to
-specify when the job should execute.  To create a new scheduled task,
-click on Scheduled Tasks under the Administration menu, and click on
-the Add button. This will bring up the screen shown in <<fig-repomap-scheduled>>.  
+specify when the job should execute.  
 
-[[fig-repomap-scheduled]]
-.Managing Nexus Scheduled Tasks
-image::figs/web/repository-manager_schedule-service.png[scale=60]
 
 ==== Managing Configuration Backups with a Scheduled Task
 
-Nexus Professional includes a scheduled task which allows
-you to create automated, scheduled backups of your Nexus configuration.
-This scheduled job will archive the contents of the
-sonatype-work/nexus/conf directory. <<fig-configuring-schedule-conf-backup>> shows a scheduled
-configuration backup job configured to backup the contents of the Nexus
-configuration every day at 12:15 AM.
+Nexus Professional includes a scheduled task which allows you to
+create automated, scheduled backups of your Nexus configuration.  This
+scheduled job will archive the contents of the
+sonatype-work/nexus/conf
+directory. <<fig-configuring-schedule-conf-backup>> shows a scheduled
+configuration backup job configured to backup the contents of the
+Nexus configuration every day at 12:15 AM.
 
 [[fig-configuring-schedule-conf-backup]]
 .Configuring a Scheduled Backup of Nexus Configuration
@@ -3612,7 +3615,10 @@ permissions that will make sense for most users. As your security
 requirements evolve, you'll likely need to customize security settings
 to create protected repositories for multiple departments, or
 development groups. Nexus provides a security model which can adapt to
-any scenario.  Nexus' Role-based access control (RBAC) system is
+any scenario. The Security configuration is done via menu items in the
+left hand Security menu.
+
+Nexus' Role-based access control (RBAC) system is
 designed around the following four security concepts:
 
 Privileges:: Privileges are rights to read, update, create, or manage
@@ -3657,9 +3663,9 @@ image::figs/web/repository-manager_security-privileges.png[scale=60]
 To create a new privilege, click on the Add... button in the
 Privileges panel and choose Repository Target privilege. Creating a
 privilege will load the New Repository Target Privilege form shown in
-<<fig-configuring-new-privilege>>. This form takes a
-privilege name, a privilege description, the repository to target, and a
-repository target.
+<<fig-configuring-new-privilege>>. This form takes a privilege name, a
+privilege description, the repository to target, and a repository
+target.
 
 [[fig-configuring-new-privilege]]
 .Managing Security Privileges
@@ -3677,15 +3683,19 @@ image::figs/web/repository-manager_security-privileges-3.png[scale=60]
 [[confignx-sect-managing-repo-targets]]
 === Managing Repository Targets
 
-A target is a set of regular expressions to match on a
-path (in the same way as the route rules work). This allows you to define
-for example a target called Apache Maven which is "/org/apache/maven/.*".
-You can then add a new privilege that relates to the target and controls
-the CRUD operations for artifacts matching that path (the privilege can
-span multiple repositories if you want). You could thus delegate all
-control of org.apache.maven targets to a "Maven" team. In this way, you
-don't need to create separate repositories for each logical division of
-your artifacts.
+A target is a set of regular expressions to match on a path (in the
+same way as the route rules work). Access the management interface via
+the Repository Tragets menu item in the left hand Views/Repositories
+menu.
+
+Repository targets allow you to define for example a target called
+Apache Maven which is "/org/apache/maven/.*".  You can then add a new
+privilege that relates to the target and controls the CRUD operations
+for artifacts matching that path (the privilege can span multiple
+repositories if you want). You could thus delegate all control of
+org.apache.maven targets to a "Maven" team. In this way, you don't
+need to create separate repositories for each logical division of your
+artifacts.
 
 .Managing Repository Targets
 image::figs/web/repository-manager_repository-targets.png[scale=60]
@@ -3694,7 +3704,7 @@ image::figs/web/repository-manager_repository-targets.png[scale=60]
 image::figs/web/repository-manager_repository-targets-2.png[scale=60]
 
 [[confignx-sect-manage-security]]
-=== Managing Security Roles
+=== Managing Roles
 
 Nexus ships with four roles: Nexus Administrator Role,
 Nexus Anonymous Role, Nexus Developer Role, and Nexus Deployment Role.
@@ -3702,28 +3712,30 @@ Click on the Roles link under Security in the Nexus menu to show the
 list of roles shown in <<fig-configuring-security-roles>>.
 
 [[fig-configuring-security-roles]]
-.Managing Security Roles
+.Viewing the List of Defined Roles
 image::figs/web/repository-manager_security-roles.png[scale=60]
 
 To create a new role, click on the Add... button and fill out the
-New Nexus Role form shown in <<fig-configuring-creating-new-role>>. When creating a new
-role, you will need to supply a role identifier, a role name, a
-description, and a session timeout. Roles are comprised of other roles
-and individual privileges, to assign a role or privilege to a role,
-click on the role or privilege under Available Roles/Privileges and drag
-the role or privilege to the Selected Roles/Privileges list.
+New Nexus Role form shown in <<fig-configuring-creating-new-role>>.
+
+When creating a new role, you will need to supply a role identifier,
+a role name, a description, and a session timeout. Roles are comprised
+of other roles and individual privileges, to assign a role or
+privilege to a role, click on the role or privilege under Available
+Roles/Privileges and drag the role or privilege to the Selected
+Roles/Privileges list.
 
 [[fig-configuring-creating-new-role]]
-.Managing Security Roles
+.Creating a New Role
 image::figs/web/repository-manager_security-roles-3.png[scale=60]
 
 The built-in roles Nexus Administrator Role, Nexus Anonymous Role,
-Nexus Deployment Role, and Nexus Developer Role are managed by Nexus and
-cannot be edited or deleted. Selecting one of these built-in roles will
-load the form shown in <<fig-configuring-builtin-role>>.
+Nexus Deployment Role, and Nexus Developer Role are managed by Nexus
+and can not be edited or deleted. Selecting one of these built-in
+roles will load the form shown in <<fig-configuring-builtin-role>>.
 
 [[fig-configuring-builtin-role]]
-.Managing Security Roles
+.Viewing an Internal Role
 image::figs/web/repository-manager_security-roles-2.png[scale=60]
 
 A Nexus role is comprised of other Nexus roles and individual
@@ -3745,19 +3757,29 @@ repository without giving up control of your private artifacts.
 [[confignx-sect-managing-users]]
 === Managing Users
 
-Nexus ships with three users: admin, anonymous, and
-deployment. The admin user has all privileges, the anonymous user has
-read-only privileges, and the deployment user can both read and deploy
-to repositories. If you need to create users with a more focused set of
+Nexus ships with three users: admin, anonymous, and deployment. The
+admin user has all privileges, the anonymous user has read-only
+privileges, and the deployment user can both read and deploy to
+repositories. If you need to create users with a more focused set of
 permissions, you can click on Users under Security in the left-hand
-navigation menu. Once you see the list of users, you can click on a user
-to edit that specific user's user ID, name, email, or status. You can
-also assign or revoke specific roles or permissions for a particular
-user.
+navigation menu. Once you see the list of users, you can click on a
+user to edit that specific user's user ID, name, email, or status. You
+can also assign or revoke specific roles or permissions for a
+particular user.
 
 .Managing Users
 image::figs/web/repository-manager_security-users.png[scale=60]
 
+Clicking the Add button in the Role Management section will bring up
+the list of available roles in a pop up window visible in
+<<fig-config-security-user-add-role>>. It allows you filter and search
+for roles and add one or multiple roles to the user.
+
+[[fig-config-security-user-add-role]]
+.Adding Roles to a User
+image::figs/web/config-security-user-add-role.png[scale=60]
+
+  
 A user can be assigned one or more roles which in turn can include
 references to other Nexus roles or to individual Nexus privileges. To
 view a tree of assigned Nexus roles and privileges, select the Role Tree
@@ -3784,24 +3806,30 @@ image::figs/web/repository-manager_security-users-privilege.png[scale=60]
 [[confignx-sect-network]]
 === Network Configuration
 
-By default, Nexus listens on port 8081. You can change this
-port, by changing the value in
-'+++$NEXUS_HOME/conf/nexus.properties+++' this file is
-shown in <<ex-plexus-props>>. To change the port, stop
-Nexus, change the value of applicationPort in this
-file, and then restart Nexus. Once you do this, you should see a log
-statement in '+++$NEXUS_HOME/logs/wrapper.log+++' telling
-you that Nexus is listening on the altered port.
+By default, Nexus listens on port 8081. You can change this port, by
+changing the value in '+++$NEXUS_HOME/conf/nexus.properties+++' this
+file is shown in <<fig-conf-nexus-properties>>. To change the port,
+stop Nexus, change the value of applicationPort in this file, and then
+restart Nexus. Once you do this, you should see a log statement in
+'+++$NEXUS_HOME/logs/wrapper.log+++' telling you that Nexus is
+listening on the altered port.
 
-[[ex-plexus-props]]
+[[fig-conf-nexus-properties]]
 .Contents of conf/nexus.properties
 ----
-applicationPort=8081
-runtime=${basedir}/runtime
-apps=${runtime}/apps
-work=${runtime/work
-webapp=${runtime}/apps/nexus/webapp
-nexus.configuration=${runtime}/apps/nexus/conf/nexus.xml
+# Sonatype Nexus
+# ==============
+# This is the most basic configuration of Nexus.
+
+# Jetty section
+application-port=8081
+application-host=0.0.0.0
+nexus-webapp=${bundleBasedir}/nexus
+nexus-webapp-context-path=/nexus
+
+# Nexus section
+nexus-work=${bundleBasedir}/../sonatype-work/nexus
+runtime=${bundleBasedir}/nexus/WEB-INF
 ----
 
 [[confignx-sect-log]]
