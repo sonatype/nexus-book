@@ -3265,9 +3265,9 @@ your Hosted repository.
 The Repository Summary panel can be loaded by selecting a
 Hosted, Proxy, or Virtual repository and then clicking on the Summary
 tab. When viewing the Summary tab of a Hosted repository, as shown in
-<<fig-configuring-summary-hosted>>, you will also see the
-Distribution Management settings which can be used to configure Maven to
-publish artifacts to a Hosted repository.
+<<fig-configuring-summary-hosted>>, you will also see the Distribution
+Management settings which can be used to configure Maven to publish
+artifacts to a Hosted repository.
 
 [[fig-configuring-summary-hosted]]
 .Repository Summary Panel for a Hosted Repository
@@ -3308,75 +3308,82 @@ image::figs/web/configuring_auto-block.png[scale=60]
 [[confignx-sect-managing-groups]]
 === Managing Groups
 
-Groups are a powerful feature of Nexus, they allow you to
-combine multiple repositories and other repository groups in a single URL.
-Nexus ships with two groups: public and public-snapshots. The public group
-combines the three hosted repositories: 3rd Party, Releases, and Snapshots
-with the Maven Central repository. The public-snapshots repository
-combines the Apache Snapshots and Codehaus Snapshots repositories.
+Groups are a powerful feature of Nexus. They allow you to combine
+multiple repositories and other repository groups in a single URL. Use
+the left hand panel Repositories menu item in the Views/Repositories
+menu to access the repositories and groups management interface.
 
-In <<maven-sect-single-group>> we configured
-Maven via the settings.xml to look for artifacts in
-the public group managed by Nexus. <<fig-group-config>> shows the group configuration screen in
-Nexus, in this figure you can see the contents of the
-public
+Nexus ships with one group: public. The Public Repositories group
+combines the multiple important external proxy repositories like the
+Central Repository with the hosted repositories: 3rd Party, Releases,
+and Snapshots.
+
+In <<maven-sect-single-group>> we configured Maven via the
+settings.xml to look for artifacts in the public group managed by
+Nexus. <<fig-group-config>> shows the group configuration screen in
+Nexus, in this figure you can see the contents of the public
 
 [[fig-group-config]]
 .Group Configuration Screen in Nexus
 image::figs/web/repository-manager_group-config.png[scale=60]
 
 Note that the order of the repositories listed in Order Group
-Repositories is important. When Nexus searches for an artifact in a group
-it will return the first match. To reorder a repository in this list,
-click and the drag the repositories and groups in the Ordered Group
-Repositories selection list.
+Repositories is important. When Nexus searches for an artifact in a
+group it will return the first match. To reorder a repository in this
+list, click and the drag the repositories and groups in the Ordered
+Group Repositories selection list.
 
 The order of repositories or other groups in a group can be used to
-influence the effective metadata that will be retrieved by Maven from a
-Nexus Repository Group. We recommend placing release repositories higher
-in the list than snapshot repositories so that LATEST and RELEASE versions
-are merged appropriately. We also recommend placing repositories with a
-higher probability of matching the majority of artifacts higher in this
-list. If most of your artifacts are going to be retrieved from the Maven
-Central Repository, putting Central higher in this list than a smaller,
-more focused repository is going to be better for performance as Nexus is
-not going to interrogate the smaller remote repository for as many missing
-artifacts.
+influence the effective metadata that will be retrieved by Maven from
+a Nexus Repository Group. We recommend placing release repositories
+higher in the list than snapshot repositories so that LATEST and
+RELEASE versions are merged appropriately. 
+
+We also recommend placing repositories with a higher probability of
+matching the majority of artifacts higher in this list. If most of
+your artifacts are going to be retrieved from the Maven Central
+Repository, putting Central higher in this list than a smaller, more
+focused repository is going to be better for performance as Nexus is
+not going to interrogate the smaller remote repository for as many
+missing artifacts.
 
 [[confignx-sect-managing-routes]]
 === Managing Routes
 
-Nexus Routes are like filters you can apply to Nexus Groups,
-they allow you to configure Nexus to include or exclude repositories from
-a particular artifact search when Nexus is trying to locate an artifact in
-a Nexus Group. There are a number of different scenarios in which you
-might configure a route in Nexus, the most common is when you want to make
+Nexus Routes are like filters you can apply to Nexus Groups, they
+allow you to configure Nexus to include or exclude repositories from a
+particular artifact search when Nexus is trying to locate an artifact
+in a repository group. There are a number of different scenarios in
+which you might configure a route in Nexus.
+
+The most common is when you want to make
 sure that you are retrieving artifacts in a particular group ID from a
 particular repository. This is especially useful when you want to make
 sure that you are trying to retrieve your own organization's artifacts
-from the hosted Release and Snapshot repositories. Nexus Routes are
-applicable when you are trying to resolve an artifact from a Nexus Group;
-using Routes allow you to modify the repositories Nexus will consult when
-it tries to resolve an artifact from a group of repositories.
+from the hosted Release and Snapshot repositories. 
+
+Routes are applicable when you are trying to resolve an artifact from
+a repository group; using Routes allow you to modify the repositories
+Nexus will consult when it tries to resolve an artifact from a group
+of repositories.
 
 [[fig-route-config]]
 .Routes Configuration Screen in Nexus
 image::figs/web/repository-manager_route-config.png[scale=60]
 
-<<fig-route-config>> shows the Route Configuration
-screen. Clicking on a route will bring up a screen which will allow you to
-configure the properties of a route. The configuration options available
-for a route are:
+<<fig-route-config>> shows the Repository Route Configuration
+screen. Clicking on a route will bring up a screen which will allow
+you to configure the properties of a route. The configuration options
+available for a route are:
 
 URL Pattern:: 
-
     This is the pattern which Nexus will use to match a request to
     Nexus. If the regular expression in this pattern is matched, Nexus
     will either include or exclude the listed repositories from a
     particular artifact query. In <<fig-route-config>>
     the two patterns are: 
 
-    ".\*/(com|org)/somecompany/.*":: This pattern would match all
+    ".\*/(com|org)/somecompany/.*";; This pattern would match all
     paths which includes either "/com/somecompany/" or
     "/org/somecompany/". The expression in the parenthesis matches
     either com or org, and the ".*" matches zero or more
@@ -3384,7 +3391,7 @@ URL Pattern::
     organization's artifacts and map these requests to the hosted
     Nexus Releases and Snapshots repositories.
 
-    ".\*/org/some-oss/.*":: This pattern is used in an exclusive
+    ".\*/org/some-oss/.*";; This pattern is used in an exclusive
     route. It matches every path that contains "/org/some-oss/". This
     particular exclusive route excludes the local hosted Releases and
     Snapshots directory for all artifacts which match this path.  When
