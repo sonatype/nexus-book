@@ -1958,8 +1958,8 @@ identify this Nexus instance for Smart Proxy usage
 error-report-bundles/:: Contains the bundled archives of data
 assembled for problem reporting.
 
-health-check/:: Holds cached reports from the repository health check
-plugin of the Sonatype Insight integration.
+health-check/:: Holds cached reports from the Repository Health Check
+plugin.
 
 indexer/:: Contains a Nexus index for all repositories and repository
 groups managed by Nexus. A Nexus index is a Lucene index which is the
@@ -2032,8 +2032,7 @@ for Smart Proxy.
 
 capabilities.xml:: Further Smart Proxy backend configuration.
 
-healthcheck.properties:: Configuration for the Sonatype Insight
-integration.
+healthcheck.properties:: Configuration for the Repository Health Check.
 
 log4j.properties, logback.properties, lopback.xml and logback-*.xml::
 Contains logging configuration. If you need to customize the detail of
@@ -6501,7 +6500,7 @@ No closed staging repositories found. Nothing to do!
 You can find more information about this Mojo https://repository.sonatype.org/content/sites/maven-sites/nexus-maven-plugin/staging-promote-mojo.html[here]
 ----
 
-[[insight]]
+[[rhc]]
 == Repository Health Check
 
 Repository Health Check is a feature of Nexus that facilitates data
@@ -6515,55 +6514,40 @@ available data in Sonatype Insight via the Sonatype Insight Service
 right in your Nexus server. The Sonatype Insight Service is part of
 the Central Repository and exposes data about the artifacts there,
 including license information, security vulnerability data and other
-statistics.
+statistics like usage data and download numbers.
 
 To perform a Repository Health Check about the artifacts in your Nexus
 instance, you have to click the Analyze button in the Quality column
 of the list of Repositories displayed in
-<<fig-insight-repo-list-quality>>. In order to be able to do that you
-have to be logged in as an administrator.
+<<fig-rhc-repo-list-quality>>. In order to be able to do that you have
+to be logged in as an administrator. Once the data gathering analysis
+is completed the Quality column will display the number of security
+and license issues found.
 
-[[fig-insight-repo-list-quality]]
-.The Repositories List with Different Quality Status Indicators
-image::figs/web/insight-repo-list-quality.png[scale=60]
+[[fig-rhc-repo-list-quality]]
+.The Repositories List with Different Quality Status Indicators and Result Counts
+image::figs/web/rhc-repo-list.png[scale=60]
 
-Once the data gathering analysis is completed the Quality column will
-display the number of security and license issues found as visible in
-<<fig-insight-repo-list-results>>. 
+Hovering your mouse pointer of that value will display the Repository
+Health Check summary data in a pop up window. A sample window is
+displayed in <<fig-rhc-summary-pop-up>>.
 
-[[fig-insight-repo-list-results]]
-.Insight Result Counts for Repositories in the List
-image::figs/web/insight-repo-list-results.png[scale=60]
-
-Hovering your mouse pointer of that value will display the Insight
-summary data in a pop up window. A sample window is displayed in
-<<fig-insight-summary-pop-up>>.
-
-[[fig-insight-summary-pop-up]]
-.A Summary Window of Insight Data  
-image::figs/web/insight-summary-pop-up.png[scale=60]
+[[fig-rhc-summary-pop-up]]
+.A Result Summary Window for a Repository Health Check
+image::figs/web/rhc-summary-report.png[scale=60]
 
 At the bottom of the pop up window you find a button to disable the
-analysis for this repository as well as button to access the detailed
-report. The detailed report will show up in another tab in the main
-area of the Nexus user interface.
+analysis for this repository as well as the button View Detailed
+Report to access the detailed report. It will show up
+in another tab in the main area of the Nexus user interface.
 
 The detailed report contains the same overview data and charts for
 security and license information at the top displayed in
-<<fig-insight-detail-header>> , <<fig-insight-detail-security-chart>>
-and <<fig-insight-detail-license-chart>>.
+<<fig-rhc-detail-summary>> .
 
-[[fig-insight-detail-header]]
-.Header of the Detailed Insight Data 
-image::figs/web/insight-detail-header.png[scale=60]
-
-[[fig-insight-detail-security-chart]]
-.Security Vulnerability Summary of the Detailed Insight Panel
-image::figs/web/insight-detail-security-chart.png[scale=60]
-
-[[fig-insight-detail-license-chart]]
-.License Analysis Summary on the Detailed Insight Panel
-image::figs/web/insight-detail-license-chart.png[scale=60]
+[[fig-rhc-detail-summary]]
+.Summary of the Detailed Repository Health Check Panel
+image::figs/web/rhc-detail-summary.png[scale=50]
 
 Below this overview a drop down for Security and
 License information allows you to toggle between two lists displaying
@@ -6571,7 +6555,7 @@ further details. Both lists have a filter for each column at the
 bottom of the list that allows you to narrow down the number of rows
 in the table and therefore find specific entries easily.
 
-The security list as visible in <<fig-insight-detail-security-list>>
+The security list as visible in <<fig-rhc-detail-security-list>>
 contains columns for Threat Level, Problem Code and the GAV parameters
 identifying the affected artifact. The Problem Code column is a link
 to the security warning referenced and commonly links a specific entry
@@ -6580,13 +6564,13 @@ http://cvs.mitre.org[the Common Vulnerabilities and Exposures] list.
 Both of these databases have a descriptive text for the vulnerability
 and further information and reference links.
 
-[[fig-insight-detail-security-list]]
-.The Security Insight Data in the Detail Report
-image::figs/web/insight-detail-security-list.png[scale=50]
+[[fig-rhc-detail-security-list]]
+.The Security Data in the Detailed Repository Health Check Report
+image::figs/web/rhc-detail-security-list.png[scale=40]
 
-The license list as visible in <<fig-insight-detail-license-list>>
+The license list as visible in <<fig-rhc-detail-license-list>>
 shows a derived threat in the Effective License Threat column. The
-Declared License details the license information found in pom
+Declared License column details the license information found in pom
 file. The Observed Licenses in Source columns lists all the licences
 found in the actual source code of the library in the form of file
 headers and license files. The next columns for the GAV parameters
@@ -6594,12 +6578,12 @@ allow you to identify the artifact. The last column Security Issues
 displays an indicator for potentially existing security issue for the
 same artifact.
 
-[[fig-insight-detail-license-list]]
-.The License Insight Data in the Detail Report
-image::figs/web/insight-detail-license-list.png[scale=50]
+[[fig-rhc-detail-license-list]]
+.The License Data in the Detailed Repository Health Check Report
+image::figs/web/rhc-detail-license-list.png[scale=40]
 
 Nexus will report all artifacts in the local storage of the respective
-repository in the Insight detail panel. This means that at some stage
+repository in the detail panel. This means that at some stage
 a build running against your Nexus instance required these artifacts
 and caused Nexus to download them to local storage.
 
