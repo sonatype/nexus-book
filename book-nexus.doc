@@ -6722,24 +6722,25 @@ understand obligations of using different OSS licenses
 [[settings-sect-intro]]
 === Introduction
 
-Nexus Professional allows you to define templates for Maven
-Settings and use Nexus as a way to distribute updates to a global Maven
-Settings template. When you move an organization to a repository manager
-such as Nexus, one of the constant challenges is keeping everyone's Maven
-Settings synchronized. If a Nexus administrator makes a change which
-requires every developer to modify his or her ~/.m2/settings.xml file,
-this feature can be used to manage the distribution of Maven Settings
-changes to the entire organization. Once you have defined a Maven Settings
-template in Nexus Professional, developers can then use the Nexus Maven
-plugin to retrieve the new Maven Settings file directly from Nexus
-Professional.
+Nexus Professional allows you to define templates for Maven Settings
+and use Nexus as a way to distribute updates to a global Maven
+Settings template. When you move an organization to a repository
+manager such as Nexus, one of the constant challenges is keeping
+everyone's Maven Settings synchronized.
+
+If a Nexus administrator makes a change which requires every developer
+to modify his or her ~/.m2/settings.xml file, this feature can be used
+to manage the distribution of Maven Settings changes to the entire
+organization. Once you have defined a Maven Settings template in Nexus
+Professional, developers can then use the Nexus Maven plugin to
+retrieve the new Maven Settings file directly from Nexus Professional.
 
 
 [[settings-sect-install]]
 === Manage Maven Settings Templates
 
-To manage Maven Settings templates, click on Maven Settings
-in the Enterprise section of the Nexus menu on the left side of the Nexus
+To manage Maven Settings templates, click on Maven Settings in the
+Enterprise section of the Nexus menu on the left side of the Nexus
 UI. Clicking on Maven Settings will load the panel shown in <<fig-settings-maven-settings>>.
 
 [[fig-settings-maven-settings]]
@@ -6749,14 +6750,16 @@ image::figs/web/settings_managing-templates.png[scale=60]
 The Maven Settings panel allows you to add, delete, and edit a Maven
 Settings template. The default template has an id of "default" and is
 read-only, it contains the recommended settings for a standard Nexus
-installation. To create a new Maven Settings template, click on the Add...
-button and select "Settings Template". Once the new template is created,
-assign a name to the template and click the Save button.
+installation. To create a new Maven Settings template, click on the
+Add...  button and select "Settings Template". Once the new template
+is created, assign a name to the template in the Template ID text
+input and click the Save button.
 
-To edit a template, click on a template that is not read
-only, and edit the template in the Maven Settings panel. Once you are
-finished editing the template, click Save to save the template. When
-editing the template, the following variables are available:
+To edit a template, click on a template that has a User Managed value
+of true, and edit the template in the Settings Templated panel. Once
+you are finished editing the template, click Save to save the
+template. When editing the template, the following variables are
+available:
 
 baseurl:: This variable will be replaced with the base URL of the
 Nexus installation.
@@ -6764,12 +6767,12 @@ Nexus installation.
 userId:: This variable will be replaced with the user id of the
 user that is generating a Maven Settings file from this template.
 
-To preview a Maven Settings template, click on the Template URL in
-the table of Maven Settings templates. Clicking on this URL will load a
-dialog window which contains the Maven Settings file generated from this
-template. This rendered view of the Maven Settings template will have all
-variable references replaced using the current context of the user:
-$baseurl will be replaced with the Base URL of the current Nexus
+To preview a Maven Settings template, click on the Template URL in the
+table of Maven Settings templates. Clicking on this URL will load a
+dialog window which contains the Maven Settings file generated from
+this template. This rendered view of the Maven Settings template will
+have all variable references replaced using the current context of the
+user: $baseurl will be replaced with the Base URL of the current Nexus
 installation, and $userId will be replaced with the user id of the
 current user.
 
@@ -6803,7 +6806,7 @@ not have to do this manually. It is essential that you make sure that
 any new, custom templates also include this plugin group
 definition. Otherwise, there is a chance that a developer could update
 his or her Maven Settings and lose the ability to use the Nexus Maven
-plugin with the short identifier
+plugin with the short identifier.
 
 [[ex-short-nexus-plugin]]
 .Invoking the Nexus Maven Plugin goal settings-download with a short identifier
@@ -6851,9 +6854,8 @@ password:: Password to use for authenticating to Nexus
 
 serverAuthId:: You should specify either username and password or the
 serverAuthId. If you specify a value for serverAuthId, the Nexus Maven
-plugin is going to look at the contents of your
-~/.m2/settings.xml file and use the username and
-password from a server definition.
+plugin is going to look at the contents of your ~/.m2/settings.xml
+file and use the username and password from a server definition.
 
 In most cases a valid user login will be required to access your
 settings templates. By default, if you don't specify the nexusURL and
@@ -6862,7 +6864,7 @@ specify the username parameter, the Java System property
 $user.name will be used.
 
 In addition to these security options, all of the Maven
-Settings management goal has the following configuration
+Settings management goals have the following configuration
 parameters:
 
 verboseDebug:: If verboseDebug is set to true Maven will print out
