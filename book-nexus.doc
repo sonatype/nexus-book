@@ -2540,59 +2540,50 @@ image::figs/web/repository-manager_browse-group-index.png[scale=60]
 In the left-hand navigation area, there is an Artifact Search text
 field next to a magnifying glass. To search for an artifact by groupId
 or artifactId, type in some text and click the magnifying glass.
-Typing in the search term "com.google.inject" and clicking the
+Typing in the search term "junit" and clicking the
 magnifying glass should yield a search result similar to
-<<fig-nexus-search>>.
+<<fig-search-results>>.
 
-[[fig-nexus-search]]
-.Results of an Artifact Search for "guice"
+[[fig-search-results]]
+.Results of an Artifact Search for "junit"
 image::figs/web/search-results.png[scale=60]
 
-Once you've located the artifact you were looking for you can click on
-the pom link to download the POM or the artifact link to download the
+The groupId in the Group column and the artifactId in the Artifact
+column identify each row in the search results table. Each row
+represents an aggregration of all artifacts in this Group and
+Artifact coordinate.
+
+The Version column displays the lastest version number available as
+well as a links to Show All Versions.
+
+The Most Popluar Version column displays the version that has the most
+downloads by all users accessing the Central Repository. This data can
+help with the selection of an appropriate version to use for a
+particular artifact.
+
+The Download column displays direct links to all the artifacts
+available for the latest version of this artifacts. A typical list of
+downloadable artifacts would include the Java archive (jar), the Maven
+pom.xml file (pom), a Javadoc archive (javadoc.jar) and a Sourcecode
+archive (sources.jar), but other download options are also added if
+more artifacts are available. Click on the link to download an
 artifact.
 
-* Look at the Version column in the search results. In this version of
-the search interface, we decided to list the most recent version. If
-you need to view a different version, click on "Show All
-Versions". Clicking on "Show All Versions" will drill down into the
-list of available versions.
+Each of the columns in the search results table can be used to sort
+the table in Ascending or Descending order. In addition you can choose
+to add and remove colums with the sort and column drop down options
+visible in <<fig-search-results-column-options>>.
 
-* Look at the Download column in the search results. This Download
-column contains direct download links for the most recent version of
-the artifact. To download a matching artifact, just click on a link in
-this column.
+[[fig-search-results-column-options]]
+.Sort and Column Options in the Search Results Table
+image::figs/web/search-results-column-options.png[scale=80]
 
-* Select a search result, and you will see the artifact in the
-Repository Tree in the lower left-hand quadrant of this interface.
-This is helpful to give you context for an artifact. An artifact could
-be present in more than one repository. If this is the case, click on
-the value next to "Viewing Repository" to switch between multiple
-matching repositories.
-
-* In the lower right-hand quadrant of the interface, you will see a
-number of tabs which show information about the selected search
-result:
-
-** Maven Information: This contains basic identifiers and a
-snippet of XML you can use to add this artifact as a project
-dependency.
-  
-** Archive Browser (Nexus Professional): This gives you a way
-to explore the contents of an archive in the repository. You can
-view the files and folders contained in a matching search
-result.
-  
-** Artifact Information: This tab contains timestamps, file
-size, checksum values, and a list of repositories containing a
-given artifact.
-  
-** Maven Dependency: This tab can be used to show the dependencies of
-   the selected artifact.
-
-In addition to searching by a groupId or an artifactId,
-Nexus has a feature which allows you to search for an artifact by a
-checksum.
+The repository browser interface below the search results table will
+displays the artifact selected in the list in the repository structure
+with the same information panels available documented in
+<<using-sect-browsing>>. An artifact could be present in more than one
+repository. If this is the case, click on the value next to "Viewing
+Repository" to switch between multiple matching repositories.
 
 WARNING: Let me guess? You installed Nexus, ran to the search box,
 typed in the name of a group or an artifact, pressed search, and saw
@@ -2600,11 +2591,79 @@ absolutely nothing. No results. Nexus isn't going to retrieve the
 remote repository indexes by default, you need to activate downloading
 of remote indexes for the three proxy repositories that Nexus ships
 with. Without these indexes, Nexus has nothing to search. Find
-instructions for activating index downloads in <<confignx-sect-manage-repo>>.
+instructions for activating index downloads in
+<<confignx-sect-manage-repo>>.
 
 
 ==== Advanced Search
 
+Clicking on the (Show All Versions) link in the Version column visible
+in <<fig-search-results>> will kick of an Advanced Search by the
+groupId and artifactId of the row and result in a view similar to
+<<fig-search-results-all-versions>>.
+
+[[fig-search-results-all-versions]]
+.Advanced Search Results for a GAV Search Activated by the Show All Versions Link
+image::figs/web/search-results-advanced-gav.png[scale=60]
+
+The header for the Advanced Search contains a selector for the type of
+search and one or more text input fields to define a search and a
+button to run a new search with the specified parameters.
+
+The search results table contains one row per Group (groupId),
+Artifact (artifactId) and Version(version). 
+
+In addition the Age column displays the age of the artifacts being
+available on the Central Repository. Since most artifacts are
+published to the Central Repository when released, this age gives you a
+good indication of the actual time since the release of the artifact.
+
+The Popularity column shows a relative popularity as compared to the
+other results in the search table. This can give you a good indication
+on the take up of a new release. For example if a newer version has a
+high Age value, but a low Popularity compared to an older version, you
+might want to check the upstream project and see if there is any
+issues stopping other users from upgrading that might affect you as
+well. Another reason could be that the new version does not provide
+signifcant improvements to warrant an upgrade for most users.
+
+The Download column provide download links for all the available
+artifacts.
+
+The following advanced searches are available:
+
+Keyword Search:: Identical to the Artifact Search in the left hand
+navigation, this search will look for the specified strings in the
+groupId and artifactId.
+
+Classname Search:: Rather than looking at the coordinates of an
+artifact in the repository, the Classname Search will look at the
+contents of the artifacts and look for Java classes with the specified
+name. For example try a search for a classname of "Pair" to see how
+many library authors saw a need to implement such a class, saving you
+from potentially implementing yet another version.
+
+GAV Search:: The GAV search allows a search using the Maven
+coordinatess of an artifact. These are Group (groupId), Artifact
+(artifactId), Version (version), Packaging (packaging) and Classifier
+(classifier). At a minimum you need to specify a Group, Artifact or
+Version in your search. An example search would be with an Artifact
+"guice and a Classifier "no_aop".
+
+Checksum Search:: Sometimes it is necessary to determine the version
+of a jar artifact in order to migrate to a qualified version. When
+attempting this and neither the filename nor the contents of the
+manfiest file in the jar contain any useful information about the
+exact version of the jar you can use Checksum Search to identify the
+artifact. Create a sha1 checksum, e.g. with the sha1sum command
+available on Linux, and use the created string in a Checksum
+search. This will return one result, which will provide you with the
+GAV coordinates to replace the jar file with a dependency declaration.
+ 
+TIP: The Checksum Search can be a huge timer save when migrating a
+legacy build system, where the used libraries are checked into the
+version control system as binary artifacts with no version information
+available.
 
 ==== Nexus OpenSearch Integration
 
