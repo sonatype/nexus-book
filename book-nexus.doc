@@ -1,5 +1,5 @@
 = Repository Management with Nexus
-:author:    Sonatype, Inc.
+author:    Sonatype, Inc.
 :data-uri:
 :icons:
 :docinfo:
@@ -1257,9 +1257,8 @@ explored in the previous chapter.
 To download Nexus Open Source go to http://nexus.sonatype.org/nexus/go
 and download the latest Nexus Open Source distribution by clicking on
 the appropriate button for a ZIP or a Gzip TAR archive (TGZ) shown in
-<<fig-installing-open-source-dl>>. Your download will be file
-named nexus-oss-webapp-2.0.0-bundle.zip or
-nexus-oss-webapp-2.0.0-bundle.tar.gz
+<<fig-installing-open-source-dl>>. Your download will be file named
+nexus-2.0-bundle.zip or nexus-2.0-bundle.tar.gz
 
 [[fig-installing-open-source-dl]]
 .Downloading Nexus Open Source
@@ -1289,8 +1288,8 @@ Fill out the form and then check your email account for download
 instructions. After filling out a brief contact form and agreeing to
 the evaluation license, you will be sent an email with a link to
 download the Nexus Professional distribution. Nexus is available as
-archive files nexus-professional-webapp-2.0.0-bundle.zip and
-nexus-professional-webapp-2.0.0-bundle.tar.gz.
+archive files nexus-professional-2.0-bundle.zip and
+nexus-professional-2.0-bundle.tar.gz.
 
 [[install-sect-install]]
 === Installing Nexus
@@ -1327,20 +1326,20 @@ home directory or wherever you like; Nexus doesn't have any hard coded
 directories, it will run from any directory. If you downloaded the ZIP
 
 ----
-$ unzip nexus-oss-webapp-2.0.0-bundle.zip
+$ unzip nexus-2.0-bundle.zip
 ----
 
 And, if you download the GZip'd TAR archive, run:
 
 ----
-$ tar xvzf nexus-oss-webapp-2.0.0-bundle.tar.gz
+$ tar xvzf nexus-2.0-bundle.tar.gz
 ----
 
 For Nexus professional the equivalent commands would be 
 
 ----
-$ unzip nexus-professional-webapp-2.0.0-bundle.zip
-$ tar xvzf nexus-professional-webapp-2.0.0-bundle.tar.gz
+$ unzip nexus-professional-2.0-bundle.zip
+$ tar xvzf nexus-professional-2.0-bundle.tar.gz
 ----
 
 NOTE: There are some known incompatibilities with the version of tar
@@ -1350,17 +1349,17 @@ end up with corrupted files.
 
 NOTE: If you are installing Nexus on a server, you might want to use a
 directory other than your home directory. On a Unix machine, this book
-assumes that Nexus is installed in /usr/local/nexus-oss-webapp-2.0.0
+assumes that Nexus is installed in /usr/local/nexus-2.0
 with a symbolic link /usr/local/nexus to the nexus directory. Using a
 generic symbolic link nexus to a specific version is a common practice
 which makes it easier to upgrade when a newer version of Nexus is made
 available.
 
 ----
-$ sudo cp nexus-oss-webapp-2.0.0-bundle.tar.gz /usr/local
+$ sudo cp nexus-2.0-bundle.tar.gz /usr/local
 $ cd /usr/local
-$ sudo tar xvzf nexus-oss-webapp-2.0.0-bundle.tar.gz
-$ ln -s nexus-oss-webapp-2.0.0 nexus
+$ sudo tar xvzf nexus-2.0-bundle.tar.gz
+$ ln -s nexus-2.0 nexus
 ----
 
 Although it isn't required for Nexus to run, you may want to set an
@@ -1374,11 +1373,11 @@ plan to run Nexus as a specific user you could install into the
 AppData/Local directory of that users home directory. Otherwise simply
 go with e.g. C:\\nexus or thing similar.
 
-The Nexus installation directory nexus-oss-webapp-2.0.0 has a sibling
-directory named sonatype-work. This directory contains all of the
-repository and configuration data for Nexus and is stored outside of
-the Nexus installation directory to make it easier to upgrade to a
-newer version of Nexus.
+The Nexus installation directory nexus-2.0 or nexus-professional-2.0
+has a sibling directory named sonatype-work. This directory contains
+all of the repository and configuration data for Nexus and is stored
+outside of the Nexus installation directory to make it easier to
+upgrade to a newer version of Nexus.
 
 By default, this directory is always a sibling to the nexus
 installation directory; if you installed nexus in /usr/local directory
@@ -1428,23 +1427,32 @@ Java Service Wrapper]. This service wrapper can be configured to run
 Nexus as a Windows service or a Unix daemon. Nexus ships with generic
 startup scripts for Unix-like platforms called +++nexus+++ and for
 Windows platforms called +++nexus.bat+++ in the +++$NEXUS_HOME/bin+++
-folder. To start Nexus on a Unix-like platform like Linux, MacOSX or Solaris use
+folder. To start Nexus on a Unix-like platform like Linux, MacOSX or
+Solaris use
 
 ----
 cd /usr/local/nexus
-./bin/nexus start
+./bin/nexus console
 ----
 
 Similarly starting on Windows can be done with the nexus.bat
-file. When executed you should see a feedback message and can then
-follow the start-up process viewing the log file
-+++logs/wrapper.log+++ changes.  Nexus will initialize itself and
-print a message stating what IP address and port it is listening on.
+file. Starting Nexus with the console command will leave Nexus running
+in the current shell and display the log output right there.
+
+On Unix system you can start Nexus detached from the starting shell
+with will the start command even when not yet installed as a service.
+
+----
+./bin/nexus start
+----
+
+When executed you should see a feedback message and can then follow
+the start-up process viewing the log file +++logs/wrapper.log+++
+changes.  
 ----
 Starting Nexus Repository Manager...
 Started Nexus Repository Manager.
 $ tail -f logs/wrapper.log 
-INFO  ... [ServletContainer:default] - SelectChannelConnector@0.0.0.0:8081
 ----
 
 At this point, Nexus will be running and listening on all IP addresses
@@ -1477,9 +1485,9 @@ files like the +++wrapper.conf+++ configuration file in conf and a
 number of libraries in +++lib+++. An optional wrapper.conf include allows you to place further configuration optionally in +++$NEXUS_HOME/conf/wrapper-override.conf+++.
 
 
-The platform specific directories
-are available for backwards compatibility with older versions only and
-should not be used. . A full list of directories follows:
+The platform specific directories are available for backwards
+compatibility with older versions only and should not be used. . A
+full list of directories follows:
 
 ----
 $ cd /usr/local/nexus/jsw
@@ -1500,8 +1508,8 @@ windows-x86-64
 ----
 
 TIP: The start-up script +++nexus+++ supports the common service
-commands +++stop+++, +++restart+++, +++status+++, +++console+++ and
-+++dump+++. 
+commands +++stop+++, +++start+++, +++restart+++, +++status+++,
++++console+++ and +++dump+++.
 
 [[install-sect-repoman-post-install]]
 === Post-Install Checklist
@@ -1727,11 +1735,14 @@ sudo launchctl load /Library/LaunchDaemons/com.sonatype.nexus.plist
 
 ==== Running as a Service on Windows
 
-For the start-up script for nexus on Windows platforms is
+The start-up script for Nexus on Windows platforms is
 +++bin/nexus.bat+++. Besides the standard commands for starting and
 stopping the service it has the additional commands +++install+++ and
 +++uninstall+++. Running these commands with elevated privileges will
-set up the service for you or remove it as desired.
+set up the service for you or remove it as desired. Once installed as
+a service with the +++install+++ command the batch file can be used to
+start and stop the service. In addition the service will be available
+in the usual Windows service management console with the +++nexus+++.
 
 [[install-sect-proxy]]
 === Running Nexus Behind a Proxy
@@ -1809,12 +1820,12 @@ application server is going to vary for each specific
 application. Often, this installation process is as simple as dropping
 a WAR file in a special directory and restarting the container. For
 example, to install the Nexus WAR in Tomcat, drop the
-nexus-webapp-2.0.0.war file in '+++$TOMCAT_HOME/webapps+++' and
+nexus-2.0.war file in '+++$TOMCAT_HOME/webapps+++' and
 restart your Tomcat instance. Assuming that Tomcat is configured on
 port 8080 once Tomcat is started, Nexus will be available on
-http://localhost:8080/nexus-webapp-2.0.0
+http://localhost:8080/nexus-2.0
 
-If you would like a less verbose URL, copy nexus-webapp-2.0.0.war to a
+If you would like a less verbose URL, copy nexus-2.0.war to a
 file named nexus.war before copying the distribution to
 '+++$TOMCAT_HOME/webapps+++'
 
