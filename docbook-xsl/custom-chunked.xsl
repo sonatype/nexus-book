@@ -58,6 +58,9 @@
     <!-- Place callout marks at this column in annotated areas -->
     <xsl:param name="callout.graphics">1</xsl:param>
     <xsl:param name="callout.defaultcolumn">90</xsl:param>
+
+
+
     <!--###################################################
                           Misc
     ################################################### -->
