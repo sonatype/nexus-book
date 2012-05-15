@@ -44,7 +44,7 @@
         qandaset toc
     </xsl:param>
     <!-- Show only Sections up to level 2 in the TOCs -->
-    <xsl:param name="toc.section.depth">3</xsl:param>
+    <xsl:param name="toc.section.depth">1</xsl:param>
     <!--###################################################
                          Labels
     ################################################### -->
@@ -58,9 +58,6 @@
     <!-- Place callout marks at this column in annotated areas -->
     <xsl:param name="callout.graphics">1</xsl:param>
     <xsl:param name="callout.defaultcolumn">90</xsl:param>
-
-
-
     <!--###################################################
                           Misc
     ################################################### -->
@@ -74,7 +71,7 @@
     </xsl:param>
     <xsl:template match="author" mode="titlepage.mode">
         <span class="{name(.)}">
-            <xsl:call-template name="person.name"/> 
+            <xsl:call-template name="person.name"/>
             <xsl:apply-templates mode="titlepage.mode" select="./contrib"/>
         </span>
     </xsl:template>
