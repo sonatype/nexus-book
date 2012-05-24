@@ -44,7 +44,7 @@
         qandaset toc
     </xsl:param>
     <!-- Show only Sections up to level 2 in the TOCs -->
-    <xsl:param name="toc.section.depth">3</xsl:param>
+    <xsl:param name="toc.section.depth">1</xsl:param>
     <!--###################################################
                          Labels
     ################################################### -->
@@ -70,19 +70,30 @@
         procedure before
     </xsl:param>
     <xsl:template match="author" mode="titlepage.mode">
-        <xsl:if test="name(preceding-sibling::*[1]) = 'author'">
-            <xsl:text>, </xsl:text>
-        </xsl:if>
         <span class="{name(.)}">
-            <xsl:call-template name="person.name"/> 
-            (<xsl:value-of select="affiliation"/>)
+            <xsl:call-template name="person.name"/>
             <xsl:apply-templates mode="titlepage.mode" select="./contrib"/>
         </span>
     </xsl:template>
     <xsl:template match="authorgroup" mode="titlepage.mode">
+        <div class="toc_intro">
+          <p>
+            If you are developing software without a repository
+            manager you are likely missing a number of opportunities
+            to reduce some pretty obvious ineffeciencies.  If everyone
+            on your team has to hit Central to download artifacts you
+            are missing out on some simple gains in speed and
+            efficiency. If you don't have a local place to deploy
+            artifacts you are forced to share binary artifacts using
+            half-measures and compromises such as storing binaries in
+            source control.  Stop developing in the Dark Ages, read
+            this book, and start using a repository manager.  Trust
+            us, once you start using Nexus, you'll wonder how you ever
+            functioned without it.
+          </p>
+        </div>
         <div class="{name(.)}">
             <h2>Authors</h2>
-            <p/>
             <xsl:apply-templates mode="titlepage.mode"/>
         </div>
     </xsl:template>
