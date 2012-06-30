@@ -4009,7 +4009,8 @@ usage and no way of recovering this information from the token values.
 ==== Enabling User Tokens
 
 The User Token based authentication can be activated by a Nexus
-administrator accessing the User Token item in the Security menu on
+administrator or any user with the role usertoken-admin or
+usertoken-all by accessing the User Token item in the Security menu on
 the left hand navigation. 
 
 Once User Token is Enabled by activating the checkbox in the
@@ -4025,6 +4026,12 @@ Selecting the Protect Content feature configures Nexus to require a
 user token for any access to the content urls of Nexus, which includes
 all repositories and groups.
 
+Alternatively the User Token feature including the content protecion
+setting can be configured via the Capabilities option in the left hand
+Administration menu after activation the Show advanced setting in the 
+list. The row with the Type value User Token is the respective
+capability configuration.
+
 After activating User Token as a feature, the User Token Realm has to
 be added as a Selected Realm in the Security Settings section as
 displayed in <<fig-config-user-token-security-settings>> and available
@@ -4035,6 +4042,36 @@ in the Server section of the left hand Administration menu.
 .Selected Realms Server Security Settings with User Token Realm activated
 image::figs/web/config-user-token-security-settings.png[scale=60]
 
+==== Accessing and Using Your User Tokens
+
+With User Token enabled any user can access their individual tokens via their
+Profile panel. To access the panel select Profile when clicking on the
+user name in the top left hand corner of the Nexus user
+interface. Then select User Token in the drop down to get access to the User
+Token screen in the Profile panel displayed in
+<<fig-config-user-token-profile>>.
+
+[[fig-config-user-token-profile]]
+.Selected Realms Server Security Settings with User Token Realm activated
+image::figs/web/config-user-token-profile.png[scale=60]
+
+In order to be able to see this User Token panel the user has to have
+the usertoken-basic role or the usertoken-user privilege. In order to
+access or reset the token you have to press the respective button in
+the panel and then provide your username and password in the dialog.
+
+Resetting the token will show and automatically hide a dialog with a
+success message and accessing the token will show the dialog displayed
+in <<fig-config-user-token-access>>.
+
+[[fig-config-user-token-access]]
+.Accessing the User Token information
+image::figs/web/config-user-token-access.png[scale=60]
+
+The User Token dialog displays the username and password tokens in
+separate fields in the top level section as well as a server section
+ready to be used in a Maven settings.xml file. The dialog will close
+automatically after one minute or can be closed with the Close button.
 
 [[smartproxy]]
 == Nexus Smart Proxy 
