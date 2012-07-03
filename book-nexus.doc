@@ -4042,6 +4042,16 @@ in the Server section of the left hand Administration menu.
 .Selected Realms Server Security Settings with User Token Realm activated
 image::figs/web/config-user-token-security-settings.png[scale=60]
 
+Besides resetting all user tokens an administrator can reset the token
+of an individual user by selecting the User Token tab in the Users
+administration from the Security menu in the left hand navigation
+displayed in <<fig-config-user-token-user-reset>>.
+
+[[fig-config-user-token-user-reset]]
+.Selected Realms Server Security Settings with User Token Realm activated
+image::figs/web/config-user-token-user-reset.png[scale=60]
+
+
 ==== Accessing and Using Your User Tokens
 
 With User Token enabled any user can access their individual tokens via their
@@ -4076,7 +4086,56 @@ automatically after one minute or can be closed with the Close button.
 The user code and pass code values can be then be used as replacements
 for username and password in the login dialog for Nexus. It is also
 possible to use the original username and the pass code to log in to
-Nexus. This feature to login with the username can be disabled by TODO
+Nexus.
+
+With content protection enabled command line access to Nexus will
+require the tokens to be supplied. Access to e.g. the releases
+repository via 
+
+----
+curl -v --user admin:admin http://localhost:9081/content/repositories/releases/
+----
+
+has to be replaced with the usage of user code and pass code separated
+by colon in the curl command line like this
+
+----
+curl -v --user HdeHuL4x:Y7ZH6ixZFdOVwNpRhaOV+phBISmipsfwVxPRUH1gkV09 http://localhost:9081/content/repositories/releases/
+----
+
+
+
+==== Configuring User Token Behaviour
+
+The user token feature is preconfigured with built-in parameters and
+no external configuration file is created by default. It is however
+possible to customize some behaviour by creating a file
+'sonatype-work/nexus/conf/usertoken.properties''.
+
+The following properties can be configured:
+
+usertoken.encodingStrategyProvider.strategy:: 	Define the
+EncodingStrategy for the token with the default value being
+'6-33-Base64' and '9-30-Base64' as optional alternative strategy.
+usertoken.userTokenServiceImpl.allowLookupByUserName:: This parameter controls
+if username lookup is allowed when using a pass code. The default is
+set to true. If set to false user code and pass code have to be used
+to authenticated, otherwise username and pass code is also
+possible. This would be the more secure setting.
+usertoken.userTokenServiceImpl.maximumUniqueNameCodeAttempts::
+The maximum number of retries to find a unique name code, when
+creating the token. Defaults to 10.
+usertoken.userTokenServiceImpl.restrictByUserAgent:: With this value
+set to true, which is the default, any access to the Nexus content
+with content protection enabled will only be allowed to web browser
+based access even without credentials. Other tools like curl or wget
+or other command line tools will be blocked. With the more secure
+setting of 'false' any access without correct codes will be
+disallowed.
+
+
+The 'usertoken.' prefix is optional when the properties are loaded
+from the 'usertoken.properties' file.
 
 [[smartproxy]]
 == Nexus Smart Proxy 
