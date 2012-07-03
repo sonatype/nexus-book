@@ -9538,8 +9538,12 @@ will learn how to install the Nexus Migration Plugin.
 === Installation of the Migration Plugin and Artifactory Bridge
 
 The migration plugin is a free, open-source plugin that can be
-downloaded by visiting http://nexus.sonatype.org/downloads/ and
-downloading nexus-migration-plugin-packaging-1.5-webapp.zip.
+downloaded by searching for the nexus-migration-plugin-packaging
+artifact on https://repository.sonatype.org/
+and downloading nexus-migration-plugin-packaging-x.y-webapp.zip with
+the version corresponding to your Nexus version. If you are using
+Nexus Professional the correct plugin can be found in the folder
+/nexus/WEB-INF/optional-plugins/ of your Nexus install.
 
 NOTE: This section assumes that you have just downloaded and installed
 Nexus Open Source or Nexus Professional. If you haven't installed
@@ -9557,47 +9561,18 @@ it. This archive will install the necessary applications and plugins
 to enable a smooth migration from Artifactory to Nexus.
 
 ----
-$ wget http://nexus.sonatype.org/downloads/\ 
-nexus-migration-plugin-packaging-1.5-webapp.zip
-
-...
-Resolving repository.sonatype.org... 63.246.20.88
-Connecting to repository.sonatype.org|63.246.20.88|:80... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 280179 (274K)
-Saving to: 'nexus-migration-plugin-packaging-1.5-webapp.zip'
-
-100%[======================================>] 280,179      406K/s   in 0.7s    
-
-2009-03-14 15:03:52 (406 KB/s) - \
-`nexus-migration-plugin-packaging-1.5-webapp.zip' saved [280179/280179]
-$ cp nexus-migration-plugin-packaging-1.5-webapp.zip ${NEXUS_HOME}
 $ cd ${NEXUS_HOME}
-$ unzip nexus-migration-plugin-packaging-1.5-webapp.zip
-Archive:  nexus-migration-plugin-packaging-1.5-webapp.zip
-creating: runtime/
-creating: runtime/apps/
-creating: runtime/apps/artifactory-bridge/
-creating: runtime/apps/artifactory-bridge/webapp/
-creating: runtime/apps/artifactory-bridge/webapp/WEB-INF/
-inflating: runtime/apps/artifactory-bridge/webapp/WEB-INF/web.xml
-creating: conf/
-inflating: conf/jetty.xml
-creating: runtime/apps/nexus/
-creating: runtime/apps/nexus/plugin-repository/
-creating: .../nexus-migration-plugin-artifactory-1.2/
+$ cp nexus/WEB-INF/optional-plugins/nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip nexus/WEB-INF/plugin-repository/
+$ cd nexus/WEB-INF/plugin-repository/
+* unzip
+nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip 
+Archive:  nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip
+   creating: artifactory-bridge/
+   creating: artifactory-bridge/WEB-INF/
+   creating: artifactory-bridge/WEB-INF/lib/
 ...
-creating: runtime/apps/nexus/lib/
-inflating: .../nexus-migration-plugin-configuration-1.2.jar
-inflating: .../nexus-migration-plugin-artifactory-bridge-1.2.jar
+* rm nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip
 ----
-
-WARNING: The Nexus Migration plugin archive contains a copy of
-conf/jetty.xml. If you have customized jetty.xml you will want to make
-a backup of your customized jetty.xml before you install this
-Migration plugin.  Most people using the Nexus Migration plugin are
-going to be setting up a new instance of Nexus so this shouldn't be an
-issue.
 
 Once the Nexus Migration plugin has been installed, start up Nexus and
 go to the Nexus URL. If you are just setting up Nexus, and you've
