@@ -2888,7 +2888,7 @@ option to Logout as well as to access your user Profile displayed in
 .Drop Down on User Name with Logout and Profile Options
 image::figs/web/using-user-dropdown.png[scale=60]
 
-Once you have select to display your profile you will get access to
+Once you have selected to display your profile you will get access to
 the Summary section of the Profile tab as displayed in
 <<fig-using-profile-summary>>.
 
@@ -2897,15 +2897,27 @@ the Summary section of the Profile tab as displayed in
 image::figs/web/using-profile-summary.png[scale=60]
 
 The Summary section allows you to edit your First Name, Last Name and
-Email directly in the form. In addition you can change you password by
-clicking on the Change Password text. The dialog displayed in
-<<fig-using-profile-change-password>> will be displayed and allow you
-to supply your current password, and choose a new password. When you
-click on Change Password, your Nexus password will be changed.
+Email directly in the form. 
+
+==== Changing Your Password
+
+In addition to changing your name and email, the user profile allows
+you to change your password by clicking on the Change Password
+text. The dialog displayed in <<fig-using-profile-change-password>>
+will be displayed and allow you to supply your current password, and
+choose a new password. When you click on Change Password, your Nexus
+password will be changed.
 
 [[fig-using-profile-change-password]]
 .Changing Your Nexus Password
 image::figs/web/repository-manager_change-password.png[scale=60]
+
+The password change feature only works with the Nexus built in XML
+Realm security realm. If you are using a different security realm like
+LDAP or Crowd, this option will not be visible and you will have the respective
+other system tools to change your password.
+
+==== Additional User Profile Tabs
 
 The Profile tab can be used by other plugins and features to
 change or access user specific data and functionality. One such use
@@ -6515,8 +6527,10 @@ repository.
 .Promoting Multiple Repositories to the Same Build Promotion Profile
 image::figs/web/multiple-promotion-release.png[scale=60]
 
+
 [[staging-sect-managing-plugin]]
 === Managing Staging Repositories with the Nexus Maven Plugin
+
 
 You can do everything that was described in
 <<staging-sect-managing-staging>> with the Nexus Maven Plugin. Using
@@ -8318,7 +8332,12 @@ created.
 Optional plugins supplied by Sonatype can be found in the directory
 +++$NEXUS_HOME/nexus/WEB-INF/optional-plugins+++. To install any of
 these simply copy the folder containing the desired plugin into
-+++$NEXUS_HOME/nexus/WEB-INF/plugin-repository+++
++++$NEXUS_HOME/nexus/WEB-INF/plugin-repository+++. 
+
+WARNING: When updating Nexus you will have to redo the install of any
+optinal plugins using the newest version shipping with the download of
+the new Nexus version. Any configuration of the plugin will be
+preserved from one version to the other.
 
 Plugins supplied by third parties like the
 http://code.google.com/p/nexus-yum-plugin/[Nexus Yum Plugin] and
@@ -8436,14 +8455,14 @@ of Nexus users who all need a basic level of read-only access, and
 making these users wait for an administrator to create an account
 makes little sense. In such a setting, anyone can create an account,
 activate the account via a verification email, and then access a
-repository with a default, read-only level of access which you can
+repository with a default level of access you can
 define.
 
 [[user-account-sect-installation]]
 ==== Installing the User Account Plugin
 
-The user account plugin is an otional plugin that comes as part of any
-Nexus download. The directory containing the plugin code is called
+The user account plugin is an optional plugin that comes as part of the
+Nexus Professional download. The directory containing the plugin code is called
 nexus-user-account-plugin-X.Y.Z. Install the plugin following the
 instructions in <<install-additional-plugins>>.
  
@@ -8474,7 +8493,7 @@ in <<user-account-sect-configuring>>, users will see a Sign Up link
 next to the Log In link in the Nexus interface. Clicking on this Sign
 Up link will display the Nexus Sign Up dialog shown in
 <<fig-user-account-sign-up-form>>. This form accepts a username,
-password, the full name of the new user, and an email account. It also
+password, the first and last name of the new user, and an email account. It also
 asks the users to type in some text from a captcha form element. If a
 user cannot read the text in the captcha, they can click on the
 captcha to refresh it with new text.
@@ -8529,8 +8548,9 @@ image::figs/web/user-account_sign-up-admin-activate.png[scale=60]
 The default user permissions in the User Sign Up feature only includes
 "UI: Base UI Privileges". If a user signs up with just this simple
 permission, the only thing they will be able to do is login, change
-their password, and logout. <<fig-user-account-base-ui>>, shows the interface a user would see after logging in with only
-the base UI privileges.
+their password, and logout. <<fig-user-account-base-ui>>, shows the
+interface a user would see after logging in with only the base UI
+privileges.
 
 [[fig-user-account-base-ui]]
 .User Interface with only the Base UI Privileges
