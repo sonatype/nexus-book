@@ -5686,22 +5686,6 @@ deployed have to follow in order to allow successful deployment.
 Staging Upload allows you to manually upload artifacts to Nexus via
 the user interface rather than by using your build system.
 
-Alternatively if using the Maven Deploy Plugin and implicit matching configure a
-Repository Target to match artifacts under the groupId you will be
-deploying artifacts to. If you are releasing all of your software
-under the groupId com.example, you would configure a target that
-matches the pattern ".*/com/example/.*".
-
-. Create a new Staging Profile When you configure this staging profile, you will be
-defining a target repository group. When the Staging Suite intercepts
-an artifact and places it in a staging repository, this staging
-repository will be added to the specified target repository group.
-
-. Assign the appropriate Staging-specific roles to the appropriate
-users. When you create a Staging Profile, Nexus also creates two new
-roles that grant access and privileges to the repositories created by
-this Staging Profile.
-
 ==== Configuring a Staging Profile
 
 Staging profiles control the process by which artifacts are selected
@@ -5891,63 +5875,72 @@ through one or more groups.
 .Configuring a Build Promotion Profile
 image::figs/web/staging_closed-beta-promotion-group.png[scale=60]
 
-[[staging-sect-deploy-role]]
-==== Adding the Staging Deployer Role
+[[staging-sect-security]]
+==== Staging Related Security Setup
+
+Staging Suite is controlled by three roles:
+
+- Staging: Deployer
+- Staging: Promoter
+- Staging: Repositories
+
+These roles are available as general 'admin' roles that apply to all
+staging profiles with the respective access. When you create a new
+staging profile, Nexus will create new roles that grant permissions
+specific to that staging profile. If you created the staging profile
+named 'Test', Nexus created the three new and profile specific roles:
+
+Staging: Repositories (Test):: This role grants a user read and view
+access to the staging repositories created by the 'Test' staging
+profile.
+ 
+Staging: Deployer (Test):: This role grants all of the privileges from
+the Staging: Repositories role and in addition grants the user
+permission to deploy artifacts, close and drop any staging repository
+created by the 'Test' staging profile.
+
+Staging: Promoter (Test):: This role grants all of the privileges from
+the Staging: Deployer role and in addition grants the user permission
+to promote abt staging repository created by the 'Test' staging
+profile.
 
 To perform a staged deployment, the user deploying the artifact must
 have the "Staging: Deployer (admin)" role or the "Staging: Deployer"
 role for a specific Staging Profile.
 
-When you create a Staging Profile, Nexus will create two new Nexus
-roles that grant permissions specific to that staging profile. If you
-created the Staging profile from the previous section, Nexus would have
-created two roles:
-
-Staging: Repositories (Release Staging Profile):: This role grants a
-user read and view access to the staging repositories created by a
-specific staging profile.
-
-Staging: Deployer (Release Staging Profile):: This role grants all
-of the privileges from the Staging: Repositories role and it grants
-the user permission to deploy artifacts, close a staging repository,
-and promote or drop a staging repository created by a specific staging
-profile.
-
-In addition to the profile-specific staging roles, the Staging Suite
-also defines two universal roles which grant read-only or deployer
-rights across all staging repositories. These roles are:
-
-Staging: Repositories (admin):: This role grants a user read and view
-access to all staging repositories.
-
-Staging: Deployer (admin):: This role grants a user all of the
-privileges from the Staging: Repositories role and it grants the user
-permission to deploy artifacts to any staging repository, close all
-staging repositories, and promote or drop all staging repositories.
-
 To configure the deployment user with the appropriate staging role,
 click on Users under the Security menu in the Nexus menu. Once you see
-the Users panel, click on the deployment user to edit this user's
-roles. If the Staging Suite is installed, you should see the "Staging:
-Deployer (admin)" role listed in Available Roles. Select the "Staging:
-Deployer (admin)" role and then click the left arrow to add this role
-to the deployment user's list of assigned roles.
+the Users panel , click on the deployment user to edit this user's
+roles. Click on the Add button in the Role Management section of the
+Config tab visible in <<fig-staging-user-add-role>> for the user to be
+able to add new roles to the user.
 
-[[fig-staging-assigning-role]]
-.Assigning the Staging Deployer Role to the deployment user
-image::figs/web/staging_deployer-role.png[scale=60]
+
+[[fig-staging-user-add-role]]
+.Adding a Role to a User 
+image::figs/web/staging-user-add-role.png[scale=60]
+
+Use the Filter section with the keyword Staging and press the Apply
+ Filter button to see all available staging related roles as displayed
+ in <<fig-staging-user-add-role>>.
+
+[[fig-staging-user-add-role-dialog]]
+.Available Roles for Staging with a Test Staging Profile 
+image::figs/web/staging-user-add-role-dialog.png[scale=40]
+
+You should see the "Staging: Deployer (admin)" role listed as well as
+the 'Test' staging profile specific role, the promoter and
+repositories ones for 'admin' and 'Test' and a few staging user
+interface related roles. If you need to add a specific permission to
+activate a single Staging Profile, you would select that specific
+role.
 
 Once the deployment user has the "Staging: Deployer (admin)" role, you
 can then use this user to deploy to the staging URL and trigger any
-Staging Profile. Without this permission, the deployment user would
+staging profile. Without this permission, the deployment user would
 not be able to publish a staged artifact. 
 
-If you need to add a specific permission to activate a single Staging
-Profile, you would select that specific role in the Available Roles
-list shown in <<fig-staging-assigning-role>>. In this figure, note
-that there are two "Staging: Deployer" roles: one for general
-administrative permission to deploy to any staging profile, and
-another which targets a specific staging profile.
+In a similar fashion you can assign the promoter role to users.
 
 ==== Using Repository Targets for Staging 
 
