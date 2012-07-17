@@ -3816,25 +3816,49 @@ image::figs/web/repository-manager_security-privileges-3.png[scale=60]
 [[confignx-sect-managing-repo-targets]]
 === Managing Repository Targets
 
-A target is a set of regular expressions to match on a path (in the
-same way as the route rules work). Access the management interface via
-the Repository Tragets menu item in the left hand Views/Repositories
+A Repository Target is a set of regular expressions to match on the
+path of artifacts in a repository (in the same way as the routing
+rules work). Nexus is preconfigured with a number of repository
+targets and allows you to create additional ones. Access the
+management interface visible in <<fig-config-repo-target-mgt>> via
+the Repository Targets menu item in the left hand Views/Repositories
 menu.
 
-Repository targets allow you to define for example a target called
-Apache Maven which is "/org/apache/maven/.*".  You can then add a new
-privilege that relates to the target and controls the CRUD operations
-for artifacts matching that path (the privilege can span multiple
-repositories if you want). You could thus delegate all control of
-org.apache.maven targets to a "Maven" team. In this way, you don't
-need to create separate repositories for each logical division of your
-artifacts.
 
+[[fig-config-repo-target-mgt]]
 .Managing Repository Targets
 image::figs/web/repository-manager_repository-targets.png[scale=60]
+ 
+Repository targets allow you to define for example a target called
+Apache Maven with a pattern of `^/org/apache/maven/.*`. This would
+match all artifacts with a groupId of 'org.apache.maven' and any
+artifacts within nested groupIds like 'org.apache.maven.plugins'.
 
-.Managing Repository Targets
+A pattern that would capture more artifacts like all artifacts with
+any part of the path containing 'maven' could be `.*maven.*`.
+
+The regular expressions can also be used to exclude artifacts as
+visible with the pattern `(?!.*-sources.*).*` in
+<<fig-config-repo-target-exclude>> where artifacts with the qualifier
+'-sources' are excluded.
+
+[[fig-config-repo-target-exclude]]
+.Excluding Source Artifacts from a Repository Targets
 image::figs/web/repository-manager_repository-targets-2.png[scale=60]
+
+By combining multiple patterns in a repository target you can
+establish a fine grained control of artifacts included and excluded.
+
+Once you have created a repository target you can it as part of your
+security setup.  You can add a new privilege that relates to the
+target and controls the CRUD operations for artifacts matching that
+path. The privilege can even span multiple repositories. With this
+setup you can delegate all control of artifacts in 'org.apache.maven'
+to a "Maven" team. In this way, you don't need to create separate
+repositories for each logical division of your artifacts.
+
+Repository targets are also be used for matching artifacts for
+implicit capture in the Staging Suite as documented in <<staging>>.
 
 [[confignx-sect-manage-security]]
 === Managing Roles
@@ -4037,7 +4061,7 @@ image::figs/web/config-plugin-core-api-site.png[scale=60]
 ==== Introduction
 
 When using Apache Maven with Nexus the user credentials for accessing
-Nexus have to be stored in clear text in the users' settings.xml
+Nexus have to be stored in clear text in the user's settings.xml
 file. Maven has the ability to encrypt passwords in setting.xml, but
 the need for it to be reversible, in order to be used, limits its
 security. In addition the general setup and use is cumbersome and the
@@ -5925,23 +5949,18 @@ that there are two "Staging: Deployer" roles: one for general
 administrative permission to deploy to any staging profile, and
 another which targets a specific staging profile.
 
-==== Configuring a Repository Target
+==== Using Repository Targets for Staging 
 
-The Staging Suite intercepts deployments to repository targets when
-using implicit matching as a profile selection strategy. For
-example, if you wanted to intercept all deployments to the
-com.sonatype.sample groupId, you would create a Repository Target
-called the "Sample Target" with a pattern expression of
-".*/com/sonatype/sample/.*". Do this by clicking on "Repository
-Targets" in the "Views/Repositories" section of the left-hand navigation menu in
-Nexus and then clicking on the Add button.
+The Staging Suite intercepts deployments to Nexus using Repository
+Targets as documented in <<confignx-sect-managing-repo-targets>> when
+using implicit matching as a profile selection strategy based on the
+artifacts path in the repository.
 
-.Adding a Repository Target for com.sonatype.sample
-image::figs/web/staging_make-target.png[scale=60]
-
-TODO ... explain using multiple patterns and how the regex works with
-some examples
-
+For example, if you wanted to intercept all deployments to the
+com.sonatype.sample groupId, you would create a repository target
+with a pattern with a regular expression of
+".*/com/sonatype/sample/.*" and use that repository target in your
+Staging Profile configuration.
 
 [[staging-sect-deployment]]
 === Configuring your Project for Deployment
@@ -6456,7 +6475,7 @@ consider migrating to the new plugin and usage patterns. Documentation
 for the old plugin is available TODO.
 
 [[staging-sect-rulesets]]
-=== Enforcing Standards for Deployments and Staging with Rulesets
+=== Enforcing Standards for Deployment and Promotion with Rulesets
 
 Nexus has the ability to define staging rules that must be satisfied
 to allow successful deployment or before a staging repository can be
