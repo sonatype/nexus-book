@@ -4086,7 +4086,7 @@ generated user tokens can be used instead.
 User token usage is integrated in the Maven settings template feature of Nexus
 documented in <<settings>> to further simplify its use.
 
-==== Enabling User Tokens
+==== Enabling and Resetting User Tokens
 
 The User Token based authentication can be activated by a Nexus
 administrator or any user with the role usertoken-admin or
@@ -4112,10 +4112,16 @@ Administration menu after activating the Show Advanced setting in the
 list. The row with the Type value User Token is the respective
 capability configuration.
 
-After activating User Token as a feature, the User Token Realm has to
-be added as a Selected Realm in the Security Settings section as
-displayed in <<fig-config-user-token-security-settings>> and available
-in the Server section of the left hand Administration menu.
+Activating User Token as a feature automatically adds the User Token Realm as a
+Selected Realm in the Security Settings section as displayed in
+<<fig-config-user-token-security-settings>> and available in the
+Server section of the left hand Administration menu. If desired you
+can reorder the security realms used, although the default create with
+the User Token Realm as a first realm is probably the desired
+setup. This realm is not removed when the User Token feature is
+disabled, however it will cleanly pass through to the next realm and
+with the realm remaining any order changes stay persisted in case the
+feature is reactivated at a later stage.
 
 
 [[fig-config-user-token-security-settings]]
@@ -4125,12 +4131,20 @@ image::figs/web/config-user-token-security-settings.png[scale=60]
 Besides resetting all user tokens an administrator can reset the token
 of an individual user by selecting the User Token tab in the Users
 administration from the Security menu in the left hand navigation
-displayed in <<fig-config-user-token-user-reset>>.
+displayed in <<fig-config-user-token-user-reset>>. The password
+requested for this action to proceed is the password for the currently
+logged in administrator resetting the token(s)
+
 
 [[fig-config-user-token-user-reset]]
 .User Token Reset for Specific User in Security Users Administration
-image::figs/web/config-user-token-user-reset.png[scale=40]
+image::figs/web/config-user-token-user-reset.png[scale=50]
 
+WARNING: Resetting user tokens forces the users to update the
+`settings.xml` with the newly created tokens and potentially breaks any
+command line builds using the tokens until this change is
+carried out. This specifically also applies to continuous integration
+servers using user tokens or any other automated build executions.
 
 ==== Accessing and Using Your User Tokens
 
@@ -4160,7 +4174,10 @@ image::figs/web/config-user-token-access.png[scale=60]
 
 The User Token dialog displays the user code and pass code tokens in
 separate fields in the top level section as well as a server section
-ready to be used in a Maven settings.xml file. The dialog will close
+ready to be used in a Maven settings.xml file. When using the server
+section you simply have to replace the `${server}` placeholder with
+the repository id that references your Nexus server you want to
+authenticate against with the user token.  The dialog will close
 automatically after one minute or can be closed with the Close button.
 
 The user code and pass code values can be used as replacements
@@ -4186,6 +4203,9 @@ curl -v --user HdeHuL4x:Y7ZH6ixZFdOVwNpRhaOV+phBISmipsfwVxPRUH1gkV09 http://loca
 User token values can be accessed as part of the Maven settings
 template feature automating updates as documented in <<settings>>.
 
+NOTE: The user tokens are created at first access wether that is by
+using the Nexus user interface or the Nexus Maven Plugin.
+
 ==== Configuring User Token Behaviour
 
 The user token feature is preconfigured with built-in parameters and
@@ -4195,17 +4215,26 @@ possible to customize some behaviour by creating a file
 
 The following properties can be configured:
 
+////
+According to Jason Dillon this is mostly for testing the underlying
+mechanis and the super edge case when the default strategy incurs too
+many name-code collissions, this is also not well tested so we remove
+it for now (or ever)
 usertoken.encodingStrategyProvider.strategy:: 	Define the
 EncodingStrategy for the token with the default value being
 '6-33-Base64' and '9-30-Base64' as optional alternative strategy.
+similar to above, very advanced and should not be exposed to users at
+this stage according to Jason Dillon
+usertoken.userTokenServiceImpl.maximumUniqueNameCodeAttempts::
+The maximum number of retries to find a unique name code, when
+creating the token. Defaults to 10.
+////
+
 usertoken.userTokenServiceImpl.allowLookupByUserName:: This parameter controls
 if username lookup is allowed when using a pass code. The default is
 set to true. If set to false user code and pass code have to be used
 to authenticated, otherwise username and pass code is also
 possible. This would be the more secure setting.
-usertoken.userTokenServiceImpl.maximumUniqueNameCodeAttempts::
-The maximum number of retries to find a unique name code, when
-creating the token. Defaults to 10.
 usertoken.userTokenServiceImpl.restrictByUserAgent:: With this value
 set to true, which is the default, any access to the Nexus content
 with content protection enabled will only be allowed to web browser
@@ -4217,6 +4246,7 @@ disallowed.
 
 The 'usertoken.' prefix is optional when the properties are loaded
 from the 'usertoken.properties' file.
+
 
 [[smartproxy]]
 == Nexus Smart Proxy 
