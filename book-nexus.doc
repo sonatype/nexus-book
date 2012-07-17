@@ -5634,43 +5634,6 @@ image::figs/web/staging_with_staging.png[scale=60]
 .The Stages of a Staging Repository starting with Deployment and Ending with a Release or a Drop of the Repository
 image::figs/web/staging-workflow.png[scale=60]
 
-[[staging-sect-multi]]
-==== Multi-level Staging and Build Promotion
-
-Nexus also supports multi-level staging and build
-promotion. With multi-level staging, a staging repository can be
-tested and then promoted to a separate "build promotion" profile and
-exposed through different repository groups to allow for additional
-testing and qualification before a final
-frelease. <<fig-staging-multi-scenario>> illustrates a potential use
-for multi-level staging:
-
-Stage:: A developer publishes artifacts to a QA staging profile which
-exposes the staged artifacts in a QA repository group used by an
-internal quality assurance team for testing.
-
-Promote to Beta:: Once the QA team has successfully completed
-testing, they promote the temporary staging repository to build
-promotion profile which will expose the staged artifacts to a limited
-set of customers who have agreed to act as a beta testers for a new
-feature.
-
-Release:: Once this closed beta testing period is finished, the
-staged repository is then released and the artifacts it contains are
-published to a hosted release repository and exposed via the public
-repository group.
-
-[[fig-staging-multi-scenario]]
-.Multi-level Staging and Build Promotion
-image::figs/web/multi-level-staging.png[scale=60]
-
-To support this multi-level staging feature, you can configure Build
-Promotion profiles as detailed in
-<<staging-sect-config-build-profile>>. Once you have promoted a
-Staging Repository to a Build Promotion profile, you can drop,
-promote, or release the artifacts it contains as detailed in
-<<staging-sect-prepare-nexus>>.
-
 
 [[staging-sect-prepare-nexus]]
 === Configuring the Nexus Staging Suite
@@ -5698,6 +5661,22 @@ deployed have to follow in order to allow successful deployment.
 
 Staging Upload allows you to manually upload artifacts to Nexus via
 the user interface rather than by using your build system.
+
+Alternatively if using the Maven Deploy Plugin and implicit matching configure a
+Repository Target to match artifacts under the groupId you will be
+deploying artifacts to. If you are releasing all of your software
+under the groupId com.example, you would configure a target that
+matches the pattern ".*/com/example/.*".
+
+. Create a new Staging Profile When you configure this staging profile, you will be
+defining a target repository group. When the Staging Suite intercepts
+an artifact and places it in a staging repository, this staging
+repository will be added to the specified target repository group.
+
+. Assign the appropriate Staging-specific roles to the appropriate
+users. When you create a Staging Profile, Nexus also creates two new
+roles that grant access and privileges to the repositories created by
+this Staging Profile.
 
 ==== Configuring a Staging Profile
 
@@ -5969,11 +5948,165 @@ some examples
 
 ==== Deployment to with the Nexus Staging Maven Plugin
 
-here will be all the new and preferred way
+TODO here will be all the new and preferred way
 
 ==== Deployment with the Maven Deploy Plugin
 
-this uses implicit mathcing and repo target
+TODO this uses implicit mathcing and repo target Here is the old content.. needs update and more
+
+Maven deploy plugin
+ A staging profile uses a Repository Target to match
+artifacts as they are deployed. If a matching artifact is deployed to
+Nexus, the Staging Suite will intercept this deployment and store the
+artifact in a staging repository.
+
+In the previous section, you created a Staging Profile which
+references the Repository Target created previously. If the Staging
+Suite is configured correctly, any deployment to the staging URL under
+the groupId com.sonatype.sample should be intercepted by the Staging
+Suite and placed in a temporary staging repository. Once this
+repository has been closed, it will be made available in the Target
+Group you selected when you configured the Staging Profile.
+
+In this section, you will create a new project using the Maven
+Archetype plugin to test the Staging Profile you created in the
+previous section.
+
+
+[[staging-sect-update-pom]]
+==== Update the POM Deployment Configuration
+
+To deploy a staged release, a developer needs to deploy to the
+staging URL. To configure this new project to deploy to the Staging
+URL, add the a distributionManagement element to the stage-test
+project's POM.
+
+[[ex-staging-dist-management]]
+.Listing the Staging URL in distributionManagement
+----
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.sonatype.sample</groupId>
+  <artifactId>staging-test</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0</version>
+  <name>staging-test</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <distributionManagement>
+    <repository>
+      <id>nexus</id>
+      <name>Nexus Staging Repo</name>
+      <url>http://localhost:8081/nexus/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+</project>
+----
+
+This configuration element, distributionManagement, defines the
+repository to which our deployment will be made. It references the
+Staging Suite's Staging URL:
+http://localhost:8081/nexus/service/local/staging/deploy/maven2
+
+This URL acts as a something of a virtual repository to be published
+to.  If an artifact being published matches one of the Repository
+Targets in a Staging Profile, that Staging Profile is "activated" and
+a temporary Staging Repository is created for a specific client as
+defined by the combination of a client's IP address, Deployment User
+name, and User-Agent.
+
+[[staging-sect-deploy-credentials]]
+==== Update settings.xml with Deployment Credentials
+
+To successfully deploy to your Nexus instance, you will
+need to update your Maven Settings with the credentials for the
+deployment user. These credentials are stored in the Maven Settings file
+in ~/.m2/settings.xml. 
+
+To add these credentials, add the following element to the servers
+element in your ~/.m2/settings.xml file as shown in
+<<ex-staging-deployment-credentials>>.
+
+[[ex-staging-deployment-credentials]]
+.Listing deployment credentials in Maven Settings
+----
+<settings>
+  ...
+  <servers>
+    ...
+    <server>
+      <id>nexus</id>
+      <username>deployment</username>
+      <password>deployment123</password>
+    </server>
+  </servers>
+  ...
+</settings>
+----
+
+Note that the server identifier listed in
+<<ex-staging-deployment-credentials>> matches the server identifier
+listed in <<ex-staging-dist-management>>.  The deployment credential
+listed in <<ex-staging-deployment-credentials>> contains the default
+password for the Nexus deployment user - deployment123.  You should
+change this password to match the deployment password for your Nexus
+installation.
+
+[[staging-sect-deploy-staged]]
+==== Deploying to a Staged Repository
+
+Once the sample project's distributionManagement has been set
+to point at the Nexus Staging URL and your deployment credentials are
+updated in your ~/.m2/settings.xml file, you can deploy to the Staging
+URL. To do this, run mvn deploy
+
+----
+$ mvn deploy
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Building staging-test
+[INFO]    task-segment: [deploy]
+[INFO] ------------------------------------------------------------------------
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [compiler:compile]
+[INFO] Nothing to compile - all classes are up to date
+[INFO] [resources:testResources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [compiler:testCompile]
+[INFO] Nothing to compile - all classes are up to date
+[INFO] [surefire:test]
+[INFO] Surefire report directory: /private/tmp/staging-test/target/surefire-reports
+
+...
+[INFO] [jar:jar]
+[INFO] [install:install]
+[INFO] Installing /private/tmp/staging-test/target/staging-test-1.0.jar to \
+~/.m2/repository/com/sonatype/sample/staging-test/1.0/staging-test-1.0.jar
+[INFO] [deploy:deploy]
+altDeploymentRepository = null
+Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
+com/sonatype/sample/staging-test/1.0/staging-test-1.0.jar
+2K uploaded
+[INFO] Uploading project information for staging-test 1.0
+[INFO] Retrieving previous metadata from nexus
+[INFO] repository metadata for: 'artifact com.sonatype.sample:staging-test' 
+could not be found on repository: nexus, so will be created
+[INFO] Uploading repository metadata for: 'artifact com.sonatype.sample:staging-test'
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+----
+
 
 [[staging-sect-uploading-staged]]
 ==== Manually Uploading a Staged Deployment in Nexus
@@ -6028,7 +6161,7 @@ using the procedures outlined in <<staging-sect-managing-staging>>.
 === Managing Staging Repositories in Nexus
 
 Once you completed the process outlined in <<staging-sect-deployment>>,
-you will then have an automatically generated Staging Repository. In
+you will have an automatically generated Staging Repository. In
 this section, you will walk through the process of managing staging
 repositories. Once a staging repository has been created, there are
 two steps in the lifecycle of a staging repository. Once you have
@@ -6277,6 +6410,51 @@ image::figs/web/multiple-promotion-release.png[scale=60]
 
 
 
+[[staging-sect-multi]]
+==== Multi-level Staging and Build Promotion
+
+Nexus also supports multi-level staging and build
+promotion. With multi-level staging, a staging repository can be
+tested and then promoted to a separate "build promotion" profile and
+exposed through different repository groups to allow for additional
+testing and qualification before a final
+frelease. <<fig-staging-multi-scenario>> illustrates a potential use
+for multi-level staging:
+
+Stage:: A developer publishes artifacts to a QA staging profile which
+exposes the staged artifacts in a QA repository group used by an
+internal quality assurance team for testing.
+
+Promote to Beta:: Once the QA team has successfully completed
+testing, they promote the temporary staging repository to build
+promotion profile which will expose the staged artifacts to a limited
+set of customers who have agreed to act as a beta testers for a new
+feature.
+
+Release:: Once this closed beta testing period is finished, the
+staged repository is then released and the artifacts it contains are
+published to a hosted release repository and exposed via the public
+repository group.
+
+[[fig-staging-multi-scenario]]
+.Multi-level Staging and Build Promotion
+image::figs/web/multi-level-staging.png[scale=60]
+
+To support this multi-level staging feature, you can configure Build
+Promotion profiles as detailed in
+<<staging-sect-config-build-profile>>. Once you have promoted a
+Staging Repository to a Build Promotion profile, you can drop,
+promote, or release the artifacts it contains as detailed in
+<<staging-sect-prepare-nexus>>.
+
+
+WARNING: TODO - where to put this info best..The Nexus Maven Plugin in
+versions earlier than 2.1 had goals to work with staging
+repositories. These goals have been deprecated in favour of the Nexus
+Staging Maven Plugin. If you are still using the old plugin you should
+consider migrating to the new plugin and usage patterns. Documentation
+for the old plugin is available TODO.
+
 [[staging-sect-rulesets]]
 === Enforcing Standards for Deployments and Staging with Rulesets
 
@@ -6357,235 +6535,6 @@ rulesets are being adhered to.
 [[fig-staging-associate-ruleset]]
 .Associating a Staging Ruleset with a Staging Profile
 image::figs/web/staging-rulesets-associate.png[scale=60]
-
-
-
-
-
-
-
-
-
-
-
-////////////// 
-old stuff
-//////////////
-
-
-[[staging-sect-config]]
-==== Configuring Staging Profiles
-
-
-
-
-
-The process for configuring a new Staging Profile is as
-follows:
-
-. Create a new Staging Profile 
-
-. Configure the Profile ID of the Staging Profile as part of the
-configuration of the Nexus Staging Maven Plugin in your Maven project
-POM
-
-
-
- for explicit matching
-of your project to a specific staging profile.
-+
-Alternatively if using the Maven Deploy Plugin and implicit matching configure a
-Repository Target to match artifacts under the groupId you will be
-deploying artifacts to. If you are releasing all of your software
-under the groupId com.example, you would configure a target that
-matches the pattern ".*/com/example/.*".
-
-. Create a new Staging Profile When you configure this staging profile, you will be
-defining a target repository group. When the Staging Suite intercepts
-an artifact and places it in a staging repository, this staging
-repository will be added to the specified target repository group.
-
-. Assign the appropriate Staging-specific roles to the appropriate
-users. When you create a Staging Profile, Nexus also creates two new
-roles that grant access and privileges to the repositories created by
-this Staging Profile.
-
-
-
-
-
-Once you've created a Staging Repository with the values shown in
-<<fig-staging-edit-profile>>, you are ready to perform a test
-deployment to the Staging URL.
-
-
-=== Performing a Staged Deployment with Maven
-
-
-
-Maven deploy plugin
- A staging profile uses a Repository Target to match
-artifacts as they are deployed. If a matching artifact is deployed to
-Nexus, the Staging Suite will intercept this deployment and store the
-artifact in a staging repository.
-
-Nexus Staging Maven plugin
-
-
-In the previous section, you created a Staging Profile which
-references the Repository Target created previously. If the Staging
-Suite is configured correctly, any deployment to the staging URL under
-the groupId com.sonatype.sample should be intercepted by the Staging
-Suite and placed in a temporary staging repository. Once this
-repository has been closed, it will be made available in the Target
-Group you selected when you configured the Staging Profile.
-
-In this section, you will create a new project using the Maven
-Archetype plugin to test the Staging Profile you created in the
-previous section.
-
-
-[[staging-sect-update-pom]]
-==== Update the POM Deployment Configuration
-
-To deploy a staged release, a developer needs to deploy to the
-staging URL. To configure this new project to deploy to the Staging
-URL, add the a distributionManagement element to the stage-test
-project's POM.
-
-[[ex-staging-dist-management]]
-.Listing the Staging URL in distributionManagement
-----
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.sonatype.sample</groupId>
-  <artifactId>staging-test</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0</version>
-  <name>staging-test</name>
-  <url>http://maven.apache.org</url>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  <distributionManagement>
-    <repository>
-      <id>nexus</id>
-      <name>Nexus Staging Repo</name>
-      <url>http://localhost:8081/nexus/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
-</project>
-----
-
-This configuration element, distributionManagement, defines the
-repository to which our deployment will be made. It references the
-Staging Suite's Staging URL:
-http://localhost:8081/nexus/service/local/staging/deploy/maven2
-
-This URL acts as a something of a virtual repository to be published
-to.  If an artifact being published matches one of the Repository
-Targets in a Staging Profile, that Staging Profile is "activated" and
-a temporary Staging Repository is created for a specific client as
-defined by the combination of a client's IP address, Deployment User
-name, and User-Agent.
-
-[[staging-sect-deploy-credentials]]
-==== Update settings.xml with Deployment Credentials
-
-To successfully deploy to your Nexus instance, you will
-need to update your Maven Settings with the credentials for the
-deployment user. These credentials are stored in the Maven Settings file
-in ~/.m2/settings.xml. 
-
-To add these credentials, add the following element to the servers
-element in your ~/.m2/settings.xml file as shown in
-<<ex-staging-deployment-credentials>>.
-
-[[ex-staging-deployment-credentials]]
-.Listing deployment credentials in Maven Settings
-----
-<settings>
-  ...
-  <servers>
-    ...
-    <server>
-      <id>nexus</id>
-      <username>deployment</username>
-      <password>deployment123</password>
-    </server>
-  </servers>
-  ...
-</settings>
-----
-
-Note that the server identifier listed in
-<<ex-staging-deployment-credentials>> matches the server identifier
-listed in <<ex-staging-dist-management>>.  The deployment credential
-listed in <<ex-staging-deployment-credentials>> contains the default
-password for the Nexus deployment user - deployment123.  You should
-change this password to match the deployment password for your Nexus
-installation.
-
-[[staging-sect-deploy-staged]]
-==== Deploying to a Staged Repository
-
-Once the sample project's distributionManagement has been set
-to point at the Nexus Staging URL and your deployment credentials are
-updated in your ~/.m2/settings.xml file, you can deploy to the Staging
-URL. To do this, run mvn deploy
-
-----
-$ mvn deploy
-[INFO] Scanning for projects...
-[INFO] ------------------------------------------------------------------------
-[INFO] Building staging-test
-[INFO]    task-segment: [deploy]
-[INFO] ------------------------------------------------------------------------
-[INFO] [resources:resources]
-[INFO] Using default encoding to copy filtered resources.
-[INFO] [compiler:compile]
-[INFO] Nothing to compile - all classes are up to date
-[INFO] [resources:testResources]
-[INFO] Using default encoding to copy filtered resources.
-[INFO] [compiler:testCompile]
-[INFO] Nothing to compile - all classes are up to date
-[INFO] [surefire:test]
-[INFO] Surefire report directory: /private/tmp/staging-test/target/surefire-reports
-
-...
-[INFO] [jar:jar]
-[INFO] [install:install]
-[INFO] Installing /private/tmp/staging-test/target/staging-test-1.0.jar to \
-~/.m2/repository/com/sonatype/sample/staging-test/1.0/staging-test-1.0.jar
-[INFO] [deploy:deploy]
-altDeploymentRepository = null
-Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
-com/sonatype/sample/staging-test/1.0/staging-test-1.0.jar
-2K uploaded
-[INFO] Uploading project information for staging-test 1.0
-[INFO] Retrieving previous metadata from nexus
-[INFO] repository metadata for: 'artifact com.sonatype.sample:staging-test' 
-could not be found on repository: nexus, so will be created
-[INFO] Uploading repository metadata for: 'artifact com.sonatype.sample:staging-test'
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESSFUL
-----
-
-
-
-WARNING: The Nexus Maven Plugin in versions earlier than 2.1 had goals
-to work with staging repositories. These goals have been deprecated in
-favour of the Nexus Staging Maven Plugin. If you are still using the
-old plugin you should consider migrating to the new
-plugin. Documentation for the old plugin is available TODO.
 
 [[rhc]]
 == Repository Health Check
