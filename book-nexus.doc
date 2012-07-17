@@ -4243,7 +4243,6 @@ or other command line tools will be blocked. With the more secure
 setting of 'false' any access without correct codes will be
 disallowed.
 
-
 The 'usertoken.' prefix is optional when the properties are loaded
 from the 'usertoken.properties' file.
 
@@ -5957,7 +5956,7 @@ Use the Filter section with the keyword Staging and press the Apply
 
 [[fig-staging-user-add-role-dialog]]
 .Available Roles for Staging with a Test Staging Profile 
-image::figs/web/staging-user-add-role-dialog.png[scale=40]
+image::figs/web/staging-user-add-role-dialog.png[scale=50]
 
 You should see the "Staging: Deployer (admin)" role listed as well as
 the 'Test' staging profile specific role, the promoter and
@@ -5983,17 +5982,43 @@ artifacts path in the repository.
 For example, if you wanted to intercept all deployments to the
 com.sonatype.sample groupId, you would create a repository target
 with a pattern with a regular expression of
-".*/com/sonatype/sample/.*" and use that repository target in your
+`^/com/sonatype/sample/.*` and use that repository target in your
 Staging Profile configuration.
 
 [[staging-sect-deployment]]
 === Configuring your Project for Deployment
 
-==== Deployment to with the Nexus Staging Maven Plugin
+Once Nexus is configured to receive artifacts in the staging suite as
+documented in <<staging-sect-prepare-nexus>>, you will have to update
+your project build configuration to deploy to the staging suite.
 
-TODO here will be all the new and preferred way
+The preferred way to do this is to take advantage of the features
+provided by the Nexus Staging Maven Plugin or the Nexus Staging Ant
+Tasks  as documented in
+<<staging-sect-deployment-nexus-staging-maven-plugin>>
+and <<staging-sect-deployment-nexus-staging-ant-tasks>>.
 
+If you need to continue to use the Maven Deploy Plugin you can read
+about using it with the Nexus Staging Suite in 
+<<staging-sect-deployment-maven-deploy-plugin>>. 
+
+With all tools you can use the manual upload of your artifacts
+documented in <<staging-sect-deployment-manual>>.
+
+[[staging-sect-deployment-nexus-staging-maven-plugin]]
+==== Deployment with the Nexus Staging Maven Plugin
+
+TODO
+
+[[staging-sect-deployment-nexus-staging-ant-tasks]]
+==== Deployment with the Nexus Staging Ant Tasks
+
+TODO
+
+[[staging-sect-deployment-maven-deploy-plugin]]
 ==== Deployment with the Maven Deploy Plugin
+
+
 
 TODO this uses implicit mathcing and repo target Here is the old content.. needs update and more
 
@@ -6151,7 +6176,7 @@ could not be found on repository: nexus, so will be created
 ----
 
 
-[[staging-sect-uploading-staged]]
+[[staging-sect-deployment-manual]]
 ==== Manually Uploading a Staged Deployment in Nexus
 
 You can also upload a staged deployment via the Nexus interface. To
