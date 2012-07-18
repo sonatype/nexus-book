@@ -1251,7 +1251,7 @@ and download the latest Java 6 or Java 7 JDK.
 [[install-sect-downloading]]
 === Downloading Nexus
 
-There are two distributions of Nexus: http://nexus.sonatype.org[Nexus
+There are two distributions of Nexus: http://www.sonatype.org/nexus[Nexus
 Open Source] and http://www.sonatype.com/products/nexus[Nexus
 Professional].  Nexus Open Source is a fully-featured repository
 manager which can be freely used, customized, and distributed under
@@ -1265,7 +1265,7 @@ explored in the previous chapter.
 
 ==== Downloading Nexus Open Source
 
-To download Nexus Open Source go to http://nexus.sonatype.org/nexus/go
+To download Nexus Open Source go to http://www.sonatype.org/nexus/go
 and download the latest Nexus Open Source distribution by clicking on
 the appropriate button for a ZIP or a Gzip TAR archive (TGZ) shown in
 <<fig-installing-open-source-dl>>. Your download will be file named
@@ -1460,20 +1460,62 @@ interface as displayed in <<fig-installing-nexus-default-screen>>
 
 While we use "localhost" throughout this book, you may need to use the
 IP Loopback Address of "127.0.0.1" or the IP address assigned to the
-machine running Nexus. Click on the "Log In" link in the upper
+machine running Nexus. 
+
+When first starting Nexus Professional you are presented with a
+form that allows you to request a trial activation. This page
+displayed in <<fig-installing-trial-form>> contains a link to
+the license activation screen in 
+<<fig-installing-license-activation>>. 
+
+[[fig-installing-trial-form]]
+.Nexus Trial Activation Form
+image::figs/web/installing-trial-form.png[scale=40]
+
+After submitting the form for your trial activation you will receive a
+license key via email that you can use in the license activation screen to
+activate Nexus Professional. If you already have a license key or
+license file you can use the same screen to upload the file and
+register your license.
+
+[[fig-installing-license-activation]]
+.Nexus License Activation 
+image::figs/web/installing-license-activation.png[scale=40]
+
+Once you have agreed to the End User License Agreement you will be
+directed to the Nexus Professional Evaluation Welcome screen displayed in 
+<<fig-installing-pro-eval-welcome>>.
+
+[[fig-installing-pro-eval-welcome]]
+.Nexus License Activation 
+image::figs/web/installing-pro-eval-welcome.png[scale=40]
+
+Click on the "Log In" link in the upper
 right-hand corner of the web page, and you should see the login dialog
 displayed in <<fig-installing-nexus-login-dialog>>. 
 
 TIP: The default administrator username and password combination is
 "admin" and "admin123".
 
-[[fig-installing-nexus-default-screen]]
-.Nexus Application Window
-image::figs/web/installing-nexus-default-screen.png[scale=80]
-
 [[fig-installing-nexus-login-dialog]]
 .Nexus Login Dialog (default login/password is admin/admin123)
 image::figs/web/installing-nexus-login-dialog.png[scale=80]
+
+When you are logged into your evaluation version of Nexus Professional
+you will see some helpful links to the Nexus Pro Evaluation Guide,
+Sample Projects and the Knowledgebase below the search input on the
+Welcome screen.
+
+With a full license for Nexus these links will be removed and you will
+get the Nexus Application Window displayed in <<fig-installing-nexus-default-screen>>.
+
+Nexus Open Source will not need to be activated with a license key and
+will display a number of links to Resources and Support on the Welcome
+screen to logged in users.
+
+[[fig-installing-nexus-default-screen]]
+.Nexus Application Window
+image::figs/web/installing-nexus-default-screen.png[scale=100]
 
 
 The files from Java Service Wrapper used for the start up process can
@@ -1523,7 +1565,7 @@ should do to your new Nexus installation is change this password. To
 change the administrative password login as "admin" with the password
 "admin123", and click on Change Password under the Security menu in
 the left-hand side of the browser window. For more detailed
-instructions, see <<using-sect-changing-password>>.
+instructions, see <<using-sect-user-profile>>.
 
 ==== Step 2: Configure the SMTP Settings
 
@@ -1576,17 +1618,7 @@ password: log in as an administrator, click on Security to expand the
 Security menu, then click on Users. You should then see a list of
 users. Right-click on the deployment user and select "Set Password".
 
-==== Step 5: Install Professional License (Nexus Professional Only)
-
-If you are running Nexus Professional and you have purchased a license
-from Sonatype, you will need to upload your license. This license will
-be emailed to you after you have purchased Nexus Professional from
-http://store.sonatype.com.  To load the License tab, click on
-Licensing under the Enterprise menu in the Nexus application menu. For
-more information about installing a Nexus Professional license file,
-see <<install-sect-licensing>>.
-
-==== Step 6: If necessary, set the LANG Environment Variable
+==== Step 5: If necessary, set the LANG Environment Variable
 
 If your Nexus instance needs to store configuration and data using an
 international character set, you should set the LANG environment
@@ -1807,7 +1839,7 @@ please see http://httpd.apache.org
 The Nexus Open Source WAR has been successfully tested in Tomcat,
 Jetty, and Resin. If you need to run Nexus under Glassfish, please see
 <<install-sect-war-gf>>. To download the Nexus Open Source WAR, go to
-http://nexus.sonatype.org/using/download.html.  Click on the Download
+http://www.sonatype.org/nexus/go.  Click on the Download
 Site link and then download the Nexus WAR. Once you have downloaded
 the Nexus Open Source WAR, you can install it in a servlet container
 or application server.
@@ -2149,30 +2181,6 @@ nexus.properties
 The conf/examples/proxy-https/ directory contains two files:
 apache2.conf and jetty.xml contains sample mod_proxy directives to
 configure Apache httpd to handle SSL.
-
-[[install-additional-plugins]]
-=== Installing Additional Plugins
-
-Nexus Open Source and Nexus Professional are built using a plugin
-architecture, where Professional simply includes additional
-plugins. Besides the default installed plugins you can install optional
-plugins shipped with Nexus as well as plugins you or somebody else
-created.
-
-Optional plugins supplied by Sonatype can be found in the directory
-+++$NEXUS_HOME/nexus/WEB-INF/optional-plugins+++. To install any of
-these simply copy the folder containing the desired plugin into
-+++$NEXUS_HOME/nexus/WEB-INF/plugin-repository+++
-
-Plugins supplied by third parties like the
-http://code.google.com/p/nexus-yum-plugin/[Nexus Yum Plugin] and
-others, are installed by copying the folder with the plugin code into
-+++sonatype-work/nexus/plugin-repository+++.
-
-After a restart of Nexus the new plugins will be active and ready
-to use. Upgrades are done by simply copying over the newer plugin and
-removing the older one.
-
 
 [[config]]
 == Configuring Maven to Use Nexus
@@ -2867,17 +2875,53 @@ file.
 .Selecting the Update Frequency when Tailing a Log File
 image::figs/web/using_tail-frequency.png[scale=60]
 
-[[using-sect-changing-password]]
-=== Changing Your Password 
 
-If you have the appropriate security privilege, you will see an option
-to change your password in the left-hand side Security menu. To
-change your password, click on Change Password, supply your current
-password, and choose a new password. When you click on Change
-Password, your Nexus password will be changed.
+[[using-sect-user-profile]]
+=== Working with Your User Profile
 
+As a logged in user, you can click on your user name in the top right
+hand corner of the Nexus user interface to expose a drop down with an
+option to Logout as well as to access your user Profile displayed in
+<<fig-using-user-dropdown>>.
+
+[[fig-using-user-dropdown]]
+.Drop Down on User Name with Logout and Profile Options
+image::figs/web/using-user-dropdown.png[scale=60]
+
+Once you have selected to display your profile you will get access to
+the Summary section of the Profile tab as displayed in
+<<fig-using-profile-summary>>.
+
+[[fig-using-profile-summary]]
+.Summary Section of the Profile Tab
+image::figs/web/using-profile-summary.png[scale=60]
+
+The Summary section allows you to edit your First Name, Last Name and
+Email directly in the form. 
+
+==== Changing Your Password
+
+In addition to changing your name and email, the user profile allows
+you to change your password by clicking on the Change Password
+text. The dialog displayed in <<fig-using-profile-change-password>>
+will be displayed and allow you to supply your current password, and
+choose a new password. When you click on Change Password, your Nexus
+password will be changed.
+
+[[fig-using-profile-change-password]]
 .Changing Your Nexus Password
 image::figs/web/repository-manager_change-password.png[scale=60]
+
+The password change feature only works with the Nexus built in XML
+Realm security realm. If you are using a different security realm like
+LDAP or Crowd, this option will not be visible and you will have the respective
+other system tools to change your password.
+
+==== Additional User Profile Tabs
+
+The Profile tab can be used by other plugins and features to
+change or access user specific data and functionality. One such use
+case is the User Token access documented in <<config-sect-usertoken>>.
 
 [[using-sect-filing-report]]
 === Filing a Problem Report
@@ -3772,25 +3816,49 @@ image::figs/web/repository-manager_security-privileges-3.png[scale=60]
 [[confignx-sect-managing-repo-targets]]
 === Managing Repository Targets
 
-A target is a set of regular expressions to match on a path (in the
-same way as the route rules work). Access the management interface via
-the Repository Tragets menu item in the left hand Views/Repositories
+A Repository Target is a set of regular expressions to match on the
+path of artifacts in a repository (in the same way as the routing
+rules work). Nexus is preconfigured with a number of repository
+targets and allows you to create additional ones. Access the
+management interface visible in <<fig-config-repo-target-mgt>> via
+the Repository Targets menu item in the left hand Views/Repositories
 menu.
 
-Repository targets allow you to define for example a target called
-Apache Maven which is "/org/apache/maven/.*".  You can then add a new
-privilege that relates to the target and controls the CRUD operations
-for artifacts matching that path (the privilege can span multiple
-repositories if you want). You could thus delegate all control of
-org.apache.maven targets to a "Maven" team. In this way, you don't
-need to create separate repositories for each logical division of your
-artifacts.
 
+[[fig-config-repo-target-mgt]]
 .Managing Repository Targets
 image::figs/web/repository-manager_repository-targets.png[scale=60]
+ 
+Repository targets allow you to define for example a target called
+Apache Maven with a pattern of `^/org/apache/maven/.*`. This would
+match all artifacts with a groupId of 'org.apache.maven' and any
+artifacts within nested groupIds like 'org.apache.maven.plugins'.
 
-.Managing Repository Targets
+A pattern that would capture more artifacts like all artifacts with
+any part of the path containing 'maven' could be `.*maven.*`.
+
+The regular expressions can also be used to exclude artifacts as
+visible with the pattern `(?!.*-sources.*).*` in
+<<fig-config-repo-target-exclude>> where artifacts with the qualifier
+'-sources' are excluded.
+
+[[fig-config-repo-target-exclude]]
+.Excluding Source Artifacts from a Repository Targets
 image::figs/web/repository-manager_repository-targets-2.png[scale=60]
+
+By combining multiple patterns in a repository target you can
+establish a fine grained control of artifacts included and excluded.
+
+Once you have created a repository target you can it as part of your
+security setup.  You can add a new privilege that relates to the
+target and controls the CRUD operations for artifacts matching that
+path. The privilege can even span multiple repositories. With this
+setup you can delegate all control of artifacts in 'org.apache.maven'
+to a "Maven" team. In this way, you don't need to create separate
+repositories for each logical division of your artifacts.
+
+Repository targets are also be used for matching artifacts for
+implicit capture in the Staging Suite as documented in <<staging>>.
 
 [[confignx-sect-manage-security]]
 === Managing Roles
@@ -3985,6 +4053,192 @@ linked off the Core Documentation plugin from
 [[fig-config-plugin-core-api-site]]
 .Documentation Website for the Core API
 image::figs/web/config-plugin-core-api-site.png[scale=60]
+
+
+[[config-sect-usertoken]]
+=== Security Setup with User Tokens
+
+==== Introduction
+
+When using Apache Maven with Nexus, the user credentials for accessing
+Nexus have to be stored in clear text in the user's settings.xml
+file. Maven has the ability to encrypt passwords in setting.xml, but
+the need for it to be reversible in order to be used, limits its
+security. In addition, the general setup and use is cumbersome and the
+potential need for regular changes due to strong security requirements
+e.g. with regular, required password changes triggers the need for a
+simpler and more secure solution.
+
+The User Token feature of Nexus fills that need for Apache Maven as
+well as other build systems and users. It introduces a two part token
+for the user, replacing the username and password with a user code and
+a pass code that allows no way of recovering the username and password
+from the user code and pass code values, yet can be used for
+authentication with Nexus from the command line e.g. via Maven as well
+as in the UI.
+
+This is especially useful for scenarios where single sign on solutions
+like LDAP are used for authentication against Nexus and other systems
+and the plain text username and password can not be stored in the
+settings.xml following security policies. In this scenario the
+generated user tokens can be used instead.
+
+User token usage is integrated in the Maven settings template feature of Nexus
+documented in <<settings>> to further simplify its use.
+
+==== Enabling and Resetting User Tokens
+
+The User Token based authentication can be activated by a Nexus
+administrator or user with the role usertoken-admin or
+usertoken-all by accessing the User Token item in the Security menu on
+the left hand navigation. 
+
+Once User Token is Enabled by activating the checkbox in the
+administration tab displayed in <<fig-config-user-token-main>> and
+pressing Save,  the feature is activated and the additional section to
+Reset All User Tokens is available as well.
+ 
+[[fig-config-user-token-main]]
+.User Token Administration Tab Panel
+image::figs/web/config-user-token-main.png[scale=60]
+
+Selecting the Protect Content feature configures Nexus to require a
+user token for any access to the content urls of Nexus, which includes
+all repositories and groups.
+
+Activating User Token as a feature automatically adds the User Token
+Realm as a Selected Realm in the Security Settings section as
+displayed in <<fig-config-user-token-security-settings>> and available
+in the Server section of the left hand Administration menu. If
+desired, you can reorder the security realms used, although the
+default settings with the User Token Realm as a first realm is
+probably the desired setup. This realm is not removed when the User
+Token feature is disabled, however it will cleanly pass through to the
+next realm and with the realm remaining any order changes stay
+persisted in case the feature is reactivated at a later stage.
+
+
+[[fig-config-user-token-security-settings]]
+.Selected Realms Server Security Settings with User Token Realm activated
+image::figs/web/config-user-token-security-settings.png[scale=60]
+
+Besides resetting all user tokens, an administrator can reset the token
+of an individual user by selecting the User Token tab in the Users
+administration from the Security menu in the right hand navigation
+displayed in <<fig-config-user-token-user-reset>>. The password
+requested for this action to proceed is the password for the currently
+logged in administrator resetting the token(s)
+
+
+[[fig-config-user-token-user-reset]]
+.User Token Reset for Specific User in Security Users Administration
+image::figs/web/config-user-token-user-reset.png[scale=50]
+
+WARNING: Resetting user tokens forces the users to update the
+`settings.xml` with the newly created tokens and potentially breaks any
+command line builds using the tokens until this change is
+carried out. This specifically also applies to continuous integration
+servers using user tokens or any other automated build executions.
+
+==== Accessing and Using Your User Tokens
+
+With User Token enabled, any user can access their individual tokens via their
+Profile panel. To access the panel, select Profile when clicking on the
+user name in the top right hand corner of the Nexus user
+interface. Then select User Token in the drop down to get access to the User
+Token screen in the Profile panel displayed in
+<<fig-config-user-token-profile>>.
+
+[[fig-config-user-token-profile]]
+.User Token Panel for the Logged in Users in the Profile Section
+image::figs/web/config-user-token-profile.png[scale=60]
+
+In order to be able to see this User Token panel the user has to have
+the usertoken-basic role or the usertoken-user privilege. To access or
+reset the token you have to press the respective button in the panel
+and then provide your username and password in the dialog.
+
+Resetting the token will show and automatically hide a dialog with a
+success message and accessing the token will show the dialog displayed
+in <<fig-config-user-token-access>>.
+
+[[fig-config-user-token-access]]
+.Accessing the User Token information
+image::figs/web/config-user-token-access.png[scale=60]
+
+The User Token dialog displays the user code and pass code tokens in
+separate fields in the top level section as well as a server section
+ready to be used in a Maven settings.xml file. When using the server
+section you simply have to replace the `${server}` placeholder with
+the repository id that references your Nexus server you want to
+authenticate against with the user token.  The dialog will close
+automatically after one minute or can be closed with the Close button.
+
+The user code and pass code values can be used as replacements
+for username and password in the login dialog for Nexus. It is also
+possible to use the original username and the pass code to log in to
+Nexus.
+
+With content protection enabled command line access to Nexus will
+require the tokens to be supplied. Access to e.g. the releases
+repository via 
+
+----
+curl -v --user admin:admin http://localhost:9081/content/repositories/releases/
+----
+
+has to be replaced with the usage of user code and pass code separated
+by colon in the curl command line like this
+
+----
+curl -v --user HdeHuL4x:Y7ZH6ixZFdOVwNpRhaOV+phBISmipsfwVxPRUH1gkV09 http://localhost:9081/content/repositories/releases/
+----
+
+User token values can be accessed as part of the Maven settings
+template feature automating updates as documented in <<settings>>.
+
+NOTE: The user tokens are created at first access whether that is by
+using the Nexus user interface or the Nexus Maven Plugin.
+
+==== Configuring User Token Behaviour
+
+The user token feature is preconfigured with built-in parameters and
+no external configuration file is created by default. It is however
+possible to customize some behaviour by creating a file
+'sonatype-work/nexus/conf/usertoken.properties''.
+
+The following properties can be configured:
+
+////
+According to Jason Dillon this is mostly for testing the underlying
+mechanis and the super edge case when the default strategy incurs too
+many name-code collissions, this is also not well tested so we remove
+it for now (or ever)
+usertoken.encodingStrategyProvider.strategy:: 	Define the
+EncodingStrategy for the token with the default value being
+'6-33-Base64' and '9-30-Base64' as optional alternative strategy.
+similar to above, very advanced and should not be exposed to users at
+this stage according to Jason Dillon
+usertoken.userTokenServiceImpl.maximumUniqueNameCodeAttempts::
+The maximum number of retries to find a unique name code, when
+creating the token. Defaults to 10.
+////
+
+usertoken.userTokenServiceImpl.allowLookupByUserName:: This parameter controls
+if username lookup is allowed when using a pass code. The default is
+set to true. If set to false user code and pass code have to be used
+to authenticated, otherwise username and pass code is also
+possible. This would be the more secure setting.
+usertoken.userTokenServiceImpl.restrictByUserAgent:: With this value
+set to true, which is the default, any access to the Nexus content
+with content protection enabled will only be allowed to web browser
+based access even without credentials. Other tools like curl or wget
+or other command line tools will be blocked. With the more secure
+setting of 'false' any access without correct codes will be
+disallowed.
+
+The 'usertoken.' prefix is optional when the properties are loaded
+from the 'usertoken.properties' file.
 
 
 [[smartproxy]]
@@ -5336,41 +5590,46 @@ Repository.
 If you release software, you will often need to test a release before
 deploying it to a production system or an externally accessible
 repository. For example, if you are developing a large, enterprise web
-application you may want to stage a release candidate to a production
+application you may want to stage a release candidate to a staging
 system and perform a series of rigorous tests before a release manager
 makes a decision to either return a system to development or deploy a
 system to production.
 
-The Nexus Staging Suite in Nexus Professional allows an organization
+The Staging Suite in Nexus Professional allows an organization
 to create a temporary staging repository and to manage the promotion
 of artifacts from a staging repository to a release repository. This
-ability to create an isolated, release candidate repository that can
+ability to create an isolated, release candidate repository that can be
 discarded or promoted makes it possible to support the decisions that
-go into certifying a release.
+go into certifying a release, while the certification process is done
+on the same binaries that will ultimately be released.
 
 [[staging-sect-without]]
 ==== Releasing Software without a Staging Repository
 
 Without the Staging Suite, when a developer deploys an artifact to a
-Hosted repository such as the Release repository, this artifact is
-published to a hosted repository and is immediately made available -
-there is no oversight, there is no approval or certification
-process. There is no chance to test the artifact before writing the
-artifact to a hosted repository. If there is a mistake in the release,
-often the only option available is to republish the artifacts to the
-release repository or deploy a new version of the artifacts.
+hosted repository such as the Release repository, this artifact is
+published and immediately made available - there is no oversight,
+there is no approval or certification process. There is no chance to
+test the artifact before writing the artifact to a hosted
+repository. If there is a mistake in the release, often the only
+option available is to republish the artifacts to the release
+repository or deploy a new version of the artifacts.
 
-.Without the Nexus Staging Suite
+.Release Deployment Without the Nexus Staging Suite
 image::figs/web/staging_without_staging.png[scale=60]
 
 While this is acceptable for some users, organizations and enterprises
-with a QA cycle often need a temporary staging repository for
-potential release candidates: a staging repository. With the Nexus
-Staging Suite, an organization can automatically stage releases to a
-temporary repository which can then be used to test and certify a set
-of artifacts before they are published to a final release
+with a QA cycle often need a temporary storage for potential release
+candidates: a staging repository. With the Nexus Staging Suite, an
+organization can automatically stage releases to a temporary
+repositor,y which can then be used to test and certify a set of
+artifacts, before they are published to a final release
 repository. This temporary repository can then be promoted as a whole
-or dropped depending on the results of testing.
+or dropped depending on the results of testing. When used the binary
+artifacts being tested and certified are the identical artifacts that
+will ultimately be released and not a clean fresh build kicked off
+after the certification finished as is often the case without a
+staging suite being used.
 
 [[staging-sect-how]]
 ==== How the Staging Suite Works
@@ -5378,14 +5637,13 @@ or dropped depending on the results of testing.
 Here's how staging works in Nexus Professional:
 
 . A developer deploys an artifact (or a set of artifacts) to Nexus
-Professional.
+Professional
 
-. The Staging Suite intercepts this deployment and matches the
-artifact's path against a set of Staging Profiles.
+. The staging suite intercepts this deployment and determines if the
+deployment matches for a staging profile 
 
-. If the path of the artifact activates a staging profile, a temporary
-staging repository is created and the artifacts are deployed to this
-repository.
+. If a match is found a temporary staging repository is created and
+the artifacts are deployed to this repository.
 
 . Once the developer has deployed a set of artifacts to Nexus, they
 will then "Close" the staging repository.
@@ -5393,11 +5651,11 @@ will then "Close" the staging repository.
 . The Staging Suite will then add this temporary staging repository to
 one or more Target Repository Groups.
 
-Once the staging repository is closed, and the staging repository
-has been added to a Target repository group, the artifacts in the
-staging repository are then made available to developers or testers via
-a repository group. Tests can be performed on the artifacts as if they
-were already published in a hosted repository. From this point, one of
+Once the staging repository is closed and has been added to a target
+repository group, the artifacts in the staging repository are
+available to Nexus users for testing and certification via a
+repository group. Tests can be performed on the artifacts as if they
+were already published in a hosted repository. At this point, one of
 two things can happen to a staging repository:
 
 Release:: A Nexus user can "release" a staging repository and select a
@@ -5412,153 +5670,112 @@ temporary staging repository.
 Promote:: If your Nexus installation contains Build Promotion
 profiles, you will also see an option to "promote" a staging
 repository to a Build Promotion Group. When you promote a staging
-repository you can expose the contents of that staging repository via
+repository you expose the contents of that staging repository via
 additional groups. Build Promotion profiles are explained in detail in
 the next section.
 
-.With Nexus Staging Suite
+.Release Deployment with the Nexus Staging Suite
 image::figs/web/staging_with_staging.png[scale=60]
 
 [[fig-staging-release-description]]
-.Supplying a Description for a Staging Release
+.The Stages of a Staging Repository starting with Deployment and Ending with a Release or a Drop of the Repository
 image::figs/web/staging-workflow.png[scale=60]
 
-[[staging-sect-multi]]
-==== Multi-level Staging and Build Promotion
 
-Nexus Professional also supports multi-level staging and build
-promotion. With multi-level staging, a staging repository can be
-tested and then promoted to a separate "build promotion" profile and
-exposed through different repository groups to allow for additional
-testing and qualification before a final
-release. <<fig-staging-multi-scenario>> illustrates a potential use
-for multi-level staging:
+[[staging-sect-prepare-nexus]]
+=== Configuring the Nexus Staging Suite
 
-Stage:: A developer publishes artifacts to a QA staging profile which
-exposes the staged artifacts in a QA repository group used by an
-internal quality assurance team for testing.
+==== Overview
 
-Promote to Beta:: Once the QA team has successfully completed
-testing, they promote the temporary staging repository to build
-promotion profile which will expose the staged artifacts to a limited
-set of customers who have agreed to act as a beta testers for a new
-feature.
+The Staging Suite is part of the default Nexus Professional install
+and is accessible with the menu items Staging Profiles, Staging
+Repositories, Staging Ruleset, and Staging Upload options in the
+left-hand navigation menu of the Nexus interface called Build
+Promotion.
 
-Release:: Once this closed beta testing period is finished, the
-staged repository is then released and the artifacts it contains are
-published to a hosted release repository and exposed via the public
-repository group.
+Staging Profiles define the rules by which artifact deployments from
+your project are intercepted by Nexus and staged in Staging
+Repositories. 
 
-[[fig-staging-multi-scenario]]
-.Multi-level Staging and Build Promotion
-image::figs/web/multi-level-staging.png[scale=60]
+Staging Repositories are dynamically created by Nexus as they are
+needed. They are temporary holding repositories for your artifacts
+that are used for the different staging related steps. Using them in
+the Nexus user interface users can promote the contents of the
+staging repository to a hosted repository, discard them and more.
 
-To support this multi-level staging feature, you can configure Build
-Promotion profiles as detailed in
-<<staging-sect-config-build-profile>>. Once you have promoted a
-Staging Repository to a Build Promotion profile, you can drop,
-promote, or release the artifacts it contains as detailed in
-<<staging-sect-using>>.
+Staging Rulesets allow you to define rules that the artifacts being
+deployed have to follow in order to allow successful deployment. 
 
-[[staging-sect-using]]
-=== Using the Nexus Staging Suite
+Staging Upload allows you to manually upload artifacts to Nexus via
+the user interface rather than by using your build system.
 
-To use the Staging Suite in Nexus Professional, start Nexus and look
-for the Staging Profiles, Staging Repositories, Staging Rulesets, and
-Staging Upload options in the left-hand navigation menu of the Nexus
-interface. If you see the links shown in <<fig-staging-links>>, the
-Staging Suite is available and ready to be configured.
-
-[[fig-staging-links]]
-.Enterprise Menu after Staging Suite Installation
-image::figs/web/staging_install-screenshot.png[scale=60]
-
-[[staging-sect-config]]
-==== Configuring Staging Profiles
-
-Staging Profiles define the rules by which artifact deployments are
-staged in Staging Repositories. Staging Repositories are created as
-they are needed and are the primary mechanism by which Nexus users can
-promote or discard the contents of a staging repository to a hosted
-repository. A staging profile uses a Repository Target to match
-artifacts as they are deployed. If a matching artifact is deployed to
-Nexus, the Staging Suite will intercept this deployment and store the
-artifact in a staging repository.
-
-The process for configuring a new Staging Profile is as
-follows:
-
-. Configure a Repository Target to match artifacts under the groupId
-you will be deploying artifacts to. If you are releasing all of your
-software under the groupId com.example, you would configure a target
-that matches the pattern ".*/com/example/.*".
-
-. Create a new Staging Profile using the target defined in the
-previous step. When you configure this staging profile, you will be
-defining a target repository group. When the Staging Suite intercepts
-an artifact and places it in a staging repository, this staging
-repository will be added to the specified target repository group.
-
-. Assign the appropriate Staging-specific roles to the appropriate
-users. When you create a Staging Profile, Nexus also creates two new
-roles that grant access and privileges to the repositories created by
-this Staging Profile.
-
-The following sections provide a more detailed look at the process
-of configuring a single staging profile in Nexus Professional.
-
-Configuring a Repository Target::
-
-The Staging Suite intercepts deployments to repository targets. For
-example, if you wanted to intercept all deployments to the
-com.sonatype.sample groupId, you would create a Repository Target
-called the "Sample Target" with a pattern expression of
-".*/com/sonatype/sample/.*". Do this by clicking on "Repository
-Targets" in the "Security" section of the left-hand navigation menu in
-Nexus and then clicking on the Add button.
-
-.Adding a Repository Target for com.sonatype.sample
-image::figs/web/staging_make-target.png[scale=60]
-
-Configuring Staging Profiles::
+==== Configuring a Staging Profile
 
 Staging profiles control the process by which artifacts are selected
 for staging. When you define a Staging profile, you are defining a set
 of rules which will control the way in which Nexus intercepts an
-artifact deployment. When you click on Staging Profiles in the Nexus
+artifact deployment and what actions to perform during and after
+staging the artifacts. When you click on Staging Profiles in the Nexus
 menu, you will see a list of configured staging profiles.  Clicking on
 Add... will display the drop-down menu shown in
 <<fig-staging-add-staging-profile>>.
 
 [[fig-staging-add-staging-profile]]
-.Multi-level Staging and Build Promotion
+.Adding a Staging Profile
 image::figs/web/staging_add-staging-profile.png[scale=60]
 
 Selecting Staging Profile will create a new Staging Profile and
 display the form shown in <<fig-staging-edit-profile>>.
 
-<<fig-staging-edit-profile>> defines a Staging Profile using the
-Repository Target. This target will match all artifacts under the
-com.sonatype.sample groupId (or the com/sonatype/sample repository
-path). This staging profile uses the "Maven2 (hosted, release)" as a
-template for newly created temporary staging repositories, and it will
-automatically add closed staging repositories to the Public
-Repositories group.
+<<fig-staging-edit-profile>> defines a Staging Profile named Test.  It
+is configured to only intercept explicit deployments in the Profile
+Selection Strategy using the Profile ID and the Nexus Staging Maven
+Plugin. It uses the template "Maven2 (hosted, release)" for newly
+created temporary staging repositories, and it will automatically add
+closed staging repositories to the Public Repositories group.
 
 [[fig-staging-edit-profile]]
-.Editing a Staging Profile
+.Creating a New Staging Profile
 image::figs/web/staging_profile-edit.png[scale=60]
 
-This form allows you to configure a profile. Every profile has a
-name, is associated with a Repository Target, and points to a template
-to use when creating a new staging repository. The Staging Profile
-configuration panel contains the following fields:
+The form allows you to configure a profile with the following fields:
 
-Profile Name:: The Name of the Staging Profile. This can be an arbitrary
+Profile ID and Deploy URL:: These two fields are only available as
+read only display once a profile has been created. The Profile ID
+displays the unique identifier that can be used for staging to this
+repository using the Nexus Staging Maven Plugin. The Deploy URL
+displays the generic staging URL that can be used with the default
+Maven Deploy Plugin together with the Repository Target configuration
+to intercept the deployment and move the artifacts into the Staging
+Suite instead.
+
+Profile Name:: The name of the staging profile. This can be an arbitrary
 value. It is simply a convenience for the Nexus Administrator, and
 it is also used to create Nexus roles that are used to grant
 permissions to view and manipulate staging repositories created by
 this profile.
+
+Profile Selection Strategy:: Select the strategy used by Nexus to
+select this staging profile. Explicit or Implicit is the default
+behaviour and causes Nexus to select the profile by the provided
+staging profile identifier and if none is provided fall back to an
+automatic determination. It is necessary to be used with
+the Maven Deploy Plugin and the correct staging profile is determined
+using Repository Targets together with the generic Deploy URL of Nexus.
++
+When using the Nexus Staging Maven Plugin for deployments, and
+therefore an explicitly defined staging profile in the project POM, the
+setting should be changed to Explicit Only. This will prevent the
+profile from implicitly capturing a deployment in this repository due
+to the matching defined and allow Nexus to ensure that the deployment
+reaches the Staging Profile with the configured Staging Profile ID
+even if the default matching and staging profile order could
+potentially cause a deployment to end up in a different profile.
+
+Searchable Repositories:: The default value of enabling this
+feature will cause any new artifacts in this staging profile to be
+added to the indexes and therefore be available in search
+queries. Disable this to feature to "hide" artifacts in staging.
 
 Staging Mode:: This field contains the options "Deploy", "UI Upload",
 and "Deploy and UI Upload". This controls how artifacts can be staged
@@ -5567,28 +5784,33 @@ deployed using Maven to upload build artifacts. If UI Upload is
 selected, users can upload artifacts to Nexus using the Nexus user
 interface.
 
-Template:: Defines a template for the temporary staging
-repository. The current version of Nexus Professional provides with
-the options "Maven2 (hosted, release)" and "Maven1 (hosted, release)".
+Template:: Defines the template for the format of the temporary
+staging repositories created by this staging profile. The current
+version of Nexus Professional provides the option "Maven2 (hosted,
+release)" only. Additional templates can be supplied by plugins that
+enable staging for other repository types. An example for such a
+plugin is the http://code.google.com/p/nexus-yum-plugin/[Nexus Yum
+Plugin].
 
-Repository Target:: This is a reference to the target which we defined
-previously. When a developer deploys an
-artifact to the Staging URL, the Staging Suite will check to see if
-the artifact matches the patterns defined in the Repository
-Target. The Target defines the "trigger" for the creation of a Staging
-Repository.
+Repository Target:: When a developer deploys an artifact to the
+generic Deploy URL, the Staging Suite will check to see if the
+artifact matches the patterns defined in this Repository Target. The
+repository target defines the "trigger" for the creation of a staging
+repository from this staging profile and is only needed for implicit
+deployments with the Deploy URL and not for explicit deployments using
+the Profile ID.
 
 Release Repository:: Staged artifacts are stored in a temporary
 staging repository which is made available via Target Groups. Once a
 staged deployment has been successfully tested, artifacts contained in
-the temporary staging repository are promoted to a hosted
-repository. The Release Repository setting configures the target
-release repository for this staging profile.
+the temporary staging repository are promoted to a hosted repository
+as their final storage place. The Release Repository setting
+configures this target release repository for this staging profile.
 
 Content Type:: Nexus can create staging repositories for repositories
 of type Maven1, Maven2, and P2 repositories. This value is
 automatically selected based on the chosen template. This chapter only
-deals with Maven2 repository types.
+deals with Maven2 repository types. TODO .. is this still true?
 
 Target Groups:: When a Staging Repository is "closed" and is made
 available to users and developers involved in the testing process, the
@@ -5601,7 +5823,7 @@ deployed a set of related release artifacts, a staging repository is
 same staging repository.  A repository would be closed when a
 developer is satisfied that a collection of staged artifacts is ready
 to be certified by a manager or a quality assurance resource. In this
-setting, it is possible to define email addresses and Roles which
+setting, it is possible to define email addresses and roles which
 should be notified of a staging repository being closed. A
 notification email will be sent to all specified email addresses, as
 well as all Nexus users in the specified roles, informing that a
@@ -5611,22 +5833,22 @@ the creator of the staging repository receives this notification.
 Promote Repository Notification Settings:: Once a closed staging
 repository has been certified by whoever is responsible for testing
 and checking a staged release, it can then be promoted (published) or
-dropped (discarded). In this setting, it is possible define email
-addresses and Roles which should be notified of a staging repository
-being promoted. A notification email will be sent to all specified
-email addresses, as well as all Nexus users in the specified roles,
-informing that a staging repository has been promoted. It is also
-possible to select that the creator of the staging repository receives
-this notification.
+dropped (discarded). In this setting, it is possible to define email
+addresses and Nexus security roles which should be notified of a
+staging repository being promoted. A notification email will be sent
+to all specified email addresses, as well as all Nexus users in the
+specified roles, informing that a staging repository has been
+promoted. It is also possible to select that the creator of the
+staging repository receives this notification.
 
 Drop Repository Notification Settings:: In this setting, it is
-possible define email addresses and Roles which should be notified of
+possible define email addresses and roles which should be notified of
 a staging repository being dropped.  A notification email will be sent
 to all specified email addresses, as well as all Nexus users in the
 specified roles, informing that a staging repository has been
 dropped. It is also possible to select that the creator of the staging
 repository receives this notification.
-
+           
 Close Repository Staging Rulesets:: This defines the rulesets which
 will be applied to a staging repository before it can be closed. If
 the staging repository does not pass the rules defined in the
@@ -5637,11 +5859,9 @@ Promote Repository Staging Rulesets:: This defines the rulesets which
 will be applied to a staging repository on promotion. If the staging
 repository does not pass the rules defined in the specified rulesets,
 the promotion will fail with an error message supplied by the failing
-rule. For more information about rulesets, see <<staging-sect-rulesets>>.
+rule. For more information about rulesets, see
+<<staging-sect-rulesets>>.
 
-Once you've created a Staging Repository with the values shown in
-<<fig-staging-edit-profile>>, you are ready to perform a test
-deployment to the Staging URL.
 
 [[staging-sect-config-build-profile]]
 ==== Configuring Build Promotion Profiles
@@ -5679,66 +5899,300 @@ through one or more groups.
 .Configuring a Build Promotion Profile
 image::figs/web/staging_closed-beta-promotion-group.png[scale=60]
 
-[[staging-sect-deploy-role]]
-==== Adding the Staging Deployer Role
+[[staging-sect-security]]
+==== Staging Related Security Setup
+
+Staging Suite is controlled by three roles:
+
+- Staging: Deployer
+- Staging: Promoter
+- Staging: Repositories
+
+These roles are available as general 'admin' roles that apply to all
+staging profiles with the respective access. When you create a new
+staging profile, Nexus will create new roles that grant permissions
+specific to that staging profile. If you created the staging profile
+named 'Test', Nexus created the three new and profile specific roles:
+
+Staging: Repositories (Test):: This role grants a user read and view
+access to the staging repositories created by the 'Test' staging
+profile.
+ 
+Staging: Deployer (Test):: This role grants all of the privileges from
+the Staging: Repositories role and in addition grants the user
+permission to deploy artifacts, close and drop any staging repository
+created by the 'Test' staging profile.
+
+Staging: Promoter (Test):: This role grants all of the privileges from
+the Staging: Deployer role and in addition grants the user permission
+to promote abt staging repository created by the 'Test' staging
+profile.
 
 To perform a staged deployment, the user deploying the artifact must
 have the "Staging: Deployer (admin)" role or the "Staging: Deployer"
 role for a specific Staging Profile.
 
-When you create a Staging Profile, Nexus will create two new Nexus
-roles that grant permissions specific to that staging profile. If you
-created the Staging profile from the previous section, Nexus would have
-created two roles:
-
-Staging: Repositories (Release Staging Profile):: This role grants a
-user read and view access to the staging repositories created by a
-specific staging profile.
-
-Staging: Deployer (Release Staging Profile):: This role grants all
-of the privileges from the Staging: Repositories role and it grants
-the user permission to deploy artifacts, close a staging repository,
-and promote or drop a staging repository created by a specific staging
-profile.
-
-In addition to the profile-specific staging roles, the Staging Suite
-also defines two universal roles which grant read-only or deployer
-rights across all staging repositories. These roles are:
-
-Staging: Repositories (admin):: This role grants a user read and view
-access to all staging repositories.
-
-Staging: Deployer (admin):: This role grants a user all of the
-privileges from the Staging: Repositories role and it grants the user
-permission to deploy artifacts to any staging repository, close all
-staging repositories, and promote or drop all staging repositories.
-
 To configure the deployment user with the appropriate staging role,
 click on Users under the Security menu in the Nexus menu. Once you see
-the Users panel, click on the deployment user to edit this user's
-roles. If the Staging Suite is installed, you should see the "Staging:
-Deployer (admin)" role listed in Available Roles. Select the "Staging:
-Deployer (admin)" role and then click the left arrow to add this role
-to the deployment user's list of assigned roles.
+the Users panel , click on the deployment user to edit this user's
+roles. Click on the Add button in the Role Management section of the
+Config tab visible in <<fig-staging-user-add-role>> for the user to be
+able to add new roles to the user.
 
-[[fig-staging-assigning-role]]
-.Assigning the Staging Deployer Role to the deployment user
-image::figs/web/staging_deployer-role.png[scale=60]
+
+[[fig-staging-user-add-role]]
+.Adding a Role to a User 
+image::figs/web/staging-user-add-role.png[scale=60]
+
+Use the Filter section with the keyword Staging and press the Apply
+ Filter button to see all available staging related roles as displayed
+ in <<fig-staging-user-add-role>>.
+
+[[fig-staging-user-add-role-dialog]]
+.Available Roles for Staging with a Test Staging Profile 
+image::figs/web/staging-user-add-role-dialog.png[scale=50]
+
+You should see the "Staging: Deployer (admin)" role listed as well as
+the 'Test' staging profile specific role, the promoter and
+repositories ones for 'admin' and 'Test' and a few staging user
+interface related roles. If you need to add a specific permission to
+activate a single Staging Profile, you would select that specific
+role.
 
 Once the deployment user has the "Staging: Deployer (admin)" role, you
 can then use this user to deploy to the staging URL and trigger any
-Staging Profile. Without this permission, the deployment user would
+staging profile. Without this permission, the deployment user would
 not be able to publish a staged artifact. 
 
-If you need to add a specific permission to activate a single Staging
-Profile, you would select that specific role in the Available Roles
-list shown in <<fig-staging-assigning-role>>. In this figure, note
-that there are two "Staging: Deployer" roles: one for general
-administrative permission to deploy to any staging profile, and
-another which targets a specific staging profile.
+In a similar fashion you can assign the promoter role to users.
+
+==== Using Repository Targets for Staging 
+
+The Staging Suite intercepts deployments to Nexus using Repository
+Targets as documented in <<confignx-sect-managing-repo-targets>> when
+using implicit matching as a profile selection strategy based on the
+artifacts path in the repository.
+
+For example, if you wanted to intercept all deployments to the
+com.sonatype.sample groupId, you would create a repository target
+with a pattern with a regular expression of
+`^/com/sonatype/sample/.*` and use that repository target in your
+Staging Profile configuration.
 
 [[staging-sect-deployment]]
-=== Performing a Staged Deployment with Maven
+=== Configuring your Project for Deployment
+
+Once Nexus is configured to receive artifacts in the staging suite as
+documented in <<staging-sect-prepare-nexus>>, you will have to update
+your project build configuration to deploy to the staging suite.
+
+The preferred way to do this is to take advantage of the features
+provided by the Nexus Staging Maven Plugin or the Nexus Staging Ant
+Tasks  as documented in
+<<staging-sect-deployment-nexus-staging-maven-plugin>>
+and <<staging-sect-deployment-nexus-staging-ant-tasks>>.
+
+If you need to continue to use the Maven Deploy Plugin you can read
+about using it with the Nexus Staging Suite in 
+<<staging-sect-deployment-maven-deploy-plugin>>. 
+
+With all tools you can use the manual upload of your artifacts
+documented in <<staging-sect-deployment-manual>>.
+
+[[staging-sect-deployment-nexus-staging-maven-plugin]]
+==== Deployment with the Nexus Staging Maven Plugin
+
+The Nexus Staging Maven Plugin is a Nexus specific and more powerful
+replacement for the Maven Deploy Plugin with a number of features
+specifically geared towards usage with the Nexus Staging Suite. The
+simplest usage can be configured by adding it to the project build plugins
+section as an extension:
+
+----
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.sonatype.plugins</groupId>
+      <artifactId>nexus-staging-maven-plugin</artifactId>
+      <extensions>true</extensions>
+      <configuration>
+        <serverId>local-nexus</serverId>
+        <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+      </configuration>
+    </plugin>
+----
+
+This configuration works only in Maven 3 and automatically replaces
+the deploy goal invocation of the Maven Deploy Plugin in the deploy
+Maven lifecycle phase with the deploy goal invocation of the Nexus
+Staging Maven Plugin. 
+
+The minimal required configuration parameters for the Nexus Staging Maven Plugin are:
+
+serverId:: the id of the server element in `settings.xml` from which
+the user credentials for accessing Nexus should be retrieved 
+nexusUrl:: the base URL at which the Nexus server to be used for
+staging is available
+
+With this configuration the Nexus Staging Maven Plugin will stage the
+artifacts locally and connect to Nexus. Nexus will try to determine
+the appropriate Staging Profile by matching the artifact path with any
+repository targets configured with staging profiles with an activated
+implicit profile selection strategy. If an appropriate staging profile
+is found a staging repository is created on the fly and the artifacts
+are deployed into it. If no profile is found the upload will fail.
+
+If more control is desired over when the plugins deploy goal is
+activated or if Maven 2 is used, you have to explicitly deactivate the
+Maven Deploy Plugin and replace the Maven Deploy Plugin invocation
+with the Nexus Staging Maven Plugin like this
+
+----
+<build> 
+  <plugins> 
+    <plugin> 
+      <groupId>org.apache.maven.plugins</groupId> 
+      <artifactId>maven-deploy-plugin</artifactId> 
+      <configuration>
+        <skip>true</skip> 
+      </configuration> 
+    </plugin> 
+    <plugin> 
+      <groupId>org.sonatype.plugins</groupId> 
+      <artifactId>nexus-staging-maven-plugin</artifactId>
+      <executions> 
+        <execution> 
+          <id>default-deploy</id> 
+          <phase>deploy</phase> 
+          <goals> 
+            <goal>deploy</goal> 
+          </goals> 
+        </execution> 
+      </executions> 
+      <configuration> 
+        <serverId>local-nexus</serverId>
+        <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+      </configuration> 
+    </plugin>
+...
+----
+
+The implicit matching relies on the setup of repository targets as
+well as the correct order of staging profiles and is therefore an
+error prone approach when many staging profiles are in use. 
+
+The preferred way to work in this sceneario is to change the profile
+selection strategy on all staging profiles to explicit only and pass
+the staging profile id to the Nexus Staging Maven Plugin using the
+`stagingProfileId` configuration parameter.
+
+In order to deploy project artifacts to Nexus with the above setup you
+would invoke a build with
+
+----
+mvn clean deploy
+----
+
+The build will locally stage the artifacts for deployment in
+`target/nexus-staging`, log an info statement like
+
+----
+[INFO] Using staging profile ID "12928995ef7eaecc" (configure by user).
+----
+
+or
+
+----
+[INFO] Using staging profile ID "12928995ef7eaecc" (matched by Nexus).
+----
+
+on the console and create a closed staging repository in Nexus
+holding the build artifacts. This execution of the `deploy`
+goal of the Nexus Staging Maven Plugin performs the following actions:
+
+- the artifacts are staged locally, 
+
+- a staging profile is selected either implicitly or explicitly
+
+- a staging repository is either created on the fly if needed or just
+  selected
+
+- an atomic upload to the staging repository is performed
+
+- and the staing repository is closed (or dropped if upload fails)
+
+If the configuration parameter
+`skipStagingRepositoryClose` set to `true` is passed to the plugin
+execution, only the local staging happens. This local staging can then
+be picked up for the remote staging and closing by running the
+`deploy-staged` goal of the plugin explicitly e.g. like this
+
+----
+mvn nexus:deploy-staged
+----
+
+Instead of Nexus creating a staging repository based on the implicit
+or explicit staging profile selection, you can explicitly configure
+the staging repository to use by providing the staging repository name
+as value of the `stagingRepositoryId` configuration property via the
+plugin configuration or command line invocation.
+
+Finally to override all staging you can define the full repository URL to
+deploy to with the `deployUrl` configuration parameter e.g. like 
+
+In addition tags can be added to the configuration section like this:
+
+----
+...
+<configuration>
+...  
+  <tags>
+    <localUsername>${env.USER}</localUsername>
+    <javaVersion>${java.version}</javaVersion>
+  </tags>
+...
+----
+
+In addition to the above documented configuration options that
+determine the behavior of the Nexus Staging Maven Plugin, further
+configuration can be provided with the following parameters:
+
+altStagingDirectory:: defaulting to target/nexus-staging you can
+set the property to set a different folder for the local staging 
+description:: allows you to provide a description for the staging
+repository action like close or drop carried out as part of the plugin
+execution
+keepStagingRepositoryOnFailure:: setting this flag to true will cause
+the plugin to skip any clean up operations like dropping a staging
+repository for failed uploads, by default these clean up operations
+occur
+skipStaging:: set to false by default this flag will cause to skip any
+execution of the plugin when set to true
+skipRemoteStaging:: if this flag is set to true any step related to
+remote staging will be skipped and only local staging will be
+performed, the default setting is false
+
+TODO document the rest of the goals namely close, drop, promote and
+release and their remote control equivalents rc-close ...
+
+
+[[staging-sect-deployment-nexus-staging-ant-tasks]]
+==== Deployment with the Nexus Staging Ant Tasks
+
+TODO
+
+[[staging-sect-deployment-maven-deploy-plugin]]
+==== Deployment with the Maven Deploy Plugin
+
+
+
+TODO this uses implicit mathcing and repo target Here is the old content.. needs update and more
+
+Maven deploy plugin
+ A staging profile uses a Repository Target to match
+artifacts as they are deployed. If a matching artifact is deployed to
+Nexus, the Staging Suite will intercept this deployment and store the
+artifact in a staging repository.
 
 In the previous section, you created a Staging Profile which
 references the Repository Target created previously. If the Staging
@@ -5751,61 +6205,6 @@ Group you selected when you configured the Staging Profile.
 In this section, you will create a new project using the Maven
 Archetype plugin to test the Staging Profile you created in the
 previous section.
-
-[[staging-sect-creating]]
-==== Creating a New Project
-
-To create a new project run mvn archetype:generate. Running this at
-the command line will bring up a list of archetypes, choose the
-default maven-archetype-quickstart, and use the identifier values
-listed in <<tbl-staging-new-project>> for the new project.
-
-[[tbl-staging-new-project]]
-.Identifiers for New Project
-[cols="2,5",options="header"]
-|====
-|Identifier|Value
-|groupId|com.sonatype.sample
-|artifactId|staging-test
-|version|1.0
-|package|com.sonatype.sample
-|====
-
-If the archetype generate goal is executed successfully, you should
-have output which resembles the following screen listing:
-
-----
-$ mvn archetype:generate
-...
-[INFO] [archetype:generate]
-[INFO] Generating project in Interactive mode
-[INFO] No archetype defined. Using maven-archetype-quickstart \
-(org.apache.maven.archetypes:maven-archetype-quickstart:1.0)
-Choose archetype:
-1: internal -> appfuse-basic-jsf (AppFuse archetype for creating a \
-web application with Hibernate, Spring and JSF)
-...
-41: internal -> gmaven-archetype-mojo (Groovy mojo archetype)
-Choose a number:  (1/.../41) 16: : 16
-Define value for groupId: : com.sonatype.sample
-Define value for artifactId: : staging-test
-Define value for version:  1.0-SNAPSHOT: : 1.0
-Define value for package:  com.sonatype.sample: : com.sonatype.sample
-Confirm properties configuration:
-groupId: com.sonatype.sample
-artifactId: staging-test
-version: 1.0
-package: com.sonatype.sample
-Y: : 
-[INFO] Parameter: groupId, Value: com.sonatype.sample
-[INFO] Parameter: packageName, Value: com.sonatype.sample
-[INFO] Parameter: basedir, Value: /private/tmp
-[INFO] Parameter: package, Value: com.sonatype.sample
-[INFO] Parameter: version, Value: 1.0
-[INFO] Parameter: artifactId, Value: staging-test
-...
-[INFO] BUILD SUCCESSFUL
-----
 
 
 [[staging-sect-update-pom]]
@@ -5942,8 +6341,9 @@ could not be found on repository: nexus, so will be created
 [INFO] BUILD SUCCESSFUL
 ----
 
-[[staging-sect-uploading-staged]]
-=== Manually Uploading a Staged Deployment in Nexus
+
+[[staging-sect-deployment-manual]]
+==== Manually Uploading a Staged Deployment in Nexus
 
 You can also upload a staged deployment via the Nexus interface. To
 upload a staged deployment, select Staging Upload from the Nexus
@@ -5990,91 +6390,12 @@ profiles that are activated by the upload. If a staging profile is
 activated, a new staging repository will be created and can be managed
 using the procedures outlined in <<staging-sect-managing-staging>>.
 
-[[staging-sect-rulesets]]
-=== Managing Rulesets
-
-Nexus Professional has the ability to define staging rules that must
-be satisfied before a staging repository can be promoted.
-
-[[staging-sect-staging-rulesets]]
-==== Managing Staging Rulesets
-
-Staging Rulesets are groups of rules that are applied to a Staging
-repository at promotion time. A staging repository associated with a
-staging ruleset cannot be promoted until all of the rules associated
-with the rulesets have been satisfied. This feature allows you to set
-standards for your own hosted repositories, and it is the mechanism
-that is used to guarantee the consistency of artifacts stored in the
-Maven Central repository.
-
-Nexus Professional contains the following rules:
-
-Staging Javadoc Validation:: The Staging Javadoc Validation rule will
-verify that every project has an artifact with the javadoc
-classifier. If you attempt to promote a staging repository which
-contains artifacts not accompanied by "-javadoc.jar" artifacts, this
-validation rule will fail.
-
-Staging Artifact Uniqueness Validation:: This rule checks to see that
-the artifact being released, promoted, or staged is unique in a
-particular Nexus instance.
-
-Staging Checksum Validation:: This rule validates file checksums
-against published artifacts.
-
-Staging No Release Repository:: This rule will fail if a particular
-staging profile is not defined with a release repository.
-
-Staging POM Validation:: The Staging POM Validation rule will verify
-Project URL - project/url, Project Licenses - project/licenses and
-Project SCM Information - project/scm.  If any of these POM elements
-are missing or empty, this Staging Ruleset will cause a promotion to
-fail.
-
-Staging Signature Validation:: The Staging Signature Validation rule
-verifies that every item in the repository has a valid PGP
-signature. If you attempt to promote a staging repository which
-contains artifacts not accompanied by valid PGP signature, this
-validation will fail.
-
-Staging Sources Validation:: The Staging Sources Validation rule will
-verify that every project has an artifact with the sources
-classifier. If you attempt to promote a staging repository which
-contains artifacts not accompanied by "-sources.jar" artifacts, this
-validation rule will fail.
-
-To create a Staging Ruleset, click on the Staging Ruleset link in the
-Nexus Menu. This will load the interface shown in
-<<fig-staging-rulesets>>.  The Staging Ruleset panel is used to define
-sets of rules that can be applied to Staging
-Profiles. <<fig-staging-rulesets>> shows a ruleset which contains all
-four predefined staging rules.
-
-[[fig-staging-rulesets]]
-.Creating a Staging Ruleset
-image::figs/web/staging-rulesets.png[scale=60]
-
-[[staging-sect-defining-rulesets]]
-==== Defining Rulesets for Promotion
-
-To define a ruleset to be used for promotion, click on Staging in the
-Nexus menu and select a Staging Profile. Click on the Configuration
-tab, and scroll down to the Promote Repository Staging Rulesets
-section of the Staging Profile configuration as shown in
-<<fig-staging-associate-ruleset>>. The next time you attempt to
-promote a staging repository that was created with this profile, Nexus
-Professional will check that all of the rules in the associated
-rulesets are being adhered to.
-
-[[fig-staging-associate-ruleset]]
-.Associating a Staging Ruleset with a Staging Profile
-image::figs/web/staging-rulesets-associate.png[scale=60]
 
 [[staging-sect-managing-staging]]
 === Managing Staging Repositories in Nexus
 
-Once you complete the process outlined in <<staging-sect-deployment>>,
-you will then have an automatically generated Staging Repository. In
+Once you completed the process outlined in <<staging-sect-deployment>>,
+you will have an automatically generated Staging Repository. In
 this section, you will walk through the process of managing staging
 repositories. Once a staging repository has been created, there are
 two steps in the lifecycle of a staging repository. Once you have
@@ -6320,284 +6641,134 @@ repository.
 .Promoting Multiple Repositories to the Same Build Promotion Profile
 image::figs/web/multiple-promotion-release.png[scale=60]
 
-[[staging-sect-managing-plugin]]
-=== Managing Staging Repositories with the Nexus Maven Plugin
-
-You can do everything that was described in
-<<staging-sect-managing-staging>> with the Nexus Maven Plugin. Using
-the Nexus Maven Plugin you can:
-
-* Close a Staging Repository
-
-* Promote a Staging Repository
-
-* Drop a Staging Repository
-
-* List All Available Staging Repositories
-
-[[staging-sect-running-nexus-plugin]]
-==== Running the Nexus Maven Plugin
-
-To invoke goals in the Nexus Maven plugin, you will want to add the
-appropriate plugin group to your Maven settings file. Add the
-org.sonatype.plugins groupId to ~/.m2/settings.xml as shown in
-<<ex-staging-nexus-plugin-group>>.
-
-[[ex-staging-nexus-plugin-group]]
-.Adding org.sonatype.plugins to pluginGroups in Maven Settings
-----
-<settings>
-  ...
-  <pluginGroups>
-    <pluginGroup>org.sonatype.plugins</pluginGroup>
-  </pluginGroups>
-  ...
-</settings>
-----
-
-Adding the org.sonatype.plugins group to your Maven Settings will
-allow you to run the following goals from the Nexus Maven Plugin:
-
-nexus:staging-close:: This goal will close a staging repository from
-Maven. This goal in the Nexus Maven plugin corresponds to the
-procedure described in <<staging-sect-closing>>.
-
-nexus:staging-list:: This goal will list all of the staging
-repositories which are currently visible to a user.
-
-nexus:staging-drop:: This goal allows you to drop a specific staging
-repository. If no repositories are specified for this goal, this
-plugin will present an interactive menu listing all of the closed
-staging repositories currently eligible for a drop operation.
-
-nexus:staging-promote:: This goal allows you to promote a specific
-repository. If no repositories are specified for this goal, this
-plugin will present an interactive menu listing all of the closed
-staging repositories currently eligible for a promote operation.
-
-Once you have configured the pluginGroup in your Maven Settings file,
-you can run the Nexus Maven plugin from the command line. In order to
-access the staging suite in your Nexus instance, the plugin must be
-told where Nexus is.
 
-----
-$ mvn nexus:staging-list
-----
 
-[[staging-sect-mvn-plugin]]
-==== Configuring Nexus Maven Plugin for Staging
 
-All of the Staging goals in the Nexus Maven plugin require
-security credentials and a base URL for the Nexus server you are
-attempting to manage. You can specify security credentials by supplying
-a username and password or by supplying a server id that corresponds to
-a server in your Maven Settings (~/.m2/settings.xml). The common
-configuration parameters and security configuration properties
-are:
-
-nexusUrl:: Points to the Nexus server installation's base URL. If you
-have installed Nexus on your local machine, this would be
-http://localhost:8081/nexus/
-
-username:: Username to use for authenticating to Nexus. Default value
-is operating system level user name
-
-password:: Password to use for authenticating to Nexus
-
-serverAuthId:: You should specify either username and password or the
-serverAuthId. If you specify a value for serverAuthId, the Nexus Maven
-plugin is going to look at the contents of your ~/.m2/settings.xml
-file and use the username and password from a server definition. In
-most cases a valid user login will be required to access your staging
-information. By default, if you don't specify the nexusUrl and
-password parameters, the plugin will prompt you for them. If you don't
-specify the username parameter, the Java System property
-$user.name. In addition to these security options, all of the staging
-goals have a common configuration property which controls the logging
-level.
-
-verboseDebug:: If verboseDebug is set to true Maven will print out
-debug messages that detail the plugin's interaction with Nexus.
-
-==== Listing Your Open Staging Repositories
-
-Once you've deployed one or more sets of artifacts as
-release candidate to Nexus, you'll have one or more open staging
-repositories. There are a variety of actions you can take with these
-repositories, but maybe one of the most basic is to list them. This
-gives you a pretty good view into the status of your release(s). The
-basic command is:
-
-----
-$ mvn nexus:staging-list
-[...]
-[INFO] Logging into Nexus: http://localhost:8082/nexus
-[INFO] User: testuser
-[INFO] 
-
-[INFO] The following OPEN staging repositories were found: 
-
--  staging-003 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-003
-
-[INFO] The following CLOSED staging repositories were found: 
-
--  staging-001 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-001
-Description: This is a test repository
-
--  staging-002 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-002
-Description: This is another test repository
-
-You can find more information about this Mojo
-https://repository.sonatype.org/content/sites/maven-sites/nexus-maven-plugin/usage-staging.html[here]
-----
-
-==== Closing a Staging Repository
-
-Before your team can run any tests against the set of artifacts that
-constitute your release, you need to mark the open staging repository
-as closed. This means that no additional artifacts can be added to
-that specific staging repository, making the set of artifacts it
-contains an immutable snapshot. When it is closed, the repository will
-become available for artifact resolution. The basic command is:
-
-----
-$ mvn nexus:staging-close
-[INFO] 
-
-Available Staging Repositories:
-
-1: staging-002 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-002
-
-
-Select a repository to close (1) 1: : 1
-
-Repository Description: This is a test repository
-[INFO] Finishing staging repository for: 'com.myco:my-project:1':
-
--  staging-002 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-002
-
-[INFO] The following CLOSED staging repositories were found for: \
-'com.myco:my-project:1':
-
--  staging-001 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-001
-Description: This is a test repository
-
--  staging-002 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-002
-Description: This is another test repository
-----
-
-The output above shows that the staging-close goal found an open
-staging repository - staging-001 - for the current project, then told
-Nexus to close it. Afterwards, it displayed the list of closed staging
-repositories, which included the one we just closed. If you don't have
-an open staging repository, you'll see something like this
-instead:
-
-----
-No open staging repositories found. Nothing to do!
-
-[INFO] The following CLOSED staging repositories were found for: \
-'com.myco:my-project:1':
-
--  staging-001 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-001
-Description: This is a test repository
-
--  staging-002 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-002
-Description: This is another test repository
-
-You can find more information about this Mojo https://repository.sonatype.org/content/sites/maven-sites/nexus-maven-plugin/staging-close-mojo.html[here]
-----
-
-
-==== Dropping a Closed Staging Repository
-
-In the unfortunate event that your project artifacts fail during
-testing, you may need to drop the staging repository that houses them,
-in order to avoid confusing them with newer candidate releases.  The
-basic command is:
-
-----
-$ mvn nexus:staging-drop
-[INFO] 
-
-Available Staging Repositories:
-
-1: staging-006 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-006
-Description: This is a test repository
-
-Select a repository to drop (1) 1: : 1
-[INFO] Dropping staged repository: 
-
--  staging-006 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-006
-Description: This is a test repository
-----
-
-The goal will present you with a list of closed staging repositories,
-with the first in the list selected as the default response. If you
-simply hit the Enter key, the default will be used; otherwise, the
-repository corresponding to the number you select will be used. If you
-have no closed staging repositories, you'll see something like this
-instead:
-
-----
-[INFO] 
-
-No closed staging repositories found. Nothing to do!
-
-You can find more information about this Mojo https://repository.sonatype.org/content/sites/maven-sites/nexus-maven-plugin/staging-drop-mojo.html[here]
-----
-
-==== Promoting a Closed Staging Repository
-
-On the other hand, if your project artifacts pass all tests, you will
-find that you need to promote the staging repository that houses them,
-in order to finalize the release and make the artifacts available for
-public consumption. The basic command is:
-
-----
-$ mvn nexus:staging-promote
-[INFO] 
-
-Available Staging Repositories:
-
-1: staging-006 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-006
-Description: This is a test repository
-
-Select a repository to promote (1) 1: : 1
-Target Repository ID: releases
-[INFO] Promoting staging repository to: releases:
-
--  staging-006 (profile: Example Profile)
-URL: http://localhost:8082/nexus/content/repositories/staging-006
-Description: This is a test repository
-----
-
-The goal will present you with a list of closed staging repositories,
-with the first in the list selected as the default response. If you
-simply hit the Enter key, the default will be used; otherwise, the
-repository corresponding to the number you select will be used. If you
-have no closed staging repositories, you'll see something like this
-instead:
-
-----
-[INFO] 
-
-No closed staging repositories found. Nothing to do!
-
-You can find more information about this Mojo https://repository.sonatype.org/content/sites/maven-sites/nexus-maven-plugin/staging-promote-mojo.html[here]
-----
+[[staging-sect-multi]]
+==== Multi-level Staging and Build Promotion
+
+Nexus also supports multi-level staging and build
+promotion. With multi-level staging, a staging repository can be
+tested and then promoted to a separate "build promotion" profile and
+exposed through different repository groups to allow for additional
+testing and qualification before a final
+frelease. <<fig-staging-multi-scenario>> illustrates a potential use
+for multi-level staging:
+
+Stage:: A developer publishes artifacts to a QA staging profile which
+exposes the staged artifacts in a QA repository group used by an
+internal quality assurance team for testing.
+
+Promote to Beta:: Once the QA team has successfully completed
+testing, they promote the temporary staging repository to build
+promotion profile which will expose the staged artifacts to a limited
+set of customers who have agreed to act as a beta testers for a new
+feature.
+
+Release:: Once this closed beta testing period is finished, the
+staged repository is then released and the artifacts it contains are
+published to a hosted release repository and exposed via the public
+repository group.
+
+[[fig-staging-multi-scenario]]
+.Multi-level Staging and Build Promotion
+image::figs/web/multi-level-staging.png[scale=60]
+
+To support this multi-level staging feature, you can configure Build
+Promotion profiles as detailed in
+<<staging-sect-config-build-profile>>. Once you have promoted a
+Staging Repository to a Build Promotion profile, you can drop,
+promote, or release the artifacts it contains as detailed in
+<<staging-sect-prepare-nexus>>.
+
+
+WARNING: TODO - where to put this info best..The Nexus Maven Plugin in
+versions earlier than 2.1 had goals to work with staging
+repositories. These goals have been deprecated in favour of the Nexus
+Staging Maven Plugin. If you are still using the old plugin you should
+consider migrating to the new plugin and usage patterns. Documentation
+for the old plugin is available TODO.
+
+[[staging-sect-rulesets]]
+=== Enforcing Standards for Deployment and Promotion with Rulesets
+
+Nexus has the ability to define staging rules that must be satisfied
+to allow successful deployment or before a staging repository can be
+promoted.
+
+[[staging-sect-staging-rulesets]]
+==== Managing Staging Rulesets
+
+Staging Rulesets are groups of rules that are applied to a Staging
+repository at promotion time. A staging repository associated with a
+staging ruleset cannot be promoted until all of the rules associated
+with the rulesets have been satisfied. This feature allows you to set
+standards for your own hosted repositories, and it is the mechanism
+that is used to guarantee the consistency of artifacts stored in the
+Maven Central repository.
+
+Nexus Professional contains the following rules:
+
+Staging Javadoc Validation:: The Staging Javadoc Validation rule will
+verify that every project has an artifact with the javadoc
+classifier. If you attempt to promote a staging repository which
+contains artifacts not accompanied by "-javadoc.jar" artifacts, this
+validation rule will fail.
+
+Staging Artifact Uniqueness Validation:: This rule checks to see that
+the artifact being released, promoted, or staged is unique in a
+particular Nexus instance.
+
+Staging Checksum Validation:: This rule validates file checksums
+against published artifacts.
+
+Staging No Release Repository:: This rule will fail if a particular
+staging profile is not defined with a release repository.
+
+Staging POM Validation:: The Staging POM Validation rule will verify
+Project URL - project/url, Project Licenses - project/licenses and
+Project SCM Information - project/scm.  If any of these POM elements
+are missing or empty, this Staging Ruleset will cause a promotion to
+fail.
+
+Staging Signature Validation:: The Staging Signature Validation rule
+verifies that every item in the repository has a valid PGP
+signature. If you attempt to promote a staging repository which
+contains artifacts not accompanied by valid PGP signature, this
+validation will fail.
+
+Staging Sources Validation:: The Staging Sources Validation rule will
+verify that every project has an artifact with the sources
+classifier. If you attempt to promote a staging repository which
+contains artifacts not accompanied by "-sources.jar" artifacts, this
+validation rule will fail.
+
+To create a Staging Ruleset, click on the Staging Ruleset link in the
+Nexus Menu. This will load the interface shown in
+<<fig-staging-rulesets>>.  The Staging Ruleset panel is used to define
+sets of rules that can be applied to Staging
+Profiles. <<fig-staging-rulesets>> shows a ruleset which contains all
+four predefined staging rules.
+
+[[fig-staging-rulesets]]
+.Creating a Staging Ruleset
+image::figs/web/staging-rulesets.png[scale=60]
+
+[[staging-sect-defining-rulesets]]
+==== Defining Rulesets for Promotion
+
+To define a ruleset to be used for promotion, click on Staging in the
+Nexus menu and select a Staging Profile. Click on the Configuration
+tab, and scroll down to the Promote Repository Staging Rulesets
+section of the Staging Profile configuration as shown in
+<<fig-staging-associate-ruleset>>. The next time you attempt to
+promote a staging repository that was created with this profile, Nexus
+Professional will check that all of the rules in the associated
+rulesets are being adhered to.
+
+[[fig-staging-associate-ruleset]]
+.Associating a Staging Ruleset with a Staging Profile
+image::figs/web/staging-rulesets-associate.png[scale=60]
 
 [[rhc]]
 == Repository Health Check
@@ -6658,8 +6829,8 @@ The security list as visible in <<fig-rhc-detail-security-list>>
 contains columns for Threat Level, Problem Code and the GAV parameters
 identifying the affected artifact. The Problem Code column is a link
 to the security warning referenced and commonly links a specific entry
-in http://osvdb.org[the Open Source Vulnerability Database] or
-http://cvs.mitre.org[the Common Vulnerabilities and Exposures] list.
+in http://www.osvdb.org[the Open Source Vulnerability Database] or
+http://cve.mitre.org[the Common Vulnerabilities and Exposures] list.
 Both of these databases have a descriptive text for the vulnerability
 and further information and reference links.
 
@@ -6694,125 +6865,6 @@ you will have to investigate all your project.
 Sonatype Insight itself helps with these tasks by enabling monitoring
 of builds and products, analyzing release artifacts and creating bill
 of material and other reports. 
-
-////
-
-Repository Health Awareness Avoid risks by identifying problematic
-components. New reports identify licensing, security and quality
-information about every component in the repo.
-
-Control Problematic Components Restrict access to the problematic
-components using Nexus Procurement. Use the results of the Health
-Awareness report to inform your procurement configuration.
-
-Need a complete, automated open source component management system,
-including rule-based component management? Check out Sonatype Insight.
-
-
-Popularity Reporting Improve component selection using the wisdom of
-the crowd. The popularity report, based on downloads from Central and
-Insight scanning results, tells you which components other developers
-are using.
-
-using open source = higher quality and improved security but like an
-iceberg there could be hidden risks under the surface -> quality,
-security, license
-
-part of Pro, meta data about artifacts in central and other
-repositories
-
-the nature of java development means that risks may be well hidden
-beyond your view
-
-sonatype manages central repo  means
-
-they have consumption awareness (which components get downloaded)
-
-update awareness (know when new releases become available, and
-monitors release notes and is aware of detected vulnerabilities)
-
-quality, security and license information => Sonatype Insight
-
-
-Automated tools you need throughout development
-
-proactive: avoid costly rework
-
-predictable: avoid surprises
-
-Visibility: policies being followed
-
-Developer friendly: no work disruptions
-
-Benefits of open source without the risk
-
-Development Insight: give you the information you need right in your tools
-
-Application Insight: lets you know what your apps are made of
-
-Management Insight: lets you know which OSS components are being used
-in your organization
-
-now that you have control of artifacts coming in with procurement and
-releases with Staging you can see more info about security and license
-data of used and prospective artifacts
-
-
-Quality Column in Repositories - Unavailable, Analyze 
-for proxy repositories
-
-Phases:
-
-Design: Build Internal Repositories, Select Components (Quality,
-License and Security)
-
-Develop: Real-time Updates, Direct to Developer Tools, Developer Friendly
-
-Build: Enforce Component Standards, Build and CI server Infrastructure
-(Hudson, Jenkins, Bamboo, Maven, Ant)
-
-Release: Full Bill of Materials, Capturing all Components in a Release
-
-Production: Monitor Bill of Materials for Security Flaws, Identify
-Applications for Critical Updates
-
-Global Visibility Across the Entire Software Development Lifecycle
-
-Enterprise Open Source Governance
-
-Nexus and Insight can help to Enforce Standards for Selecting Open
-Source Components
-
-Insight provides a framework for 
-
-- Enterprise OSS Governance
-
-- Standards Enforcement
-
-- Policy Definition
-
-Gain Visibility of Downloads across entire organization
-
-Expose Hidden Open Source Risks
-
-How/When/Where OSS Components are Consumed
-
-Maintain a Full Bill of Materials
-
-Constant Analysis of Deployed Applications
-
-Notification of Newly Identified OSS Risks
-
-Choose, Manage, Analyze, Monitor
-
-Alerts about new vulnerabilities
-- detect vulnerable components
-- determine impact
-- mitigate risk
-
-understand obligations of using different OSS licenses
-
-////
 
 
 [[settings]]
@@ -6857,23 +6909,94 @@ input and click the Save button.
 To edit a template, click on a template that has a User Managed value
 of true, and edit the template in the Settings Templated panel. Once
 you are finished editing the template, click Save to save the
-template. When editing the template, the following variables are
-available:
+template. When editing the template, the following variables can be
+used and will be replaced with their values at request time:
 
-baseurl:: This variable will be replaced with the base URL of the
-Nexus installation.
+baseurl::  the base URL of the Nexus installation.
+userId::   the user id of the user that is generating a Maven Settings file from this template.
+userToken:: the formatted user token composed of name code, ':' and
+pass code.
+userToken.nameCode:: the name code part of the user token
+userToken.passCode:: the pass code part of the user token
 
-userId:: This variable will be replaced with the user id of the
-user that is generating a Maven Settings file from this template.
+An example usage of baseurl and user token in a settings
+template follows:
+
+----
+<settings>
+  <servers>
+    <server>
+      <id>nexus</id>
+      <!-- User-token: ${userToken} -->
+      <username>${userToken.nameCode}</username>
+      <password>${userToken.passCode}</password>
+    </server>
+  </servers>
+  <mirrors>
+    <mirror>
+     <id>nexus</id>
+      <mirrorOf>*</mirrorOf>
+      <url>${baseurl}/content/groups/public</url>
+    </mirror>
+...
+----
 
 To preview a Maven Settings template, click on the Template URL in the
 table of Maven Settings templates. Clicking on this URL will load a
 dialog window which contains the Maven Settings file generated from
 this template. This rendered view of the Maven Settings template will
 have all variable references replaced using the current context of the
-user: $baseurl will be replaced with the Base URL of the current Nexus
-installation, and $userId will be replaced with the user id of the
-current user.
+user. The property replacement can be running on the Nexus server side
+as done in the dialog or when used with the Nexus Maven Plugin on the
+client side as well. Server side replacement uses the standard Maven
+syntax of '${property.name}' using curly braces, while client side
+replacement uses '$[property.name]' with square braces.
+
+Client side properties supported by the Nexus Maven Plugin are
+
+- userToken
+- userToken.encrypted
+- userToken.nameCode
+- userToken.nameCode.encrypted
+- userToken.passCode
+- userToken.passCode.encrypted
+
+Maven itself supports 
+
+- server.password
+- server.passphrase
+- proxy.password
+
+Using client side interpolation is useful when using 
+http://maven.apache.org/guides/mini/guide-encryption.html[Maven
+master-password encryption] with the master keyword in
+'settings-security.xml' or in general when Maven and the Nexus Maven
+Plugin are used to download the setting. In this use case the '.encrypted'  values
+should be used like this
+
+----
+<server>
+  <id>nexus-client-side-interp-encrypted</id>
+  <!-- User-token: $[userToken.encrypted] -->
+  <username>$[userToken.nameCode.encrypted]</username>
+  <password>$[userToken.passCode.encrypted]</password>
+</server>
+----
+
+which will result in values using the encrypted value syntax based on
+the master keyword similar to e.g.
+
+----
+<server>
+  <id>nexus-client-side-interp-encrypted</id>
+  <!-- User-token: {2Sn+...} -->
+  <username>{3HQg...}</username>
+  <password>{fsx2f...}</password>
+</server>
+----
+
+Server side interpolation takes effect even when the download of the
+settings template is done with tools like curl.
 
 [[settings-sect-downloading]]
 === Downloading Maven Settings with the Nexus Maven Plugin
@@ -7748,10 +7871,11 @@ the Add... drop-down and choose "Hosted Repository" as shown in <<fig-sites-add-
 image::figs/web/sites-add-hosted.png[scale=60]
 
 In the New Hosted Repository form, click on the Repository Type
-drop-down and chose the Maven Site Repository format as shown in <<fig-sites-new-site-repo>>. Although you can use any
-arbitrary name and identifier for your own Nexus repository, for the
-chapter's example, use a Repository ID of "site" and a Repository Name
-of "Maven Site".
+drop-down and chose the Maven Site Repository format as shown in
+<<fig-sites-new-site-repo>>. Although you can use any arbitrary name
+and identifier for your own Nexus repository, for the chapter's
+example, use a Repository ID of "site" and a Repository Name of "Maven
+Site".
 
 [[fig-sites-new-site-repo]]
 .Creating a New Maven Site Repository
@@ -7846,483 +7970,7 @@ by going to http://localhost:8081/nexus/content/sites/site/
 .Sample Site Maven Project Web Site
 image::figs/web/sites-sample-site.png[scale=60]
 
-[[custom-metadata-plugin]]
-== Custom Metadata Plugin
 
-=== Introduction
-
-The custom metadata plugin is an optional plugin that comes as part of
-any Nexus download. It allows you to view, edit and search for
-additional metadata about any artifact in your Nexus repositories.
-
-The directory containing the plugin code is called
-nexus-custom-metadata-plugin-X.Y.Z. Intall the plugin following the
-instructions in <<install-additional-plugins>>.
-
-=== Viewing Artifact Metadata
-
-The Custom Metadata Plugin gives you the ability to view artifact
-metadata. When browsing repository storage or a repository index,
-clicking on an artifact will load the Artifact Information panel.
-Selecting the Artifact Metadata tab will display the interface shown
-in <<fig-using-viewing-metadata>>.
-
-[[fig-using-viewing-metadata]]
-.Viewing Artifact Metadata
-image::figs/web/meta_existing-meta-value.png[scale=60]
-
-Artifact metadata consists of a key, a value, and a namespace.
-Existing metadata from an artifact's POM is given a urn:maven
-namespace, and custom attributes are stored under the urn:nexus/user
-namespace.
-
-=== Editing Artifact Metadata
-
-The Custom Metadata Plugin gives you the ability to add custom
-attributes to artifact metadata. To add a custom attribute, click on
-an artifact in Nexus, and select the Artifact Metadata tab. On the
-Artifact Metadata tab, click on the Add... button and a new row will
-be inserted into the list of attributes. Supply a key and value and
-click the Save button to update an artifact's
-metadata. <<fig-using-editing-metadata>> shows the Artifact Metadata
-panel with two custom attributes: "approvedBy" and "approved".
-
-[[fig-using-editing-metadata]]
-.Editing Artifact Metadata
-image::figs/web/meta_setting-meta-value.png[scale=60]
-
-=== Searching Artifact Metadata
-
-The Custom Metadata Plugin provides you with the ability to configure
-custom artifact metadata and search for artifacts with specific
-metadata. To search for artifacts using metadata, click on the
-Advanced Search link directly below the search field in the Nexus
-application menu to open the Search panel. Once in the search panel,
-click on the Keyword Search and click on Metadata Search in the search
-type drop-down as shown in <<fig-using-search-metadata>>.
-
-[[fig-using-search-metadata]]
-.Searching Artifact Metadata
-image::figs/web/meta_search-selection.png[scale=60]
-
-Once you select the Metadata Search you will see two search fields and
-an operator drop-down. The two search fields are the key and value of
-the metadata you are searching for. The key corresponds to the key of
-the metadata you are searching for, and the value contains the value
-or value range you are searching for. The operator drop-down can be set
-to Equals, Matches, Bounded, or Not Equal.
-
-.Metadata Search Results for Custom Metadata
-image::figs/web/meta_search-function.png[scale=60]
-
-Once you locate a matching artifact in the Metadata Search interface,
-click on the artifact and then select the Artifact Metadata to examine
-an artifacts metadata as shown in <<fig-using-search-metadata-results>>.
-
-[[fig-using-search-metadata-results]]
-.Metadata Search Results for Custom Metadata
-image::figs/web/meta_search-result-0.png[scale=60]
-
-
-[[user-account]]
-== User Account Plugin
-
-=== Introduction
-
-Nexus Professional's User Account Plugin allows anonymous users to
-sign-up for a Nexus account without administrative intervention.  This
-"self-serve" capability for user account creation is especially
-important when an open source project is using Nexus as a primary
-means for distribution. In such an environment, there may be hundreds
-of Nexus users who all need a basic level of read-only access, and
-making these users wait for an administrator to create an account
-makes little sense. In such a setting, anyone can create an account,
-activate the account via a verification email, and then access a
-repository with a default, read-only level of access which you can
-define.
-
-[[user-account-sect-installation]]
-=== Installing the User Account Plugin
-
-The user account plugin is an otional plugin that comes as part of any
-Nexus download. The directory containing the plugin code is called
-nexus-user-account-plugin-X.Y.Z. Intall the plugin following the
-instructions in <<install-additional-plugins>>.
- 
-[[user-account-sect-configuring]]
-=== Configuring the User Account Plugin
-
-To configure the User Account Plugin, click on Server under the
-Administration section of the Nexus menu, and scroll down to the
-section named "User Sign Up". The User Sign Up section is shown in
-<<fig-user-account-user-sign-up-preference>>.
-
-[[fig-user-account-user-sign-up-preference]]
-.Configuring the User Account Plugin
-image::figs/web/user-account_user-sign-up-preference.png[scale=60]
-
-To activate the User Sign Up feature, set the "User Sign Up" feature
-to "On". This will expose a "Sign Up" link next to the "Log In" link
-in the Nexus user interface. The Selected Roles in this configuration
-section are the default roles assigned to users who successfully
-signed up for an account.
-
-[[user-account-sect-sign-up]]
-=== Signing Up for an Account
-
-Once User Sign Up has been activated via the Server settings as shown
-in <<user-account-sect-configuring>>, users will see a
-Sign Up link next to the Log In link in the Nexus interface. This Sign
-Up link can be seen in the upper right-hand corner of <<fig-user-account-sign-up-link>>.
-
-[[fig-user-account-sign-up-link]]
-.Sign Up Link Available for All Nexus Users
-image::figs/web/user-account_sign-up-link.png[scale=60]
-
-Clicking on this Sign Up link will display the Nexus Sign Up dialog
-shown in <<fig-user-account-sign-up-form>>. This form
-accepts a username, password, the full name of the new user, and an
-email account. It also asks the users to type in some text from a
-captcha form element. If a user cannot read the text in the captcha,
-they can click on the captcha to refresh it with new text.
-
-[[fig-user-account-sign-up-form]]
-.Nexus Sign Up Form
-image::figs/web/user-account_sign-up-form.png[scale=60]
-
-Once the new user clicks on the Sign Up button, they will receive a
-confirmation dialog which instructs them to check for an activation
-email.
-
-[[fig-user-account-sign-up-confirm]]
-.Nexus Sign Up Confirmation
-image::figs/web/user-account_sign-up-succeed.png[scale=60]
-
-The user will then receive an email containing an activation
-link. When a user signs up for a Nexus account, the newly created
-account is disabled until they click on the activation link contained
-in this email. A sample of the activation email is shown in <<fig-user-account-activation-email>>.
-
-[[fig-user-account-activation-email]]
-.Nexus Activation Email
-image::figs/web/user-account_activation-email.png[scale=60]
-
-NOTE: The example activation email in <<fig-user-account-activation-email>>, points to
-localhost:8081. You can change this URL by changing the Base URL
-setting in the Application Server Settings section of the Server
-configuration.  To change this setting, click on the Server link under
-Administration in the Nexus menu.
-
-[[user-account-sect-manual-activate]]
-=== Manual Activation of New Users
-
-If a user does not receive the activation email after signing up for a
-new account, an Administrator may need to manually activate a new
-user. To do this, go to the list of Nexus users by clicking on the
-Users link under Security in the Nexus menu. Locate and select the new
-user in the list of Nexus users, and change the Status from Disabled
-to Enabled as shown in <<fig-user-account-activation>>.
-
-[[fig-user-account-activation]]
-.Nexus Activation Email
-image::figs/web/user-account_sign-up-admin-activate.png[scale=60]
-
-[[user-account-sect-default-user]]
-=== Modifying Default User Permissions
-
-The default user permissions in the User Sign Up feature only includes
-"UI: Base UI Privileges". If a user signs up with just this simple
-permission, the only thing they will be able to do is login, change
-their password, and logout. <<fig-user-account-base-ui>>, shows the interface a user would see after logging in with only
-the base UI privileges.
-
-[[fig-user-account-base-ui]]
-.User Interface with only the Base UI Privileges
-image::figs/web/user-account_sign-up-default-permissions.png[scale=60]
-
-To provide some sensible default permissions, click on the Server
-under the Administration section of the Nexus menu and scroll down to
-the User Sign Up section of the Server settings. Make sure that the
-selected default roles for new users contain some ability to browse,
-search, and view repositories.
-
-[[fig-user-account-default-roles]]
-.Selecting Default Roles for New Users
-image::figs/web/user-account_sign-up-more-default-permissions.png[scale=60]
-
-WARNING: <<fig-user-account-default-roles>> shows a
-default User Sign Up role containing the Nexus Deployment Role. If
-your server were available to the public this wouldn't be a wise
-default role as it would allow anyone to sign up for an account,
-activate an account, and start publishing artifacts to hosted
-repositories with little or no oversight. Such a default role may only
-make sense if you are running an internal, corporate instance of Nexus
-Professional and you are comfortable granting any developer in the
-organization deployment permissions.
-
-[[crowd]]
-== Nexus Atlassian Crowd Plugin
-
-=== Introduction 
-
-Atlassian's Crowd is a single sign-on and identity management product
-that many organizations use to consolidate user accounts and control
-which users and groups have access to which applications. Nexus
-Professional contains an optional security plugin that allows you to
-configure Nexus to authenticate against an Atlassian Crowd
-instance. For more information about Atlassian Crowd, go to
-http://www.atlassian.com/software/crowd/
-
-[[crowd-sect-installation]]
-=== Installing the Crowd Plugin
-
-The user account plugin is an otional plugin that comes as part of any
-Nexus Professional download. The directory containing the plugin code
-is called enterprise-crowd-plugin-X.Y.Z. Intall the plugin following
-the instructions in <<install-additional-plugins>>.
- 
-[[crowd-sect-config]]
-=== Configuring the Crowd Plugin
-
-Once the Atlassian Crowd plugin is installed, restart Nexus and login
-as a user with Administrative privileges. To configure the Crowd
-plugin, click on the Crowd Configuration in the Security section of
-the Nexus menu as shown in <<fig-crowd-menu-link>>.
-
-[[fig-crowd-menu-link]]
-.Crowd Menu Link under the Security Section of the Nexus Menu
-image::figs/web/crowd_menu-link.png[scale=60]
-
-Clicking on the Crowd Configuration link will load the form shown in
-<<fig-crowd-config>>. This configuration panel contains
-all of the options that need to be configured to connect your Nexus
-instance to Crowd for authorization and authentication.
-
-[[fig-crowd-config]]
-.Crowd Configuration Panel
-image::figs/web/crowd_server-config.png[scale=60]
-
-The following sections outline all of the settings in the Crowd
-Configuration Pane.
-
-[[crowd-sect-access]]
-=== Crowd Access Settings
-
-The Access Settings section of the Crowd configuration is shown in
-<<fig-crowd-access-settings>>. This section contains
-the following fields:
-
-Application Name:: This field contains the application name of a Crowd
-application. This value should match the value in the Name field of
-the form shown in <<fig-crowd-app>>.
-
-Application Password:: This field contains the application password of
-a Crowd application. This value should match the value in the Password
-field of the form shown in <<fig-crowd-app>>.
-
-Crowd Server URL:: This is the URL of the Crowd Server, this URL
-should be accessible to the Nexus process as it is the URL that Nexus
-will use to connect to Crowd's SOAP services.
-
-Authentication Interval:: This is the number of minutes that a Crowd
-authentication is valid for. This value is in units of minutes, and a
-value of 30 means that Nexus will only require re-authentication if
-more than 30 minutes have elapsed since a previously authenticated
-user has accessed Nexus.
-
-Use Groups:: If clicked, Use Groups allows Nexus to use Crowd Groups
-when calculating Nexus Roles. When selected, you can map a Nexus Role
-to a Crowd Group.
-
-[[fig-crowd-access-settings]]
-.Crowd Access Settings
-image::figs/web/crowd_server-config-access-settings.png[scale=60]
-
-==== Crowd HTTP Settings
-
-You can control the concurrency of connections to Crowd in the HTTP
-Settings section shown in <<fig-crowd-http-settings>>. If you have a
-high-traffic instance of Nexus, you will want to limit the number of
-simultaneous connections to the Crowd server to a reasonable value
-like 20. The HTTP Timeout specifies the number of milliseconds Nexus
-will wait for a response from Crowd. A value of zero for either of
-these properties indicates that there is no limit to either the number
-of connections or the timeout.
-
-[[fig-crowd-http-settings]]
-.Crowd HTTP Settings
-image::figs/web/crowd_server-config-http-settings.png[scale=60]
-
-==== Crowd HTTP Proxy Settings
-
-If your Nexus installation is connecting to Crowd via an HTTP Proxy
-server, the HTTP Proxy Settings section of the Crowd Configuration
-allows you to specify the host, port, and credentials for a HTTP Proxy
-server. The HTTP Proxy Settings section is shown in <<fig-crowd-http-proxy>>.
-
-[[fig-crowd-http-proxy]]
-.Crowd HTTP Proxy Settings
-image::figs/web/crowd_server-config-http-proxy.png[scale=60]
-
-==== Miscellaneous Settings
-
-The miscellaneous settings section shown in
-<<fig-crowd-misc-settings>>, allows you to configure settings that
-control the name of the Single Sign-on cookie and the various keys
-that are used to retrieve values that relate to authentication and the
-auth token. This dialog is only relevant if you have modified optional
-Crowd settings in your $CROWD_HOME/etc/crowd.properties. For more
-information about customizing these options see the
-http://confluence.atlassian.com/display/CROWD/The+crowd.properties+File[Atlassian
-Crowd documentation]
-
-[[fig-crowd-misc-settings]]
-.Crowd Miscellaneous Settings
-image::figs/web/crowd_server-config-misc.png[scale=60]
-
-[[crowd-sect-auth-realm]]
-=== Adding the Crowd Authentication Realm
-
-Once you have configured Nexus to connect to Crowd, you must select
-the Crowd authorization realm from the list of available realms in
-your Nexus Server settings. <<fig-crowd-activate-realm>>, shows the
-Security settings section in the Nexus Server
-configuration. To load the Nexus server configuration panel, click on
-Server under Administration in the Nexus menu. Drag Crowd from the
-list of available realms to the list of selected realms and then save
-the Nexus server configuration.
-
-[[fig-crowd-activate-realm]]
-.Configuring the Crowd Authentication Realm
-image::figs/web/crowd_activate-realm.png[scale=60]
-
-[[crowd-sect-nx]]
-=== Configuring a Nexus Application in Crowd
-
-To connect Nexus to Atlassian's Crowd, you will need to configure
-Nexus as an application in Crowd. To do this, login to Crowd as a user
-with Administrative rights, and click on the Applications tab. Once
-you click on this tab, you should see two options under the
-Applications tab: Search Applications and Add Application. Click on
-Add Application to display the form shown in <<fig-crowd-app>>, and
-create a new application with the following values in the Details tab
-of the Add Application form:
-
-* Application Type: Generic Application
-
-* Name: nexus
-
-* Description: Sonatype Nexus Professional
-
-Choose a password for this application. Nexus will use this password
-to authenticate with the Crowd server. Click on the Next button.
-
-[[fig-crowd-app]]
-.Creating a Nexus Crowd Application
-image::figs/web/crowd_new-app.png[scale=60]
-
-Clicking on Next will advance the form to the Connection tab shown in
-<<fig-crowd-app-connection>>. In this tab you need to supply the URL
-Nexus and the remote IP address for
-Nexus. <<fig-crowd-app-connection>>, shows the Connection form
-configured for a local instance of Nexus. If you were configuring
-Crowd and Nexus in a production environment, you would supply the URL
-that users would use to load Nexus in a web browser and you would
-supply the IP address that Nexus will be connecting from. Once you
-have completed the Connection form, click on Next to advance to the
-Directories form.
-
-[[fig-crowd-app-connection]]
-.Creating a Nexus Crowd Application Connection
-image::figs/web/crowd_new-app-connection.png[scale=60]
-
-Clicking on Next advances to the Directories form shown in
-<<fig-crowd-app-directories>>.  In this example, the Nexus application
-in Crowd is going to use the default "User Management"
-directory. Click on the Next button to advance to the "Authorisation"
-form.
-
-[[fig-crowd-app-directories]]
-.Creating a Nexus Crowd Application Directories
-image::figs/web/crowd_new-app-directories.png[scale=60]
-
-Clicking on the Next button advances to the "Authorisation" form shown
-in <<fig-crowd-app-authorization>>. If any of the
-directories selected in the previous form contain groups, each group
-is displayed on this form next to a checkbox. You can select "Allow
-all users" for a directory, or you can select specific groups which
-are allowed to authenticate to Crowd through Nexus. This option would
-be used if you wanted to limit Nexus access to specific subgroups
-within a larger Crowd directory. If your entire organization is stored
-in a single Crowd directory, you may want to limit Nexus access to a
-group that contains only Developers and Administrators.
-
-[[fig-crowd-app-authorization]]
-.Creating a Nexus Crowd Application Authorization
-image::figs/web/crowd_new-app-authorization.png[scale=60]
-
-[[crowd-sect-mapping]]
-=== Mapping Crowd Groups to Nexus Roles
-
-To map a Crowd Group to a Nexus Role, open up the Roles panel by
-clicking on the Roles link under the Security section of the Nexus
-menu. Click on the Add... button and select External Role Mapping as
-shown in <<fig-crowd-add-ext-role-map>>.
-
-[[fig-crowd-add-ext-role-map]]
-.Adding an External Role Mapping
-image::figs/web/crowd_add-ext-role-map.png[scale=60]
-
-Selecting External Role Mapping will show the Map External Role dialog
-shown in <<fig-crowd-map-ext-role>>.
-
-[[fig-crowd-map-ext-role]]
-.Mapping an External Crowd Group to a Nexus Role
-image::figs/web/crowd_map-ext-role.png[scale=60]
-
-Once you have mapped a Crowd Group to a Nexus Role, these Roles will
-appear in the list of Nexus Roles with a mapping value of "Crowd" as
-shown in <<fig-crowd-mapped-rules" os=">>.
-
-[[fig-crowd-mapped-rules]]
-.Two Crowd Groups Mapped to Nexus Roles
-image::figs/web/crowd_mapped-roles.png[scale=60]
-
-[[crowd-sect-role]]
-=== Adding a Crowd Role to a Nexus User
-
-To illustrate this feature, consider the crowd-manager user with an id
-of "brian". This user's groups are shown in
-<<fig-crowd-view-user-groups-brian>>.
-
-[[fig-crowd-view-user-groups-brian]]
-.Crowd Groups for User "brian"
-image::figs/web/crowd_view-user-groups-brian.png[scale=60]
-
-To add an external user role mapping, open up the Users panel by
-clicking on Users in the Security section of the Nexus panel. Click on
-the Add... button and select External User Role Mapping from the
-drop-down as shown in <<fig-crowd-add-ext-user-role-map>>.
-
-[[fig-crowd-add-ext-user-role-map]]
-.Adding an External User Role Mapping
-image::figs/web/crowd_add-ext-user-role-map.png[scale=60]
-
-Selecting External User Role Mapping will show the dialog shown in
-<<fig-crowd-find-external-user" os=">>.
-
-[[fig-crowd-find-external-user]]
-.Locating a Crowd User in the User Role Mapping Dialog
-image::figs/web/crowd_find-external-user.png[scale=60]
-
-Once you locate the Crowd user that you want to add a Nexus Role
-to... You can use the configuration panel shown in
-<<fig-crowd-assign-user-role>>, to add a Role to the Crowd-managed
-"brian" user.
-
-[[fig-crowd-assign-user-role]]
-.Adding a Nexus Role to a Crowd User
-image::figs/web/crowd_assign-user-role.png[scale=60]
 
 [[bundles]]
 == Artifact Bundles
@@ -8539,6 +8187,7 @@ promotion was completed successfully as shown in
 .Confirmation that Staged Repository has been Promoted
 image::figs/web/bundles-stage-success.png[scale=60]
 
+
 [[best]]
 == Nexus Best Practises
 
@@ -8629,6 +8278,529 @@ based on the repository and/or the path of the artifact, meaning it is
 possible to slice and dice the system any way you see fit. My default
 position is to use a few Hosted Repositories as possible and control
 the permissions by the Repository Target.
+
+
+[[plugins]]
+== Using Nexus Plugins
+
+Nexus Open Source and Nexus Professional are built using a plugin
+architecture, where Professional simply includes additional
+plugins. Besides the default installed plugins you can install optional
+plugins shipped with Nexus as well as plugins you or somebody else
+created.
+ 
+[[install-additional-plugins]]
+=== Installing Additional Plugins
+
+Optional plugins supplied by Sonatype can be found in the directory
++++$NEXUS_HOME/nexus/WEB-INF/optional-plugins+++. To install any of
+these simply copy the folder containing the desired plugin into
++++$NEXUS_HOME/nexus/WEB-INF/plugin-repository+++. 
+
+WARNING: When updating Nexus you will have to redo the install of any
+optinal plugins using the newest version shipping with the download of
+the new Nexus version. Any configuration of the plugin will be
+preserved from one version to the other.
+
+Plugins supplied by third parties like the
+http://code.google.com/p/nexus-yum-plugin/[Nexus Yum Plugin] and
+others, are installed by copying the folder with the plugin code into
++++sonatype-work/nexus/plugin-repository+++.
+
+After a restart of Nexus the new plugins will be active and ready
+to use. Upgrades are done by simply copying over the newer plugin and
+removing the older one.
+
+Plugins can be removed by deleting the respective folder in the
+plugin-repository and restarting Nexus.
+
+[[nexus-outreach-plugin]]
+=== Nexus Outreach Plugin
+
+The Nexus Outreach Plugin is installed by default in Nexus Open Source
+as well as in Nexus Professional. It allocates space in the user
+interface in the left navigation as well as in the welcome page and
+populates these with content linking to further documentation and
+support resources. This data is retrieved from the Sonatype servers.
+
+In a case where this outgoing traffic from your Nexus instance or the
+resulting documentation and links are not desired, the plugin can be
+safely removed without any other negative side effects. To do so
+simply remove the 'nexus-outreach-plugin-x.y.z' folder in
+'$NEXUS_HOME/nexus/WEB-INF/plugin-repository/' and restart your Nexus
+instance.
+
+[[custom-metadata-plugin]]
+=== Custom Metadata Plugin
+
+The custom metadata plugin is an optional plugin that comes as part of
+any Nexus download. It allows you to view, edit and search for
+additional metadata about any artifact in your Nexus repositories.
+
+The directory containing the plugin code is called
+nexus-custom-metadata-plugin-X.Y.Z. Intall the plugin following the
+instructions in <<install-additional-plugins>>.
+
+==== Viewing Artifact Metadata
+
+The Custom Metadata Plugin gives you the ability to view artifact
+metadata. When browsing repository storage or a repository index,
+clicking on an artifact will load the Artifact Information panel.
+Selecting the Artifact Metadata tab will display the interface shown
+in <<fig-using-viewing-metadata>>.
+
+[[fig-using-viewing-metadata]]
+.Viewing Artifact Metadata
+image::figs/web/meta_existing-meta-value.png[scale=60]
+
+Artifact metadata consists of a key, a value, and a namespace.
+Existing metadata from an artifact's POM is given a urn:maven
+namespace, and custom attributes are stored under the urn:nexus/user
+namespace.
+
+==== Editing Artifact Metadata
+
+The Custom Metadata Plugin gives you the ability to add custom
+attributes to artifact metadata. To add a custom attribute, click on
+an artifact in Nexus, and select the Artifact Metadata tab. On the
+Artifact Metadata tab, click on the Add... button and a new row will
+be inserted into the list of attributes. Supply a key and value and
+click the Save button to update an artifact's
+metadata. <<fig-using-editing-metadata>> shows the Artifact Metadata
+panel with two custom attributes: "approvedBy" and "approved".
+
+[[fig-using-editing-metadata]]
+.Editing Artifact Metadata
+image::figs/web/meta_setting-meta-value.png[scale=60]
+
+==== Searching Artifact Metadata
+
+The Custom Metadata Plugin provides you with the ability to configure
+custom artifact metadata and search for artifacts with specific
+metadata. To search for artifacts using metadata, click on the
+Advanced Search link directly below the search field in the Nexus
+application menu to open the Search panel. Once in the search panel,
+click on the Keyword Search and click on Metadata Search in the search
+type drop-down as shown in <<fig-using-search-metadata>>.
+
+[[fig-using-search-metadata]]
+.Searching Artifact Metadata
+image::figs/web/meta_search-selection.png[scale=60]
+
+Once you select the Metadata Search you will see two search fields and
+an operator drop-down. The two search fields are the key and value of
+the metadata you are searching for. The key corresponds to the key of
+the metadata you are searching for, and the value contains the value
+or value range you are searching for. The operator drop-down can be set
+to Equals, Matches, Bounded, or Not Equal.
+
+.Metadata Search Results for Custom Metadata
+image::figs/web/meta_search-function.png[scale=60]
+
+Once you locate a matching artifact in the Metadata Search interface,
+click on the artifact and then select the Artifact Metadata to examine
+an artifacts metadata as shown in <<fig-using-search-metadata-results>>.
+
+[[fig-using-search-metadata-results]]
+.Metadata Search Results for Custom Metadata
+image::figs/web/meta_search-result-0.png[scale=60]
+
+
+[[user-account]]
+=== User Account Plugin
+
+Nexus Professional's User Account Plugin allows anonymous users to
+sign-up for a Nexus account without administrative intervention.  This
+"self-serve" capability for user account creation is especially
+important when an open source project is using Nexus as a primary
+means for distribution. In such an environment, there may be hundreds
+of Nexus users who all need a basic level of read-only access, and
+making these users wait for an administrator to create an account
+makes little sense. In such a setting, anyone can create an account,
+activate the account via a verification email, and then access a
+repository with a default level of access you can
+define.
+
+[[user-account-sect-installation]]
+==== Installing the User Account Plugin
+
+The user account plugin is an optional plugin that comes as part of the
+Nexus Professional download. The directory containing the plugin code is called
+nexus-user-account-plugin-X.Y.Z. Install the plugin following the
+instructions in <<install-additional-plugins>>.
+ 
+[[user-account-sect-configuring]]
+==== Configuring the User Account Plugin
+
+After a restart of Nexus the installed plugin will be available for
+use but still be deactivated.  To configure the User Account Plugin,
+click on Server under the Administration section of the Nexus menu,
+and scroll down to the section named "User Sign Up". The User Sign Up
+section is shown in <<fig-user-account-user-sign-up-preference>>.
+
+[[fig-user-account-user-sign-up-preference]]
+.Configuring the User Account Plugin
+image::figs/web/user-account_user-sign-up-preference.png[scale=60]
+
+To activate the User Sign Up feature, set the "User Sign Up" feature
+to "On". This will expose a "Sign Up" link next to the "Log In" link
+in the Nexus user interface. The Selected Roles in this configuration
+section are the default roles assigned to users who successfully
+signed up for an account.
+
+[[user-account-sect-sign-up]]
+==== Signing Up for an Account
+
+Once User Sign Up has been activated via the Server settings as shown
+in <<user-account-sect-configuring>>, users will see a Sign Up link
+next to the Log In link in the Nexus interface. Clicking on this Sign
+Up link will display the Nexus Sign Up dialog shown in
+<<fig-user-account-sign-up-form>>. This form accepts a username,
+password, the first and last name of the new user, and an email account. It also
+asks the users to type in some text from a captcha form element. If a
+user cannot read the text in the captcha, they can click on the
+captcha to refresh it with new text.
+
+[[fig-user-account-sign-up-form]]
+.Nexus Sign Up Form
+image::figs/web/user-account_sign-up-form.png[scale=60]
+
+Once the new user clicks on the Sign Up button, they will receive a
+confirmation dialog which instructs them to check for an activation
+email.
+
+[[fig-user-account-sign-up-confirm]]
+.Nexus Sign Up Confirmation
+image::figs/web/user-account_sign-up-succeed.png[scale=60]
+
+The user will then receive an email containing an activation
+link. When a user signs up for a Nexus account, the newly created
+account is disabled until they click on the activation link contained
+in this email. A sample of the activation email is shown in <<fig-user-account-activation-email>>.
+
+[[fig-user-account-activation-email]]
+.Nexus Activation Email
+image::figs/web/user-account_activation-email.png[scale=60]
+
+Upon successful login from the activation email link, the user will be
+directed to the Summary panel of the users Profile.
+
+NOTE: The example activation email in <<fig-user-account-activation-email>>, points to
+localhost:8081. You can change this URL by changing the Base URL
+setting in the Application Server Settings section of the Server
+configuration.  To change this setting, click on the Server link under
+Administration in the Nexus menu.
+
+[[user-account-sect-manual-activate]]
+==== Manual Activation of New Users
+
+If a user does not receive the activation email after signing up for a
+new account, an Administrator may need to manually activate a new
+user. To do this, go to the list of Nexus users by clicking on the
+Users link under Security in the Nexus menu. Locate and select the new
+user in the list of Nexus users, and change the Status from Disabled
+to Enabled as shown in <<fig-user-account-activation>>.
+
+[[fig-user-account-activation]]
+.Manually Activating a Signed Up User
+image::figs/web/user-account_sign-up-admin-activate.png[scale=60]
+
+[[user-account-sect-default-user]]
+==== Modifying Default User Permissions
+
+The default user permissions in the User Sign Up feature only includes
+"UI: Base UI Privileges". If a user signs up with just this simple
+permission, the only thing they will be able to do is login, change
+their password, and logout. <<fig-user-account-base-ui>>, shows the
+interface a user would see after logging in with only the base UI
+privileges.
+
+[[fig-user-account-base-ui]]
+.User Interface with only the Base UI Privileges
+image::figs/web/user-account_sign-up-default-permissions.png[scale=40]
+
+To provide some sensible default permissions, click on the Server
+under the Administration section of the Nexus menu and scroll down to
+the User Sign Up section of the Server settings. Make sure that the
+selected default roles for new users contain some ability to browse,
+search, and view repositories.
+
+[[fig-user-account-default-roles]]
+.Selecting Default Roles for New Users
+image::figs/web/user-account_sign-up-more-default-permissions.png[scale=60]
+
+WARNING: <<fig-user-account-default-roles>> shows a
+default User Sign Up role containing the Nexus Deployment Role. If
+your server were available to the public this wouldn't be a wise
+default role as it would allow anyone to sign up for an account,
+activate an account, and start publishing artifacts to hosted
+repositories with little or no oversight. Such a default role may only
+make sense if you are running an internal, corporate instance of Nexus
+Professional and you are comfortable granting any developer in the
+organization deployment permissions.
+
+[[crowd]]
+=== Nexus Atlassian Crowd Plugin
+
+Atlassian's Crowd is a single sign-on and identity management product
+that many organizations use to consolidate user accounts and control
+which users and groups have access to which applications. Nexus
+Professional contains an optional security plugin that allows you to
+configure Nexus to authenticate against an Atlassian Crowd
+instance. For more information about Atlassian Crowd, go to
+http://www.atlassian.com/software/crowd/
+
+[[crowd-sect-installation]]
+==== Installing the Crowd Plugin
+
+The user account plugin is an otional plugin that comes as part of any
+Nexus Professional download. The directory containing the plugin code
+is called enterprise-crowd-plugin-X.Y.Z. Intall the plugin following
+the instructions in <<install-additional-plugins>>.
+ 
+[[crowd-sect-config]]
+==== Configuring the Crowd Plugin
+
+Once the Atlassian Crowd plugin is installed, restart Nexus and login
+as a user with Administrative privileges. To configure the Crowd
+plugin, click on the Crowd Configuration in the Security section of
+the Nexus menu as shown in <<fig-crowd-menu-link>>.
+
+[[fig-crowd-menu-link]]
+.Crowd Menu Link under the Security Section of the Nexus Menu
+image::figs/web/crowd_menu-link.png[scale=60]
+
+Clicking on the Crowd Configuration link will load the form shown in
+<<fig-crowd-config>>. This configuration panel contains
+all of the options that need to be configured to connect your Nexus
+instance to Crowd for authorization and authentication.
+
+[[fig-crowd-config]]
+.Crowd Configuration Panel
+image::figs/web/crowd_server-config.png[scale=60]
+
+The following sections outline all of the settings in the Crowd
+Configuration Pane.
+
+[[crowd-sect-access]]
+==== Crowd Access Settings
+
+The Access Settings section of the Crowd configuration is shown in
+<<fig-crowd-access-settings>>. This section contains
+the following fields:
+
+Application Name:: This field contains the application name of a Crowd
+application. This value should match the value in the Name field of
+the form shown in <<fig-crowd-app>>.
+
+Application Password:: This field contains the application password of
+a Crowd application. This value should match the value in the Password
+field of the form shown in <<fig-crowd-app>>.
+
+Crowd Server URL:: This is the URL of the Crowd Server, this URL
+should be accessible to the Nexus process as it is the URL that Nexus
+will use to connect to Crowd's SOAP services.
+
+Authentication Interval:: This is the number of minutes that a Crowd
+authentication is valid for. This value is in units of minutes, and a
+value of 30 means that Nexus will only require re-authentication if
+more than 30 minutes have elapsed since a previously authenticated
+user has accessed Nexus.
+
+Use Groups:: If clicked, Use Groups allows Nexus to use Crowd Groups
+when calculating Nexus Roles. When selected, you can map a Nexus Role
+to a Crowd Group.
+
+[[fig-crowd-access-settings]]
+.Crowd Access Settings
+image::figs/web/crowd_server-config-access-settings.png[scale=60]
+
+===== Crowd HTTP Settings
+
+You can control the concurrency of connections to Crowd in the HTTP
+Settings section shown in <<fig-crowd-http-settings>>. If you have a
+high-traffic instance of Nexus, you will want to limit the number of
+simultaneous connections to the Crowd server to a reasonable value
+like 20. The HTTP Timeout specifies the number of milliseconds Nexus
+will wait for a response from Crowd. A value of zero for either of
+these properties indicates that there is no limit to either the number
+of connections or the timeout.
+
+[[fig-crowd-http-settings]]
+.Crowd HTTP Settings
+image::figs/web/crowd_server-config-http-settings.png[scale=60]
+
+===== Crowd HTTP Proxy Settings
+
+If your Nexus installation is connecting to Crowd via an HTTP Proxy
+server, the HTTP Proxy Settings section of the Crowd Configuration
+allows you to specify the host, port, and credentials for a HTTP Proxy
+server. The HTTP Proxy Settings section is shown in <<fig-crowd-http-proxy>>.
+
+[[fig-crowd-http-proxy]]
+.Crowd HTTP Proxy Settings
+image::figs/web/crowd_server-config-http-proxy.png[scale=60]
+
+===== Miscellaneous Settings
+
+The miscellaneous settings section shown in
+<<fig-crowd-misc-settings>>, allows you to configure settings that
+control the name of the Single Sign-on cookie and the various keys
+that are used to retrieve values that relate to authentication and the
+auth token. This dialog is only relevant if you have modified optional
+Crowd settings in your $CROWD_HOME/etc/crowd.properties. For more
+information about customizing these options see the
+http://confluence.atlassian.com/display/CROWD/The+crowd.properties+File[Atlassian
+Crowd documentation]
+
+[[fig-crowd-misc-settings]]
+.Crowd Miscellaneous Settings
+image::figs/web/crowd_server-config-misc.png[scale=60]
+
+[[crowd-sect-auth-realm]]
+==== Adding the Crowd Authentication Realm
+
+Once you have configured Nexus to connect to Crowd, you must select
+the Crowd authorization realm from the list of available realms in
+your Nexus Server settings. <<fig-crowd-activate-realm>>, shows the
+Security settings section in the Nexus Server
+configuration. To load the Nexus server configuration panel, click on
+Server under Administration in the Nexus menu. Drag Crowd from the
+list of available realms to the list of selected realms and then save
+the Nexus server configuration.
+
+[[fig-crowd-activate-realm]]
+.Configuring the Crowd Authentication Realm
+image::figs/web/crowd_activate-realm.png[scale=60]
+
+[[crowd-sect-nx]]
+==== Configuring a Nexus Application in Crowd
+
+To connect Nexus to Atlassian's Crowd, you will need to configure
+Nexus as an application in Crowd. To do this, login to Crowd as a user
+with Administrative rights, and click on the Applications tab. Once
+you click on this tab, you should see two options under the
+Applications tab: Search Applications and Add Application. Click on
+Add Application to display the form shown in <<fig-crowd-app>>, and
+create a new application with the following values in the Details tab
+of the Add Application form:
+
+* Application Type: Generic Application
+
+* Name: nexus
+
+* Description: Sonatype Nexus Professional
+
+Choose a password for this application. Nexus will use this password
+to authenticate with the Crowd server. Click on the Next button.
+
+[[fig-crowd-app]]
+.Creating a Nexus Crowd Application
+image::figs/web/crowd_new-app.png[scale=60]
+
+Clicking on Next will advance the form to the Connection tab shown in
+<<fig-crowd-app-connection>>. In this tab you need to supply the URL
+Nexus and the remote IP address for
+Nexus. <<fig-crowd-app-connection>>, shows the Connection form
+configured for a local instance of Nexus. If you were configuring
+Crowd and Nexus in a production environment, you would supply the URL
+that users would use to load Nexus in a web browser and you would
+supply the IP address that Nexus will be connecting from. Once you
+have completed the Connection form, click on Next to advance to the
+Directories form.
+
+[[fig-crowd-app-connection]]
+.Creating a Nexus Crowd Application Connection
+image::figs/web/crowd_new-app-connection.png[scale=60]
+
+Clicking on Next advances to the Directories form shown in
+<<fig-crowd-app-directories>>.  In this example, the Nexus application
+in Crowd is going to use the default "User Management"
+directory. Click on the Next button to advance to the "Authorisation"
+form.
+
+[[fig-crowd-app-directories]]
+.Creating a Nexus Crowd Application Directories
+image::figs/web/crowd_new-app-directories.png[scale=60]
+
+Clicking on the Next button advances to the "Authorisation" form shown
+in <<fig-crowd-app-authorization>>. If any of the
+directories selected in the previous form contain groups, each group
+is displayed on this form next to a checkbox. You can select "Allow
+all users" for a directory, or you can select specific groups which
+are allowed to authenticate to Crowd through Nexus. This option would
+be used if you wanted to limit Nexus access to specific subgroups
+within a larger Crowd directory. If your entire organization is stored
+in a single Crowd directory, you may want to limit Nexus access to a
+group that contains only Developers and Administrators.
+
+[[fig-crowd-app-authorization]]
+.Creating a Nexus Crowd Application Authorization
+image::figs/web/crowd_new-app-authorization.png[scale=60]
+
+[[crowd-sect-mapping]]
+==== Mapping Crowd Groups to Nexus Roles
+
+To map a Crowd Group to a Nexus Role, open up the Roles panel by
+clicking on the Roles link under the Security section of the Nexus
+menu. Click on the Add... button and select External Role Mapping as
+shown in <<fig-crowd-add-ext-role-map>>.
+
+[[fig-crowd-add-ext-role-map]]
+.Adding an External Role Mapping
+image::figs/web/crowd_add-ext-role-map.png[scale=60]
+
+Selecting External Role Mapping will show the Map External Role dialog
+shown in <<fig-crowd-map-ext-role>>.
+
+[[fig-crowd-map-ext-role]]
+.Mapping an External Crowd Group to a Nexus Role
+image::figs/web/crowd_map-ext-role.png[scale=60]
+
+Once you have mapped a Crowd Group to a Nexus Role, these Roles will
+appear in the list of Nexus Roles with a mapping value of "Crowd" as
+shown in <<fig-crowd-mapped-rules" os=">>.
+
+[[fig-crowd-mapped-rules]]
+.Two Crowd Groups Mapped to Nexus Roles
+image::figs/web/crowd_mapped-roles.png[scale=60]
+
+[[crowd-sect-role]]
+==== Adding a Crowd Role to a Nexus User
+
+To illustrate this feature, consider the crowd-manager user with an id
+of "brian". This user's groups are shown in
+<<fig-crowd-view-user-groups-brian>>.
+
+[[fig-crowd-view-user-groups-brian]]
+.Crowd Groups for User "brian"
+image::figs/web/crowd_view-user-groups-brian.png[scale=60]
+
+To add an external user role mapping, open up the Users panel by
+clicking on Users in the Security section of the Nexus panel. Click on
+the Add... button and select External User Role Mapping from the
+drop-down as shown in <<fig-crowd-add-ext-user-role-map>>.
+
+[[fig-crowd-add-ext-user-role-map]]
+.Adding an External User Role Mapping
+image::figs/web/crowd_add-ext-user-role-map.png[scale=60]
+
+Selecting External User Role Mapping will show the dialog shown in
+<<fig-crowd-find-external-user" os=">>.
+
+[[fig-crowd-find-external-user]]
+.Locating a Crowd User in the User Role Mapping Dialog
+image::figs/web/crowd_find-external-user.png[scale=60]
+
+Once you locate the Crowd user that you want to add a Nexus Role
+to... You can use the configuration panel shown in
+<<fig-crowd-assign-user-role>>, to add a Role to the Crowd-managed
+"brian" user.
+
+[[fig-crowd-assign-user-role]]
+.Adding a Nexus Role to a Crowd User
+image::figs/web/crowd_assign-user-role.png[scale=60]
+
 
 [[plugdev]]
 == Developing Nexus Plugins
@@ -9388,12 +9560,18 @@ public class DefaultSampleRepository extends AbstractRepository
 Your newly introduced repository type will appear under
 http://localhost:8081/nexus/content/sample/.
 
-[[artifactory]]
+
+
+[[migrating]]
 [appendix]
 == Migrating to Nexus from Artifactory
 
+
+[[artifactory]]
+=== Migrating from Artifactory
+
 [[artifactory-sect-introduction]]
-=== Introduction
+==== Introduction
 
 This appendix walks you through the process of using the Nexus
 Migration Plugin to migrate an existing Artifactory installation to a
@@ -9408,7 +9586,7 @@ Nexus Migration plugin offers an easy, drop-in replacement for
 Artifactory.
 
 [[artifactory-sect-create-backup]]
-=== Creating an Artifactory Backup
+==== Creating an Artifactory Backup
 
 The Nexus Migration Plugin relies on the Artifactory System Export
 which is an ZIP archive containing all of the configuration and data
@@ -9444,11 +9622,15 @@ Artifactory, and you can safely shut it down. In the next section you
 will learn how to install the Nexus Migration Plugin.
 
 [[artifactory-sect-installation]]
-=== Installation of the Migration Plugin and Artifactory Bridge
+==== Installation of the Migration Plugin and Artifactory Bridge
 
 The migration plugin is a free, open-source plugin that can be
-downloaded by visiting http://nexus.sonatype.org/downloads/ and
-downloading nexus-migration-plugin-packaging-1.5-webapp.zip.
+downloaded by searching for the nexus-migration-plugin-packaging
+artifact on https://repository.sonatype.org/
+and downloading nexus-migration-plugin-packaging-x.y-webapp.zip with
+the version corresponding to your Nexus version. If you are using
+Nexus Professional the correct plugin can be found in the folder
+/nexus/WEB-INF/optional-plugins/ of your Nexus install.
 
 NOTE: This section assumes that you have just downloaded and installed
 Nexus Open Source or Nexus Professional. If you haven't installed
@@ -9466,47 +9648,18 @@ it. This archive will install the necessary applications and plugins
 to enable a smooth migration from Artifactory to Nexus.
 
 ----
-$ wget http://nexus.sonatype.org/downloads/\ 
-nexus-migration-plugin-packaging-1.5-webapp.zip
-
-...
-Resolving repository.sonatype.org... 63.246.20.88
-Connecting to repository.sonatype.org|63.246.20.88|:80... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 280179 (274K)
-Saving to: 'nexus-migration-plugin-packaging-1.5-webapp.zip'
-
-100%[======================================>] 280,179      406K/s   in 0.7s    
-
-2009-03-14 15:03:52 (406 KB/s) - \
-`nexus-migration-plugin-packaging-1.5-webapp.zip' saved [280179/280179]
-$ cp nexus-migration-plugin-packaging-1.5-webapp.zip ${NEXUS_HOME}
 $ cd ${NEXUS_HOME}
-$ unzip nexus-migration-plugin-packaging-1.5-webapp.zip
-Archive:  nexus-migration-plugin-packaging-1.5-webapp.zip
-creating: runtime/
-creating: runtime/apps/
-creating: runtime/apps/artifactory-bridge/
-creating: runtime/apps/artifactory-bridge/webapp/
-creating: runtime/apps/artifactory-bridge/webapp/WEB-INF/
-inflating: runtime/apps/artifactory-bridge/webapp/WEB-INF/web.xml
-creating: conf/
-inflating: conf/jetty.xml
-creating: runtime/apps/nexus/
-creating: runtime/apps/nexus/plugin-repository/
-creating: .../nexus-migration-plugin-artifactory-1.2/
+$ cp nexus/WEB-INF/optional-plugins/nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip nexus/WEB-INF/plugin-repository/
+$ cd nexus/WEB-INF/plugin-repository/
+* unzip
+nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip 
+Archive:  nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip
+   creating: artifactory-bridge/
+   creating: artifactory-bridge/WEB-INF/
+   creating: artifactory-bridge/WEB-INF/lib/
 ...
-creating: runtime/apps/nexus/lib/
-inflating: .../nexus-migration-plugin-configuration-1.2.jar
-inflating: .../nexus-migration-plugin-artifactory-bridge-1.2.jar
+* rm nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip
 ----
-
-WARNING: The Nexus Migration plugin archive contains a copy of
-conf/jetty.xml. If you have customized jetty.xml you will want to make
-a backup of your customized jetty.xml before you install this
-Migration plugin.  Most people using the Nexus Migration plugin are
-going to be setting up a new instance of Nexus so this shouldn't be an
-issue.
 
 Once the Nexus Migration plugin has been installed, start up Nexus and
 go to the Nexus URL. If you are just setting up Nexus, and you've
@@ -9522,7 +9675,7 @@ shown in <<fig-artifactory-import-panel>>.
 image::figs/web/artifactory_after-installation.png[scale=60]
 
 [[artifactory-sect-importing]]
-=== Importing an Artifactory System Backup
+==== Importing an Artifactory System Backup
 
 To import the backup created in <<artifactory-sect-create-backup>>, enter the path to the
 Artifactory system backup archive in the Artifactory Import panel as
@@ -9549,7 +9702,7 @@ System Backup archive and populate fields in Step 2 of the Artifactory
 Import panel.
 
 [[artifactory-sect-configuring]]
-=== Configuring the Artifactory Import
+==== Configuring the Artifactory Import
 
 Once the System Backup has been imported, the Nexus Migration plugin
 will populate the Groups, Repositories, and Users tables in Step 2 of
@@ -9564,7 +9717,7 @@ these configuration tables in detail.
 image::figs/web/artifactory_customer-import-step2.png[scale=60]
 
 [[artifactory-sect-configuring-groups]]
-=== Configuring Artifactory Group Imports
+==== Configuring Artifactory Group Imports
 
 The groups table displays all of the groups contained in the
 Artifactory system backup. By default, all groups are selected. If you
@@ -9579,7 +9732,7 @@ configures the Nexus Group that corresponds to each Artifactory Group.
 image::figs/web/artifactory_groups-content-type.png[scale=60]
 
 [[fig-artifactory-config-repository-imports]]
-=== Configuring Artifactory Repository Imports
+==== Configuring Artifactory Repository Imports
 
 The second table in Step 2 of the Artifactory Import panel is the
 Repositories panel. In this panel you can select repositories to
@@ -9649,7 +9802,7 @@ plugin will create new proxy repository for repo1
 image::figs/web/artifactory_merging-proxy-repos.png[scale=60]
 
 [[artifactory-sect-config-users-privs]]
-=== Configuring Users and Privileges in the Artifactory Import
+==== Configuring Users and Privileges in the Artifactory Import
 
 The Users table shown in <<fig-artifactory-configuring-users>> allows you to select
 which users are imported into Nexus from the Artifactory system backup
@@ -9677,7 +9830,7 @@ privileges into Nexus and map the corresponding roles and privileges
 to the imported users.
 
 [[artifactory-sect-perform-import]]
-=== Performing the Artifactory Import
+==== Performing the Artifactory Import
 
 Once the Artifactory import has been configured, click on the Start
 Import button at the bottom of the Artifactory Import panel. Clicking
@@ -9712,7 +9865,7 @@ in <<fig-artifactory-migration-log>>.
 image::figs/web/artifactory_migration-log.png[scale=60]
 
 [[artifactory-sect-bridge]]
-=== Configuring Artifactory Clients to Use Nexus
+==== Configuring Artifactory Clients to Use Nexus
 
 Nexus is a drop-in replacement for Artifactory, this means that you
 don't need to reconfigure your project's settings.xml and repository
@@ -9772,17 +9925,16 @@ contains a reference to the web application and also configures the
 context-path /artifactory
 
 [[archiva]]
-[appendix]
-== Migrating to Nexus from Archiva
+=== Migrating from Archiva
 
 [[archiva-sect-introduction]]
-=== Introduction
+==== Introduction
 
 This appendix walks you through the process of migrating an
 existing Archiva installation to a new Nexus installation.
 
 [[archiva-sect-migrepo]]
-=== Migrating Archiva Repositories
+==== Migrating Archiva Repositories
 
 Archive uses the filesystem to store hosted repositories and
 proxied repositories, because of this migrating from Archiva to Nexus
@@ -9790,7 +9942,7 @@ couldn't be simpler. The following sections outline the process for
 migrating existing Archiva repositories to a new Nexus instance.
 
 [[archiva-sect-migrating-managed]]
-=== Migrating an Archiva Managed Repository
+==== Migrating an Archiva Managed Repository
 
 Archiva Managed Repositories are the equivalent of Nexus
 Hosted repositories. To migrate a Managed Repository from Archiva to
@@ -9888,7 +10040,7 @@ Once the migration is complete, you will be able to search and browse
 the contents of your newly migrated Nexus Hosted repository.
 
 [[archiva-sect-proxy]]
-=== Migrating an Archiva Proxy Connector
+==== Migrating an Archiva Proxy Connector
 
 Archiva allows you to define remote repositories and repository
 connectors to proxy remote repositories and cache remote artifacts
