@@ -6008,7 +6008,179 @@ documented in <<staging-sect-deployment-manual>>.
 [[staging-sect-deployment-nexus-staging-maven-plugin]]
 ==== Deployment with the Nexus Staging Maven Plugin
 
-TODO
+The Nexus Staging Maven Plugin is a Nexus specific and more powerful
+replacement for the Maven Deploy Plugin with a number of features
+specifically geared towards usage with the Nexus Staging Suite. The
+simplest usage can be configured by adding it to the project build plugins
+section as an extension:
+
+----
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.sonatype.plugins</groupId>
+      <artifactId>nexus-staging-maven-plugin</artifactId>
+      <extensions>true</extensions>
+      <configuration>
+        <serverId>local-nexus</serverId>
+        <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+      </configuration>
+    </plugin>
+----
+
+This configuration works only in Maven 3 and automatically replaces
+the deploy goal invocation of the Maven Deploy Plugin in the deploy
+Maven lifecycle phase with the deploy goal invocation of the Nexus
+Staging Maven Plugin. 
+
+The minimal required configuration parameters for the Nexus Staging Maven Plugin are:
+
+serverId:: the id of the server element in `settings.xml` from which
+the user credentials for accessing Nexus should be retrieved 
+nexusUrl:: the base URL at which the Nexus server to be used for
+staging is available
+
+With this configuration the Nexus Staging Maven Plugin will stage the
+artifacts locally and connect to Nexus. Nexus will try to determine
+the appropriate Staging Profile by matching the artifact path with any
+repository targets configured with staging profiles with an activated
+implicit profile selection strategy. If an appropriate staging profile
+is found a staging repository is created on the fly and the artifacts
+are deployed into it. If no profile is found the upload will fail.
+
+If more control is desired over when the plugins deploy goal is
+activated or if Maven 2 is used, you have to explicitly deactivate the
+Maven Deploy Plugin and replace the Maven Deploy Plugin invocation
+with the Nexus Staging Maven Plugin like this
+
+----
+<build> 
+  <plugins> 
+    <plugin> 
+      <groupId>org.apache.maven.plugins</groupId> 
+      <artifactId>maven-deploy-plugin</artifactId> 
+      <configuration>
+        <skip>true</skip> 
+      </configuration> 
+    </plugin> 
+    <plugin> 
+      <groupId>org.sonatype.plugins</groupId> 
+      <artifactId>nexus-staging-maven-plugin</artifactId>
+      <executions> 
+        <execution> 
+          <id>default-deploy</id> 
+          <phase>deploy</phase> 
+          <goals> 
+            <goal>deploy</goal> 
+          </goals> 
+        </execution> 
+      </executions> 
+      <configuration> 
+        <serverId>local-nexus</serverId>
+        <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+      </configuration> 
+    </plugin>
+...
+----
+
+The implicit matching relies on the setup of repository targets as
+well as the correct order of staging profiles and is therefore an
+error prone approach when many staging profiles are in use. 
+
+The preferred way to work in this sceneario is to change the profile
+selection strategy on all staging profiles to explicit only and pass
+the staging profile id to the Nexus Staging Maven Plugin using the
+`stagingProfileId` configuration parameter.
+
+In order to deploy project artifacts to Nexus with the above setup you
+would invoke a build with
+
+----
+mvn clean deploy
+----
+
+The build will locally stage the artifacts for deployment in
+`target/nexus-staging`, log an info statement like
+
+----
+[INFO] Using staging profile ID "12928995ef7eaecc" (configure by user).
+----
+
+or
+
+----
+[INFO] Using staging profile ID "12928995ef7eaecc" (matched by Nexus).
+----
+
+on the console and create a closed staging repository in Nexus
+holding the build artifacts. This execution of the `deploy`
+goal of the Nexus Staging Maven Plugin performs the following actions:
+
+- the artifacts are staged locally, 
+
+- a staging profile is selected either implicitly or explicitly
+
+- a staging repository is either created on the fly if needed or just
+  selected
+
+- an atomic upload to the staging repository is performed
+
+- and the staing repository is closed (or dropped if upload fails)
+
+If the configuration parameter
+`skipStagingRepositoryClose` set to `true` is passed to the plugin
+execution, only the local staging happens. This local staging can then
+be picked up for the remote staging and closing by running the
+`deploy-staged` goal of the plugin explicitly e.g. like this
+
+----
+mvn nexus:deploy-staged
+----
+
+Instead of Nexus creating a staging repository based on the implicit
+or explicit staging profile selection, you can explicitly configure
+the staging repository to use by providing the staging repository name
+as value of the `stagingRepositoryId` configuration property via the
+plugin configuration or command line invocation.
+
+Finally to override all staging you can define the full repository URL to
+deploy to with the `deployUrl` configuration parameter e.g. like 
+
+In addition tags can be added to the configuration section like this:
+
+----
+...
+<configuration>
+...  
+  <tags>
+    <localUsername>${env.USER}</localUsername>
+    <javaVersion>${java.version}</javaVersion>
+  </tags>
+...
+----
+
+In addition to the above documented configuration options that
+determine the behvaiour of the Nexus Staging Maven Plugin, further
+configuration can be provided with the following parameters:
+
+altStagingDirectory:: defaulting to target/nexus-staging you can
+set the property to set a different folder for the local staging 
+description:: allows you to provide a description for the staging
+repository action like close or drop carried out as part of the plugin
+execution
+keepStagingRepositoryOnFailure:: setting this flag to true will cause
+the plugin to skip any clean up operations like dropping a staging
+repository for failed uploads, by default these clean up operations
+occur
+skipStaging:: set to false by default this flag will cause to skip any
+execution of the plugin when set to true
+skipRemoteStaging:: if this flag is set to true any step related to
+remote staging will be skipped and only local staging will be
+performed, the default setting is false
+
+TODO document the rest of the goals namely close, drop, promote and
+release and their remote control equivalents rc-close ...
+
 
 [[staging-sect-deployment-nexus-staging-ant-tasks]]
 ==== Deployment with the Nexus Staging Ant Tasks
