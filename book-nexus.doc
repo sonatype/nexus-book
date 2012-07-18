@@ -4060,10 +4060,10 @@ image::figs/web/config-plugin-core-api-site.png[scale=60]
 
 ==== Introduction
 
-When using Apache Maven with Nexus the user credentials for accessing
+When using Apache Maven with Nexus, the user credentials for accessing
 Nexus have to be stored in clear text in the user's settings.xml
 file. Maven has the ability to encrypt passwords in setting.xml, but
-the need for it to be reversible, in order to be used, limits its
+the need for it to be reversible in order to be used, limits its
 security. In addition the general setup and use is cumbersome and the
 potential need for regular changes due to strong security requirements
 e.g. with regular, required password changes triggers the need for a
@@ -4073,7 +4073,7 @@ The User Token feature of Nexus fills that need for Apache Maven as
 well as other build systems and users. It introduces a two part token
 for the user, replacing the username and password with a user code and
 a pass code that allows no way of recovering the username and password
-from the user code and pass code values yet can be used for
+from the user code and pass code values, yet can be used for
 authentication with Nexus from the command line e.g. via Maven as well
 as in the UI.
 
@@ -4089,7 +4089,7 @@ documented in <<settings>> to further simplify its use.
 ==== Enabling and Resetting User Tokens
 
 The User Token based authentication can be activated by a Nexus
-administrator or any user with the role usertoken-admin or
+administrator or user with the role usertoken-admin or
 usertoken-all by accessing the User Token item in the Security menu on
 the left hand navigation. 
 
@@ -4105,12 +4105,6 @@ image::figs/web/config-user-token-main.png[scale=60]
 Selecting the Protect Content feature configures Nexus to require a
 user token for any access to the content urls of Nexus, which includes
 all repositories and groups.
-
-Alternatively the User Token feature including the content protection
-setting can be configured via the Capabilities option in the left hand
-Administration menu after activating the Show Advanced setting in the 
-list. The row with the Type value User Token is the respective
-capability configuration.
 
 Activating User Token as a feature automatically adds the User Token
 Realm as a Selected Realm in the Security Settings section as
@@ -4128,7 +4122,7 @@ persisted in case the feature is reactivated at a later stage.
 .Selected Realms Server Security Settings with User Token Realm activated
 image::figs/web/config-user-token-security-settings.png[scale=60]
 
-Besides resetting all user tokens an administrator can reset the token
+Besides resetting all user tokens, an administrator can reset the token
 of an individual user by selecting the User Token tab in the Users
 administration from the Security menu in the left hand navigation
 displayed in <<fig-config-user-token-user-reset>>. The password
@@ -4150,7 +4144,7 @@ servers using user tokens or any other automated build executions.
 
 With User Token enabled, any user can access their individual tokens via their
 Profile panel. To access the panel, select Profile when clicking on the
-user name in the top left hand corner of the Nexus user
+user name in the top right hand corner of the Nexus user
 interface. Then select User Token in the drop down to get access to the User
 Token screen in the Profile panel displayed in
 <<fig-config-user-token-profile>>.
@@ -4203,7 +4197,7 @@ curl -v --user HdeHuL4x:Y7ZH6ixZFdOVwNpRhaOV+phBISmipsfwVxPRUH1gkV09 http://loca
 User token values can be accessed as part of the Maven settings
 template feature automating updates as documented in <<settings>>.
 
-NOTE: The user tokens are created at first access wether that is by
+NOTE: The user tokens are created at first access whether that is by
 using the Nexus user interface or the Nexus Maven Plugin.
 
 ==== Configuring User Token Behaviour
@@ -6100,19 +6094,7 @@ mvn clean deploy
 ----
 
 The build will locally stage the artifacts for deployment in
-`target/nexus-staging`, log an info statement like
-
-----
-[INFO] Using staging profile ID "12928995ef7eaecc" (configure by user).
-----
-
-or
-
-----
-[INFO] Using staging profile ID "12928995ef7eaecc" (matched by Nexus).
-----
-
-on the console and create a closed staging repository in Nexus
+`target/nexus-staging`, on the console and create a closed staging repository in Nexus
 holding the build artifacts. This execution of the `deploy`
 goal of the Nexus Staging Maven Plugin performs the following actions:
 
@@ -6127,26 +6109,75 @@ goal of the Nexus Staging Maven Plugin performs the following actions:
 
 - and the staing repository is closed (or dropped if upload fails)
 
-If the configuration parameter
-`skipStagingRepositoryClose` set to `true` is passed to the plugin
-execution, only the local staging happens. This local staging can then
-be picked up for the remote staging and closing by running the
-`deploy-staged` goal of the plugin explicitly e.g. like this
+The log of a succesful deployment would look similar to this:
 
 ----
-mvn nexus:deploy-staged
+[INFO] --- nexus-staging-maven-plugin:2.1-SNAPSHOT:deploy (injected-nexus-deploy) @ staging-example ---
+[INFO] Using server credentials with ID="nexus-releases" from Maven settings.
+[INFO] Preparing staging against Nexus on URL http://localhost:8081/nexus/
+[INFO]  * Remote Nexus reported itself as version 2.1-SNAPSHOT and edition "Professional"
+[INFO]  * Using staging profile ID "12a1656609231352" (matched by Nexus).
+[INFO] Staging locally (stagingDirectory="/Users/manfred/dev/staging-example/target/nexus-staging/12a1656609231352")...
+Uploading: file: ... staging-example-1.0.0.jar
+Uploaded: file: ... staging-example-1.0.0.jar (4 KB at 1051.1 KB/sec)
+Uploading: file: ... staging-example-1.0.0.pom
+Uploaded: file: ... staging-example-1.0.0.pom (4 KB at 656.2 KB/sec)
+Downloading: file: ...maven-metadata.xml
+Uploading: file: ...maven-metadata.xml
+Uploaded: file: ... maven-metadata.xml (322 B at 157.2 KB/sec)
+[INFO] Staging remotely...
+[INFO] Uploading locally staged directory: 12a1656609231352
+[INFO] Performing staging against Nexus on URL http://localhost:8081/nexus/
+[INFO]  * Remote Nexus reported itself as version 2.1-SNAPSHOT and edition "Professional"
+[INFO]  * Created staging repository with ID "test-002", applied tags: {javaVersion=1.6.0_26, localUsername=manfred}
+[INFO]  * Uploading locally staged artifacts to: http://localhost:8081/nexus/service/local/staging/deployByRepositoryId/test-002
+[INFO]  * Upload of locally staged artifacts done.
+[INFO]  * Closing staging repository with ID "test-002".
+[INFO] Finished staging against Nexus with success.
+---- 
+
+Failures are accompanied by error reports that reveal furhter details:
+
 ----
+[ERROR] Error while trying to close staging repository with ID "test-003".
+[ERROR] 
+[ERROR] Nexus Staging Rules Failure Report
+[ERROR] ==================================
+[ERROR] 
+[ERROR] Repository "Test-003 (u:admin, a:127.0.0.1)" (id=n/a) failures
+[ERROR]   Rule "RepositoryWritePolicy" failures
+[ERROR]     * Artifact updating: Repository ='releases:Releases' does not allow updating artifact='/com/sonatype/training/nexus/staging-example/t1.0.0/staging-example-1.0.0.jar'
+[ERROR]     * Artifact updating: Repository ='releases:Releases' does not allow updating artifact='/com/sonatype/training/nexus/staging-example/1.0.0/staging-example-1.0.0.pom'
+[ERROR] 
+[ERROR] 
+----
+
+If the configuration parameter
+`skipStagingRepositoryClose` set to `true` is passed to the plugin
+execution, the remote staging repository will not be closed.
 
 Instead of Nexus creating a staging repository based on the implicit
 or explicit staging profile selection, you can explicitly configure
 the staging repository to use by providing the staging repository name
 as value of the `stagingRepositoryId` configuration property via the
-plugin configuration or command line invocation.
+plugin configuration or command line invocation. Together with
+skipping the closing of the repository using
+`skipStagingRepositoryClose` it is possible to get multiple builds to
+deploy to the same staging repository and therefore have a number of
+artifacts go through the staging workflow together. An alternative to
+this approach would be to create an aggregating project that assembles
+all artifacts together e.g. in an assembly and then use this project
+for staging.
+
 
 Finally to override all staging you can define the full repository URL to
 deploy to with the `deployUrl` configuration parameter e.g. like 
+`http://localhost:8081/nexus/content/repositories/releases/`.
+This would cause any staging to be skipped and a straight upload of
+the artifacts to the repository to occur.
 
-In addition tags can be added to the configuration section like this:
+As part of the configuration section for the plugin you can define
+tags like this:
 
 ----
 ...
@@ -6158,6 +6189,11 @@ In addition tags can be added to the configuration section like this:
   </tags>
 ...
 ----
+
+Once artifacts are released these tags are transformed into attributes
+stored along the artifacts in the release repository and  can be
+accessed via the REST interface and therefore any plugin and user
+interface integration. 
 
 In addition to the above documented configuration options that
 determine the behvaiour of the Nexus Staging Maven Plugin, further
@@ -6178,8 +6214,39 @@ skipRemoteStaging:: if this flag is set to true any step related to
 remote staging will be skipped and only local staging will be
 performed, the default setting is false
 
-TODO document the rest of the goals namely close, drop, promote and
-release and their remote control equivalents rc-close ...
+With `skipRemoteStaging` set to true, only the local staging
+happens. This local staging can then be picked up for the remote
+staging and closing by running the `deploy-staged` goal of the plugin
+explicitly e.g. like this
+
+----
+mvn nexus:deploy-staged
+----
+
+Besides the default `deploy` goal the Nexus Staging Maven Plugin
+supports a number of additional goals. By configuring executions of
+the goals as part of your POM or manually invoking them further
+automation of a staged release process can be achieved.
+
+deploy-staged:: perform full staging deployment workflow for a locally
+staged project e.g. with the artifacts in target/nexus-staging
+
+close:: close the staging repository 
+
+drop:: drop the staging repository 
+
+release:: release the staging repository 
+
+promote:: promote the staging repository
+
+Closing, dropping and releasing the staging repository using the goals
+relies on content of a local staging folder .
+
+Promoting additionally needs the build promotion identifier passed in
+via the `buildPromotionProfileId` configuration parameter.
+
+TODO rc-* goals next
+
 
 
 [[staging-sect-deployment-nexus-staging-ant-tasks]]
