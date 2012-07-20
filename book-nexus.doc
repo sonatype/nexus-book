@@ -6070,9 +6070,8 @@ element in your ~/.m2/settings.xml file as shown in
 
 Note that the server identifier listed in
 <<ex-staging-deployment-credentials>> should match the serverId
-parameter you are passing to the Nexus Staging Maven Plugin.  The
-deployment credential listed in <<ex-staging-deployment-credentials>>
-contains the default password for the Nexus deployment user -
+parameter you are passing to the Nexus Staging Maven Plugin and in the
+example contains the default password for the Nexus deployment user -
 deployment123.  You should change this password to match the
 deployment password for your Nexus installation.
 
@@ -6205,13 +6204,19 @@ for staging.
 
 
 Finally to override all staging you can define the full repository URL to
-deploy to with the `deployUrl` configuration parameter e.g. like 
-`http://localhost:8081/nexus/content/repositories/releases/`.
+deploy to with the `deployUrl` configuration parameter e.g.
+
+---- 
+http://localhost:8081/nexus/content/repositories/releases/`.
+----
+
 This would cause any staging to be skipped and a straight upload of
 the artifacts to the repository to occur.
 
 As part of the configuration section for the plugin you can define
-tags like this:
+tags with arbitrary key and value names. For example you could create
+a tag with key localUsername and a value of the current user picked up
+from the USER environment variable:
 
 ----
 ...
@@ -6223,6 +6228,7 @@ tags like this:
   </tags>
 ...
 ----
+
 
 Once artifacts are released these tags are transformed into attributes
 stored along the artifacts in the release repository and  can be
@@ -6237,7 +6243,8 @@ altStagingDirectory:: defaulting to target/nexus-staging you can
 set the property to set a different folder for the local staging 
 description:: allows you to provide a description for the staging
 repository action like close or drop carried out as part of the plugin
-execution
+execution. The description will then be used in any notification just
+like a description provided in the user interface.
 keepStagingRepositoryOnFailure:: setting this flag to true will cause
 the plugin to skip any clean up operations like dropping a staging
 repository for failed uploads, by default these clean up operations
@@ -6251,7 +6258,7 @@ performed, the default setting is false
 With `skipRemoteStaging` set to true, only the local staging
 happens. This local staging can then be picked up for the remote
 staging and closing by running the `deploy-staged` goal of the plugin
-explicitly e.g. like this
+explicitly like this
 
 ----
 mvn nexus-staging:deploy-staged
@@ -6271,18 +6278,19 @@ drop:: drop the staging repository for current context
 
 release:: release the staging repository for current context
 
-promote:: promote the staging repository
+promote:: promote the staging repository for the current context
 
 Closing, dropping and releasing the staging repository using the goals
 relies on content of a local staging folder .
 
-Promoting additionally needs the build promotion identifier passed in
+Promoting additionally needs the build promotion profile name passed in
 via the `buildPromotionProfileId` configuration parameter.
 
 While the above goals need the context of a project with configuration
-for the Nexus Staging Plugin in the POM file, it is possible work
-without a project as welll. The Nexus Staging Maven Plugin offers
-remote-control to control staging in Nexus:
+for the Nexus Staging Plugin in the POM file, it is possible to
+execute staging repository related tasks without a project as
+welll. The Nexus Staging Maven Plugin offers remote-control goals to
+control staging in Nexus:
 
 rc-close:: close a specified staging repository 
 
@@ -6302,16 +6310,16 @@ your settings.xml:
  </pluginGroups>
 ----
 
-When invoking the remote control goals, you need to specify all
-parameters on the command line as properties.
+In addition you need to specify all parameters on the command line as
+properties passed in via `-Dkey=value`.
 
 At a minimum the required parameters `serverId` and `nexusUrl` have to
-be specified: 
+be specified:
 ----
  mvn nexus-staging:rc-close -DserverId=local-nexus -DnexusUrl=http://localhost:8081/nexus
 ---- 
 
-In addition depending on the goal you will have configure the staging
+Depending on the goal you will have to configure the staging
 repositories you want to close, drop or release with
 
 ----
@@ -6331,9 +6339,18 @@ the build promotion profile identifier:
 -DbuildPromotionProfileId=12a25eabf8c8b3f2
 ----
 
-TODO .. the above seems to be not working for me so I need to test and
-clarify and update the content accordingly
+A successful remote control drop would be logged in the command line
+similar to this
 
+---- 
+— nexus-staging-maven-plugin:2.1-SNAPSHOT:rc-drop (default-cli) @ standalone-pom —
+[INFO] Connecting to Nexus...
+[INFO] Using server credentials with ID="nexus-releases" from Maven settings.
+[INFO] RC-Dropping staging repository with IDs=[test-003]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+----
 
 [[staging-sect-deployment-nexus-staging-ant-tasks]]
 ==== Deployment with the Nexus Staging Ant Tasks
@@ -6348,9 +6365,8 @@ rely on implicit matching of the artifacts against a staging profile
 based on a repository target definition. 
 
 To deploy a staged release, a developer needs to deploy to the
-staging URL. To configure this new project to deploy to the Staging
-URL, add the a distributionManagement element to your
-project's POM.
+staging URL. To configure a project to deploy to the Staging URL, add
+the a distributionManagement element to your project's POM. 
 
 [[ex-staging-dist-management]]
 .Listing the Staging URL in distributionManagement
@@ -6377,8 +6393,6 @@ This URL acts as a something of a virtual repository to be published
 to.  If an artifact being published matches one of the Repository
 Targets in a Staging Profile, that Staging Profile is "activated" and
 a temporary Staging Repository is created.
-
-
 
 Once the sample project's distributionManagement has been set
 to point at the Nexus Staging URL and your deployment credentials are
@@ -6422,15 +6436,15 @@ could not be found on repository: nexus, so will be created
 [INFO] BUILD SUCCESSFUL
 ----
 
-If the Staging
-Suite is configured correctly, any deployment to the staging URL under
-the groupId com.sonatype.sample should be intercepted by the Staging
-Suite and placed in a temporary staging repository. Once this
-repository has been closed, it will be made available in the Target
-Group you selected when you configured the Staging Profile. Closing
-the staging repository has to be done with the Nexus user interface or
-the Nexus Staging Maven Plugin. Deployment with the Maven Deploy
-Plugin will not automatically close the staging repository.
+If the Staging Suite is configured correctly, any deployment to the
+staging URL matching in a repository target configured for a stating
+profile should be intercepted by the Staging Suite and placed in a
+temporary staging repository. Deployment with the Maven Deploy Plugin
+will not automatically close the staging repository. Closing the
+staging repository has to be done with the Nexus user interface or the
+Nexus Staging Maven Plugin.  Once this repository has been closed, it
+will be made available in the Target Group you selected when you
+configured the Staging Profile.
 
 
 [[staging-sect-deployment-manual]]
