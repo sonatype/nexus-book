@@ -6042,6 +6042,40 @@ implicit profile selection strategy. If an appropriate staging profile
 is found a staging repository is created on the fly and the artifacts
 are deployed into it. If no profile is found the upload will fail.
 
+To successfully deploy to your Nexus instance, you will
+need to update your Maven Settings with the credentials for the
+deployment user. These credentials are stored in the Maven Settings file
+in ~/.m2/settings.xml. 
+
+To add these credentials, add the following element to the servers
+element in your ~/.m2/settings.xml file as shown in
+<<ex-staging-deployment-credentials>>.
+
+[[ex-staging-deployment-credentials]]
+.Listing deployment credentials in Maven Settings
+----
+<settings>
+  ...
+  <servers>
+    ...
+    <server>
+      <id>nexus</id>
+      <username>deployment</username>
+      <password>deployment123</password>
+    </server>
+  </servers>
+  ...
+</settings>
+----
+
+Note that the server identifier listed in
+<<ex-staging-deployment-credentials>> should match the serverId
+parameter you are passing to the Nexus Staging Maven Plugin.  The
+deployment credential listed in <<ex-staging-deployment-credentials>>
+contains the default password for the Nexus deployment user -
+deployment123.  You should change this password to match the
+deployment password for your Nexus installation.
+
 If more control is desired over when the plugins deploy goal is
 activated or if Maven 2 is used, you have to explicitly deactivate the
 Maven Deploy Plugin and replace the Maven Deploy Plugin invocation
@@ -6220,7 +6254,7 @@ staging and closing by running the `deploy-staged` goal of the plugin
 explicitly e.g. like this
 
 ----
-mvn nexus:deploy-staged
+mvn nexus-staging:deploy-staged
 ----
 
 Besides the default `deploy` goal the Nexus Staging Maven Plugin
@@ -6231,11 +6265,11 @@ automation of a staged release process can be achieved.
 deploy-staged:: perform full staging deployment workflow for a locally
 staged project e.g. with the artifacts in target/nexus-staging
 
-close:: close the staging repository 
+close:: close the staging repository for current context
 
-drop:: drop the staging repository 
+drop:: drop the staging repository for current context
 
-release:: release the staging repository 
+release:: release the staging repository for current context
 
 promote:: promote the staging repository
 
@@ -6245,8 +6279,60 @@ relies on content of a local staging folder .
 Promoting additionally needs the build promotion identifier passed in
 via the `buildPromotionProfileId` configuration parameter.
 
-TODO rc-* goals next
+While the above goals need the context of a project with configuration
+for the Nexus Staging Plugin in the POM file, it is possible work
+without a project as welll. The Nexus Staging Maven Plugin offers
+remote-control to control staging in Nexus:
 
+rc-close:: close a specified staging repository 
+
+rc-drop:: drop a specified staging repository 
+
+rc-release:: release a specified staging repository 
+
+rc-promote:: promote a specified staging repository
+
+When invoking these goals outside a project context you need to have
+the Nexus Staging Maven Plugin groupId specified as a pluginGroup in
+your settings.xml:
+
+----
+ <pluginGroups>
+       <pluginGroup>org.sonatype.plugins</pluginGroup>
+ </pluginGroups>
+----
+
+When invoking the remote control goals, you need to specify all
+parameters on the command line as properties.
+
+At a minimum the required parameters `serverId` and `nexusUrl` have to
+be specified: 
+----
+ mvn nexus-staging:rc-close -DserverId=local-nexus -DnexusUrl=http://localhost:8081/nexus
+---- 
+
+In addition depending on the goal you will have configure the staging
+repositories you want to close, drop or release with
+
+----
+ -DstagingRepositoryId=repo-001,repo-002
+----
+
+and you can also supply a description like this
+
+----
+-Ddescription="Dropping since QA of issue 123 failed"
+----
+
+For promoting you need to add the required parameter that specifies
+the build promotion profile identifier:
+
+----
+-DbuildPromotionProfileId=12a25eabf8c8b3f2
+----
+
+TODO .. the above seems to be not working for me so I need to test and
+clarify and update the content accordingly
 
 
 [[staging-sect-deployment-nexus-staging-ant-tasks]]
@@ -6257,59 +6343,20 @@ TODO
 [[staging-sect-deployment-maven-deploy-plugin]]
 ==== Deployment with the Maven Deploy Plugin
 
-
-
-TODO this uses implicit mathcing and repo target Here is the old content.. needs update and more
-
-Maven deploy plugin
- A staging profile uses a Repository Target to match
-artifacts as they are deployed. If a matching artifact is deployed to
-Nexus, the Staging Suite will intercept this deployment and store the
-artifact in a staging repository.
-
-In the previous section, you created a Staging Profile which
-references the Repository Target created previously. If the Staging
-Suite is configured correctly, any deployment to the staging URL under
-the groupId com.sonatype.sample should be intercepted by the Staging
-Suite and placed in a temporary staging repository. Once this
-repository has been closed, it will be made available in the Target
-Group you selected when you configured the Staging Profile.
-
-In this section, you will create a new project using the Maven
-Archetype plugin to test the Staging Profile you created in the
-previous section.
-
-
-[[staging-sect-update-pom]]
-==== Update the POM Deployment Configuration
+When using the Maven Deploy Plugin with the Nexus Staging Suite, you
+rely on implicit matching of the artifacts against a staging profile
+based on a repository target definition. 
 
 To deploy a staged release, a developer needs to deploy to the
 staging URL. To configure this new project to deploy to the Staging
-URL, add the a distributionManagement element to the stage-test
+URL, add the a distributionManagement element to your
 project's POM.
 
 [[ex-staging-dist-management]]
 .Listing the Staging URL in distributionManagement
 ----
 <project xmlns="http://maven.apache.org/POM/4.0.0" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.sonatype.sample</groupId>
-  <artifactId>staging-test</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0</version>
-  <name>staging-test</name>
-  <url>http://maven.apache.org</url>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+...
   <distributionManagement>
     <repository>
       <id>nexus</id>
@@ -6317,6 +6364,7 @@ http://maven.apache.org/maven-v4_0_0.xsd">
       <url>http://localhost:8081/nexus/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
+...
 </project>
 ----
 
@@ -6328,49 +6376,9 @@ http://localhost:8081/nexus/service/local/staging/deploy/maven2
 This URL acts as a something of a virtual repository to be published
 to.  If an artifact being published matches one of the Repository
 Targets in a Staging Profile, that Staging Profile is "activated" and
-a temporary Staging Repository is created for a specific client as
-defined by the combination of a client's IP address, Deployment User
-name, and User-Agent.
+a temporary Staging Repository is created.
 
-[[staging-sect-deploy-credentials]]
-==== Update settings.xml with Deployment Credentials
 
-To successfully deploy to your Nexus instance, you will
-need to update your Maven Settings with the credentials for the
-deployment user. These credentials are stored in the Maven Settings file
-in ~/.m2/settings.xml. 
-
-To add these credentials, add the following element to the servers
-element in your ~/.m2/settings.xml file as shown in
-<<ex-staging-deployment-credentials>>.
-
-[[ex-staging-deployment-credentials]]
-.Listing deployment credentials in Maven Settings
-----
-<settings>
-  ...
-  <servers>
-    ...
-    <server>
-      <id>nexus</id>
-      <username>deployment</username>
-      <password>deployment123</password>
-    </server>
-  </servers>
-  ...
-</settings>
-----
-
-Note that the server identifier listed in
-<<ex-staging-deployment-credentials>> matches the server identifier
-listed in <<ex-staging-dist-management>>.  The deployment credential
-listed in <<ex-staging-deployment-credentials>> contains the default
-password for the Nexus deployment user - deployment123.  You should
-change this password to match the deployment password for your Nexus
-installation.
-
-[[staging-sect-deploy-staged]]
-==== Deploying to a Staged Repository
 
 Once the sample project's distributionManagement has been set
 to point at the Nexus Staging URL and your deployment credentials are
@@ -6413,6 +6421,16 @@ could not be found on repository: nexus, so will be created
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESSFUL
 ----
+
+If the Staging
+Suite is configured correctly, any deployment to the staging URL under
+the groupId com.sonatype.sample should be intercepted by the Staging
+Suite and placed in a temporary staging repository. Once this
+repository has been closed, it will be made available in the Target
+Group you selected when you configured the Staging Profile. Closing
+the staging repository has to be done with the Nexus user interface or
+the Nexus Staging Maven Plugin. Deployment with the Maven Deploy
+Plugin will not automatically close the staging repository.
 
 
 [[staging-sect-deployment-manual]]
