@@ -6193,8 +6193,16 @@ Instead of Nexus creating a staging repository based on the implicit
 or explicit staging profile selection, you can explicitly configure
 the staging repository to use by providing the staging repository name
 as value of the `stagingRepositoryId` configuration property via the
-plugin configuration or command line invocation. Together with
-skipping the closing of the repository using
+plugin configuration or command line invocation. 
+
+The identifier of a staging repository can be determined by looking at
+the name column in the list of staging repositories. The name column
+used the capitalized id and adds the username and address the staging
+was deployed from in brackets. For example a name could be 
+`Test-003 (u: admin, a: 127.0.0.1)`. The ID of this staging repository
+is `test-003`.
+
+Together with skipping the closing of the repository using
 `skipStagingRepositoryClose` it is possible to get multiple builds to
 deploy to the same staging repository and therefore have a number of
 artifacts go through the staging workflow together. An alternative to
@@ -6351,6 +6359,10 @@ similar to this
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
 ----
+
+WARNING: The Nexus Maven Plugin in versions earlier than 2.1 had goals
+to work with staging repositories. These goals have been deprecated in
+favour of the remote control goals of the Nexus Staging Maven Plugin.
 
 [[staging-sect-deployment-nexus-staging-ant-tasks]]
 ==== Deployment with the Nexus Staging Ant Tasks
@@ -6786,13 +6798,6 @@ Staging Repository to a Build Promotion profile, you can drop,
 promote, or release the artifacts it contains as detailed in
 <<staging-sect-prepare-nexus>>.
 
-
-WARNING: TODO - where to put this info best..The Nexus Maven Plugin in
-versions earlier than 2.1 had goals to work with staging
-repositories. These goals have been deprecated in favour of the Nexus
-Staging Maven Plugin. If you are still using the old plugin you should
-consider migrating to the new plugin and usage patterns. Documentation
-for the old plugin is available TODO.
 
 [[staging-sect-rulesets]]
 === Enforcing Standards for Deployment and Promotion with Rulesets
