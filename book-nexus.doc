@@ -6014,6 +6014,7 @@ section as an extension:
     <plugin>
       <groupId>org.sonatype.plugins</groupId>
       <artifactId>nexus-staging-maven-plugin</artifactId>
+      <version>1.0</version>
       <extensions>true</extensions>
       <configuration>
         <serverId>local-nexus</serverId>
@@ -6021,6 +6022,9 @@ section as an extension:
       </configuration>
     </plugin>
 ----
+
+Following Maven best practices the version should be pulled out into a
+pluginManagement section in a company POM or parent POM.
 
 This configuration works only in Maven 3 and automatically replaces
 the deploy goal invocation of the Maven Deploy Plugin in the deploy
@@ -6076,7 +6080,7 @@ deployment123.  You should change this password to match the
 deployment password for your Nexus installation.
 
 If more control is desired over when the plugins deploy goal is
-activated or if Maven 2 is used, you have to explicitly deactivate the
+I will activated or if Maven 2 is used, you have to explicitly deactivate the
 Maven Deploy Plugin and replace the Maven Deploy Plugin invocation
 with the Nexus Staging Maven Plugin like this
 
@@ -6145,7 +6149,7 @@ goal of the Nexus Staging Maven Plugin performs the following actions:
 The log of a succesful deployment would look similar to this:
 
 ----
-[INFO] --- nexus-staging-maven-plugin:2.1-SNAPSHOT:deploy (injected-nexus-deploy) @ staging-example ---
+[INFO] --- nexus-staging-maven-plugin:1.0-SNAPSHOT:deploy (injected-nexus-deploy) @ staging-example ---
 [INFO] Using server credentials with ID="nexus-releases" from Maven settings.
 [INFO] Preparing staging against Nexus on URL http://localhost:8081/nexus/
 [INFO]  * Remote Nexus reported itself as version 2.1-SNAPSHOT and edition "Professional"
@@ -6351,7 +6355,7 @@ A successful remote control drop would be logged in the command line
 similar to this
 
 ---- 
-— nexus-staging-maven-plugin:2.1-SNAPSHOT:rc-drop (default-cli) @ standalone-pom —
+— nexus-staging-maven-plugin:1.0-SNAPSHOT:rc-drop (default-cli) @ standalone-pom —
 [INFO] Connecting to Nexus...
 [INFO] Using server credentials with ID="nexus-releases" from Maven settings.
 [INFO] RC-Dropping staging repository with IDs=[test-003]
@@ -6360,14 +6364,145 @@ similar to this
 [INFO] ------------------------------------------------------------------------
 ----
 
-WARNING: The Nexus Maven Plugin in versions earlier than 2.1 had goals
+WARNING: The Nexus Maven Plugin in versions earlier than 2.1.0 had goals
 to work with staging repositories. These goals have been deprecated in
 favour of the remote control goals of the Nexus Staging Maven Plugin.
 
 [[staging-sect-deployment-nexus-staging-ant-tasks]]
 ==== Deployment with the Nexus Staging Ant Tasks
 
-TODO
+The Nexus Staging Ant Tasks provide equivalent features to the Nexus
+Staging Maven Plugin for Apache Ant users covering all use cases for
+interacting with the Nexus Staging Suite.
+
+To use the ant tasks in your Ant build file you need to download the
+complete jar with the included dependencies. You can find it at
+the Central Repository. Simply search for 'nexus-staging-ant-tasks'
+and download the jar file with the `uber` classifier
+e.g. `nexus-staging-ant-tasks-1.0-uber.jar`.
+
+After downloading, put the jar file somewhere in your
+project or in your system so you can add it to the classpath in your
+build file with a task definition. In the following example the jar
+file is placed in a `tasks` folder within the project.
+
+----
+<taskdef uri="antlib:org.sonatype.nexus.ant.staging" 
+         resource="org/sonatype/nexus/ant/staging/antlib.xml">
+  <classpath>
+    <fileset dir="tasks" includes="nexus-staging-ant-tasks-*uber.jar" />
+  </classpath>
+</taskdef>
+----
+
+The deployment related information for your project is captured in a
+`nexusStagingInfo` section in your build file that contains all the
+necessary configuration.
+
+----
+<staging:nexusStagingInfo id="target-nexus" 
+    stagingDirectory="target/local-staging">
+  <staging:projectInfo groupId="org.sonatype.nexus.ant"
+      artifactId="nexus-staging-ant-tasks"
+      version="1.0" />
+  <staging:connectionInfo 
+      baseUrl="http://localhost:8081/nexus">
+    <staging:authentication 
+      username="deployment" 
+      password="deployment123" />
+  </staging:connectionInfo>
+</staging:nexusStagingInfo>
+----
+
+nexusStagingInfo:id:: the identifier that allows you to reference the
+staging information in the Ant build file
+
+stagingInfo:stagingDirectory:: the local staging directory, a place
+where local staging will happen. Ensure that this directory is cleaned
+up by "clean" tasks (or alike, if any).
+
+projectInfo:: the project information targetting a staging
+profile. This can be done explicitly with the stagingProfileId or
+implicitly with groupId, artifactId and version. stagingRepositoryId
+can also be part of projectInfo identifying a staging repository for
+interaction
+
+connectionInfo:baseUrl:: the base URL of the Nexus server you want to
+deploy to and interact with
+
+If necessary the connection Info can have a nested proxy section
+
+----
+<staging:proxy 
+    host="proxy.mycorp.com" 
+    port="8080">
+  <staging:authentication 
+      username="proxyUser" 
+      password="proxySecret" />
+</staging:proxy>
+----
+
+With the above setup you are ready to add a deploy target to your
+build file that stages the artifacts locally as well as remotely and
+closes the staging repository. 
+
+----
+<target name="deploy" description="Deploy: Local and Remote Staging">
+
+  <staging:stageLocally>
+    <staging:nexusStagingInfo 
+        refid="target-nexus" />
+      <fileset dir="target/local-repo" 
+        includes="**/*.*" />
+    </staging:stageLocally>
+
+  <staging:stageRemotely>
+    <staging:nexusStagingInfo 
+        refid="target-nexus" />
+  </staging:stageRemotely>
+
+</target>
+----
+
+Similarily you can create a target that releases the staged artifacts
+by adding the closeStagingRepository task to the end of the target:
+
+----
+<staging:releaseStagingRepository>
+  <staging:nexusStagingInfo 
+      refid="target-nexus" />
+</staging:releaseStagingRepository>
+----
+
+The stageLocally task takes a fileset as configuration. The
+stageRemotely task has additional configuration options 
+
+keepStagingRepositoryOnFailure:: set to true this causes the remote
+staging repository to be kept rather than deleted in case of a failed
+upload, default setting is false
+
+skipStagingRepositoryClose:: by default a staging repository is
+automatically closed, setting this parameter to true will cause the
+staging repository to remain open
+
+In addition to the tasks for local and remote staging the Nexus
+Staging Ant Tasks includes tasks for closing, dropping, releasing and
+promoting a staging repository:
+
+- closeStagingRepository
+
+- dropStagingRepository
+
+- releaseStagingRepository
+
+- promoteStagingRepository
+
+All these tasks take the context information from the local staging
+directory or from the optional parameter `stagingRepositoryId`. The
+task to promote a repository has the additional, mandatory attribute
+`buildPromotionProfileId` to specify the build promotion profile to
+promote.
+
 
 [[staging-sect-deployment-maven-deploy-plugin]]
 ==== Deployment with the Maven Deploy Plugin
