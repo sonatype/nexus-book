@@ -1836,13 +1836,12 @@ please see http://httpd.apache.org
 [[install-sect-as-a-war]]
 === Installing the Nexus WAR
 
-The Nexus Open Source WAR has been successfully tested in Tomcat,
-Jetty, and Resin. If you need to run Nexus under Glassfish, please see
-<<install-sect-war-gf>>. To download the Nexus Open Source WAR, go to
-http://www.sonatype.org/nexus/go.  Click on the Download
-Site link and then download the Nexus WAR. Once you have downloaded
-the Nexus Open Source WAR, you can install it in a servlet container
-or application server.
+The Nexus Open Source WAR can run in in Tomcat, Jetty, and Resin and
+other application server. To download the Nexus Open Source WAR, go to
+http://www.sonatype.org/nexus/go.  Click on the Download Site link and
+then download the Nexus WAR. Once you have downloaded the Nexus Open
+Source WAR, you can install it in a servlet container or application
+server.
 
 The process for installing a WAR in an servlet container or
 application server is going to vary for each specific
@@ -1862,32 +1861,7 @@ NOTE: When installing Nexus as a WAR in an application server or
 servlet container, it automatically creates a sonatype-work directory
 in the home directory of the user running the application server. This
 directory contains all of the necessary configuration and repository
-storage for Nexus.
-
-
-[[install-sect-war-gf]]
-==== Running the Nexus WAR in Glassfish
-
-There is a known logging configuration conflict between the Nexus Open
-Source WAR and Glassfish. To address this conflict, you will need to
-modify the log4j.properties file and change a few of the directives
-that print messages to the console. The log4j.properties file is
-located in \~/sonatype-work/conf/log4j.properties. This file is created
-the first time you attempt to deploy Nexus to Glassfish. To create
-this file, deploy Nexus to Glassfish. While this initial deployment
-will fail due to a logging conflict, the act of deploying Nexus to
-Glassfish will create the working directory in ~/sonatype-work and the
-log4j.properties
-
-Edit this log4j.properties file as follows:
-
-. On the first line, change "log4j.rootLogger=INFO, console," to
-  "logfilelog4j.rootLogger=INFO, logfile"
-
-. Remove the last three lines starting with "log4j.appender.console"
-
-These changes will instruct Log4J not to print messages to the
-console. Once you make these edits, restart Glassfish.
+storage for Nexus. 
 
 [[install-sect-licensing]]
 === Installing a Nexus Professional License
@@ -2080,11 +2054,13 @@ capabilities.xml:: Further Smart Proxy backend configuration.
 
 healthcheck.properties:: Configuration for the Repository Health Check.
 
-log4j.properties, logback.properties, lopback.xml and logback-*.xml::
+logback.properties, logback.xml and logback-*.xml::
 Contains logging configuration. If you need to customize the detail of
 log messages, the frequency of log file rotation, or if you want to
-connect your own, custom Log4J appenders, you would alter this
-configuration file.
+connect your own, custom logging appenders, you would alter this
+configuration file. If you find log4j.properties files as well you can
+safely remove them since they are remnants from an old version and are
+not used anymore.
 
 lvo-plugin.xml:: Contains configuration for the latest version
 plugin. This XML file contains the location of the properties file
