@@ -3767,7 +3767,7 @@ control whether a user can view a repository. Behind the scenes, a
 privilege is related to a single REST operation and method like
 create, update, delete, read.  
 
-.Managing Security PrLoggiivileges
+.Managing Security Privileges
 image::figs/web/repository-manager_security-privileges.png[scale=60]
 
 To create a new privilege, click on the Add... button in the
@@ -3817,7 +3817,8 @@ any part of the path containing 'maven' could be `.*maven.*`.
 The regular expressions can also be used to exclude artifacts as
 visible with the pattern `(?!.*-sources.*).*` in
 <<fig-config-repo-target-exclude>> where artifacts with the qualifier
-'-sources' are excluded.
+'-sources' are excluded. The syntax used for the expressions is the
+http://docs.oracle.com/javase/tutorial/essential/regex/[Java syntax], which is similar but not identical to the Perl syntax.
 
 [[fig-config-repo-target-exclude]]
 .Excluding Source Artifacts from a Repository Targets
@@ -6571,11 +6572,13 @@ menu. Clicking Staging Upload will show the panel shown in
 image::figs/web/staging_artifact-upload.png[scale=60]
 
 To upload an artifact, click on Select Artifact(s) for Upload... and
-select one or more artifacts from the filesystem to upload. Once you
-have selected an artifact, you can modify the classifier and the
-extension before clicking on the Add Artifact button. Once you have
-clicked on the Add Artifact button, you can then configure the source
-of the Group, Artifact, Version (GAV) parameters.
+select an artifacts from the filesystem to upload. Once you have
+selected an artifact, you can modify the classifier and the extension
+before clicking on the Add Artifact button. Repeat this process to
+upload mutltiple artifacts for the same Group, Artficat and Version
+(GAV) coordinates like a jar, the pom and maybe a sources and javadoc
+jar in addition. Once you have added all the artifacts, you can then
+configure the source of the Group, Artifact, Version (GAV) parameters.
 
 If the artifact you are uploading is a JAR file that was created by
 Maven it will already have POM information embedded in it, but if you
@@ -6597,14 +6600,17 @@ Group, Artifact, and Version identifiers. For example, if you need to
 upload multiple artifacts with different classifiers, you may do so by
 clicking on Select Artifact(s) for Upload and Add Artifact multiple
 times.  This interface also accepts an Artifact Bundle which is a JAR
-that contains more than one artifact.
+that contains more than one artifact, which is documented in more
+detail in <<bundles>>.
 
 Once a staging artifact upload has been completely configured, click
 on Upload Artifact(s) button to begin the upload process. Nexus will
 upload the artifacts to the Staging URL which will trigger any staging
-profiles that are activated by the upload. If a staging profile is
-activated, a new staging repository will be created and can be managed
-using the procedures outlined in <<staging-sect-managing-staging>>.
+profiles that are activated by the upload by explicity matching using
+the repository targets configured with the staging profiles. If a
+staging profile is activated, a new staging repository will be created
+and can be managed using the procedures outlined in
+<<staging-sect-managing-staging>>.
 
 
 [[staging-sect-managing-staging]]
@@ -8250,7 +8256,7 @@ http://maven.apache.org/maven-v4_0_0.xsd">
     <connection>
       scm:git:git://github.com/sonatype/sample-project.git
     </connection>
-    <url>scm:git:git://github.com/sonatype/sample-project.git</url>
+    <url>http://github.com/sonatype/sample-project.git</url>
     <developerConnection>
       scm:git:git://github.com/sonatype-sample-project.git
     </developerConnection>     
@@ -8348,31 +8354,34 @@ artifact, the javadoc artifact, and the sources artifact.
 [[bundles-sect-uploading]]
 === Uploading an Artifact Bundle to Nexus
 
-To upload an artifact bundle to Nexus Professional, select Staging
-Upload from the Enterprise section of the Nexus menu as shown in
+To upload an artifact bundle to Nexus Professional you have to have a
+repository target for the project configured as described in
+<<confignx-sect-managing-repo-targets>>. 
+
+Once that is done, select Staging Upload from the Build Promotion section of the Nexus menu as shown in
 <<fig-bundles-upload-link>>.
 
 [[fig-bundles-upload-link]]
-.Staging Upload Link
+.Build Promotion Menu
 image::figs/web/bundles-upload-link.png[scale=60]
 
 Selecting the Staging Upload link will load the Staging Upload
-dialog. Choose Artifact Bundle form the Upload Mode drop-down the
+dialog. Choose Artifact Bundle from the Upload Mode drop-down the
 Staging Upload panel will switch to the form shown in
 <<fig-bundles-staging-upload>>.  Click on Select Bundle to
 Upload... and then select the JAR that was created with the Maven
 Repository plugin used in the previous sections.  Once a bundle is
-selected, click on Upload Bundle.
+selected, click on Upload Bundle. 
 
 [[fig-bundles-staging-upload]]
 .Uploading an Artifact Bundle
 image::figs/web/bundles-staging-upload.png[scale=60]
 
-After uploading the Artifact Bundle, click on the Staging link in the
-Enterprise section of the Nexus menu as shown in
-<<fig-bundles-upload-link>>.  Click on Staging will load a list of all
-the defined staging profiles. Click on the first default profiles
-named "Release Staging Profile", and you should see that the Staging
+After a successful upload, a dialog displays the name of the created
+staging repository in a URL that links to the content of the
+repository. To view the staging repository, click on the Staging
+Repositories link in the Build Promotion section of the Nexus menu as
+shown in <<fig-bundles-upload-link>>, and you should see that the Staging
 Artifact Upload created and closed a new staging repository as shown
 in <<fig-bundles-staged-bundle>>. This repository contains all of the
 artifacts contained in the uploaded bundle. It allows you to promote
@@ -8382,25 +8391,9 @@ or drop the artifacts contained in a bundle as a single unit.
 .Staging Repository Created for Artifact Bundle Upload
 image::figs/web/bundles-staged-bundle.png[scale=60]
 
-To promote a staging repository, right click on the closed repository
-shown in <<fig-bundles-staged-bundle>>, and select "Promote". Once you
-select promote, Nexus will present the Promote Staged Repository
-dialog shown in <<fig-bundles-stage-promote>>. Select the repository
-that you want to published the staging repository to, and click on the
-Promote button.
-
-[[fig-bundles-stage-promote]]
-.Promoting a Staged Repository
-image::figs/web/bundles-stage-promote.png[scale=60]
-
-After promotion, Nexus will then display a confirmation that the
-promotion was completed successfully as shown in
-<<fig-bundles-stage-success>>.
-
-[[fig-bundles-stage-success]]
-.Confirmation that Staged Repository has been Promoted
-image::figs/web/bundles-stage-success.png[scale=60]
-
+Once the staging repository is closed you can promote it to a Build
+Promotion Profile or release it to the target repository of the
+staging profile as documented in <<staging-sect-managing-staging>>.
 
 [[best]]
 == Nexus Best Practises
