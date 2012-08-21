@@ -4534,30 +4534,30 @@ Authentication realm, you will need to add the Nexus LDAP
 Authentication Realm to the Selected Realms in the Security section of
 the Server configuration panel. To load the Server configuration
 panel, click on the Server link under Administration in the Nexus
-menu. Once you have the Server configuration panel loaded, select OSS
-LDAP Authentication Realm in the Available Realms list under the
-Security section and click the Add button (or Left Arrow) as shown in
-<<fig-ldap-selecting-realm>>.
+menu. Once you have the Server configuration panel loaded, select
+Enterprise LDAP Authentication Realm (or OSS LDAP Authenication Realm) in the Available Realms
+list under the Security section and click the Add button (or Left
+Arrow) as shown in <<fig-ldap-selecting-realm>>.
 
 [[fig-ldap-selecting-realm]]
 .Adding the LDAP Authentication Realm to Available Realms
 image::figs/web/ldap_moving_ldap_realm_over.png[scale=60]
 
-Next, click on the Save button in the Server configuration panel. To
-make sure that your Nexus instance attempts to authenticate against
-LDAP first, click on the OSS LDAP Authentication Realm in the Selected
-Realms list and drag it to the top of the list as shown in <<fig-ldap-move-realm-to-top>>.
-This will ensure that Nexus will consult the LDAP Server before it
-consults the other Authentication Realms.
+Next, ensure that the LDAP realms is located below the XML realms in
+the list. If the LDAP realm is on top of the list after adding, drag
+it after the XML realms as shown in <<fig-ldap-move-realm-after-xml>>.
 
-NOTE: Nexus will continue to fall-back to the Xml Authenticating Realm
-if it cannot authenticate a user against the LDAP server. If your LDAP
-server is unavailable, and you need to reconfigure the LDAP
-connection, you can always login as the default admin
+This is necessary, so that Nexus can be used by anonymous, admin and
+other users configured in the XML realms even with LDAP authentication
+offline or unavailable. Any user account not found in the XML realms,
+will be passed through to LDAP authentication.
 
-[[fig-ldap-move-realm-to-top]]
+Next, click on the Save button at the bottom of the Server
+configuration panel to have the change applied.
+
+[[fig-ldap-move-realm-after-xml]]
 .Move the LDAP Authentication Realm to the Top of Selected
-image::figs/web/ldap_moving_ldap_realm_to_top.png[scale=60]
+image::figs/web/ldap_moving_ldap_realm_after_xml.png[scale=60]
       
 [[ldap-sect-configuring]]
 === Configuring Nexus LDAP Integration
