@@ -9898,70 +9898,6 @@ http://localhost:8081/nexus/content/sample/.
 [appendix]
 == Migrating to Nexus
 
-
-[[artifactory]]
-=== Migrating from Artifactory
-
-[[artifactory-sect-introduction]]
-==== Introduction
-
-This appendix walks you through the process of using the Nexus
-Migration Plugin to migrate an existing Artifactory installation to a
-new Nexus installation. The Nexus Migration Plugin can read an
-Artifactory System Export archive and recreate groups and repositories
-based on your existing Artifactory installation. Once the migration is
-completed, the Nexus Artifactory Bridge will then serve repository
-artifacts to clients using a web application, exposing the same
-artifacts to clients using the same URLs and repository identifier
-that they referenced in your legacy Artifactory installation. This
-Nexus Migration plugin offers an easy, drop-in replacement for
-Artifactory.
-
-[[artifactory-sect-create-backup]]
-==== Creating an Artifactory Backup
-
-The Nexus Migration Plugin relies on the Artifactory System Export
-which is an ZIP archive containing all of the configuration and data
-for an Artifactory installation. To generate this export, log in as an
-administrative user in Artifactory, and click on the SystemImport
-&amp; Export in the left navigation menu. Clicking on this link will
-show the Entire System Export &amp; Import screen as shown in
-<<fig-creating-artifactory-backup>>.
-
-[[fig-creating-artifactory-backup]]
-.Creating an Artifactory System Export
-image::figs/web/artifactory_creating-backup.png[scale=60]
-
-This appendix assumes that Artifactory has been installed in the
-directory /usr/local/artifactory-2.2.5. To create a
-backup ZIP archive in that same directory:
-
-* Enter /usr/local/artifactory-2.2.5 into the Target
-export dir field. If you are on a Windows platform, or if you have
-installed Artifactory in a different path, enter the path at which
-Artifactory is installed.
-
-* Check the Create a zip archive (slow!)  checkbox as shown in <<fig-creating-artifactory-backup>>.
-
-* Click the Export
-
-When you click the Export button, Artifactory is going to create a
-timestamped ZIP archive in the specified directory.  In this example,
-Artifactory creates a file named
-/usr/local/artifactory-2.2.5/20100222.154349.zip.
-Once this step is completed, you will no longer need to run
-Artifactory, and you can safely shut it down. In the next section you
-will learn how to install the Nexus Migration Plugin.
-
-
-
-
-
-
-
-
-
-
 [[archiva]]
 === Migrating from Archiva
 
@@ -10178,6 +10114,48 @@ group you configured in <<fig-archiva-proxy-to-group>>.
 
 .Defining Nexus Repository Groups
 image::figs/web/archiva-nx-repo-routes.png[scale=60]
+
+
+[[artifactory]]
+=== Migrating from Artifactory
+
+This appendix provides a guideline for migrating a Maven repository
+from Artifactory to Nexus.
+
+Typically migrating from Artifactory revolves around migrating hosted
+repositories only, since any proxy repositories configured in
+Artifactory can just be set up with the same configuration in Nexus
+and all data will be retrieved from the upstream repositories again.
+
+Hosted repositories on the other hand have to be migrated. The best
+practice for migration is to use the import/export feature of
+Artifactory and migrate one hosted repository after another. Please
+consult the Artifactory documentation for step by step instructions on
+how to export a repository.
+
+After the export you have to create a hosted repository in Nexus
+e.g. with the name "old-releases" as documented in
+<<config-sect-new-repo>>. This will create a folder in
+sonatype-work/nexus/storage/old-releases.
+
+Now you are ready to take the exported repository and copy it into the
+newly created storage folder. 
+
+Going back to the Nexus user interface, navigate to the repository
+administration and select the Browse Storage panel. Right-click on the root
+folder of the repository and select Rebuild Metadata first and as a
+second step select Update Index. Once these tasks are completed, the
+migrated repository is ready to be used.
+
+After these task are completed you will probably want to add the
+migrated repository to the Public Repositories group or any other
+group in which you want the migrated repository content to be
+available. 
+
+If you want to ensure that the repository does not get any further
+content added you can set the Deployment Policy to Read Only in the
+Access Settings of the repository Configuration panel.
+
 
 [[ssl]]
 [appendix]
