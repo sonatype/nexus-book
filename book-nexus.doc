@@ -2228,13 +2228,32 @@ and add the following mirror configuration to your Maven settings in
 </settings>
 ----
 
-In <<ex-maven-nexus-simple>> we have defined a single
-profile: nexus profile is configured to download from the
-central repository with a bogus URL. This URL is
-overridden by the mirror setting in the same settings.xml file to
-point to the URL of your single Nexus group. The nexus group
-is then listed as an active profile in the activeProfiles
-element.
+In <<ex-maven-nexus-simple>> we have defined a single profile:
+nexus. It configures a repository and a pluginRepository with the id
+"central" that overrides the same repositories in the super pom, that
+is internal you every Apache Maven install establishing defaults. The
+overrides change the repositories enabling snapshots and replacing the
+URL with a bogus URL. This URL is overridden by the mirror setting in
+the same settings.xml file to point to the URL of your single Nexus
+group. This Nexus group can therefore contain release as well as
+snapshot artifacts and Maven will pick them up.
+
+The mirrorOf pattern of * causes any repository request to be
+redirected to this mirror and therefore to your single repository
+group, which in the example is the public group.
+
+It is possible to use other patterns in the mirrorOf field. A possible
+valuable setting is to use "external:*". This matches all repositories
+expect those using localhost or file based repositories. This is used
+in conjunction with a repository manager when you want to exclude
+redirecting repositories that are defined for integration testing. The
+integration test runs for Apache Maven itself require this setting.
+
+More documentation about mirror settings can be found in the
+http://maven.apache.org/guides/mini/guide-mirror-settings.html[mini guide on the Maven web site].
+
+As a last configuration nexus group is listed as an active profile in
+the activeProfiles element.
 
 [[config-sect-custom]]  
 === Adding Custom Repositories for Missing Dependencies
