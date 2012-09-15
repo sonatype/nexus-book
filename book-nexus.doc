@@ -3,6 +3,17 @@
 :icons:
 :docinfo:
 
+
+[[preface]]
+== Preface
+
+This book covers the concepts of repository management in general and
+specifically usage of Sonatype Nexus Open Source and Sonatype Nexus
+Professional. It details all aspects of setup and running Nexus with
+the features of the latest release version 2.1.2. 
+
+This book was last updated and published on  {localdate}.
+
 [[intro]]
 == Introducing Sonatype Nexus
 
@@ -1263,7 +1274,7 @@ To download Nexus Open Source go to http://www.sonatype.org/nexus/go
 and download the latest Nexus Open Source distribution by clicking on
 the appropriate button for a ZIP or a Gzip TAR archive (TGZ) shown in
 <<fig-installing-open-source-dl>>. Your download will be file named
-nexus-2.1.0-bundle.zip or nexus-2.1.0-bundle.tar.gz
+nexus-2.1.2-bundle.zip or nexus-2.1.2-bundle.tar.gz
 
 [[fig-installing-open-source-dl]]
 .Downloading Nexus Open Source
@@ -1310,20 +1321,20 @@ home directory or wherever you like; Nexus doesn't have any hard coded
 directories, it will run from any directory. If you downloaded the ZIP
 
 ----
-$ unzip nexus-2.1.0-bundle.zip
+$ unzip nexus-2.1.2-bundle.zip
 ----
 
 And, if you download the GZip'd TAR archive, run:
 
 ----
-$ tar xvzf nexus-2.1.0-bundle.tar.gz
+$ tar xvzf nexus-2.1.2-bundle.tar.gz
 ----
 
 For Nexus professional the equivalent commands would be 
 
 ----
-$ unzip nexus-professional-2.1.0-bundle.zip
-$ tar xvzf nexus-professional-2.1.0-bundle.tar.gz
+$ unzip nexus-professional-2.1.2-bundle.zip
+$ tar xvzf nexus-professional-2.1.2-bundle.tar.gz
 ----
 
 NOTE: There are some known incompatibilities with the version of tar
@@ -1333,17 +1344,17 @@ end up with corrupted files.
 
 NOTE: If you are installing Nexus on a server, you might want to use a
 directory other than your home directory. On a Unix machine, this book
-assumes that Nexus is installed in /usr/local/nexus-2.1.0
+assumes that Nexus is installed in /usr/local/nexus-2.1.2
 with a symbolic link /usr/local/nexus to the nexus directory. Using a
 generic symbolic link nexus to a specific version is a common practice
 which makes it easier to upgrade when a newer version of Nexus is made
 available.
 
 ----
-$ sudo cp nexus-2.1.0-bundle.tar.gz /usr/local
+$ sudo cp nexus-2.1.2-bundle.tar.gz /usr/local
 $ cd /usr/local
-$ sudo tar xvzf nexus-2.1.0-bundle.tar.gz
-$ ln -s nexus-2.1.0 nexus
+$ sudo tar xvzf nexus-2.1.2-bundle.tar.gz
+$ ln -s nexus-2.1.2 nexus
 ----
 
 Although it isn't required for Nexus to run, you may want to set an
@@ -1357,7 +1368,7 @@ plan to run Nexus as a specific user you could install into the
 AppData/Local directory of that users home directory. Otherwise simply
 go with e.g. C:\nexus or something similar.
 
-The Nexus installation directory nexus-2.1.0 or nexus-professional-2.1.0
+The Nexus installation directory nexus-2.1.2 or nexus-professional-2.1.2
 has a sibling directory named sonatype-work. This directory contains
 all of the repository and configuration data for Nexus and is stored
 outside of the Nexus installation directory to make it easier to
@@ -1426,7 +1437,7 @@ file. Starting Nexus with the console command will leave Nexus running
 in the current shell and display the log output right there.
 
 On Unix system you can start Nexus detached from the starting shell
-with will the start command even when not yet installed as a service.
+with the start command even when not yet installed as a service.
 
 ----
 ./bin/nexus start
@@ -1520,7 +1531,7 @@ compatibility with older versions only and should not be used. A full
 list of directories follows:
 
 ----
-$ cd /usr/local/nexus/jsw
+$ cd /usr/local/nexus/bin/jsw
 $ ls -1                                                                             
 conf
 lib
@@ -1538,7 +1549,7 @@ windows-x86-64
 ----
 
 TIP: The start-up script +++nexus+++ supports the common service
-commands +++stop+++, +++start+++, +++restart+++, +++status+++,
+commands +++start+++, +++stop+++, +++restart+++, +++status+++,
 +++console+++ and +++dump+++.
 
 [[install-sect-repoman-post-install]]
@@ -1620,6 +1631,15 @@ service, place this environment variable in the start-up script found
 in /etc/init.d/nexus. For more information about locale settings in
 Ubuntu read https://help.ubuntu.com/community/Locale
 
+==== Step 6: Configure Routes
+
+A route defines patterns use define in which repositories artifacts
+are searched for. Typically internal artifacts are not available in
+e.g. the Central Repository. A route as documented in
+<<confignx-sect-managing-routes>>should be configured so that any
+requests for internal artifacts do not leak to external repositories.
+
+
 [[install-sect-service]]
 === Configuring Nexus as a Service
 
@@ -1652,7 +1672,9 @@ perform the following operations as the root user:
 a JAVA_HOME variable which points to your local Java installation and 
 add a '+++$JAVA_HOME/bin+++' to the PATH
 
-. (Optional) Set the RUN_AS_USER to "nexus". If you do this, you will
+. (Recommended) Set the RUN_AS_USER to "nexus" or any users with
+  restricted rights you want to run the service. You should not be
+  running Nexus as root. If you do this, you will
   need to:
 
 .. Create a nexus user
@@ -1762,7 +1784,7 @@ stopping the service it has the additional commands +++install+++ and
 set up the service for you or remove it as desired. Once installed as
 a service with the +++install+++ command the batch file can be used to
 start and stop the service. In addition the service will be available
-in the usual Windows service management console with the +++nexus+++.
+in the usual Windows service management console.
 
 [[install-sect-proxy]]
 === Running Nexus Behind a Proxy
@@ -1821,7 +1843,7 @@ would include the context path in your ProxyPass and ProxyPassReverse
 
 Apache configuration is going to vary based on your own application's
 requirements and the way you intend to expose Nexus to the outside
-world. If you need more details about Apache httpd and mod_proxy,
+world. If you need more details about Apache HTTPd and mod_proxy,
 please see http://httpd.apache.org
 
 [[install-sect-as-a-war]]
@@ -1843,12 +1865,12 @@ than deploying the unextracted WAR file for the plugin manager to work
 with all installed plugins and allow installation of additional plugins.
 
 For example, to install the Nexus WAR in Tomcat, drop the
-nexus-2.1.0.war file in '+++$TOMCAT_HOME/webapps+++' and restart your
+nexus-2.1.2.war file in '+++$TOMCAT_HOME/webapps+++' and restart your
 Tomcat instance. Assuming that Tomcat is configured on port 8080 once
 Tomcat is started, Nexus will be available on
-http://localhost:8080/nexus-2.1.0
+http://localhost:8080/nexus-2.1.2
 
-If you would like a less verbose URL, copy nexus-2.1.0.war to a
+If you would like a less verbose URL, copy nexus-2.1.2.war to a
 file named nexus.war before copying the distribution to
 '+++$TOMCAT_HOME/webapps+++'
 
@@ -1915,7 +1937,7 @@ image::figs/web/installing_uninstall_completed.png[scale=60]
 
 When a Nexus Professional license expires, the Nexus user interface
 will have all functionality disabled except for the ability to install
-the new version.
+a new license file.
  
 [[install-sect-dirs]]
 === Nexus Directories
@@ -2226,13 +2248,32 @@ and add the following mirror configuration to your Maven settings in
 </settings>
 ----
 
-In <<ex-maven-nexus-simple>> we have defined a single
-profile: nexus profile is configured to download from the
-central repository with a bogus URL. This URL is
-overridden by the mirror setting in the same settings.xml file to
-point to the URL of your single Nexus group. The nexus group
-is then listed as an active profile in the activeProfiles
-element.
+In <<ex-maven-nexus-simple>> we have defined a single profile:
+nexus. It configures a repository and a pluginRepository with the id
+"central" that overrides the same repositories in the super pom, that
+is internal you every Apache Maven install establishing defaults. The
+overrides change the repositories enabling snapshots and replacing the
+URL with a bogus URL. This URL is overridden by the mirror setting in
+the same settings.xml file to point to the URL of your single Nexus
+group. This Nexus group can therefore contain release as well as
+snapshot artifacts and Maven will pick them up.
+
+The mirrorOf pattern of * causes any repository request to be
+redirected to this mirror and therefore to your single repository
+group, which in the example is the public group.
+
+It is possible to use other patterns in the mirrorOf field. A possible
+valuable setting is to use "external:*". This matches all repositories
+expect those using localhost or file based repositories. This is used
+in conjunction with a repository manager when you want to exclude
+redirecting repositories that are defined for integration testing. The
+integration test runs for Apache Maven itself require this setting.
+
+More documentation about mirror settings can be found in the
+http://maven.apache.org/guides/mini/guide-mirror-settings.html[mini guide on the Maven web site].
+
+As a last configuration nexus group is listed as an active profile in
+the activeProfiles element.
 
 [[config-sect-custom]]  
 === Adding Custom Repositories for Missing Dependencies
@@ -2910,7 +2951,7 @@ JIRA instance.
 
 To file a problem report, you will first need to sign up for an
 account on http://issues.sonatype.org. You can click on Report Problem
-in the left hand Helpmenu, supply your Sonatype JIRA credentials, and
+in the left hand Help menu, supply your Sonatype JIRA credentials, and
 file a problem report. Supply your JIRA username and password along
 with a short title and a description as shown in the following figure.
 
@@ -2919,6 +2960,9 @@ JIRA and attach your configuration and logs to the newly filed issue.
 
 .Generating a Nexus Problem Report
 image::figs/web/configuring-generate-report.png[scale=60]
+
+The submitted files are stored in zip archive files in
+sonatype-work/nexus/error-report-bundles.
 
 [[confignx]]
 == Configuring Nexus
@@ -3117,13 +3161,12 @@ A proxy repository is a proxy of a remote repository.  By default,
 Nexus ships with the following configured proxy repositories:
 
     Apache Snapshots:: This repository contains snapshot releases from
-    the Apache Software Foundation
-    http://people.apache.org/repo/m2-snapshot-repository
+    the Apache Software Foundation http://repository.apache.org/snapshots/
 
     Codehaus Snapshots:: This repository contains snapshot released
-    from Codehaus http://snapshots.repository.codehaus.org/
+    from Codehaus http://nexus.codehaus.org/snapshots/
 
-    Maven Central Repository:: This is the central repository (for
+    Central:: This is the central repository (for
     releases).  http://repo1.maven.org/maven2/
 
 ==== Hosted Repository
@@ -3149,6 +3192,9 @@ This serves as an adaptor to and from different types of
 repositories. Currently Nexus supports conversion to and from Maven 1
 repositories and Maven 2 repositories and from Maven 2 to NuGet
 repositories.
+
+By default it ships with a Central M1 shadow repository that exposes
+the Central repository in Maven 1 format.
 
 ==== Configuring Repositories
 
@@ -3580,44 +3626,122 @@ Scheduled Tasks.
 
 [[fig-repomap-scheduled]]
 .Managing Nexus Scheduled Tasks
-image::figs/web/repository-manager_schedule-service.png[scale=60]
+image::figs/web/repository-manager_schedule-service.png[scale=50]
 
-You can create the following kinds of scheduled tasks:
+The list interface allows you to Add new tasks and Run, Cancel and
+Delete existing tasks as well as Refresh the list with respective
+buttons above the list.
+
+When creating or updating a scheduled task, you can configure the
+following properties:
+
+Enabled:: allows you to enable or disable a specific task
+
+Name:: provide a name to identify the task in the user interface
+
+Task Type:: specify the type of action the scheduled task can
+execute. The list of available task type is documented in more detail
+below.
+
+Task Settings:: configure task settings specific to the selected task
+type. Tasks affecting repository have a setting called
+Repository/Group that allows you to let the task affect all
+repositories and groups or only a specific one.
+
+Alert Email:: configure a notification email for task execution
+failures
+
+Recurrence:: configure the schedule for the task executions. Available
+choices are Manual, Once, Hourly, Daily, Weekly, Monthly and
+Advanced. All choices provide a self-explanatory custom user interface
+for scheduling the specific recurrence. The Advanced setting allows
+you to provide a CRON expression to configure any more complex
+schedules.
+
+The following kinds of scheduled task types are available:
+
+Backup all Nexus Configuration Files (Nexus Professional only):: This
+scheduled task will archive the contents of the
+sonatype-work/nexus/conf directory.  Once a backup has been run, the
+contents of the backup will be available in sonatype-work/nexus/backup
+in a series of ZIP archives which include the date and a timestamp.
 
 Download Indexes:: This scheduled task will cause Nexus to download
 indexes from remote repositories for proxied repositories. The
 Download Remote Indexes configuration also needs to be enabled on the
 proxy repository.
 
+Download NuGet Feed:: This task allows you to download the feed for a
+NuGet proxy repository. For one time invocation you can enable the
+Clear feed cache setting, which will delete the cache completely and
+re-fetch all data. The setting Fetch all versions? will trigger to
+download all versions of an artifact in contrast to the default
+behaviour of getting only the latest version.
+
 Empty Trash:: The Evict and Purge actions do not delete data from the
 Nexus working directory. They simply move data to be cleared or
 evicted to a trash directory under the Nexus work directory. This
-service deletes the data in this trash directory.
+task deletes the data in this trash directory older than the number of
+days specified in the task setting "Purge Items older than (days)".
 
-Evict Unused Proxied Items From Repository Caches:: Use it or lose
-it. This scheduled task tells Nexus to get rid of all proxied items
-which haven't been "used" (referenced or retrieved by a client). This
-can be a good job to run if you are try to conserve storage space. In
-this service you can specify the number of days over which Nexus will
-look for activity before making the decision to evict an
-artifact. (See note about deletion.)
+Evict Unused Proxied Items From Repository Caches:: This scheduled
+task tells Nexus to delete all proxied items which haven't been
+"used" (referenced or retrieved by a client) in a number of days as
+specified in Evict Items older than (days). This can be a good job
+to run if you are try to conserve storage space and do not all
+artifacts in the future e.g. to reproduce old builds without renewed
+retrieval. This is particularly useful for a personal Nexus with a
+large change rate of artifacts.
+
+Expire Repository Caches:: Repositories have several caches to improve
+performance. This task expires the caches causing Nexus to recheck the
+remote repository for a proxy repository or the file system for a
+hosted repository. You can configure the repository or group to be
+affected with the task setting Repository/Group. Alternatively you can
+provide a Repository Path to configure the content that should be
+expired.
 
 Optimize Repository Index:: To speed up searches in Nexus, this task
 tells the internal search engine to optimize its index files. This has
 no affect on the indexes published by Nexus. Typically, this task does
 not have to run more than once a week.
 
+Rebuild P2 metadata and Rebuild P2 repository:: These tasks can be
+used to rebuild the metadata or the full repository with a P2
+format. You can specify a Repository/Group or a Repository Path to
+determine which content to affect.
+
 Publish Indexes:: Just as Maven downloads an index from a remote
 repository, Nexus can publish an index in the same format. This will
 make it easier for people using m2eclipse or Nexus to interact with
 your repositories.
+
+Purge Orphaned API Keys:: This scheduled tasks will delete old, unused
+API keys generated and used by various plugins. For example it should
+be scheduled when using the User Token feature or NuGet
+repositoriies. It will purge orphaned API keys e.g. after users reset
+their token and should be scheduled to run regularly, specifically
+when internal security policies for password resets and you are using
+an external security provider like LDAP with this requirement for
+resets to access Nexus.
 
 Purge Nexus Timeline:: Nexus maintains a lot of data that relates to
 the interaction between itself, proxied remote repositories, and
 clients on Nexus.  While this information can be important for
 purposes of auditing, it can also take up storage space. Using this
 scheduled task you can tell Nexus to periodically purge this
-information. (See note about deletion.)
+information. The setting "Purge Items older than (days)" controls the
+age of the data to be deleted.
+
+Rebuild Maven Metadata Files:: This task will rebuild the
+maven-metadata.xml files with the correct information and will also
+validate the checksums (.mh5/.sha1) for all files in the specified
+Repository/Group. Typically this task is run manually to repair a
+corrupted repository.
+
+Rebuild NuGet Feed:: If you are using NuGet, pushing your artifacts
+into a NuGet hosted repository and are proxying that repository to
+other users, this task can be used to rebuild the feed.
 
 Repair Repositories Index:: In certain cases it might be required to
 remove the internal index as well as the published ones of a
@@ -3635,26 +3759,34 @@ that configuring and running this job is not enough to reclaim disk
 space.  You will also need to configure a scheduled job to empty the
 trash folder.  Files are not deleted by the Remove Snapshots job, they
 are only moved into the Trash folder.  When you create a scheduled
-task to remove snapshots, you can specify:
+task to remove snapshots, you can specify the Repository/Group to
+affect as well as:
 +
-Minimum Snapshots to preserve in a repository - This configuration
-option allows you to specify a minimum number of SNAPSHOTs to preserve
-per artifact.  For example, if you configured this option with a value
-of 2, Nexus will always preserve at least two SNAPSHOT artifacts.
+Minimum Snapshot Count - This configuration option allows you to
+specify a minimum number of SNAPSHOTs to preserve per artifact.  For
+example, if you configured this option with a value of 2, Nexus will
+always preserve at least two SNAPSHOT artifacts. -1 indicates to
+preserve all SNAPSHOTs.
 +
-Snapshot Retention (in days) - This configuration option allows you to
+Snapshot Retention (days) - This configuration option allows you to
 specify the number of days to retain SNAPSHOT artifacts.  For example,
 if you want to make sure that you are always keeping the last three
 day's worth of SNAPSHOT artifacts, configure this option with a value
-of 3.
+of 3. The minimum count overrides this setting.
 +
-Whether snapshots should be removed if an artifact has been released -
-If your Nexus repository also contains a release repository, you can
-configure Nexus to remove all SNAPSHOT artifacts once an artifact has
-been released.
+Remove if released - If enabled and a released artifact with the same
+GAV coordinates is detected all SNAPSHOTs will be removed.
++
+Delete immediately - If you want to have artifacts deleted directly
+rather than moved to the trash, you can enable this setting.
++
+When doing regular deployments to a snapshot repository via a CI server, this task
+should be configured to run regularly.
 
 Synchronize Shadow Repository:: This service synchronizes a shadow (or
-virtual) repository with its master repository.
+virtual) repository with its master repository. This task is only
+needed when external changes affected a source repository of a virtual
+repository you are using.
 
 Update Repositories Index:: If files are deployed directly to a
 repository's local storage (not deployed through Nexus), you will need
@@ -3665,7 +3797,14 @@ Lastly, the index is published for the repository as well. Normally,
 there should be no need to schedule this task. One possible except
 would be if files are deployed directly to the local storage regularly.
 
-NOTE: The Evict and Purge actions do not delete data from the Nexus
+Mirror Eclipse Update Site (Nexus Professional only):: The P2 plugin
+allows you to mirror Eclipse update sites. This task can be used to
+force updates of repositories that went out of sync.
+
+Beyond these tasks any plugin can provide additional scheduled tasks,
+which will appear in the drop down once you have installed the plugin.
+
+The Evict and Purge actions do not delete data from the Nexus
 working directory. They simply move data to be cleared or evicted to a
 trash directory under the Nexus work directory. If you want to reclaim
 disk space, you need to clear the Trash on the Browse Repositories
@@ -3674,41 +3813,18 @@ move the data back to the appropriate storage location from the trash.
 You can also schedule the Empty Trash service to clear this directory
 on a periodic basis.
 
-When you create a new task you can configure it to apply to all
-repositories, the repositories in a Nexus Group, or a specific Nexus
-Repository. A task can be scheduled to run once at a specific date
-and time, or periodically once every Day, Week, or Month. If none of
-these options suit your specific needs, you can select a recurrence of
-"Advanced" which will allow you to supply your own cron expression to
-specify when the job should execute. There is also the recurrence
-option of "Manual", which will allow you to initiate an execution of
-the task manually.
-
-
 TIP: In order to keep the heap usage in check it is recommended that
 you schedule an "optimize indexes" task to run weekly. An number of
 other maintenance tasks should also be scheduled for production
 deployments.
 
-
-
-==== Managing Configuration Backups with a Scheduled Task
-
-Nexus Professional includes a scheduled task which allows you to
-create automated, scheduled backups of your Nexus configuration.  This
-scheduled job will archive the contents of the
-sonatype-work/nexus/conf
-directory. <<fig-configuring-schedule-conf-backup>> shows a scheduled
-configuration backup job configured to backup the contents of the
-Nexus configuration every day at 12:15 AM.
-
-[[fig-configuring-schedule-conf-backup]]
-.Configuring a Scheduled Backup of Nexus Configuration
-image::figs/web/configuring_schedule-conf-backup.png[scale=60]
-
-Once a backup has been run, the contents of the backup will be
-available in sonatype-work/nexus/backup in a series
-of ZIP archives which include the date and a timestamp.
+Setting up scheduled tasks adapted to your usage of Nexus is an
+important first step when setting up a Nexus instance. Go through the
+list of task types and consider your usage patterns of Nexus. Also
+update your scheduled tasks
+when changing e.g. from not deploying SNAPSHOTS to running deployments
+of a CI server or when introducing usage of user tokens with a
+strict LDAP password change policy.
 
 [[confignx-sect-managing-security]]
 === Managing Security
@@ -3767,7 +3883,7 @@ control whether a user can view a repository. Behind the scenes, a
 privilege is related to a single REST operation and method like
 create, update, delete, read.  
 
-.Managing Security PrLoggiivileges
+.Managing Security Privileges
 image::figs/web/repository-manager_security-privileges.png[scale=60]
 
 To create a new privilege, click on the Add... button in the
@@ -3817,7 +3933,8 @@ any part of the path containing 'maven' could be `.*maven.*`.
 The regular expressions can also be used to exclude artifacts as
 visible with the pattern `(?!.*-sources.*).*` in
 <<fig-config-repo-target-exclude>> where artifacts with the qualifier
-'-sources' are excluded.
+'-sources' are excluded. The syntax used for the expressions is the
+http://docs.oracle.com/javase/tutorial/essential/regex/[Java syntax], which is similar but not identical to the Perl syntax.
 
 [[fig-config-repo-target-exclude]]
 .Excluding Source Artifacts from a Repository Targets
@@ -4465,30 +4582,30 @@ Authentication realm, you will need to add the Nexus LDAP
 Authentication Realm to the Selected Realms in the Security section of
 the Server configuration panel. To load the Server configuration
 panel, click on the Server link under Administration in the Nexus
-menu. Once you have the Server configuration panel loaded, select OSS
-LDAP Authentication Realm in the Available Realms list under the
-Security section and click the Add button (or Left Arrow) as shown in
-<<fig-ldap-selecting-realm>>.
+menu. Once you have the Server configuration panel loaded, select
+Enterprise LDAP Authentication Realm (or OSS LDAP Authenication Realm) in the Available Realms
+list under the Security section and click the Add button (or Left
+Arrow) as shown in <<fig-ldap-selecting-realm>>.
 
 [[fig-ldap-selecting-realm]]
 .Adding the LDAP Authentication Realm to Available Realms
 image::figs/web/ldap_moving_ldap_realm_over.png[scale=60]
 
-Next, click on the Save button in the Server configuration panel. To
-make sure that your Nexus instance attempts to authenticate against
-LDAP first, click on the OSS LDAP Authentication Realm in the Selected
-Realms list and drag it to the top of the list as shown in <<fig-ldap-move-realm-to-top>>.
-This will ensure that Nexus will consult the LDAP Server before it
-consults the other Authentication Realms.
+Next, ensure that the LDAP realms is located below the XML realms in
+the list. If the LDAP realm is on top of the list after adding, drag
+it after the XML realms as shown in <<fig-ldap-move-realm-after-xml>>.
 
-NOTE: Nexus will continue to fall-back to the Xml Authenticating Realm
-if it cannot authenticate a user against the LDAP server. If your LDAP
-server is unavailable, and you need to reconfigure the LDAP
-connection, you can always login as the default admin
+This is necessary, so that Nexus can be used by anonymous, admin and
+other users configured in the XML realms even with LDAP authentication
+offline or unavailable. Any user account not found in the XML realms,
+will be passed through to LDAP authentication.
 
-[[fig-ldap-move-realm-to-top]]
+Next, click on the Save button at the bottom of the Server
+configuration panel to have the change applied.
+
+[[fig-ldap-move-realm-after-xml]]
 .Move the LDAP Authentication Realm to the Top of Selected
-image::figs/web/ldap_moving_ldap_realm_to_top.png[scale=60]
+image::figs/web/ldap_moving_ldap_realm_after_xml.png[scale=60]
       
 [[ldap-sect-configuring]]
 === Configuring Nexus LDAP Integration
@@ -6113,10 +6230,10 @@ goal of the Nexus Staging Maven Plugin performs the following actions:
 The log of a successful deployment would look similar to this:
 
 ----
-[INFO] --- nexus-staging-maven-plugin:1.0-SNAPSHOT:deploy (injected-nexus-deploy) @ staging-example ---
+[INFO] --- nexus-staging-maven-plugin:1.0:deploy (injected-nexus-deploy) @ staging-example ---
 [INFO] Using server credentials with ID="nexus-releases" from Maven settings.
 [INFO] Preparing staging against Nexus on URL http://localhost:8081/nexus/
-[INFO]  * Remote Nexus reported itself as version 2.1-SNAPSHOT and edition "Professional"
+[INFO]  * Remote Nexus reported itself as version 2.1.2 and edition "Professional"
 [INFO]  * Using staging profile ID "12a1656609231352" (matched by Nexus).
 [INFO] Staging locally (stagingDirectory="/Users/manfred/dev/staging-example/target/nexus-staging/12a1656609231352")...
 Uploading: file: ... staging-example-1.0.0.jar
@@ -6129,7 +6246,7 @@ Uploaded: file: ... maven-metadata.xml (322 B at 157.2 KB/sec)
 [INFO] Staging remotely...
 [INFO] Uploading locally staged directory: 12a1656609231352
 [INFO] Performing staging against Nexus on URL http://localhost:8081/nexus/
-[INFO]  * Remote Nexus reported itself as version 2.1-SNAPSHOT and edition "Professional"
+[INFO]  * Remote Nexus reported itself as version 2.1.2 and edition "Professional"
 [INFO]  * Created staging repository with ID "test-002", applied tags: {javaVersion=1.6.0_26, localUsername=manfred}
 [INFO]  * Uploading locally staged artifacts to: http://localhost:8081/nexus/service/local/staging/deployByRepositoryId/test-002
 [INFO]  * Upload of locally staged artifacts done.
@@ -6571,11 +6688,13 @@ menu. Clicking Staging Upload will show the panel shown in
 image::figs/web/staging_artifact-upload.png[scale=60]
 
 To upload an artifact, click on Select Artifact(s) for Upload... and
-select one or more artifacts from the filesystem to upload. Once you
-have selected an artifact, you can modify the classifier and the
-extension before clicking on the Add Artifact button. Once you have
-clicked on the Add Artifact button, you can then configure the source
-of the Group, Artifact, Version (GAV) parameters.
+select an artifacts from the filesystem to upload. Once you have
+selected an artifact, you can modify the classifier and the extension
+before clicking on the Add Artifact button. Repeat this process to
+upload mutltiple artifacts for the same Group, Artficat and Version
+(GAV) coordinates like a jar, the pom and maybe a sources and javadoc
+jar in addition. Once you have added all the artifacts, you can then
+configure the source of the Group, Artifact, Version (GAV) parameters.
 
 If the artifact you are uploading is a JAR file that was created by
 Maven it will already have POM information embedded in it, but if you
@@ -6597,14 +6716,17 @@ Group, Artifact, and Version identifiers. For example, if you need to
 upload multiple artifacts with different classifiers, you may do so by
 clicking on Select Artifact(s) for Upload and Add Artifact multiple
 times.  This interface also accepts an Artifact Bundle which is a JAR
-that contains more than one artifact.
+that contains more than one artifact, which is documented in more
+detail in <<bundles>>.
 
 Once a staging artifact upload has been completely configured, click
 on Upload Artifact(s) button to begin the upload process. Nexus will
 upload the artifacts to the Staging URL which will trigger any staging
-profiles that are activated by the upload. If a staging profile is
-activated, a new staging repository will be created and can be managed
-using the procedures outlined in <<staging-sect-managing-staging>>.
+profiles that are activated by the upload by explicity matching using
+the repository targets configured with the staging profiles. If a
+staging profile is activated, a new staging repository will be created
+and can be managed using the procedures outlined in
+<<staging-sect-managing-staging>>.
 
 
 [[staging-sect-managing-staging]]
@@ -7994,7 +8116,6 @@ http://maven.apache.org/maven-v4_0_0.xsd">
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>sample-site</name>
-  <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -8026,9 +8147,39 @@ Professional installation running on localhost port 8081. In your
 environment you will need to customize this URL to point to your own
 Nexus instance.
 
-In addition to the distributionManagement element, you will want to
-add the following build element that will configure Maven to use
-version 2.0.1 of the Maven Site plugin.
+The url in the distribution management is not parameterized, which
+means that any redeployment overwrites old content and potentially
+leaves old stale files behind. To have a new deployment directory for
+each version you can change the url to 
+
+----
+<url>
+dav:http://localhost:8081/nexus/content/sites/site/${project.groupId}/${project.artifactId}/${project.version}
+</url>
+----
+
+If you combine this approach with a redirector or a static page that
+links to the different copies of your site you can e.g. maintain
+separate sites hosting your javadoc and other documentation for
+different release of your software.
+
+The dav protocol used by for deployment to Nexus requires that you add
+the implementing library as a build extension to your Maven project:
+
+----
+ <build>
+   <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>2.2</version>
+      </extension>
+    </extensions>
+----
+
+In addition to the distributionManagement element and the build
+extension, you will want to add the following build element that will
+configure Maven to use version 3.1 of the Maven Site plugin.
 
 .Configuring the Maven Site Plugin for Nexus Site Deployment
 ----
@@ -8036,14 +8187,12 @@ version 2.0.1 of the Maven Site plugin.
   <plugins>
     <plugin>
       <artifactId>maven-site-plugin</artifactId>
-      <version>2.0.1</version>
+      <version>3.1</version>
     </plugin>
   </plugins>
 </build>
 ----
 
-NOTE: Site deployment to Nexus Professional requires version 2.0.1 or
-higher of the Maven Site Plugin.
 
 === Adding Credentials to Your Maven Settings
 
@@ -8128,18 +8277,16 @@ to a Maven Site repository.
 === Publishing a Maven Site to Nexus
 
 To publish a site to a Maven Site repository in Nexus Professional,
-run mvn site site:deploy from the sample-site/ project created earlier
+run mvn site-deploy from the sample-site/ project created earlier
 in this chapter.  The Maven Site plugin will deploy this site to Nexus
 using the credentials stored in your Maven Settings.
 
 ----
-~/examples/sample-site$ mvn site site:deploy
+~/examples/sample-site$ mvn site-deploy
 [INFO] Scanning for projects...
 [INFO] ------------------------------------------------------------------------
 [INFO] Building sample-site
-[INFO]    task-segment: [site, site:deploy]
-[INFO] ------------------------------------------------------------------------
-[INFO] [site:site {execution: default-site}]
+...
 [INFO] Generating "About" report.
 [INFO] Generating "Issue Tracking" report.
 [INFO] Generating "Project Team" report.
@@ -8250,7 +8397,7 @@ http://maven.apache.org/maven-v4_0_0.xsd">
     <connection>
       scm:git:git://github.com/sonatype/sample-project.git
     </connection>
-    <url>scm:git:git://github.com/sonatype/sample-project.git</url>
+    <url>http://github.com/sonatype/sample-project.git</url>
     <developerConnection>
       scm:git:git://github.com/sonatype-sample-project.git
     </developerConnection>     
@@ -8348,31 +8495,34 @@ artifact, the javadoc artifact, and the sources artifact.
 [[bundles-sect-uploading]]
 === Uploading an Artifact Bundle to Nexus
 
-To upload an artifact bundle to Nexus Professional, select Staging
-Upload from the Enterprise section of the Nexus menu as shown in
+To upload an artifact bundle to Nexus Professional you have to have a
+repository target for the project configured as described in
+<<confignx-sect-managing-repo-targets>>. 
+
+Once that is done, select Staging Upload from the Build Promotion section of the Nexus menu as shown in
 <<fig-bundles-upload-link>>.
 
 [[fig-bundles-upload-link]]
-.Staging Upload Link
+.Build Promotion Menu
 image::figs/web/bundles-upload-link.png[scale=60]
 
 Selecting the Staging Upload link will load the Staging Upload
-dialog. Choose Artifact Bundle form the Upload Mode drop-down the
+dialog. Choose Artifact Bundle from the Upload Mode drop-down the
 Staging Upload panel will switch to the form shown in
 <<fig-bundles-staging-upload>>.  Click on Select Bundle to
 Upload... and then select the JAR that was created with the Maven
 Repository plugin used in the previous sections.  Once a bundle is
-selected, click on Upload Bundle.
+selected, click on Upload Bundle. 
 
 [[fig-bundles-staging-upload]]
 .Uploading an Artifact Bundle
 image::figs/web/bundles-staging-upload.png[scale=60]
 
-After uploading the Artifact Bundle, click on the Staging link in the
-Enterprise section of the Nexus menu as shown in
-<<fig-bundles-upload-link>>.  Click on Staging will load a list of all
-the defined staging profiles. Click on the first default profiles
-named "Release Staging Profile", and you should see that the Staging
+After a successful upload, a dialog displays the name of the created
+staging repository in a URL that links to the content of the
+repository. To view the staging repository, click on the Staging
+Repositories link in the Build Promotion section of the Nexus menu as
+shown in <<fig-bundles-upload-link>>, and you should see that the Staging
 Artifact Upload created and closed a new staging repository as shown
 in <<fig-bundles-staged-bundle>>. This repository contains all of the
 artifacts contained in the uploaded bundle. It allows you to promote
@@ -8382,25 +8532,9 @@ or drop the artifacts contained in a bundle as a single unit.
 .Staging Repository Created for Artifact Bundle Upload
 image::figs/web/bundles-staged-bundle.png[scale=60]
 
-To promote a staging repository, right click on the closed repository
-shown in <<fig-bundles-staged-bundle>>, and select "Promote". Once you
-select promote, Nexus will present the Promote Staged Repository
-dialog shown in <<fig-bundles-stage-promote>>. Select the repository
-that you want to published the staging repository to, and click on the
-Promote button.
-
-[[fig-bundles-stage-promote]]
-.Promoting a Staged Repository
-image::figs/web/bundles-stage-promote.png[scale=60]
-
-After promotion, Nexus will then display a confirmation that the
-promotion was completed successfully as shown in
-<<fig-bundles-stage-success>>.
-
-[[fig-bundles-stage-success]]
-.Confirmation that Staged Repository has been Promoted
-image::figs/web/bundles-stage-success.png[scale=60]
-
+Once the staging repository is closed you can promote it to a Build
+Promotion Profile or release it to the target repository of the
+staging profile as documented in <<staging-sect-managing-staging>>.
 
 [[best]]
 == Nexus Best Practises
@@ -8771,7 +8905,7 @@ http://www.atlassian.com/software/crowd/
 [[crowd-sect-installation]]
 ==== Installing the Crowd Plugin
 
-The user account plugin is an otional plugin that comes as part of any
+The Nexus Atlassian Crowd plugin is an otional plugin that comes as part of any
 Nexus Professional download. The directory containing the plugin code
 is called enterprise-crowd-plugin-X.Y.Z. Install the plugin following
 the instructions in <<install-additional-plugins>>.
@@ -9018,6 +9152,30 @@ to... You can use the configuration panel shown in
 [[fig-crowd-assign-user-role]]
 .Adding a Nexus Role to a Crowd User
 image::figs/web/crowd_assign-user-role.png[scale=60]
+
+[[nexus-branding-plugin]]
+=== Nexus Branding Plugin
+
+The branding plugin is an optional plugin that comes as part of Nexus
+Professional. It features the possibility to brand your Nexus instance
+by replacing the default Sonatype Nexus logo with your logo (or an
+image of your choice).
+
+The new logo needs to be a PNG image. To blend in well in the UI, it
+is recommended that it is of 60 pixels height and has a transparent
+background.
+
+By default, the branding plugin will look for the new logo in a file
+called sonatype-work/nexus/conf/branding.png. However, it is possible
+to configure this path by adding a branding.image.path property to
+'+++$NEXUS_HOME/conf/nexus.properties+++':
+
+----
+branding.image.path=/data/images/nexus_logo.png
+----
+
+If it fails to find a new logo, the plugin will fall back to using
+the default Sonatype Nexus logo.
 
 
 [[plugdev]]
@@ -9782,365 +9940,7 @@ http://localhost:8081/nexus/content/sample/.
 
 [[migrating]]
 [appendix]
-== Migrating to Nexus from Artifactory
-
-
-[[artifactory]]
-=== Migrating from Artifactory
-
-[[artifactory-sect-introduction]]
-==== Introduction
-
-This appendix walks you through the process of using the Nexus
-Migration Plugin to migrate an existing Artifactory installation to a
-new Nexus installation. The Nexus Migration Plugin can read an
-Artifactory System Export archive and recreate groups and repositories
-based on your existing Artifactory installation. Once the migration is
-completed, the Nexus Artifactory Bridge will then serve repository
-artifacts to clients using a web application, exposing the same
-artifacts to clients using the same URLs and repository identifier
-that they referenced in your legacy Artifactory installation. This
-Nexus Migration plugin offers an easy, drop-in replacement for
-Artifactory.
-
-[[artifactory-sect-create-backup]]
-==== Creating an Artifactory Backup
-
-The Nexus Migration Plugin relies on the Artifactory System Export
-which is an ZIP archive containing all of the configuration and data
-for an Artifactory installation. To generate this export, log in as an
-administrative user in Artifactory, and click on the SystemImport
-&amp; Export in the left navigation menu. Clicking on this link will
-show the Entire System Export &amp; Import screen as shown in
-<<fig-creating-artifactory-backup>>.
-
-[[fig-creating-artifactory-backup]]
-.Creating an Artifactory System Export
-image::figs/web/artifactory_creating-backup.png[scale=60]
-
-This appendix assumes that Artifactory has been installed in the
-directory /usr/local/artifactory-2.2.5. To create a
-backup ZIP archive in that same directory:
-
-* Enter /usr/local/artifactory-2.2.5 into the Target
-export dir field. If you are on a Windows platform, or if you have
-installed Artifactory in a different path, enter the path at which
-Artifactory is installed.
-
-* Check the Create a zip archive (slow!)  checkbox as shown in <<fig-creating-artifactory-backup>>.
-
-* Click the Export
-
-When you click the Export button, Artifactory is going to create a
-timestamped ZIP archive in the specified directory.  In this example,
-Artifactory creates a file named
-/usr/local/artifactory-2.2.5/20100222.154349.zip.
-Once this step is completed, you will no longer need to run
-Artifactory, and you can safely shut it down. In the next section you
-will learn how to install the Nexus Migration Plugin.
-
-[[artifactory-sect-installation]]
-==== Installation of the Migration Plugin and Artifactory Bridge
-
-The migration plugin is a free, open-source plugin that can be
-downloaded by searching for the nexus-migration-plugin-packaging
-artifact on https://repository.sonatype.org/
-and downloading nexus-migration-plugin-packaging-x.y-webapp.zip with
-the version corresponding to your Nexus version. If you are using
-Nexus Professional the correct plugin can be found in the folder
-/nexus/WEB-INF/optional-plugins/ of your Nexus install.
-
-NOTE: This section assumes that you have just downloaded and installed
-Nexus Open Source or Nexus Professional. If you haven't installed
-Nexus, you should make a bookmark for this section and jump to <<install>>.
-Once you have installed Nexus, return to this
-section and install the Nexus Migration Plugin.
-
-The following screen listing shows a series of commands which can be
-used to install the Nexus Migration plugin into an existing Nexus
-installation. This listing assumes that the environment variable
-$NEXUS_HOME points to an existing Nexus
-installation. Download the Nexus Migration plugin, copy the
-distribution archive to the Nexus installation folder, and unpack
-it. This archive will install the necessary applications and plugins
-to enable a smooth migration from Artifactory to Nexus.
-
-----
-$ cd ${NEXUS_HOME}
-$ cp nexus/WEB-INF/optional-plugins/nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip nexus/WEB-INF/plugin-repository/
-$ cd nexus/WEB-INF/plugin-repository/
-* unzip
-nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip 
-Archive:  nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip
-   creating: artifactory-bridge/
-   creating: artifactory-bridge/WEB-INF/
-   creating: artifactory-bridge/WEB-INF/lib/
-...
-* rm nexus-migration-plugin-packaging-2.1-20120703.071738-259-bridge.zip
-----
-
-Once the Nexus Migration plugin has been installed, start up Nexus and
-go to the Nexus URL. If you are just setting up Nexus, and you've
-skipped the installation chapter, the default Nexus URL is
-http://localhost:8081/nexus and the default administrative
-username/password combination is "admin" and "admin123". If the Nexus
-Migration Plugin is installed properly, you should see the Artifactory
-Import link under Administration in the Nexus application menu as
-shown in <<fig-artifactory-import-panel>>.
-
-[[fig-artifactory-import-panel]]
-.Artifactory Import Panel from the Nexus Migration Plugin
-image::figs/web/artifactory_after-installation.png[scale=60]
-
-[[artifactory-sect-importing]]
-==== Importing an Artifactory System Backup
-
-To import the backup created in <<artifactory-sect-create-backup>>, enter the path to the
-Artifactory system backup archive in the Artifactory Import panel as
-shown in <<fig-artifactory-import-backup>>. This path
-references a filesystem path on the same server that is running Nexus.
-
-NOTE: Please note that the filesystem path in Step 1 of the
-Artifactory Import process references a path on the same server that
-is running Nexus. This field is not a file upload field, and you are
-not uploading the Artifactory System Backup archive from your local
-machine to the server. The Artifactory system export archive can be
-rather large, and the assumption of the Nexus Migration plugin is that
-you are installing Nexus on the same server that had previously run
-Artifactory. If you are not installing Nexus on the same server, you
-must upload the Artifactory System Backup ZIP file to the Nexus server
-prior to typing in the filesystem path shown in <<fig-artifactory-import-backup>>.
-
-[[fig-artifactory-import-backup]]
-.Specifying the Artifactory System Backup Path
-image::figs/web/artifactory_import-artifactory-backup.png[scale=60]
-
-Click the Import button, and Nexus will then examine the Artifactory
-System Backup archive and populate fields in Step 2 of the Artifactory
-Import panel.
-
-[[artifactory-sect-configuring]]
-==== Configuring the Artifactory Import
-
-Once the System Backup has been imported, the Nexus Migration plugin
-will populate the Groups, Repositories, and Users tables in Step 2 of
-the Artifactory Import panel as shown in <<fig-artifactory-configuring-import>>. These tables and form
-elements allow you to customize which repositories and groups are
-going to be imported into Nexus and how Nexus will configure
-corresponding repositories. The following sections describe each of
-these configuration tables in detail.
-
-[[fig-artifactory-configuring-import]]
-.Configuring the Artifactory Import
-image::figs/web/artifactory_customer-import-step2.png[scale=60]
-
-[[artifactory-sect-configuring-groups]]
-==== Configuring Artifactory Group Imports
-
-The groups table displays all of the groups contained in the
-Artifactory system backup. By default, all groups are selected. If you
-wish to omit an Artifactory group from the import process, deselect
-the checkbox for that group in the Import column. Each group's content
-type resolution is shown in the Content Type Resolution
-column. Changing the content type resolution will control how Nexus
-configures the Nexus Group that corresponds to each Artifactory Group.
-
-[[fig-artifactory-configuring-groups]]
-.Configuring Artifactory Group Imports
-image::figs/web/artifactory_groups-content-type.png[scale=60]
-
-[[fig-artifactory-config-repository-imports]]
-==== Configuring Artifactory Repository Imports
-
-The second table in Step 2 of the Artifactory Import panel is the
-Repositories panel. In this panel you can select repositories to
-import and also configure how Artifactory proxy repositories would be
-mapped to Nexus proxy repository with matching canonical URLs. Each
-row in the Repositories table contains the following columns:
-
-Import:: This column contains a simple checkbox. If the checkbox is
-checked, the repository will be imported into Nexus. If the checkbox
-is not check, the Nexus Migration plugin will omit the repository from
-the import process.
-
-Repository ID:: This is the repository identifier from
-Artifactory. This column cannot be edited.
-
-Type:: This is the type of the repository being imported. Hosted
-repositories in Artifactory will be imported as hosted repositories in
-Nexus. Proxy repositories in Artifactory will be imported as proxy
-repositories in Nexus unless they are merged with an existing proxy
-repository.
-
-Map URLs:: Since Nexus is a drop-in replacement for Artifactory, the
-Nexus Migration Plugin gives you the option to Map the legacy
-Artifactory URLs to the newer Nexus URLs. Checking this box will tell
-the Nexus Migration plugin to create the appropriate URL mappings to
-allow clients to interact with the newly created Nexus repositories
-via the legacy Artifactory URLs.
-
-Copy Cached Artifacts:: Checking this box will tell the Nexus
-Migration plugin to copy the cache contents of a proxy repository to
-the newly created Nexus repository. Leaving this box unchecked will
-tell the Nexus Migration plugin to only copy the configuration for a
-proxy repository.
-
-Releases/Snapshots:: This allows you to customize the Repository
-Policy in a newly created Nexus repository. If you want a hosted or
-proxy repository to serve only release or snapshot versions, select
-the corresponding value in the drop-down. If you want a host or proxy
-repository to serve both release and snapshot versions, select both in
-this drop-down list. If you want Nexus to use the type implied by the
-Artifactory repository, don't select a value in this drop-down.
-
-////
-[[fig-artifactory-configuring-repo]]
-.Configuring Repositories for Artifactory Import
-image::figs/web/artifactory_repository-releases-snapshots.png[scale=60]
-////
-
-Merge With:: If an Artifactory proxy repository has a canonical URL
-which matches the canonical URL of an existing Nexus repository, you
-can merge this proxy repository into the existing Nexus proxy
-repository. Most people running the Artifactory Import process will
-likely have a repo1 proxy repository in Artifactory for the
-Maven Central repository and a central proxy repository in
-Nexus for the Maven Central repository. As both of these repositories
-have the same URL, the Nexus Migration plugin will show a checkbox in
-the Merge With column as shown in <<fig-artifactory-merge-with>>. Checking this box will
-instruct the Nexus Migration plugin to merge the contents and
-configuration of the repo1 repository with the existing
-central repository. In other words, if this box is checked,
-the Nexus Migration plugin will not create a new proxy repository for
-repo1, and if the box isn't checked, the Nexus Migration
-plugin will create new proxy repository for repo1
-
-[[fig-artifactory-merge-with]]
-.Merging a Proxy Repository During Artifactory Import
-image::figs/web/artifactory_merging-proxy-repos.png[scale=60]
-
-[[artifactory-sect-config-users-privs]]
-==== Configuring Users and Privileges in the Artifactory Import
-
-The Users table shown in <<fig-artifactory-configuring-users>> allows you to select
-which users are imported into Nexus from the Artifactory system backup
-archive. The columns in the User table are:
-
-Import:: If the checkbox in this column is selected, the Artifactory
-user will be imported into Nexus, if the box is not selected this user
-will not be imported into Nexus.
-
-User ID:: This is the User identifier from Artifactory, this field
-cannot be edited.
-
-Email:: This is the email of a User, this field cannot be edited.
-
-Admin:: If this checkbox is selected, Nexus will associate the newly
-imported user with the Nexus Administrator role.
-
-[[fig-artifactory-configuring-users]]
-.Configuring Users During Artifactory Import
-image::figs/web/artifactory_user-import.png[scale=60]
-
-Just below the Users table is the Import Permissions checkbox. If this
-checkbox is selected, Nexus will attempt to import Artifactory
-privileges into Nexus and map the corresponding roles and privileges
-to the imported users.
-
-[[artifactory-sect-perform-import]]
-==== Performing the Artifactory Import
-
-Once the Artifactory import has been configured, click on the Start
-Import button at the bottom of the Artifactory Import panel. Clicking
-on the Start Import button will show you the warning dialog shown in
-<<fig-artifactory-loading-warning>>.
-
-[[fig-artifactory-loading-warning]]
-.Loading Artifactory Configuration Warning
-image::figs/web/artifactory_warning-long-time.png[scale=60]
-
-If you are migrating a large Artifactory installation, the loading
-process could take a significant amount of time. If you are
-comfortable with your import configuration, click on the Yes
-button. Clicking on the Yes button will then cause Nexus to display
-the dialog shown in <<fig-artifactory-import-scheduled>>.
-
-[[fig-artifactory-import-scheduled]]
-.Artifactory Import Scheduled Dialog
-image::figs/web/artifactory_import-scheduled.png[scale=60]
-
-This dialog informs you that the import is scheduled to start as soon
-as possible using the Nexus scheduled Job execution infrastructure.
-You can check on the progress of the import process by clicking on the
-Show Log button at the bottom of the Artifactory Import panel or by
-clicking on Logs and Config Files under the
-Views/Repositories menu and selecting the migration.log file
-from the "Select a document..."  drop-down. The migration log is shown
-in <<fig-artifactory-migration-log>>.
-
-[[fig-artifactory-migration-log]]
-.Viewing the Migration Logs
-image::figs/web/artifactory_migration-log.png[scale=60]
-
-[[artifactory-sect-bridge]]
-==== Configuring Artifactory Clients to Use Nexus
-
-Nexus is a drop-in replacement for Artifactory, this means that you
-don't need to reconfigure your project's settings.xml and repository
-elements throughout your POMs to start using Nexus. When you installed
-the Nexus Migration plugin, you also installed a web application
-called the Artifactory Bridge which should be running under the
-context path /artifactory next to the /nexus application. If you run
-Nexus at the default http://localhost:8081/nexus/ URL, the artifactory
-bridge will be running at http://localhost:8081/artifactory/
-
-This Artifactory Bridge will serve repository metadata and artifacts
-from Nexus under the same URLs that your existing Artifactory clients
-expect. When you were configuring your repositories during the
-Artifactory Import in <<fig-artifactory-config-repository-imports>>, you'll
-remember that there was a column named Map URL check box for a
-repository instructed the Nexus Migration plugin to configure a
-mapping between the old Artifactory URL and repository identifier and
-the new Nexus URL and repository identifier.
-
-To see this mapping in action, take a look at the Central repository
-through three different URLs. This example assumes that you mapped
-your old repo1 Artifactory proxy repository to the Nexus central proxy
-repository. Let's take a quick look at the URL for metadata.xml for
-the nexus-index artifact which is under the group identifier
-org.sonatype.nexus. To retrieve this directly from the Maven Central
-repository, you would use the following URL:
-
-----
-http://repo1.maven.org/maven2/\
-org/sonatype/nexus/nexus-indexer/maven-metadata.xml
-----
-
-To retrieve the same file from the Nexus central proxy of the Maven
-Central repository, you would use the following URL which contains the
-new Nexus repository identifier "central":
-
-----
-http://localhost:8081/nexus/content/repositories/central/\
-org/sonatype/nexus/nexus-indexer/maven-metadata.xml
-----
-
-To retrieve the same file from the Artifactory Bridge, you would use
-the following URL which contains the old Artifactory repository
-identifier "repo1":
-
-----
-http://localhost:8081/artifactory/repo1/\
-org/sonatype/nexus/nexus-indexer/maven-metadata.xml
-----
-
-The configuration for these mappings is stored in
-sonatype-work/nexus/conf/mapping.xml. This is an XML file which was
-configured during the import that maps the old Artifactory repository
-identifiers to the new Nexus repository identifiers. The Artifactory
-Bridge web application is configured in $NEXUS_HOME/conf/plexus.xml
-contains a reference to the web application and also configures the
-context-path /artifactory
+== Migrating to Nexus
 
 [[archiva]]
 === Migrating from Archiva
@@ -10149,12 +9949,12 @@ context-path /artifactory
 ==== Introduction
 
 This appendix walks you through the process of migrating an
-existing Archiva installation to a new Nexus installation.
+existing http://archiva.apache.org/[Archiva] installation to a new Nexus installation.
 
 [[archiva-sect-migrepo]]
 ==== Migrating Archiva Repositories
 
-Archive uses the filesystem to store hosted repositories and
+Archiva uses the filesystem to store hosted repositories and
 proxied repositories, because of this migrating from Archiva to Nexus
 couldn't be simpler. The following sections outline the process for
 migrating existing Archiva repositories to a new Nexus instance.
@@ -10358,6 +10158,48 @@ group you configured in <<fig-archiva-proxy-to-group>>.
 
 .Defining Nexus Repository Groups
 image::figs/web/archiva-nx-repo-routes.png[scale=60]
+
+
+[[artifactory]]
+=== Migrating from Artifactory
+
+This appendix provides a guideline for migrating a Maven repository
+from Artifactory to Nexus.
+
+Typically migrating from Artifactory revolves around migrating hosted
+repositories only, since any proxy repositories configured in
+Artifactory can just be set up with the same configuration in Nexus
+and all data will be retrieved from the upstream repositories again.
+
+Hosted repositories on the other hand have to be migrated. The best
+practice for migration is to use the import/export feature of
+Artifactory and migrate one hosted repository after another. Please
+consult the Artifactory documentation for step by step instructions on
+how to export a repository.
+
+After the export you have to create a hosted repository in Nexus
+e.g. with the name "old-releases" as documented in
+<<config-sect-new-repo>>. This will create a folder in
+sonatype-work/nexus/storage/old-releases.
+
+Now you are ready to take the exported repository and copy it into the
+newly created storage folder. 
+
+Going back to the Nexus user interface, navigate to the repository
+administration and select the Browse Storage panel. Right-click on the root
+folder of the repository and select Rebuild Metadata first and as a
+second step select Update Index. Once these tasks are completed, the
+migrated repository is ready to be used.
+
+After these task are completed you will probably want to add the
+migrated repository to the Public Repositories group or any other
+group in which you want the migrated repository content to be
+available. 
+
+If you want to ensure that the repository does not get any further
+content added you can set the Deployment Policy to Read Only in the
+Access Settings of the repository Configuration panel.
+
 
 [[ssl]]
 [appendix]
