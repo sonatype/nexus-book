@@ -6296,8 +6296,11 @@ deployment password for your Nexus installation.
 If more control is desired over when the plugins deploy goal is
 activated or if Maven 2 is used, you have to explicitly deactivate the
 Maven Deploy Plugin and replace the Maven Deploy Plugin invocation
-with the Nexus Staging Maven Plugin like this
+with the Nexus Staging Maven Plugin like visible in
+in <<fig-staging-maven2and3>>.
 
+[[fig-staging-maven2and3]]
+.Usage of Nexus Staging Maven Plugin for Maven 2
 ----
 <build> 
   <plugins> 
@@ -6350,13 +6353,13 @@ available in <<fig-staging-example-pom>>.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.sonatype.training.nxs301</groupId>
-  <artifactId>04-explicit-staging</artifactId>
+  <artifactId>explicit-staging-example</artifactId>
   <version>1.0.0</version>
 
   <distributionManagement>
     <snapshotRepository>
-      <id>nexus-snapshots</id>
-      <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
+    <id>nexus-snapshots</id>
+    <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -6369,9 +6372,9 @@ available in <<fig-staging-example-pom>>.
         <extensions>true</extensions>
         <configuration>
 	      <serverId>nexus-releases</serverId>
-		  <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
-		  <!-- update this to the correct id! -->
-		  <stagingProfileId>1296f79efe04a4d0</stagingProfileId>
+          <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+          <!-- update this to the correct id! -->
+          <stagingProfileId>1296f79efe04a4d0</stagingProfileId>
         </configuration>
       </plugin>
     </plugins>
@@ -6405,17 +6408,17 @@ goal of the Nexus Staging Maven Plugin performs the following actions:
 The log of a successful deployment would look similar to this:
 
 ----
-[INFO] --- nexus-staging-maven-plugin:1.0:deploy (injected-nexus-deploy) @ staging-example ---
+[INFO] --- nexus-staging-maven-plugin:1.1.1:deploy (injected-nexus-deploy) @ staging-example ---
 [INFO] Using server credentials with ID="nexus-releases" from Maven settings.
 [INFO] Preparing staging against Nexus on URL http://localhost:8081/nexus/
 [INFO]  * Remote Nexus reported itself as version 2.1.2 and edition "Professional"
 [INFO]  * Using staging profile ID "12a1656609231352" (matched by Nexus).
 [INFO] Staging locally (stagingDirectory=
-"/Users/manfred/dev/staging-example/target/nexus-staging/12a1656609231352")...
-Uploading: file: ... staging-example-1.0.0.jar
-Uploaded: file: ... staging-example-1.0.0.jar (4 KB at 1051.1 KB/sec)
-Uploading: file: ... staging-example-1.0.0.pom
-Uploaded: file: ... staging-example-1.0.0.pom (4 KB at 656.2 KB/sec)
+"/Users/manfred/dev/explicit-staging-example/target/nexus-staging/12a1656609231352")...
+Uploading: file: ... explicit-staging-example-1.0.0.jar
+Uploaded: file: ... explicit-staging-example-1.0.0.jar (4 KB at 1051.1 KB/sec)
+Uploading: file: ... explicit-staging-example-1.0.0.pom
+Uploaded: file: ... explicit-staging-example-1.0.0.pom (4 KB at 656.2 KB/sec)
 Downloading: file: ...maven-metadata.xml
 Uploading: file: ...maven-metadata.xml
 Uploaded: file: ... maven-metadata.xml (322 B at 157.2 KB/sec)
@@ -6424,7 +6427,7 @@ Uploaded: file: ... maven-metadata.xml (322 B at 157.2 KB/sec)
 [INFO] Performing staging against Nexus on URL http://localhost:8081/nexus/
 [INFO]  * Remote Nexus reported itself as version 2.1.2 and edition "Professional"
 [INFO]  * Created staging repository with ID "test-002", 
-applied tags: {javaVersion=1.6.0_26, localUsername=manfred}
+applied tags: {javaVersion=1.6.0_37, localUsername=manfred}
 [INFO]  * Uploading locally staged artifacts to: 
 http://localhost:8081/nexus/service/local/staging/deployByRepositoryId/test-002
 [INFO]  * Upload of locally staged artifacts done.
@@ -6444,10 +6447,10 @@ Failures are accompanied by error reports that reveal further details:
 [ERROR]   Rule "RepositoryWritePolicy" failures
 [ERROR]     * Artifact updating: Repository ='releases:Releases' does
 not allow updating 
-artifact='/com/sonatype/training/nexus/staging-example/t1.0.0/staging-example-1.0.0.jar'
+artifact='/com/sonatype/training/nexus/explicit-staging-example/t1.0.0/staging-example-1.0.0.jar'
 [ERROR]     * Artifact updating: Repository ='releases:Releases' does 
 not allow updating 
-artifact='/com/sonatype/training/nexus/staging-example/1.0.0/staging-example-1.0.0.pom'
+artifact='/com/sonatype/training/nexus/explicit-staging-example/1.0.0/staging-example-1.0.0.pom'
 [ERROR] 
 [ERROR] 
 ----
