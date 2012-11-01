@@ -2774,7 +2774,7 @@ typed in the name of a group or an artifact, pressed search, and saw
 absolutely nothing. No results. Nexus isn't going to retrieve the
 remote repository indexes by default, you need to activate downloading
 of remote indexes for the three proxy repositories that Nexus ships
-with. Without these indexes, Nexus has nothing to search. Find
+with. Without these indexes, Nexus has nothing to search. Fifnd
 instructions for activating index downloads in
 <<confignx-sect-manage-repo>>.
 
@@ -7342,6 +7342,8 @@ the Central Repository and exposes data about the artifacts there,
 including license information, security vulnerability data and other
 statistics like usage data and download numbers.
 
+=== Analyzing a Repository with Repository Health Check
+
 To perform a Repository Health Check about the artifacts in your Nexus
 instance, you have to click the Analyze button in the Quality column
 of the list of Repositories displayed in
@@ -7366,6 +7368,8 @@ At the bottom of the pop up window you find a button to disable the
 analysis for this repository as well as the button View Detailed
 Report to access the detailed report. It will show up
 in another tab in the main area of the Nexus user interface.
+
+=== Accessing the Detailed Repository Health Check Report
 
 The detailed report contains the same overview data and charts for
 security and license information at the top displayed in
@@ -7455,6 +7459,66 @@ Sonatype Insight itself helps with these tasks by enabling monitoring
 of builds and products, analyzing release artifacts and creating bill
 of material and other reports. 
 
+=== Using Repository Health Check Results For Component Lifecycle Management
+
+==== Example: Analyzing a Spring Beans Vulnerability
+
+The following example details how you can analyze security issues of
+an artifact found in your repository health check and determine a
+solution with the help of information available with in Nexus.
+
+After performing a repository health check as documented in the prior
+sections of  <<rhc>>, you noticed the artifact with the Group
+org.springframework, the Artifact spring-beans and Version 2.5.4.Upon further inspection of your software build and the components
+used, you can confirm that this artifact is indeed part of your
+shipping software.
+
+TIP: http://links.sonatype.com/products/insight/ci/home[Sonatype
+Insight for CI] and
+http://links.sonatype.com/products/insight/ac/home[Sonatype App Health
+Check] are CLM tools that can help you with the detection of license
+and security issues during continuous integration build as well as
+
+A GAV search for the artifact in Nexus as documented in <<using-sect-searching>> allows you to inspect the
+Insight tab for the artifact displayed in <<fig-rhc-spring-insight>>.
+
+[[fig-rhc-spring-insight]]
+.Insight tab for org.springframework:spring-beans:2.5.4
+image::figs/web/rhc-spring-insight.png[scale=50]
+
+After reading the summary and inspecting the entries for the security
+issues in the security databases, you decide that this issue affects
+you and a fix is required. In order to determine you next steps you
+search of all versions of the spring-beans artifact. As a result you
+receive the list of all versions available. The security column in the
+search results list in <<fig-rhc-spring-list>> displays the count of
+two security issues for the version 2.5.4 of the library.
+
+[[fig-rhc-spring-list]]
+.Viewing Multiple Versions of org.springframework:spring-beans:x
+image::figs/web/rhc-spring-list.png[scale=50]
+
+Looking at the Security Issues column in the results, allows you to
+determine that with the uprade of the library to version 2.5.6.SEC02
+the count of security issues drops to zero. The same applies to
+version 2.5.6.SEC03, which appears to be the latest version of the 2.x
+version of the artifact. In addition the table shows that early version of
+the 3.x releases were affected by security issues as well.
+
+With these results, you decide that an immediate update to version
+2.5.6.SEC03 will be required as your next step. In the longer term an
+update to a newer version of the 3.x releases will follow.
+
+The necessary steps to upgrade depend on your usage of the
+spring-beans library. A direct usage of the library will allow you to
+upgrade it directly. In most cases this will require an upgrade of
+other SpringFramework libraries. If you are indirectly using
+spring-beans as a transitive dependency, you will need to figure out
+how to upgrade either the dependency causing the inclusion or override
+the version used. The necessary steps will depend on the build system
+used, but in all cases you now have the information at your hands why
+you should upgrade and what version to upgrade to, which allows you to
+carry out your component lifecycle management effectively.
 
 [[settings]]
 == Managing Maven Settings
