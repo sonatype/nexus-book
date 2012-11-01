@@ -2644,7 +2644,46 @@ Filter text input to search for particular artifact dependencies.  If
 you double click on a row in the tree or list of dependencies you can
 navigate to other artifacts within the Nexus interface.
 
+[[using-sect-insight]]
+==== Viewing the Artifact Insight Data
+
+One of the added features of Nexus Professional is the usage of data
+from Sonatype Insight. This data contains security and license
+information about artifacts and is accessible for a whole repository
+in the Repository Health Check feature described in <<rhc>>.  Details
+about the vulnerability and security issue ratings and others can be
+found there as well.
+
+The Insight tab displays the security and licence information
+available for a specific artifact. It is available in browsing or
+search results, once a you have selected an artifact in the search
+results list or repository tree view. An example search for Jetty with
+the Insight tab visible is displayed in <<fig-insight-tab-jetty>>.  It
+displays the results from the License Analysis and any found Security
+Issues. The License Analysis reveals a medium threat triggered by the
+fact that Non-Standard license headers were found in the Source as
+visible in the Observed License(s) in Source column. The license found
+in the pom.xml file associated to the project only documented Apache-2.0
+or EPL-1.0 as the Declared License(s).
+
+[[fig-insight-tab-jetty]]
+.Insight Data Displaying Security Vulnerabilities for an Old Version of Jetty 
+image::figs/web/insight-tab-jetty.png[scale=60when ]
+
+The Security Issues section displays two issues of Threat Level 5 with
+the Problem Code linking to the respective entries in the Common
+Vulnerabilities and Exposures CVE list as well as the Open Source
+Vulnerability DataBase OSVDB displayed in <<fig-insight-cve-jetty>>
+and <<fig-insight-osvdb-jetty>>
+
+[[fig-insight-cve-jetty]]
+.Common Vulnerabilities and Exposures CVE Entry for a Jetty Security Issue
+image::figs/web/insight-cve-jetty.png[scale=60]
   
+[[fig-insight-osvdb-jetty]]
+.Open Source Vulnerability DataBase OSVDB Entry for a Jetty Security Issue
+image::figs/web/insight-cve-jetty.png[scale=60]
+
 [[using-sect-browse-groups]]
 === Browsing Groups
 
@@ -5370,7 +5409,7 @@ image::figs/web/ldap-templates.png[scale=60]
 Nexus Professional provides you with the ability to test a user
 login directly. To test a user login, go to the User and Group Settings
 tab for a server listed in the Enterprise LDAP panel. Scroll to the
-bottom of the form, and you should see a button named "Check
+ bottom of the form, and you should see a button named "Check
 Login".
 
 .Testing a User Login
@@ -5633,7 +5672,7 @@ image::figs/web/procure_add-procured-repository.png[scale=60]
 
 You will then be presented with the Start Procurement dialog as shown
 in <<fig-procure-start-procurement-dialog>>. Select the
-"Maven Central" proxy repository from the list of available Source
+"Central" proxy repository from the list of available Source
 repositories.
 
 [[fig-procure-start-procurement-dialog]] 
@@ -7290,10 +7329,11 @@ image::figs/web/staging-rulesets-associate.png[scale=60]
 == Repository Health Check
 
 Repository Health Check is a feature of Nexus that integrates data
-used for http://links.sonatype.com/products/insight/home[Sonatype
-Insight]. Sonatype Insight is a separate product that consists of
+from http://links.sonatype.com/products/insight/home[Sonatype
+Insight]. Sonatype Insight is suite of separate products that consists of
 tools to monitor and manage license, quality and security data about
-artifacts used in your software development life cycle. 
+artifacts used in your software development life cycle for your
+Component Lifecycle Management CLM efforts.
 
 Repository Health Check provides access to a limited subset of the
 available data in Sonatype Insight via the Sonatype Insight Service
@@ -7335,11 +7375,11 @@ security and license information at the top displayed in
 .Summary of the Detailed Repository Health Check Panel
 image::figs/web/rhc-detail-summary.png[scale=50]
 
-Below this overview a drop down for Security and
-License information allows you to toggle between two lists displaying
-further details. Both lists have a filter for each column at the
-bottom of the list that allows you to narrow down the number of rows
-in the table and therefore find specific entries easily.
+Below this overview a drop down for Security and License information
+allows you to toggle between two lists displaying further
+details. Both lists have a filter for each column at the bottom of the
+list that allows you to narrow down the number of rows in the table
+and therefore find specific entries easily.
 
 The security list as visible in <<fig-rhc-detail-security-list>>
 contains columns for Threat Level, Problem Code and the GAV parameters
@@ -7354,6 +7394,13 @@ and further information and reference links.
 .The Security Data in the Detailed Repository Health Check Report
 image::figs/web/rhc-detail-security-list.png[scale=40]
 
+The Threat Level is rated in values used by the vulnerability
+databases and ranges from zero for a low threat to ten for the highest
+threat. Values from 8-10 are classified as Critical and are displayed
+as red notification, values from 4 to 7 are classified as Severe and
+use orange and values from 8 to 10 are classified as Moderate and use
+yellow as notification color.
+
 The license list as visible in <<fig-rhc-detail-license-list>>
 shows a derived threat in the Effective License Threat column. The
 Declared License column details the license information found in pom
@@ -7363,6 +7410,32 @@ headers and license files. The next columns for the GAV parameters
 allow you to identify the artifact. The last column Security Issues
 displays an indicator for potentially existing security issue for the
 same artifact.
+
+Licences such as GPL-2.0 or GPL-3.0 are classified as the highest
+License Threat and labelled as Copyleft and use red as signalling color. 
+
+Non Standard or Not Provided license are classified as a moderate
+threat and use orange. Non Standard as a classification is triggered
+when a mixture of licenses such as Apache-1.1, Apache-2.0, LGPL and
+LGPL-2.1 is observed in the source and a different license
+e.g. LGPL-3.0 is declared, since that license declaration might
+actually be legally invalid depending on the combination of licenses
+observed. Not Provided is trigged as classification if no license
+information was found anywhere.
+
+Licenses such as CDDL-1.0, EPL-1.0 or GPL-2.0-CPE receive a Weak
+Copyleft classification and yellow as notication color.
+
+Liberal licences that are generally friendly to inclusion in
+commercial products are using blue and include licences such as
+Apache-2.0, MIT or BSD.
+
+A general description about the implications of the different licenses
+is available when hovering of the specific category in the License
+Analysis Summary. Further information about the different licenses can
+be obtained from the Open Source Initiative at
+http://opensource.org/licenses/index.html. Detailed implications to
+your business and software are best discussed with your lawyers.
 
 [[fig-rhc-detail-license-list]]
 .The License Data in the Detailed Repository Health Check Report
