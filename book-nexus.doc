@@ -7483,8 +7483,9 @@ security issues during continuous integration builds.
 http://links.sonatype.com/products/insight/ac/home[Sonatype App Health
 Check] allows you to analyze already assembled application archives
 
-A GAV search for the artifact in Nexus as documented in <<using-sect-searching>> allows you to inspect the
-Insight tab for the artifact displayed in <<fig-rhc-spring-insight>>.
+A GAV search for the artifact in Nexus as documented in
+<<using-sect-searching>> allows you to inspect the Insight tab for the
+artifact displayed in <<fig-rhc-spring-insight>>.
 
 [[fig-rhc-spring-insight]]
 .Insight tab for org.springframework:spring-beans:2.5.4
@@ -7527,6 +7528,49 @@ The necessary steps will depend on the build system used, but in all
 cases you now have the information at your hands why you should
 upgrade and what version to upgrade to, which allows you to carry out
 your component lifecycle management effectively.
+
+
+==== Example: Resolving a License Issue
+
+The following example details how you can analyze a license issue of
+an artifact found in your repository health check and determine a
+solution with the help of information available in Nexus.
+
+Your repository health check detail report indicated that Hibernate
+3.2.7.GA might have issues due to its Threat Level declared as
+Non-Standard. Looking at your software artifacts you found that you
+are indeed using this version of Hibernate. Searching for the artifact
+in Nexus provides you with the search results list and the Insight tab
+for the specific version displayed in <<fig-rhc-hibernate>>.
+
+[[fig-rhc-hibernate]]
+.Viewing License Analysis Results for Hibernate
+image::figs/web/rhc-hibernate.png[scale=0]
+
+The Insight tab displays the declared license of Hibernate
+is the LGPL-3.0 license. Contrary to that the licenses observed in the
+source code include Apache-1.1, Apache-2.0, LGPL-2.1, LGPL and
+Non-Standard. 
+
+Looking at newer versions of Hibernate you find that the observed
+license in the source code changed to Not-Provided. Given this change
+you can conclude that the license headers in the individual source
+code files were removed or otherwise altered and the declared license
+was modified to LGPL-2.1.
+
+With this information in hand you determine that you will need to
+contact your lawyers to figure out if you are okay to upgrade to a
+newer version of Hibernate to remedy the uncertainty of the
+license. In addition you will need to decide if the LGPL-2.0 is
+compatible with the distribution mechanism of your software and
+approved by your lawyers.
+
+In the above steps Nexus provided you with a lot of information
+allowing you to effectively carry out our component lifecycle
+management with a minimum amount of effort.
+
+Talking to your lawyer you determine that this artifact can actually
+not be legally shipped 
 
 [[settings]]
 == Managing Maven Settings
