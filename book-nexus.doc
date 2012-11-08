@@ -3744,30 +3744,33 @@ not going to interrogate the smaller remote repository for as many
 missing artifacts.
 
 [[confignx-sect-managing-routes]]
-=== Managing Routes
+=== Managing Routing
 
-Nexus Routes are like filters you can apply to Nexus Groups, they
-allow you to configure Nexus to include or exclude repositories from a
-particular artifact search when Nexus is trying to locate an artifact
-in a repository group. There are a number of different scenarios in
-which you might configure a route in Nexus.
+Nexus Routes are like filters you can apply to Nexus Groups in terms
+of security access and general component retrieval. The adminitration
+interface for routes can be accesses via the Routing menu item in the
+View/Repositories menu in the left hand navigation panel. They allow
+you to configure Nexus to include or exclude specific repository
+content paths from a particular artifact search when Nexus is trying
+to locate an artifact in a repository group. There are a number of
+different scenarios in which you might configure a route in Nexus.
 
-The most common is when you want to make
-sure that you are retrieving artifacts in a particular group ID from a
-particular repository. This is especially useful when you want to make
-sure that you are trying to retrieve your own organization's artifacts
-from the hosted Release and Snapshot repositories. 
+The most commonly configured scenario is when you want to make sure
+that you are retrieving artifacts in a particular group ID from a
+particular repository. This is especially useful when you want your
+own organization's artifacts from the hosted Release and Snapshot
+repositories only.
 
 Routes are applicable when you are trying to resolve an artifact from
-a repository group; using Routes allow you to modify the repositories
+a repository group; using routes allows you to modify the repositories
 Nexus will consult when it tries to resolve an artifact from a group
 of repositories.
 
 [[fig-route-config]]
-.Routes Configuration Screen in Nexus
+.Routing Configuration Screen in Nexus
 image::figs/web/repository-manager_route-config.png[scale=60]
 
-<<fig-route-config>> shows the Repository Route Configuration
+<<fig-route-config>> shows the Routing configuration
 screen. Clicking on a route will bring up a screen which will allow
 you to configure the properties of a route. The configuration options
 available for a route are:
@@ -3796,9 +3799,9 @@ URL Pattern::
 
 Rule Type:: Rule Type can be either "inclusive" or "exclusive". An
 inclusive rule type defines the set of repositories which should be
-searched for artifacts when the URL pattern has
-been matched. An exclusive rule type defines repositories which
-should not be searched for a particular artifact.
+searched for artifacts when the URL pattern has been matched. An
+exclusive rule type defines repositories which should not be searched
+for a particular artifact.
 
 Ordered Route Repositories:: This is an ordered list of repositories
 which Nexus will search to locate a particular artifact. Nexus
@@ -3806,10 +3809,10 @@ searches top to bottom; if it's looking for an artifact, it will
 return the first match. When Nexus is looking for metadata, all
 repositories in a group are checked and the results are merged. The
 merging is applied giving preference to the earlier repositories. This
-is relevant when a project is looking for a LATEST or a
-RELEASE version. Within a Nexus Group, you should define the
-release repositories before the snapshot repositories, otherwise
-LATEST may incorrectly resolve to a snapshot version.
+is relevant when a project is looking for a LATEST or a RELEASE
+version. Within a Nexus Group, you should define the release
+repositories before the snapshot repositories, otherwise LATEST may
+incorrectly resolve to a snapshot version.
 
 In this figure you can see the two dummy Routes that Nexus has as
 default routes. 
@@ -3817,12 +3820,12 @@ default routes.
 The first route is an inclusive route, it is provided as an example of
 a custom route an organization might use to make sure that internally
 generated artifacts are resolved from the Releases and Snapshots
-repositories. If your organization's group IDs all start with
+repositories only. If your organization's group IDs all start with
 com.somecompany, and if you deploy internally generated artifacts to
 the Releases and Snapshots repositories, this Route will make sure
 that Nexus doesn't waste time trying to resolve these artifacts from
 public Maven repositories like the Maven Central Repository or the
-Apache Snapshots repository.
+Apache Snapshots repository. 
 
 The second dummy route is an exclusive route. This route excludes the
 Releases and Snapshots repositories when the request path contains
@@ -3833,40 +3836,51 @@ Releases and Snapshots repositories when it is trying to resolve these
 dependencies. In other words, don't bother looking for an Apache
 dependency in your organization's internal repositories.
 
+TIP: Exclusive rules will positively impact performance, since the
+number of index searches is reduced.
+
 What if there is a conflict between two routes? Nexus will process
 inclusive routes before it will process the exclusive routes.
-Remember that Nexus Routes only affect Nexus' resolution of artifacts
-when it is searching a Group. When Nexus starts to resolve an artifact
-from a Nexus Group it will start with the list of repositories in a
+Remember that routes only affect Nexus' resolution of artifacts when
+it is searching a Group. When Nexus starts to resolve an artifact from
+a repository group it will start with the list of repositories in a
 group. If there are matching inclusive routes, Nexus will then take
-the intersection of the repositories in the Group and the repositories
-in the inclusive Nexus Route. The order as defined in the Nexus Group
-will not be affected by the Inclusive route. Nexus will then take the
-result of applying the inclusive route and apply the exclusive route
-to that list of repositories. The resulting list is then searched for
-a matching artifact.
+the intersection of the repositories in the group and the repositories
+in the inclusive route. The order as defined in the group will not be
+affected by the inclusive route. Nexus will then take the result of
+applying the inclusive route and apply the exclusive route to that
+list of repositories. The resulting list is then searched for a
+matching artifact.
 
 One straightforward use of routes is to create a route that excludes
-the Maven Central repository from all searches for your own
-organization's hosted artifacts. If you are deploying your own
-artifacts to Nexus under a groupId of org.mycompany, and if you are
-not deploying these artifacts to a public repository, you can create a
-rule that tells Nexus not to interrogate Central for your own
-organization's artifacts. This will improve performance because Nexus
-will not need to communicate with a remote repository when it serves
-your own organization's artifacts. In addition to the performance
-benefits, excluding Central from searches for your own artifacts will
-reduce needless queries to the public repositories.
+the Central Repository from all searches for your own organization's
+hosted artifacts. If you are deploying your own artifacts to Nexus
+under a groupId of org.mycompany, and if you are not deploying these
+artifacts to a public repository, you can create a rule that tells
+Nexus not to interrogate Central for your own organization's
+artifacts. This will improve performance because Nexus will not need
+to communicate with a remote repository when it serves your own
+organization's artifacts. In addition to the performance benefits,
+excluding the Central Repository from searches for your own artifacts
+will reduce needless queries to the public repositories.
 
-To summarize, there are creative possibilities with Routes that the
+TIP: This practice of defining an inclusive route for your internal
+artifacts to only hit internal repositories is a crucial best practice
+of implementing a secure component lifecycle management in your
+organization and a recommended step for initial Nexus
+configuration. Without this configuration requests for internal
+artifacts will be broadcasted to all configured external proxy
+repositories. This could lead to an information leak where e.g. your
+internet traffic reveals that your organization works on a component
+with the artifact coordinates of
+com.yourcompany.website:new-super-secret-feature:1.0-SNAPSHOT.
+
+To summarize, there are creative possibilities with routes that the
 designers of Nexus may not have anticipated, but we advise you to
 proceed with caution if you start relying on conflicting or
-overlapping Routes.  Use Routes sparingly, and use course URL
-patterns, as Nexus evolves there will be more features which allow for
-more fine grained rules to allow you to prohibit requests for specific
-artifacts and specific versions of artifacts. Remember that routes are
-only applied to Nexus Groups, routes are not used when an artifact is
-requested from a specific repository.
+overlapping routes.  Use routes sparingly, and use coarse URL
+patterns. Remember that routes are only applied to groups, routes are
+not used when an artifact is requested from a specific repository.
 
 [[confignx-sect-managing-tasks]]
 === Managing Scheduled Tasks
