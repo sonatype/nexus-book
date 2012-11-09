@@ -3643,13 +3643,8 @@ as well as compromising these components via Cross Build Injection XBI
 attacks.
 
 The Remote Storage Location configured for the "Central" proxy
-repository is 
-
-----
-https://secure.central.sonatype.com/maven2/
-----
-
-as displayed in <<fig-secure-central-configuration>>.
+repository is "https://secure.central.sonatype.com/maven2/" as
+displayed in <<fig-secure-central-configuration>>.
 
 [[fig-secure-central-configuration]]
 .Default Configuration for the Central Repository Using HTTPS
@@ -3668,20 +3663,10 @@ image::figs/web/secure-central-capability.png[scale=60]
 You can use the secure connection to the Central Repository on a
 version of Nexus that was either upgraded from Nexus Open Source or
 from an older version, where the Central location was
-
-----
-http://repo1.maven.org/maven2/
-----
-
-On Nexus 2.2 and newer you simply replace the Remote Storage Location
-for the "Central" proxy repository with 
-
-----
-https://secure.central.sonatype.com/maven2/
-----
-
-The authentication token will automatically be requested and
-configured.
+"http://repo1.maven.org/maven2/". On Nexus 2.2 and newer you simply
+replace the Remote Storage Location for the "Central" proxy repository
+with "https://secure.central.sonatype.com/maven2/". The authentication
+token will automatically be requested and configured.
 
 The secure access can be used on older versions of Nexus as well,
 although the preferred approach is to update to Nexus 2.2 or
@@ -10176,9 +10161,14 @@ $ mvn archetype:generate \
 [[plugdev-sect-building]]
 === Building a Nexus Plugin Project
 
-To build your Nexus plugin project, just run mvn install in the newly
-generated project directory. Once the build is completed, your
-plugin's JAR will be available in the project's target/ folder.
+To build your Nexus plugin project, just run 
+
+----
+mvn clean install 
+----
+
+in the newly generated project directory. Once the build is completed,
+your plugin's JAR will be available in the project's target/ folder.
 
 WARNING: Nexus plugin development requires you to use Apache Maven 3.
 
@@ -10199,9 +10189,9 @@ the repository to your public group.
 [[plugdev-sect-complex]]
 === Creating a Complex Plugin
 
-In this section, we will step through a skeletal, sample project that
-implements a virus scanner plugin for Nexus. This plugin will consist
-of:
+In this section, we will step through the skeletal, sample project
+that implements a virus scanner plugin for Nexus as created with the
+archetype. This plugin will consist of:
 
 * A managed "virus scanner" component
 
@@ -10262,7 +10252,7 @@ public class XYVirusScanner implements VirusScanner {
 }
 ----
 
-The next class is a request processor which virus scans an artifact
+The next class is a request processor which scans an artifact for viruses
 before it is cached locally. If a virus is found in an artifact, this
 plugin will refuse to cache the artifact and trigger an event which
 will signal that a virus was found in a file item. Note the use of
@@ -10347,12 +10337,12 @@ implements RequestProcessor {
 }
 ----
 
-The last extension is RepositoryCustomizer, that simply injects our
-virus scanner RequestProcessor into proxy repositories only (the only
-way to get an artifact into Nexus from uncontrolled Internet. Local
-uploads are considered "safe" for this example). Note how the request
-processor is injected into this repository customizer with @Inject and
-@Named.
+The last component is the RepositoryCustomizer. It simply injects our
+virus scanner RequestProcessor into proxy repositories only. For his
+example local uploads are considered safe, so the only way to get an
+artifact into Nexus from the uncontrolled Internet is a proxy
+repository. Note how the request processor is injected into this
+repository customizer with @Inject and @Named.
 
 .The Virus Scanner Repository Customizer
 ----
@@ -10394,16 +10384,17 @@ public class VirusScannerRepositoryCustomizer
 === Nexus Plugin Descriptor Maven Plugin
 
 Nexus plugins have a custom packaging "nexus-plugin" which is
-introduced by the NexusPD Maven Plugin. A "nexus-plugin" packaged
+introduced by the app-lifecycle-maven-plugin. A "nexus-plugin" packaged
 plugin:
 
 * is a plain JAR
 * has a META-INF/nexus/plugin.xml embedded Nexus Plugin Metadata embedded
 * has static resources embedded into the plugin JAR
 
-The NexusPD Maven plugin introduces a new project path (i.e.
+The plugin introduces a new project path (i.e.
 src/main/static-resources). Static resources such as JavaScript files,
-images, and CSS which are referenced in
+images, and CSS should be located in this folder and will be packaged
+appropriately.
 
 [[plugdev-sect-plugin-descriptor]]
 === The Nexus Plugin Descriptor
