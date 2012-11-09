@@ -2188,13 +2188,13 @@ capabilities.xml:: Further Smart Proxy backend configuration.
 
 healthcheck.properties:: Configuration for the Repository Health Check.
 
-logback.properties, logback.xml and logback-*.xml::
-Contains logging configuration. If you need to customize the detail of
-log messages, the frequency of log file rotation, or if you want to
-connect your own, custom logging appenders, you would alter this
-configuration file. If you find log4j.properties files as well you can
-safely remove them since they are remnants from an old version and are
-not used anymore.
+logback.properties, logback.xml and logback-*.xml:: Contains logging
+configuration. If you need to customize the detail of log messages,
+the frequency of log file rotation, or if you want to connect your
+own, custom logging appenders, you should edit the logback-nexus.xml
+configuration file as desired. If you find log4j.properties files as
+well you can safely remove them since they are remnants from an old
+version and are not used anymore.
 
 lvo-plugin.xml:: Contains configuration for the latest version
 plugin. This XML file contains the location of the properties file
@@ -4439,6 +4439,11 @@ very verbose printing all log messages include debugging
 statements. If set to ERROR, Nexus will be far less verbose only
 printing out a log statement if Nexus encounters an error. INFO
 represents an intermediate amount of logging.
+
+Advanced logging configurations can be done by editing the
+logback-nexus.xml file found in sonatype-work/nexus/conf. Other
+logback* file found in the same directory do not need to be edited for
+most logging modifications.
 
 
 [[confignx-sect-plugins]]
@@ -10019,64 +10024,80 @@ request.
 === Using the Nexus Plugin Archetype
 
 To create a new Nexus Plugin, you can use the Nexus Plugin Archetype
-by running archetype:generate with the following identifiers:
-
-archetypeGroupId:: org.sonatype.nexus.archetypes
-archetypeArtifactId:: nexus-plugin-archetype
-archetypeVersion:: 1.2
+by running archetype:generate with the following filter set to
+"nexus-plugin-archetype" as displayed in
+<<fig-nexus-plugin-archetype>>. Enter the number of the
+nexus-plugin-archetype at the first prompt and select the version
+corresponding to the version of Nexus you are using.
 
 Once you run archetype:generate, you will be prompted for the groupId,
 artifactId, version, and package name for the generated project.
 
+[[fig-nexus-plugin-archetype]]
+.Creating a Sample Nexus Plugin using the Archetype
 ----
-$ mvn archetype:generate -DarchetypeGroupId=org.sonatype.nexus.archetypes \
--DarchetypeArtifactId=nexus-plugin-archetype \
--DarchetypeVersion=1.2
+$ mvn archetype:generate -Dfilter=nexus-plugin-archetype
 [INFO] Scanning for projects...
 [INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
 [INFO] Building Maven Stub Project (No POM) 1
 [INFO] ------------------------------------------------------------------------
 [INFO] 
-[INFO] >>> maven-archetype-plugin:2.1:generate (default-cli) @ standalone-pom >>>
+[INFO] >>> maven-archetype-plugin:2.2:generate (default-cli) @ standalone-pom >>>
 [INFO] 
-[INFO] <<< maven-archetype-plugin:2.1:generate (default-cli) @ standalone-pom <<<
+[INFO] <<< maven-archetype-plugin:2.2:generate (default-cli) @ standalone-pom <<<
 [INFO] 
-[INFO] --- maven-archetype-plugin:2.1:generate (default-cli) @ standalone-pom ---
+[INFO] --- maven-archetype-plugin:2.2:generate (default-cli) @ standalone-pom ---
 [INFO] Generating project in Interactive mode
-[INFO] Archetype repository missing. Using the one from [org.sonatype.nexus.archetypes:nexus-plugin-archetype:1.2] found in catalog remote
-Define value for property 'groupId': : org.sonatype.book.nexus
+[INFO] No archetype defined. Using maven-archetype-quickstart (org.apache.maven.archetypes:maven-archetype-quickstart:1.0)
+Choose archetype:
+1: remote -> org.sonatype.nexus.archetypes:nexus-plugin-archetype (-)
+Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1
+Choose org.sonatype.nexus.archetypes:nexus-plugin-archetype version: 
+1: 1.0
+2: 1.1
+3: 1.2
+4: 2.1-RC1
+5: 2.1
+6: 2.1.1
+7: 2.1.2
+8: 2.2-SNAPSHOT
+9: 2.2
+10: 2.2-01
+11: 2.2.1
+Choose a number: 11: 11
+Define value for property 'groupId': : org.sonatype.nexus.plugins
 Define value for property 'artifactId': : sample-plugin
 Define value for property 'version':  1.0-SNAPSHOT: : 
-Define value for property 'package':  org.sonatype.book.nexus: : 
-[INFO] Using property: nexusVersion = 1.4.1
+Define value for property 'package':  org.sonatype.nexus.plugins: : 
+[INFO] Using property: nexusVersion = 2.2.1
 Confirm properties configuration:
-groupId: org.sonatype.book.nexus
+groupId: org.sonatype.nexus.plugins
 artifactId: sample-plugin
 version: 1.0-SNAPSHOT
-package: org.sonatype.book.nexus
-nexusVersion: 1.4.1
+package: org.sonatype.nexus.plugins
+nexusVersion: 2.2.1
  Y: : 
 [INFO] ----------------------------------------------------------------------------
-[INFO] Using following parameters for creating project from Archetype: nexus-plugin-archetype:1.2
+[INFO] Using following parameters for creating project from Archetype: nexus-plugin-archetype:2.2.1
 [INFO] ----------------------------------------------------------------------------
-[INFO] Parameter: groupId, Value: org.sonatype.book.nexus
+[INFO] Parameter: groupId, Value: org.sonatype.nexus.plugins
 [INFO] Parameter: artifactId, Value: sample-plugin
 [INFO] Parameter: version, Value: 1.0-SNAPSHOT
-[INFO] Parameter: package, Value: org.sonatype.book.nexus
-[INFO] Parameter: packageInPathFormat, Value: org/sonatype/book/nexus
-[INFO] Parameter: package, Value: org.sonatype.book.nexus
+[INFO] Parameter: package, Value: org.sonatype.nexus.plugins
+[INFO] Parameter: packageInPathFormat, Value: org/sonatype/nexus/plugins
+[INFO] Parameter: package, Value: org.sonatype.nexus.plugins
 [INFO] Parameter: version, Value: 1.0-SNAPSHOT
-[INFO] Parameter: nexusVersion, Value: 1.4.1
-[INFO] Parameter: groupId, Value: org.sonatype.book.nexus
+[INFO] Parameter: nexusVersion, Value: 2.2.1
+[INFO] Parameter: groupId, Value: org.sonatype.nexus.plugins
 [INFO] Parameter: artifactId, Value: sample-plugin
-[INFO] project created from Archetype in dir: /Users/anders/dev/sample-plugin
+[INFO] project created from Archetype in dir: /Users/manfred/Projects/sample-plugin
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 54.206s
-[INFO] Finished at: Thu Oct 27 11:12:13 CEST 2011
-[INFO] Final Memory: 7M/265M
+[INFO] Total time: 45.655s
+[INFO] Finished at: Thu Nov 08 20:55:03 PST 2012
+[INFO] Final Memory: 15M/153M
 [INFO] ------------------------------------------------------------------------
 ----
 
@@ -10085,24 +10106,47 @@ project with the layout shown in <<fig-plugdev-project-layout>>.
 
 [[fig-plugdev-project-layout]]
 .Layout of a Nexus Plugin Project
-image::figs/web/plugdev_filesystem.png[scale=60]
+----
+$tree sample-plugin/
+sample-plugin/
+├── pom.xml
+└── src
+    └── main
+        └── java
+            └── org
+                └── sonatype
+                    └── nexus
+                        └── plugins
+                            ├── VirusScanner.java
+                            ├── VirusScannerRepositoryCustomizer.java
+                            ├── VirusScannerRequestProcessor.java
+                            ├── XYVirusScanner.java
+                            ├── events
+                            │   └── InfectedItemFoundEvent.java
+                            └── rest
+                                └── HelloWorldPlexusResource.java
+
+9 directories, 7 files
+----
 
 The generated project contains the following classes:
 
-org.sonatype.book.nexus.XYVirusScanner:: An implementation of the
-VirusScanner Interface
-
-org.sonatype.book.nexus.VirusScannerRequestProcessor:: A class which
-customizes the request handling process in Nexus
-
-org.sonatype.book.nexus.VirusScannerRepositoryCustomizer:: A class
-which customizes the repositories affected by the VirusScanner
-
-org.sonatype.book.nexus.VirusScanner:: A VirusScanner interface
+VirusScanner:: A VirusScanner interface
 described in <<plugdev-sect-complex>>.
 
-org.sonatype.book.nexus.events.InfectedItemFoundEvent:: A simple event
+VirusScannerRepositoryCustomizer:: A class
+which customizes the repositories affected by the VirusScanner
+
+VirusScannerRequestProcessor:: A class which
+customizes the request handling process in Nexus
+
+XYVirusScanner:: An implementation of the
+VirusScanner Interface
+
+InfectedItemFoundEvent:: A simple event
 which is fired by the VirusScanner
+
+HelloWorldPlexusResource:: what is that.. TODO
 
 [[plugdev-sect-target-version]]
 === Set the Target Nexus Version
@@ -10134,8 +10178,8 @@ during the creation of a new project. To do that, you would set the
 ----
 $ mvn archetype:generate -DarchetypeGroupId=org.sonatype.nexus.archetypes \
 -DarchetypeArtifactId=nexus-plugin-archetype \
--DarchetypeVersion=1.2 \
--DnexusVersion=1.9.2
+-DarchetypeVersion=2.2.1 \
+-DnexusVersion=2.2
 ----
 
 [[plugdev-sect-building]]
@@ -10153,7 +10197,9 @@ Maven Central repository. If you experience missing artifacts during
 your Nexus plugin project build, you should make sure that the
 following repositories are added to your environment:
 
-* The Sonatype Forge Repository:
+* The Sonatype Public Grid Repository:
+  http://repository.sonatype.org/content/groups/sonatype-public-grid/
+
   http://repository.sonatype.org/content/groups/forge
 
 * The Codehaus Snapshot Repository:
