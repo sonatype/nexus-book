@@ -10018,14 +10018,15 @@ request.
 === Using the Nexus Plugin Archetype
 
 To create a new Nexus Plugin, you can use the Nexus Plugin Archetype
-by running archetype:generate with the following filter set to
-"nexus-plugin-archetype" as displayed in
-<<fig-nexus-plugin-archetype>>. Enter the number of the
-nexus-plugin-archetype at the first prompt and select the version
-corresponding to the version of Nexus you are using.
+by with the Maven Archtetype Plugins generate goal with the filter set
+to "nexus-plugin-archetype" as displayed in
+<<fig-nexus-plugin-archetype>>. 
 
-Once you run archetype:generate, you will be prompted for the groupId,
-artifactId, version, and package name for the generated project.
+Enter the number of the nexus-plugin-archetype at the first prompt and
+select the version corresponding to the version of Nexus you are
+using. Supply the desired values for the groupId, artifactId, version,
+and package name for the generated plugin next and confirm you values
+provided.
 
 [[fig-nexus-plugin-archetype]]
 .Creating a Sample Nexus Plugin using the Archetype
@@ -10033,20 +10034,17 @@ artifactId, version, and package name for the generated project.
 $ mvn archetype:generate -Dfilter=nexus-plugin-archetype
 [INFO] Scanning for projects...
 [INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------
 [INFO] Building Maven Stub Project (No POM) 1
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] >>> maven-archetype-plugin:2.2:generate (default-cli) @ standalone-pom >>>
-[INFO] 
-[INFO] <<< maven-archetype-plugin:2.2:generate (default-cli) @ standalone-pom <<<
-[INFO] 
-[INFO] --- maven-archetype-plugin:2.2:generate (default-cli) @ standalone-pom ---
+[INFO] ------------------------------------------
+...
 [INFO] Generating project in Interactive mode
-[INFO] No archetype defined. Using maven-archetype-quickstart (org.apache.maven.archetypes:maven-archetype-quickstart:1.0)
+[INFO] No archetype defined. Using maven-archetype-quickstart 
+(org.apache.maven.archetypes:maven-archetype-quickstart:1.0)
 Choose archetype:
 1: remote -> org.sonatype.nexus.archetypes:nexus-plugin-archetype (-)
-Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): : 1
+Choose a number or apply filter (format: [groupId:]artifactId, 
+case sensitive contains): : 1
 Choose org.sonatype.nexus.archetypes:nexus-plugin-archetype version: 
 1: 1.0
 2: 1.1
@@ -10072,9 +10070,10 @@ version: 1.0-SNAPSHOT
 package: org.sonatype.nexus.plugins
 nexusVersion: 2.2.1
  Y: : 
-[INFO] ----------------------------------------------------------------------------
-[INFO] Using following parameters for creating project from Archetype: nexus-plugin-archetype:2.2.1
-[INFO] ----------------------------------------------------------------------------
+[INFO] --------------------------------------------------
+[INFO] Using following parameters for creating project from Archetype:
+ nexus-plugin-archetype:2.2.1
+[INFO] --------------------------------------------------
 [INFO] Parameter: groupId, Value: org.sonatype.nexus.plugins
 [INFO] Parameter: artifactId, Value: sample-plugin
 [INFO] Parameter: version, Value: 1.0-SNAPSHOT
@@ -10085,42 +10084,40 @@ nexusVersion: 2.2.1
 [INFO] Parameter: nexusVersion, Value: 2.2.1
 [INFO] Parameter: groupId, Value: org.sonatype.nexus.plugins
 [INFO] Parameter: artifactId, Value: sample-plugin
-[INFO] project created from Archetype in dir: /Users/manfred/Projects/sample-plugin
-[INFO] ------------------------------------------------------------------------
+[INFO] project created from Archetype in dir: 
+                  /Users/manfred/Projects/sample-plugin
+[INFO] --------------------------------------------------
 [INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
+[INFO] --------------------------------------------------
 [INFO] Total time: 45.655s
 [INFO] Finished at: Thu Nov 08 20:55:03 PST 2012
 [INFO] Final Memory: 15M/153M
-[INFO] ------------------------------------------------------------------------
+[INFO] --------------------------------------------------
 ----
 
 Once the Archetype plugin has created the project, you will have a
-project with the layout shown in <<fig-plugdev-project-layout>>.
+project with the layout shown in <<fig-plugdev-project-layout>> in a
+directory using the name of the artifactId value supplied.
 
 [[fig-plugdev-project-layout]]
 .Layout of a Nexus Plugin Project
 ----
-$tree sample-plugin/
-sample-plugin/
-├── pom.xml
-└── src
-    └── main
-        └── java
-            └── org
-                └── sonatype
-                    └── nexus
-                        └── plugins
-                            ├── VirusScanner.java
-                            ├── VirusScannerRepositoryCustomizer.java
-                            ├── VirusScannerRequestProcessor.java
-                            ├── XYVirusScanner.java
-                            ├── events
-                            │   └── InfectedItemFoundEvent.java
-                            └── rest
-                                └── HelloWorldPlexusResource.java
-
-9 directories, 7 files
+pom.xml
+src
+    main
+        java
+            org
+                sonatype
+                    nexus
+                        plugins
+                            VirusScanner.java
+                            VirusScannerRepositoryCustomizer.java
+                            VirusScannerRequestProcessor.java
+                            XYVirusScanner.java
+                            events
+                                InfectedItemFoundEvent.java
+                            rest
+                                HelloWorldPlexusResource.java
 ----
 
 The generated project contains the following classes:
@@ -10158,8 +10155,7 @@ to target a specific Nexus version.
 <project>
   ...
   <properties>
-    <!-- Set the Nexus version here, against which you build the plugin -->
-    <nexus-version>1.4.1</nexus-version>
+    <nexus.version>2.2.1</nexus.version>
   </properties>
   ...
 </project>
@@ -10170,7 +10166,8 @@ during the creation of a new project. To do that, you would set the
 "nexusVersion" system property value on the command-line:
 
 ----
-$ mvn archetype:generate -DarchetypeGroupId=org.sonatype.nexus.archetypes \
+$ mvn archetype:generate \
+-DarchetypeGroupId=org.sonatype.nexus.archetypes \
 -DarchetypeArtifactId=nexus-plugin-archetype \
 -DarchetypeVersion=2.2.1 \
 -DnexusVersion=2.2
@@ -10189,25 +10186,15 @@ The Nexus Plugin project, as created by the Nexus Plugin archetype,
 depends on a number of artifacts which may not be available from the
 Maven Central repository. If you experience missing artifacts during
 your Nexus plugin project build, you should make sure that the
-following repositories are added to your environment:
+Sonatype Public Grid Repository is available as release repository. 
 
-* The Sonatype Public Grid Repository:
-  http://repository.sonatype.org/content/groups/sonatype-public-grid/
-
-  http://repository.sonatype.org/content/groups/forge
-
-* The Codehaus Snapshot Repository:
-  http://snapshots.repository.codehaus.org
-
-If you experience any difficulty with the build, you may also want to
-remove the section of the generated POM that is labelled with the
-#ITSet label.
+----
+http://repository.sonatype.org/content/groups/sonatype-public-grid/
+----
 
 If you are using Nexus, and you have configured your build to work
 against a public group, you will want to make sure that you have added
-both of the repositories listed above to your public group. You will
-also want to make sure that the Repository Policy setting for the
-Sonatype Forge Repository is set to "Release".
+the repository to your public group. 
 
 [[plugdev-sect-complex]]
 === Creating a Complex Plugin
