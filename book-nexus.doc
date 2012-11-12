@@ -3734,13 +3734,17 @@ missing artifacts.
 === Managing Routing
 
 Nexus Routes are like filters you can apply to Nexus Groups in terms
-of security access and general component retrieval. The administration
-interface for routes can be accesses via the Routing menu item in the
-View/Repositories menu in the left hand navigation panel. They allow
-you to configure Nexus to include or exclude specific repository
-content paths from a particular artifact search when Nexus is trying
-to locate an artifact in a repository group. There are a number of
-different scenarios in which you might configure a route in Nexus.
+of security access and general component retrieval and can reduce the
+number of repositories within a group accessed in order to retrieve an
+artifact. The administration interface for routes can be accesses via
+the Routing menu item in the View/Repositories menu in the left hand
+navigation panel.
+
+Routes allow you to configure Nexus to include or exclude specific
+repository content paths from a particular artifact search when Nexus
+is trying to locate an artifact in a repository group. There are a
+number of different scenarios in which you might configure a route in
+Nexus.
 
 The most commonly configured scenario is when you want to make sure
 that you are retrieving artifacts in a particular group ID from a
@@ -3860,6 +3864,17 @@ repositories. This could lead to an information leak where e.g. your
 internet traffic reveals that your organization works on a component
 with the artifact coordinates of
 com.yourcompany.website:new-super-secret-feature:1.0-SNAPSHOT.
+
+
+In addition to defining inclusive and exclusive routes, you can define
+blocking routes. A blocking route can be created by creating a route
+with no repositories in the ordered list of repositories. It allows
+you to completely block access to artifacts with the specified
+pattern(s) from the group. As such blocking routes are a simplified,
+coarse grained access control. 
+
+TIP: Check out <<procure>> for fine grained control of artifact
+availability and use blocking routes with sparingly.
 
 To summarize, there are creative possibilities with routes that the
 designers of Nexus may not have anticipated, but we advise you to
