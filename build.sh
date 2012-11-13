@@ -27,4 +27,4 @@ gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=target/tmp.pdf target/boo
 mv target/tmp.pdf target/book-nexus.pdf
 
 # Build the Chunked HTML
-a2x -v -k -fchunked --xsl-file=docbook-xsl/custom-chunked.xsl --xsltproc-opts "--stringparam chunk.section.depth 1" -dbook --dblatex-opts=" -P latex.output.revhistory=0" -D target book-nexus.doc
+a2x -v -k -fchunked --xsl-file=docbook-xsl/custom-chunked.xsl --xsltproc-opts "--stringparam chunk.section.depth 1 --stringparam toc.section.depth 3" -dbook --dblatex-opts=" -P latex.output.revhistory=0" -D target book-nexus.doc
