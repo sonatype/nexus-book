@@ -1895,15 +1895,20 @@ in the usual Windows service management console.
 [[install-sect-proxy]]
 === Running Nexus Behind a Proxy
 
-If you installed Nexus as a stand-alone application, Nexus is running
-on a high-performance servlet container based on Java NIO. From a
-performance perspective, there is no reason for you not to run Nexus
-by itself without a proxy. Yet, more often than not, organizations run
-applications behind a proxy for security concerns and to consolidate
-multiple disparate applications using tools like mod_rewrite. For this
-reason, we've included some brief instructions for configuration
-Apache httpd. We assume that you've already installed Apache 2, and
-that you are using a Virtual Host for www.somecompany.com.
+The Nexus installation bundle is based on the high-performance servlet
+container Eclipse Jetty running the Nexus web application. This
+achieves a very high performance of Nexus and make installation of a
+separate proxy for performance improvements unnecessary.
+
+However in many cases organizations run applications behind a proxy
+for security concerns, familiarity with securing a particular proxy
+server or to consolidate multiple disparate applications using tools
+like mod_rewrite.
+
+Some brief instructions for establishing such a setup with Apache
+httpd follow as an example. We assume that you've already installed
+Apache 2, and that you are using a Virtual Host for
+www.somecompany.com.
 
 Let's assume that you wanted to host Nexus behind Apache HTTPd at the
 URL http://www.somecompany.com. To do this, you'll need to change the
@@ -1922,7 +1927,7 @@ context path that Nexus is served from.
 
 At this point, edit the HTTPd configuration file for the
 www.somecompany.com virtual host. Include the following to expose
-Nexus via mod_proxy at http://www.somecompany.com/
+Nexus via mod_proxy at http://www.somecompany.com/.
 
 ----
 ProxyRequests Off 
@@ -3875,6 +3880,7 @@ coarse grained access control.
 
 TIP: Check out <<procure>> for fine grained control of artifact
 availability and use blocking routes with sparingly.
+
 
 To summarize, there are creative possibilities with routes that the
 designers of Nexus may not have anticipated, but we advise you to
