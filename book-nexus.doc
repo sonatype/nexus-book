@@ -10,7 +10,7 @@
 This book covers the concepts of repository management in general and
 specifically usage of Sonatype Nexus Open Source and Sonatype Nexus
 Professional. It details all aspects of setup and running Nexus with
-the features of the latest release version 2.1.2. 
+the features of the latest release version 2.2.1. 
 
 This book was last updated and published on  {localdate}.
 
@@ -67,6 +67,18 @@ a single repository group URL, and if anyone ever needs a custom
 remote repository added to the group, you can do this in a central
 location without having to modify every developer’s workstation.
   
+Hosting Project Web Sites:: Nexus is a publishing destination for
+project web sites. While you very easily generate a project web site
+with Maven, without Nexus, you will need to set up a WebDAV server and
+configure both your web server and build with the appropriate security
+credentials. With Nexus, you can deploy your project’s web site to the
+same infrastructure that hosts the project’s build output. This single
+destination for binaries and documentation helps to minimize the
+number of moving parts in your development environment. You don’t have
+to worry about configuring another web server or configuring your
+builds to distribute the project site using a different protocol, you
+simple point your project at Nexus and deploy the project site.
+
 Fine-grained Security Model:: Nexus Open Source ships with a very
 capable and customizable security model. Every operation in Nexus is
 associated with a privilege, and privileges can be combined into
@@ -173,20 +185,7 @@ post a collection of related, staged artifacts which can be tested,
 promoted, or discarded as a unit. Nexus keeps track of the individuals
 that are involved in a staged, managed release and can be used to
 support the decisions that go into producing quality software.
-  
-Hosting Project Web Sites:: Nexus Professional is a publishing
-destination for project web sites. While you very easily generate a
-project web site with Maven, without Nexus, you will need to set up a
-WebDAV server and configure both your web server and build with the
-appropriate security credentials. With Nexus, you can deploy your
-project’s web site to the same infrastructure that hosts the project’s
-build output. This single destination for binaries and documentation
-helps to minimize the number of moving parts in your development
-environment. You don’t have to worry about configuring another web
-server or configuring your builds to distribute the project site using
-a different protocol, you simple point your project at Nexus and
-deploy the project site.
-  
+    
 Support for OSGi Repositories:: Instead of just supporting Maven
 repositories, Nexus Professional supports OSGi Bundle repositories and
 P2 repositories for those developers who are targeting OSGi or the
@@ -389,17 +388,100 @@ m2eclipse.
   
   
 [[repoman]]
-== Repository Management
+== Component Lifecycle and Repository Management
+
+=== Introduction
+
+Component Lifecycle Management (CLM) in general and specifically the
+subset Repository Management are two aspects of current software
+development best practices that are closely related to Nexus usage. In
+this chapter you will learn more about CLM and repository management
+and how you can take advantage of Nexus features to implement these
+best practices.
+
+[[clm]]
+=== Component Lifecycle Management
+
+Component lifecycle management can be defined as the practice of
+ analysis, control, and monitoring of all components used in your
+ software development lifecycle.
+
+It has emerged as a new category of software development products,
+information services and practices that help managing agile,
+collaborative, component-based development efforts. They allows you to
+ensure the integrity of the modern software supply chain, amplifying
+the benefits of modern development, while reducing risk.
+
+==== Increasing Component Usage and Open Source Components
+
+Modern software development practices have shifted dramatically from
+large efforts of writing new code to the usage of components to
+assemble applications. This approach limits the amount of code
+authorship to the business specific aspects of your software. 
+
+A large number of open source components in the form of libraries,
+reusable widgets or whole applicatione, application servers and others
+is now available featuring very high levels of quality and feature
+sets, that could not be implemented as a side effect of your business
+application development. E.g. creating a new web application framework
+and business workflow system just to create a website with a
+publishing workflow would be extremely inefficient.
+
+Open source has become an integral part of modern applications in this
+form of components. A typical enterprise application is comprised of
+tens, if not hundreds, of components accounting for 80% and more of the
+application.
+
+==== Security Vulnerability and License Compliance Risks
+
+With the huge benefits derived from using open source as well as
+commercial components, comes the complexity of understanding all the
+implications to your software delivery. These include security
+vulnerabilities, license compliance problems as well as quality
+issues, that need to be managed through the whole life cycle starting
+at the inception of the sofware all the way through development,
+qualitiy assurance, production deployments and onwards until the
+decommissioning of the software. 
+
+The number of components, their rapid change rate with new releases as
+well as the ease of adding new dependencies, make the management and
+full understanding of all involved components a task, that can not be
+carried out manually and requires the assistance of tools such as
+Nexus and Sonatype Insight.
+
+==== Nexus and Component Lifecycle Management
+
+Nexus provides a number of tools that can help you in your CLM
+efforts. Besides focussing on being a component repository manager it
+includes features such as the display of security vulnerabilities as
+well as license analysis results within search results and the
+Repository Health Check reports for a proxy repository. 
+
+Specific examples about using Nexus for CLM related tasks can be found
+in <<rhc>>.
+
+Nexus Professional secures your component supply chain as documented
+in <<confignx-sect-secure-central>>, which forms an important base
+for your CLM efforts.
+
 
 [[repoman-sect-intro]]
 === Repository Management
 
+Repository Management is a critical practice that is part of your
+Component Lifecycle Managment implementation.  Without repository
+management your component usage is effectively out of control and can
+not be governed and managed. This makes it impossible to track
+security, license and quality issues you are exposed to due to the
+components you use from your source code, through your build
+environments and releases to production usage.
+
 Repository managers serve two purposes: they act as highly
-configurable proxies between your organization and the public Maven
-repositories and they also provide an organization with a deployment
+configurable proxies between your organization and the public 
+repositories and they provide an organization with a deployment
 destination for its own generated artifacts. Just as Source Code
 Management (SCM) tools are designed to manage source artifacts,
-Repository Managers have been designed to manage and track external
+repository managers have been designed to manage and track external
 dependencies and artifacts generated by your build. They are an
 essential part of any enterprise or open-source software development
 effort, and they enable greater collaboration between developers and
@@ -661,41 +743,45 @@ be retrieved from the same repository using the same URL patterns.
 
 ==== The Maven Central Repository
 
-The most useful Maven repository is the Maven Central repository. The
-Maven Central repository contains almost 90,000 software artifacts
-occupying around 70 GB of disk space. You can look at Central as an
-example of how Maven repositories operate and how they are
-assembled. Here are some of the properties of release repositories
-such as the Maven Central repository:
+The most useful Maven repository is the Central Repository. The
+Central Repository is the largest repository for Java based components
+and the default repository built into Apache Maven. Statistics about
+the size of the Central Repository are available at
+http://search.maven.org/#stats[http://search.maven.org/#stats]. You
+can look at the Central Repository as an example of how Maven repositories
+operate and how they are assembled. Here are some of the properties of
+release repositories such as the Central Repository:
 
-Artifact Metadata:: All software artifacts added to Central require
-proper metadata including a Project Object Model (POM) for each
-artifact which describes the artifact itself, and any dependencies
-that software artifact might have.
+Artifact Metadata:: All software artifacts added to the Central
+Repository require proper metadata including a Project Object Model
+(POM) for each artifact which describes the artifact itself, and any
+dependencies that software artifact might have.
 
-Release Stability:: Once published to the Maven Central repository, an
+Release Stability:: Once published to the Central Repository, an
 artifact and the metadata describing that artifact never change. This
 property of release repositories guarantees that projects which depend
 on releases will be repeatable and stable over time. While new
-software artifacts are being published to central every day, once an
-artifact is assigned a release number on Central, there is a strict
+software artifacts are being published every day, once an artifact is
+assigned a release number on the Central Repository, there is a strict
 policy against modifying the contents of a software artifact after a
 release.
 
-Repository Mirrors:: Central is a public resource, and it is currently
-used by the millions of developers who have adopted Maven and the
-tools that understand how to interact with the Maven repository
-structure. There are a series of mirrors for the Central repository
-which are constantly synchronized with Central. Users are encouraged
-to query central for project metadata and cryptographic hashes and
+Repository Mirrors:: The Central Repository is a public resource, and
+it is currently used by the millions of developers who have adopted
+Maven and other build tools that understand how to interact with the
+Maven repository structure. There are a series of mirrors for the
+Central Repository which are constantly synchronized. Users are
+encouraged to query for project metadata and cryptographic hashes and
 they are encouraged to retrieve the actual software artifacts from one
 of Central's many mirrors.  Tools like Nexus are designed to retrieve
-metadata from Central and artifact binaries from mirrors.
+metadata from the Central Repository and artifact binaries from
+mirrors.
 
-Artifact Security:: The Maven Central repository contains
-cryptographic hash cryptographic hashes and PGP signatures which can
-be used to verify the authenticity and integrity of software artifacts
-served from Central or one of the many mirrors of Central.
+Artifact Security:: The Central Repository contains cryptographic
+hashes and PGP signatures which can be used to verify the authenticity
+and integrity of software artifacts served from Central or one of the
+many mirrors of Central and supports connection to Central in a secure
+manner via HTTP.
 
 [[repoman-sect-repoman]]
 === What is a Repository Manager
@@ -1244,14 +1330,27 @@ software release.
 === Nexus Prerequisites
 
 Nexus Open Source and Nexus Professional only have one prerequisite, a
-Java Runtime Environment (JRE) compatible with Java 5 or higher. Nexus
+Java Runtime Environment (JRE) compatible with Java 6 or Java 7. Nexus
 is most often run with the JRE that is bundled with a Java Development
-Kit (JDK) installation, and it can be run with the latest version of
-Oracle's JDK for Java 6 or Java 7. To download the latest release of
-the Oracle JDK, go to
+Kit (JDK) installation, and it can be run with Oracle's JDK for Java 6
+or Java 7. To download the latest release of the Oracle JDK, go to
 http://www.oracle.com/technetwork/java/javase/downloads/index.html ,
 and download the latest Java 6 or Java 7 JDK.
 
+At a minium Java 6 Update 30 or Java 7u2 are required. IBM Java versions 6 and 7 are
+supported as well. In all instances we recommend tha latest available
+version.
+
+When encountering problems related to IPv6 usage with Nexus or Maven
+as is the default with Java 7, a known workaround is to configure
+
+----
+java.net.preferIPv4Stack=true
+----
+
+
+WARNING: While known to work for most use-cases OpenJDK is not
+officially supported.
 
 [[install-sect-downloading]]
 === Downloading Nexus
@@ -1397,9 +1496,15 @@ If you have defined a symbolic link for the version of Nexus to use,
 stop the server and change that to point at the new Nexus application
 directory. When you start the new instance of Nexus it will read the
 existing repository configuration from the sonatype-work directory.
-Depending on the version you upgrade from and to some maintenance tasks
-like rebuilding the internal indices can be necessary. Please refer
-to the upgrade notes of the new release for more information on this.
+Depending on the version you upgrade from and to, some maintenance
+tasks like rebuilding the internal indices can be necessary. Please
+refer to the
+http://links.sonatype.com/products/nexus/oss/upgrading[upgrade
+notes] of the new release for more information on this. In addition a
+review of the
+http://links.sonatype.com/products/nexus/oss/release-notes[release
+notes] can be very useful to get a better understanding of potential,
+additional steps required.
 
 If you are using any additional plugins supplied by Sonatype, the new
 version of Nexus you downloaded will contain a newer version of the
@@ -1462,6 +1567,11 @@ While we use "localhost" throughout this book, you may need to use the
 IP Loopback Address of "127.0.0.1" or the IP address assigned to the
 machine running Nexus. 
 
+++++
+<?dbhtml-include href="promo_group.html"?>
+++++
+
+
 When first starting Nexus Professional you are presented with a
 form that allows you to request a trial activation. This page
 displayed in <<fig-installing-trial-form>> contains a link to
@@ -1470,7 +1580,7 @@ the license activation screen in
 
 [[fig-installing-trial-form]]
 .Nexus Trial Activation Form
-image::figs/web/installing-trial-form.png[scale=40]
+image::figs/web/installing-trial-form.png[scale=20]
 
 After submitting the form for your trial activation you will receive a
 license key via email that you can use in the license activation screen to
@@ -1480,7 +1590,7 @@ register your license.
 
 [[fig-installing-license-activation]]
 .Nexus License Activation 
-image::figs/web/installing-license-activation.png[scale=40]
+image::figs/web/installing-license-activation.png[scale=20]
 
 Once you have agreed to the End User License Agreement you will be
 directed to the Nexus Professional Evaluation Welcome screen displayed in 
@@ -1515,7 +1625,7 @@ screen to logged in users.
 
 [[fig-installing-nexus-default-screen]]
 .Nexus Application Window
-image::figs/web/installing-nexus-default-screen.png[scale=100]
+image::figs/web/installing-nexus-default-screen.png[scale=80]
 
 
 The files from Java Service Wrapper used for the start up process can
@@ -1633,7 +1743,7 @@ Ubuntu read https://help.ubuntu.com/community/Locale
 
 ==== Step 6: Configure Routes
 
-A route defines patterns use define in which repositories artifacts
+A route defines patterns used to define in which repositories artifacts
 are searched for. Typically internal artifacts are not available in
 e.g. the Central Repository. A route as documented in
 <<confignx-sect-managing-routes>>should be configured so that any
@@ -1689,6 +1799,11 @@ root. The properties that would need to be added to customize the PID
 file location is "wrapper.pid". For more information about this
 property and how it would be configured in wrapper.conf, see:
 http://wrapper.tanukisoftware.com/doc/english/properties.html
+
+++++
+<?dbhtml-include href="promo_nexusService.html"?>
+++++
+
 
 ===== Add Nexus as a Service on Red Hat, Fedora, and CentOS
 
@@ -1789,15 +1904,20 @@ in the usual Windows service management console.
 [[install-sect-proxy]]
 === Running Nexus Behind a Proxy
 
-If you installed Nexus as a stand-alone application, Nexus is running
-on a high-performance servlet container based on Java NIO. From a
-performance perspective, there is no reason for you not to run Nexus
-by itself without a proxy. Yet, more often than not, organizations run
-applications behind a proxy for security concerns and to consolidate
-multiple disparate applications using tools like mod_rewrite. For this
-reason, we've included some brief instructions for configuration
-Apache httpd. We assume that you've already installed Apache 2, and
-that you are using a Virtual Host for www.somecompany.com.
+The Nexus installation bundle is based on the high-performance servlet
+container Eclipse Jetty running the Nexus web application. This
+achieves a very high performance of Nexus and make installation of a
+separate proxy for performance improvements unnecessary.
+
+However in many cases organizations run applications behind a proxy
+for security concerns, familiarity with securing a particular proxy
+server or to consolidate multiple disparate applications using tools
+like mod_rewrite.
+
+Some brief instructions for establishing such a setup with Apache
+httpd follow as an example. We assume that you've already installed
+Apache 2, and that you are using a Virtual Host for
+www.somecompany.com.
 
 Let's assume that you wanted to host Nexus behind Apache HTTPd at the
 URL http://www.somecompany.com. To do this, you'll need to change the
@@ -1816,7 +1936,7 @@ context path that Nexus is served from.
 
 At this point, edit the HTTPd configuration file for the
 www.somecompany.com virtual host. Include the following to expose
-Nexus via mod_proxy at http://www.somecompany.com/
+Nexus via mod_proxy at http://www.somecompany.com/.
 
 ----
 ProxyRequests Off 
@@ -1849,12 +1969,19 @@ please see http://httpd.apache.org
 [[install-sect-as-a-war]]
 === Installing the Nexus WAR
 
-The Nexus Open Source WAR can run in in Tomcat, Jetty, and Resin and
-other application server. To download the Nexus Open Source WAR, go to
+The Nexus Open Source WAR can run on most Java application servers.
+To download the Nexus Open Source WAR, go to
 http://www.sonatype.org/nexus/go.  Click on the Download Site link and
 then download the Nexus WAR. Once you have downloaded the Nexus Open
 Source WAR, you can install it in a servlet container or application
 server.
+
+WARNING: Testing of the WAR file install is currently only done on
+Tomcat and Jetty. The complexity of the task to get Nexus to
+run on an application server may vary depending on the server and the
+server version. It is strongly recommend to use the bundle install with
+the included Jetty application server instead of the WAR file. Support
+for Nexus Professional is only provided for the bundle install.
 
 The process for installing a WAR in an servlet container or
 application server is going to vary for each specific
@@ -1862,7 +1989,8 @@ application. Often, this installation process is as simple as dropping
 a WAR file in a special directory and restarting the container. In
 many cases it will be required to expand the war into a folder rather
 than deploying the unextracted WAR file for the plugin manager to work
-with all installed plugins and allow installation of additional plugins.
+with all installed plugins and allow installation of additional
+plugins.
 
 For example, to install the Nexus WAR in Tomcat, drop the
 nexus-2.1.2.war file in '+++$TOMCAT_HOME/webapps+++' and restart your
@@ -1873,6 +2001,11 @@ http://localhost:8080/nexus-2.1.2
 If you would like a less verbose URL, copy nexus-2.1.2.war to a
 file named nexus.war before copying the distribution to
 '+++$TOMCAT_HOME/webapps+++'
+
+++++
+<?dbhtml-include href="promo_nexusWAR.html"?>
+++++
+
 
 NOTE: When installing Nexus as a WAR in an application server or
 servlet container, it automatically creates a sonatype-work directory
@@ -2012,7 +2145,7 @@ Nexus index from remote repositories.
 logs/:: The nexus.log file that contains information about a running
 instance of Nexus. This directory also contains archived copies of
 Nexus log files. Nexus log files are rotated every day. To reclaim
-disk space, you can delete old log files from the logs/
+disk space, you can delete old log files from the logs directory.
 
 nuget/:: Contains the database supporting queries against NuGet
 repositories used for .NET package support in Nexus.
@@ -2078,13 +2211,13 @@ capabilities.xml:: Further Smart Proxy backend configuration.
 
 healthcheck.properties:: Configuration for the Repository Health Check.
 
-logback.properties, logback.xml and logback-*.xml::
-Contains logging configuration. If you need to customize the detail of
-log messages, the frequency of log file rotation, or if you want to
-connect your own, custom logging appenders, you would alter this
-configuration file. If you find log4j.properties files as well you can
-safely remove them since they are remnants from an old version and are
-not used anymore.
+logback.properties, logback.xml and logback-*.xml:: Contains logging
+configuration. If you need to customize the detail of log messages,
+the frequency of log file rotation, or if you want to connect your
+own, custom logging appenders, you should edit the logback-nexus.xml
+configuration file as desired. If you find log4j.properties files as
+well you can safely remove them since they are remnants from an old
+version and are not used anymore.
 
 lvo-plugin.xml:: Contains configuration for the latest version
 plugin. This XML file contains the location of the properties file
@@ -2250,13 +2383,14 @@ and add the following mirror configuration to your Maven settings in
 
 In <<ex-maven-nexus-simple>> we have defined a single profile:
 nexus. It configures a repository and a pluginRepository with the id
-"central" that overrides the same repositories in the super pom, that
-is internal you every Apache Maven install establishing defaults. The
-overrides change the repositories enabling snapshots and replacing the
-URL with a bogus URL. This URL is overridden by the mirror setting in
-the same settings.xml file to point to the URL of your single Nexus
-group. This Nexus group can therefore contain release as well as
-snapshot artifacts and Maven will pick them up.
+"central" that overrides the same repositories in the super pom. The
+super pom is internal to every Apache Maven install and establishes 
+default values. These overrides are important since they change the
+repositories by enabling snapshots and replacing the URL with a
+bogus URL. This URL is overridden by the mirror setting in the same
+settings.xml file to point to the URL of your single Nexus group. This
+Nexus group can therefore contain release as well as snapshot
+artifacts and Maven will pick them up.
 
 The mirrorOf pattern of * causes any repository request to be
 redirected to this mirror and therefore to your single repository
@@ -2540,7 +2674,49 @@ Filter text input to search for particular artifact dependencies.  If
 you double click on a row in the tree or list of dependencies you can
 navigate to other artifacts within the Nexus interface.
 
+[[using-sect-insight]]
+==== Viewing the Artifact Insight Data
+
+One of the added features of Nexus Professional is the usage of data
+from Sonatype Insight. This data contains security and license
+information about artifacts and is accessible for a whole repository
+in the Repository Health Check feature described in <<rhc>>.  Details
+about the vulnerability and security issue ratings and others can be
+found there as well.
+
+The Insight tab displays the security and licence information
+available for a specific artifact. It is available in browsing or
+search results, once a you have selected an artifact in the search
+results list or repository tree view. An example search for Jetty, with
+the Insight tab visible, is displayed in <<fig-insight-tab-jetty>>.  It
+displays the results from the License Analysis and any found Security
+Issues. 
+
+The License Analysis reveals a medium threat triggered by the fact
+that Non-Standard license headers were found in the source code as visible
+in the Observed License(s) in Source column. The license found in the
+pom.xml file associated to the project only documented Apache-2.0 or
+EPL-1.0 as the Declared License(s).
+
+[[fig-insight-tab-jetty]]
+.Insight Data Displaying Security Vulnerabilities for an Old Version of Jetty 
+image::figs/web/insight-tab-jetty.png[scale=40]
+
+The Security Issues section displays two issues of Threat Level 5. The
+Summary column contains a small summary description of the security
+issue. The Problem Code column contains the codes, which link to the
+respective entries in the Common Vulnerabilities and Exposures CVE
+list as well as the Open Source Vulnerability DataBase OSVDB displayed
+in <<fig-insight-cve-jetty>> and <<fig-insight-osvdb-jetty>>.
+
+[[fig-insight-cve-jetty]]
+.Common Vulnerabilities and Exposures CVE Entry for a Jetty Security Issue
+image::figs/web/insight-cve-jetty.png[scale=40]
   
+[[fig-insight-osvdb-jetty]]
+.Open Source Vulnerability DataBase OSVDB Entry for a Jetty Security Issue
+image::figs/web/insight-osvdb-jetty.png[scale=40]
+
 [[using-sect-browse-groups]]
 === Browsing Groups
 
@@ -2559,7 +2735,7 @@ a Nexus Group vs. browsing a Nexus Repository.
 
 [[fig-nexus-browse-group]]
 .Browsing a Nexus Group
-image::figs/web/repository-manager_browse-group.png[scale=60]
+image::figs/web/repository-manager_browse-group.png[scale=70]
 
 When browsing a Nexus group's storage, you are browsing the underlying
 storage for all of the repositories which are contained in a group. If
@@ -2587,7 +2763,7 @@ magnifying glass should yield a search result similar to
 
 [[fig-search-results]]
 .Results of an Artifact Search for "junit"
-image::figs/web/search-results.png[scale=60]
+image::figs/web/search-results.png[scale=70]
 
 The groupId in the Group column and the artifactId in the Artifact
 column identify each row in the search results table. Each row
@@ -2631,7 +2807,7 @@ typed in the name of a group or an artifact, pressed search, and saw
 absolutely nothing. No results. Nexus isn't going to retrieve the
 remote repository indexes by default, you need to activate downloading
 of remote indexes for the three proxy repositories that Nexus ships
-with. Without these indexes, Nexus has nothing to search. Find
+with. Without these indexes, Nexus has nothing to search. Fifnd
 instructions for activating index downloads in
 <<confignx-sect-manage-repo>>.
 
@@ -2660,7 +2836,7 @@ published to the Central Repository when released, this age gives you a
 good indication of the actual time since the release of the artifact.
 
 The Popularity column shows a relative popularity as compared to the
-other results in the search table. This can give you a good indication
+other results in the search table. This can give you a good idea
 on the take up of a new release. For example if a newer version has a
 high Age value, but a low Popularity compared to an older version, you
 might want to check the upstream project and see if there is any
@@ -2668,7 +2844,14 @@ issues stopping other users from upgrading that might affect you as
 well. Another reason could be that the new version does not provide
 signifcant improvements to warrant an upgrade for most users.
 
-The Download column provide download links for all the available
+The Security Issues column shows the number of known security issues
+for the specific artifact. The License Threat column shows a colored
+square with blue indicating no license threat and yellow, orange and
+red indicating increased license threats. More information about both
+indicators can be seen in the Insight panel below the list of
+artifacts for the specific artifact.
+
+The Download column provides download links for all the available
 artifacts.
 
 The following advanced searches are available:
@@ -2998,11 +3181,21 @@ following.
 ==== SMTP Settings
 
 Nexus sends email to users who need to recover user names and
-password. To do this, you'll need to configure the SMTP server
-settings in this dialog. This section of the form takes an SMTP Host
-and Port as well as other parameters relating to SMTP authentication
-and encryption. You can also change the From: header of an email from
-Nexus.
+password, notifications for staging and a number of other uses. In
+order for these notifications to work, you'll need to configure the SMTP server
+settings in this dialog.
+
+This section of the form takes an SMTP Hostname and Port as well as
+Username and Password. In addition you can enable SSL and/or TLS for
+the connection to the SMTP server. The System Email parameter defines
+the email address used in the From: header of an email from
+Nexus. Typically this would be configured as a "Do-Not-Reply" email
+address or a mailbox or mailing list monitored by the administrators
+of the Nexus server.
+
+Once you have configured the parameters you can use the Test SMTP
+settings button to confirm the configured parameters and the
+successful connection to the server.
 
 [[fig-config-administration-smtp]]
 .Administration SMTP Settings
@@ -3195,11 +3388,18 @@ ships with the following configured hosted repositories:
 
 This serves as an adaptor to and from different types of
 repositories. Currently Nexus supports conversion to and from Maven 1
-repositories and Maven 2 repositories and from Maven 2 to NuGet
-repositories.
+repositories and Maven 2 repositories. In addition you can expose any
+repository format as a NuGet or OBR repository. For example a Maven 2
+repository can contain OSGi Bundles, which can be exposed as a OSGi
+Bundle repository with the virtual repository Provider set to OBR.
 
 By default it ships with a Central M1 shadow repository that exposes
 the Central repository in Maven 1 format.
+
+++++
+<?dbhtml-include href="promo_managingRepos.html"?>
+++++
+
 
 ==== Configuring Repositories
 
@@ -3240,8 +3440,11 @@ virtual). You can't change the type of a repository, it is selected
 when you create a repository.
 
 Provider and Format:: Provider and Format define in what format Nexus
-exposes the repository to external tools. Supported formats are Maven
-1, Maven 2, NuGet, OBR, P2 and P2 Update Site.
+exposes the repository to external tools. Supported formats depend on
+the installed plugins. Nexus Open Source includes support for Maven 1,
+Maven 2 and Site repositories. Nexus Professional adds support for
+NuGet and OBR and additional plugins can add support for P2 and P2
+Update Site and other formats.
 
 Repository Policy:: If a proxy repository has a policy of release than
 it will only access released versions from the remote repository. If a
@@ -3421,10 +3624,9 @@ artifacts to a Hosted repository.
 image::figs/web/repository-manager_summary-hosted.png[scale=60]
 
 The Repository Summary panel for a Proxy repository, as shown in
-<<fig-configuring-summary-proxy>>, contains all of the
-repository identifiers and configuration in addition to the size of the
-local storage for the proxy repository and the URL of the remote
-repository.
+<<fig-configuring-summary-proxy>>, contains all of the repository
+identifiers and configuration as well as a list of groups, in which
+the repository is contained.
 
 [[fig-configuring-summary-proxy]]
 .Repository Summary Panel for a Proxy Repository
@@ -3432,11 +3634,59 @@ image::figs/web/repository-manager_summary-proxy.png[scale=60]
 
 The Repository Summary panel for a Virtual repository, as shown in
 <<fig-configuring-summary-virtual>>, displays repository
-identifiers and the size of the Virtual repository on disk.
+identifiers and configuration.
 
 [[fig-configuring-summary-virtual]]
 .Repository Summary Panel for a Virtual Repository
 image::figs/web/repository-manager_summary-virtual.png[scale=60]
+
+[[confignx-sect-secure-central]]
+==== Accessing The Central Repository Securely
+
+One part of component lifecycle managemet is securing your component
+supply chain. The most important and widely used source for components
+for Java development and beyond is the Central Repository available at
+http://search.maven.org. It is the preconfigured default repository in
+Apache Maven and easily configured in other build systems as well.
+
+Nexus Professional supports access to the Central Repository
+using HTTPS. This secure access to the Central Repository is the default
+configuration for Nexus Professional 2.2 and newer. It prevents
+anybody from gaining insight into the components you are downloading
+as well as compromising these components via Cross Build Injection XBI
+attacks.
+
+The Remote Storage Location configured for the "Central" proxy
+repository is "https://secure.central.sonatype.com/maven2/" as
+displayed in <<fig-secure-central-configuration>>.
+
+[[fig-secure-central-configuration]]
+.Default Configuration for the Central Repository Using HTTPS
+image::figs/web/secure-central-configuration.png[scale=60]
+
+The secure connection relies on an authentication token as well as
+Nexus running on a JVM with high-strength RSA cipher keys. The status
+of the secured access to the Central Repository can be inspected by
+accessing the "Secure Central " capability displayed in
+<<fig-secure-central-capability>>.
+
+[[fig-secure-central-capability]]
+.Secure Central Capability
+image::figs/web/secure-central-capability.png[scale=60]
+
+You can use the secure connection to the Central Repository on a
+version of Nexus that was either upgraded from Nexus Open Source or
+from an older version, where the Central location was
+"http://repo1.maven.org/maven2/". On Nexus 2.2 and newer you simply
+replace the Remote Storage Location for the "Central" proxy repository
+with "https://secure.central.sonatype.com/maven2/". The authentication
+token will automatically be requested and configured.
+
+The secure access can be used on older versions of Nexus as well,
+although the preferred approach is to update to Nexus 2.2 or
+higher. If you require secure access to the Central Repository on an
+older version of Nexus please contact Sonatype support to receive your
+authentication token and configuration instructions.
 
 ==== Auto Block/Unblock of Remote Repositories
 
@@ -3495,30 +3745,37 @@ not going to interrogate the smaller remote repository for as many
 missing artifacts.
 
 [[confignx-sect-managing-routes]]
-=== Managing Routes
+=== Managing Routing
 
-Nexus Routes are like filters you can apply to Nexus Groups, they
-allow you to configure Nexus to include or exclude repositories from a
-particular artifact search when Nexus is trying to locate an artifact
-in a repository group. There are a number of different scenarios in
-which you might configure a route in Nexus.
+Nexus Routes are like filters you can apply to Nexus Groups in terms
+of security access and general component retrieval and can reduce the
+number of repositories within a group accessed in order to retrieve an
+artifact. The administration interface for routes can be accesses via
+the Routing menu item in the View/Repositories menu in the left hand
+navigation panel.
 
-The most common is when you want to make
-sure that you are retrieving artifacts in a particular group ID from a
-particular repository. This is especially useful when you want to make
-sure that you are trying to retrieve your own organization's artifacts
-from the hosted Release and Snapshot repositories. 
+Routes allow you to configure Nexus to include or exclude specific
+repository content paths from a particular artifact search when Nexus
+is trying to locate an artifact in a repository group. There are a
+number of different scenarios in which you might configure a route in
+Nexus.
+
+The most commonly configured scenario is when you want to make sure
+that you are retrieving artifacts in a particular group ID from a
+particular repository. This is especially useful when you want your
+own organization's artifacts from the hosted Release and Snapshot
+repositories only.
 
 Routes are applicable when you are trying to resolve an artifact from
-a repository group; using Routes allow you to modify the repositories
+a repository group; using routes allows you to modify the repositories
 Nexus will consult when it tries to resolve an artifact from a group
 of repositories.
 
 [[fig-route-config]]
-.Routes Configuration Screen in Nexus
+.Routing Configuration Screen in Nexus
 image::figs/web/repository-manager_route-config.png[scale=60]
 
-<<fig-route-config>> shows the Repository Route Configuration
+<<fig-route-config>> shows the Routing configuration
 screen. Clicking on a route will bring up a screen which will allow
 you to configure the properties of a route. The configuration options
 available for a route are:
@@ -3547,9 +3804,9 @@ URL Pattern::
 
 Rule Type:: Rule Type can be either "inclusive" or "exclusive". An
 inclusive rule type defines the set of repositories which should be
-searched for artifacts when the URL pattern has
-been matched. An exclusive rule type defines repositories which
-should not be searched for a particular artifact.
+searched for artifacts when the URL pattern has been matched. An
+exclusive rule type defines repositories which should not be searched
+for a particular artifact.
 
 Ordered Route Repositories:: This is an ordered list of repositories
 which Nexus will search to locate a particular artifact. Nexus
@@ -3557,23 +3814,21 @@ searches top to bottom; if it's looking for an artifact, it will
 return the first match. When Nexus is looking for metadata, all
 repositories in a group are checked and the results are merged. The
 merging is applied giving preference to the earlier repositories. This
-is relevant when a project is looking for a LATEST or a
-RELEASE version. Within a Nexus Group, you should define the
-release repositories before the snapshot repositories, otherwise
-LATEST may incorrectly resolve to a snapshot version.
+is relevant when a project is looking for a LATEST or a RELEASE
+version. Within a Nexus Group, you should define the release
+repositories before the snapshot repositories, otherwise LATEST may
+incorrectly resolve to a snapshot version.
 
-In this figure you can see the two dummy Routes that Nexus has as
-default routes. 
-
-The first route is an inclusive route, it is provided as an example of
-a custom route an organization might use to make sure that internally
-generated artifacts are resolved from the Releases and Snapshots
-repositories. If your organization's group IDs all start with
-com.somecompany, and if you deploy internally generated artifacts to
-the Releases and Snapshots repositories, this Route will make sure
-that Nexus doesn't waste time trying to resolve these artifacts from
-public Maven repositories like the Maven Central Repository or the
-Apache Snapshots repository.
+In this figure you can see the two dummy routes that Nexus has
+configured as default routes. The first route is an inclusive route,
+it is provided as an example of a custom route an organization might
+use to make sure that internally generated artifacts are resolved from
+the Releases and Snapshots repositories only. If your organization's
+group IDs all start with com.somecompany, and if you deploy internally
+generated artifacts to the Releases and Snapshots repositories, this
+Route will make sure that Nexus doesn't waste time trying to resolve
+these artifacts from public Maven repositories like the Maven Central
+Repository or the Apache Snapshots repository.
 
 The second dummy route is an exclusive route. This route excludes the
 Releases and Snapshots repositories when the request path contains
@@ -3584,40 +3839,64 @@ Releases and Snapshots repositories when it is trying to resolve these
 dependencies. In other words, don't bother looking for an Apache
 dependency in your organization's internal repositories.
 
+TIP: Exclusive rules will positively impact performance, since the
+number of repositories that qualify for locating the artifact and
+therefore the search effort is reduced.
+
 What if there is a conflict between two routes? Nexus will process
 inclusive routes before it will process the exclusive routes.
-Remember that Nexus Routes only affect Nexus' resolution of artifacts
-when it is searching a Group. When Nexus starts to resolve an artifact
-from a Nexus Group it will start with the list of repositories in a
+Remember that routes only affect Nexus' resolution of artifacts when
+it is searching a Group. When Nexus starts to resolve an artifact from
+a repository group it will start with the list of repositories in a
 group. If there are matching inclusive routes, Nexus will then take
-the intersection of the repositories in the Group and the repositories
-in the inclusive Nexus Route. The order as defined in the Nexus Group
-will not be affected by the Inclusive route. Nexus will then take the
-result of applying the inclusive route and apply the exclusive route
-to that list of repositories. The resulting list is then searched for
-a matching artifact.
+the intersection of the repositories in the group and the repositories
+in the inclusive route. The order as defined in the group will not be
+affected by the inclusive route. Nexus will then take the result of
+applying the inclusive route and apply the exclusive route to that
+list of repositories. The resulting list is then searched for a
+matching artifact.
 
 One straightforward use of routes is to create a route that excludes
-the Maven Central repository from all searches for your own
-organization's hosted artifacts. If you are deploying your own
-artifacts to Nexus under a groupId of org.mycompany, and if you are
-not deploying these artifacts to a public repository, you can create a
-rule that tells Nexus not to interrogate Central for your own
-organization's artifacts. This will improve performance because Nexus
-will not need to communicate with a remote repository when it serves
-your own organization's artifacts. In addition to the performance
-benefits, excluding Central from searches for your own artifacts will
-reduce needless queries to the public repositories.
+the Central Repository from all searches for your own organization's
+hosted artifacts. If you are deploying your own artifacts to Nexus
+under a groupId of org.mycompany, and if you are not deploying these
+artifacts to a public repository, you can create a rule that tells
+Nexus not to interrogate Central for your own organization's
+artifacts. This will improve performance because Nexus will not need
+to communicate with a remote repository when it serves your own
+organization's artifacts. In addition to the performance benefits,
+excluding the Central Repository from searches for your own artifacts
+will reduce needless queries to the public repositories.
 
-To summarize, there are creative possibilities with Routes that the
+TIP: This practice of defining an inclusive route for your internal
+artifacts to only hit internal repositories is a crucial best practice
+of implementing a secure component lifecycle management in your
+organization and a recommended step for initial Nexus
+configuration. Without this configuration requests for internal
+artifacts will be broadcasted to all configured external proxy
+repositories. This could lead to an information leak where e.g. your
+internet traffic reveals that your organization works on a component
+with the artifact coordinates of
+com.yourcompany.website:new-super-secret-feature:1.0-SNAPSHOT.
+
+
+In addition to defining inclusive and exclusive routes, you can define
+blocking routes. A blocking route can be created by creating a route
+with no repositories in the ordered list of repositories. It allows
+you to completely block access to artifacts with the specified
+pattern(s) from the group. As such blocking routes are a simplified,
+coarse grained access control. 
+
+TIP: Check out <<procure>> for fine grained control of artifact
+availability and use blocking routes with sparingly.
+
+
+To summarize, there are creative possibilities with routes that the
 designers of Nexus may not have anticipated, but we advise you to
 proceed with caution if you start relying on conflicting or
-overlapping Routes.  Use Routes sparingly, and use course URL
-patterns, as Nexus evolves there will be more features which allow for
-more fine grained rules to allow you to prohibit requests for specific
-artifacts and specific versions of artifacts. Remember that routes are
-only applied to Nexus Groups, routes are not used when an artifact is
-requested from a specific repository.
+overlapping routes.  Use routes sparingly, and use coarse URL
+patterns. Remember that routes are only applied to groups, routes are
+not used when an artifact is requested from a specific repository.
 
 [[confignx-sect-managing-tasks]]
 === Managing Scheduled Tasks
@@ -3658,10 +3937,11 @@ failures
 
 Recurrence:: configure the schedule for the task executions. Available
 choices are Manual, Once, Hourly, Daily, Weekly, Monthly and
-Advanced. All choices provide a self-explanatory custom user interface
-for scheduling the specific recurrence. The Advanced setting allows
-you to provide a CRON expression to configure any more complex
-schedules.
+Advanced. All choices provide a custom user interface
+for scheduling the specific recurrence. Weekly scheduling requires at
+least one day of the week to be selected. The Advanced setting allows
+you to provide a CRON expression to configure more complex
+schedules. 
 
 The following kinds of scheduled task types are available:
 
@@ -3830,6 +4110,63 @@ update your scheduled tasks
 when changing e.g. from not deploying SNAPSHOTS to running deployments
 of a CI server or when introducing usage of user tokens with a
 strict LDAP password change policy.
+
+[[confignx-sect-capabilities]]
+=== Accessing and Configuring Capabilities
+
+Capabilities are features of Nexus plugins that can be configured by a
+user in the generic administration view accessible in the left hand
+navigation menu Administration under Capabilities.
+
+WARNING: In most cases you will not need to configure anything in
+Capabilities unless explicitly instructed to do so by the Sonatype
+support team. Execute any capability changes with caution, potentially
+backing up your configuration before proceeding.
+
+Nexus Professional ships with a number of capabilities pre-installed
+and allows you to enable/disable them. An example capability is the
+Outreach Management displayed in <<fig-capability-outreach>>. The
+Capabilities management interface supports adding new capabilities by
+pressing the Add button and deleting a selected capability with the
+Delete button. 
+
+[[fig-capability-outreach]]
+.Capabilities Management Interface with the Outreach Management Details Visible
+image::figs/web/capability-outreach.png[scale=60]
+
+Every capability can be enabled or disabled with the Enabled
+checkbox. The Active checkbox shows if the capability is current
+operating correctly. It can not be changed by the user. If the
+checkbox is deselected the capability is inactive and a help text will
+display the reason for that status. Depending on the capability the
+reasons can vary widely. For example the Secure Central capability
+requires Nexus to run on a JVM with specific security features and an
+error message with indicate, if the JVM is not suitable and an error
+message regarding this will be displayed. In addition the Type of the
+capability is displayed in the drop down and Notes can be added and
+edited in the input field
+
+A small description of the capability is displayed on the right hand
+side of the generic configuration.
+
+Creating a new capability by pressing the Add button will display a
+new form allowing you to configure the capability. You can configure
+if the capability should be enabled with the Enabled checkbox. The
+Notes field allows you to provide a simple text note, that is visible
+in the list of capabilities. The main configuration is the Type
+selector, which determines what further customization can be done
+specific to the type of capability and will provide the necessary user
+interface components in the capability configuration section below the
+Notes input.
+
+Many of the built-in capabilities can be configured in the
+Capabilities administration section, but also in other more user
+friendly, targetted user interface sections. E.g. the User Token
+feature administrated by using the interface available via the User
+Token menu item in the Security left hand menu as well as by editing
+the User Token capability. Other capabilities are internal to Nexus
+functionality and sometimes managed automatically by the responsible
+plugin.
 
 [[confignx-sect-managing-security]]
 === Managing Security
@@ -4046,7 +4383,7 @@ for a particular user as shown in <<fig-configuring-security-user-role-tree>>.
 image::figs/web/repository-manager_security-users-role-tree.png[scale=60]
 
 If you need to find out exactly how a particular user has been
-granted a particular privilege, you can use the Privilege Trace pane as
+granted a particular privilege, you can use the Privilege Trace panel as
 shown in <<fig-configuring-security-user-priv-trace>>.
 The Privilege Trace pane lists all of the privileges that have been
 granted to a particular user. Clicking on a privilege loads a tree of
@@ -4058,6 +4395,12 @@ Containment list.
 [[fig-configuring-security-user-priv-trace]]
 .Nexus User Privilege Trace
 image::figs/web/repository-manager_security-users-privilege.png[scale=60]
+
+Additional plugins can contribute further panels for the security
+configuration of a user. An example of an additional panel is the User
+Token panel, added by the User Token feature of Nexus Professional as
+documented in <<config-sect-usertoken>>.
+
 
 [[confignx-sect-network]]
 === Network Configuration
@@ -4106,6 +4449,11 @@ very verbose printing all log messages include debugging
 statements. If set to ERROR, Nexus will be far less verbose only
 printing out a log statement if Nexus encounters an error. INFO
 represents an intermediate amount of logging.
+
+Advanced logging configurations can be done by editing the
+logback-nexus.xml file found in sonatype-work/nexus/conf. Other
+logback* file found in the same directory do not need to be edited for
+most logging modifications.
 
 
 [[confignx-sect-plugins]]
@@ -5243,7 +5591,7 @@ image::figs/web/ldap-templates.png[scale=60]
 Nexus Professional provides you with the ability to test a user
 login directly. To test a user login, go to the User and Group Settings
 tab for a server listed in the Enterprise LDAP panel. Scroll to the
-bottom of the form, and you should see a button named "Check
+ bottom of the form, and you should see a button named "Check
 Login".
 
 .Testing a User Login
@@ -5431,8 +5779,8 @@ downloading is disabled by default.
 
 To use procurement, you will need to tell Nexus to download the remote
 indexes for a proxy repository. Click on "Repositories" under
-Views/Repositories in the Nexus menu, then click on the Maven Central
-repository in the list of repositories. Click on the Configuration
+Views/Repositories in the Nexus menu, then click on the Central
+Repository in the list of repositories. Click on the Configuration
 tab, locate Download Remote Indexes, and switch this option to "True"
 as shown in <<fig-procure-enabling-remote>>.
 
@@ -5449,7 +5797,8 @@ Repository Groups that contain this proxied repository.
 Nexus may take a few minutes to download the remote index for a large
 repository. Depending on your connection to the Internet, this process
 can take anywhere from under a minute to a few minutes. The size of
-the remote index for Maven Central is on the order of 30 MB.
+the remote index for the Central Repository currently exceeds 50MB and
+is growing in parallel to the size of the repository itself.
 
 To check on the status of the remote index download, click on System
 Feeds under Views in the Nexus menu. Click on the last feed to see a
@@ -5505,7 +5854,7 @@ image::figs/web/procure_add-procured-repository.png[scale=60]
 
 You will then be presented with the Start Procurement dialog as shown
 in <<fig-procure-start-procurement-dialog>>. Select the
-"Maven Central" proxy repository from the list of available Source
+"Central" proxy repository from the list of available Source
 repositories.
 
 [[fig-procure-start-procurement-dialog]] 
@@ -6100,7 +6449,7 @@ section as an extension:
     <plugin>
       <groupId>org.sonatype.plugins</groupId>
       <artifactId>nexus-staging-maven-plugin</artifactId>
-      <version>1.0</version>
+      <version>1.2</version>
       <extensions>true</extensions>
       <configuration>
         <serverId>local-nexus</serverId>
@@ -6168,8 +6517,11 @@ deployment password for your Nexus installation.
 If more control is desired over when the plugins deploy goal is
 activated or if Maven 2 is used, you have to explicitly deactivate the
 Maven Deploy Plugin and replace the Maven Deploy Plugin invocation
-with the Nexus Staging Maven Plugin like this
+with the Nexus Staging Maven Plugin like visible in
+in <<fig-staging-maven2and3>>.
 
+[[fig-staging-maven2and3]]
+.Usage of Nexus Staging Maven Plugin for Maven 2
 ----
 <build> 
   <plugins> 
@@ -6209,7 +6561,47 @@ error prone approach when many staging profiles are in use.
 The preferred way to work in this sceneario is to change the profile
 selection strategy on all staging profiles to explicit only and pass
 the staging profile id to the Nexus Staging Maven Plugin using the
-`stagingProfileId` configuration parameter as documented above.
+`stagingProfileId` configuration parameter as documented above. A full
+example pom.xml for deployment of snapshot as well as release builds
+with the Nexus Staging Maven Plugin using explicit matching for the
+staging profile and locally staged builds and atomic uploads is
+available in <<fig-staging-example-pom>>.
+
+[[fig-staging-example-pom]]
+.Full example pom.xml for Nexus Staging Maven Plugin usage
+----
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.sonatype.training.nxs301</groupId>
+  <artifactId>explicit-staging-example</artifactId>
+  <version>1.0.0</version>
+
+  <distributionManagement>
+    <snapshotRepository>
+    <id>nexus-snapshots</id>
+    <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.2</version>
+        <extensions>true</extensions>
+        <configuration>
+	      <serverId>nexus-releases</serverId>
+          <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+          <!-- update this to the correct id! -->
+          <stagingProfileId>1296f79efe04a4d0</stagingProfileId>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+----
 
 In order to deploy project artifacts to Nexus with the above setup you
 would invoke a build with
@@ -6237,17 +6629,17 @@ goal of the Nexus Staging Maven Plugin performs the following actions:
 The log of a successful deployment would look similar to this:
 
 ----
-[INFO] --- nexus-staging-maven-plugin:1.0:deploy (injected-nexus-deploy) @ staging-example ---
+[INFO] --- nexus-staging-maven-plugin:1.1.1:deploy (injected-nexus-deploy) @ staging-example ---
 [INFO] Using server credentials with ID="nexus-releases" from Maven settings.
 [INFO] Preparing staging against Nexus on URL http://localhost:8081/nexus/
 [INFO]  * Remote Nexus reported itself as version 2.1.2 and edition "Professional"
 [INFO]  * Using staging profile ID "12a1656609231352" (matched by Nexus).
 [INFO] Staging locally (stagingDirectory=
-"/Users/manfred/dev/staging-example/target/nexus-staging/12a1656609231352")...
-Uploading: file: ... staging-example-1.0.0.jar
-Uploaded: file: ... staging-example-1.0.0.jar (4 KB at 1051.1 KB/sec)
-Uploading: file: ... staging-example-1.0.0.pom
-Uploaded: file: ... staging-example-1.0.0.pom (4 KB at 656.2 KB/sec)
+"/Users/manfred/dev/explicit-staging-example/target/nexus-staging/12a1656609231352")...
+Uploading: file: ... explicit-staging-example-1.0.0.jar
+Uploaded: file: ... explicit-staging-example-1.0.0.jar (4 KB at 1051.1 KB/sec)
+Uploading: file: ... explicit-staging-example-1.0.0.pom
+Uploaded: file: ... explicit-staging-example-1.0.0.pom (4 KB at 656.2 KB/sec)
 Downloading: file: ...maven-metadata.xml
 Uploading: file: ...maven-metadata.xml
 Uploaded: file: ... maven-metadata.xml (322 B at 157.2 KB/sec)
@@ -6256,7 +6648,7 @@ Uploaded: file: ... maven-metadata.xml (322 B at 157.2 KB/sec)
 [INFO] Performing staging against Nexus on URL http://localhost:8081/nexus/
 [INFO]  * Remote Nexus reported itself as version 2.1.2 and edition "Professional"
 [INFO]  * Created staging repository with ID "test-002", 
-applied tags: {javaVersion=1.6.0_26, localUsername=manfred}
+applied tags: {javaVersion=1.6.0_37, localUsername=manfred}
 [INFO]  * Uploading locally staged artifacts to: 
 http://localhost:8081/nexus/service/local/staging/deployByRepositoryId/test-002
 [INFO]  * Upload of locally staged artifacts done.
@@ -6276,10 +6668,10 @@ Failures are accompanied by error reports that reveal further details:
 [ERROR]   Rule "RepositoryWritePolicy" failures
 [ERROR]     * Artifact updating: Repository ='releases:Releases' does
 not allow updating 
-artifact='/com/sonatype/training/nexus/staging-example/t1.0.0/staging-example-1.0.0.jar'
+artifact='/com/sonatype/training/nexus/explicit-staging-example/t1.0.0/staging-example-1.0.0.jar'
 [ERROR]     * Artifact updating: Repository ='releases:Releases' does 
 not allow updating 
-artifact='/com/sonatype/training/nexus/staging-example/1.0.0/staging-example-1.0.0.pom'
+artifact='/com/sonatype/training/nexus/explicit-staging-example/1.0.0/staging-example-1.0.0.pom'
 [ERROR] 
 [ERROR] 
 ----
@@ -6450,7 +6842,7 @@ A successful remote control drop would be logged in the command line
 similar to this
 
 ---- 
-— nexus-staging-maven-plugin:1.0-SNAPSHOT:rc-drop (default-cli) @ standalone-pom —
+— nexus-staging-maven-plugin:1.2:rc-drop (default-cli) @ standalone-pom —
 [INFO] Connecting to Nexus...
 [INFO] Using server credentials with ID="nexus-releases" from Maven settings.
 [INFO] RC-Dropping staging repository with IDs=[test-003]
@@ -7119,17 +7511,20 @@ image::figs/web/staging-rulesets-associate.png[scale=60]
 == Repository Health Check
 
 Repository Health Check is a feature of Nexus that integrates data
-used for http://links.sonatype.com/products/insight/home[Sonatype
-Insight]. Sonatype Insight is a separate product that consists of
+from http://links.sonatype.com/products/insight/home[Sonatype
+Insight]. Sonatype Insight is suite of separate products that consists of
 tools to monitor and manage license, quality and security data about
-artifacts used in your software development life cycle. 
+artifacts used in your software development life cycle for your
+Component Lifecycle Management CLM efforts.
 
 Repository Health Check provides access to a limited subset of the
 available data in Sonatype Insight via the Sonatype Insight Service
 right in your Nexus server. The Sonatype Insight Service is part of
 the Central Repository and exposes data about the artifacts there,
 including license information, security vulnerability data and other
-statistics like usage data and download numbers.
+statistics like relative usage data and age.
+
+=== Analyzing a Repository with Repository Health Check
 
 To perform a Repository Health Check about the artifacts in your Nexus
 instance, you have to click the Analyze button in the Quality column
@@ -7141,9 +7536,9 @@ and license issues found.
 
 [[fig-rhc-repo-list-quality]]
 .The Repositories List with Different Quality Status Indicators and Result Counts
-image::figs/web/rhc-repo-list.png[scale=60]
+image::figs/web/rhc-repo-list.png[scale=80]
 
-Hovering your mouse pointer of that value will display the Repository
+Hovering your mouse pointer over that value will display the Repository
 Health Check summary data in a pop up window. A sample window is
 displayed in <<fig-rhc-summary-pop-up>>.
 
@@ -7156,6 +7551,8 @@ analysis for this repository as well as the button View Detailed
 Report to access the detailed report. It will show up
 in another tab in the main area of the Nexus user interface.
 
+=== Accessing the Detailed Repository Health Check Report
+
 The detailed report contains the same overview data and charts for
 security and license information at the top displayed in
 <<fig-rhc-detail-summary>> .
@@ -7164,11 +7561,11 @@ security and license information at the top displayed in
 .Summary of the Detailed Repository Health Check Panel
 image::figs/web/rhc-detail-summary.png[scale=50]
 
-Below this overview a drop down for Security and
-License information allows you to toggle between two lists displaying
-further details. Both lists have a filter for each column at the
-bottom of the list that allows you to narrow down the number of rows
-in the table and therefore find specific entries easily.
+Below this overview a drop down for Security and License information
+allows you to toggle between two lists displaying further
+details. Both lists have a filter for each column at the bottom of the
+list that allows you to narrow down the number of rows in the table
+and therefore find specific entries easily.
 
 The security list as visible in <<fig-rhc-detail-security-list>>
 contains columns for Threat Level, Problem Code and the GAV parameters
@@ -7183,6 +7580,13 @@ and further information and reference links.
 .The Security Data in the Detailed Repository Health Check Report
 image::figs/web/rhc-detail-security-list.png[scale=40]
 
+The Threat Level is rated in values used by the vulnerability
+databases and ranges from 0 for a low threat to 10 for the highest
+threat. Values from 8-10 are classified as Critical and are displayed
+as red notification, values from 4 to 7 are classified as Severe and
+use orange and values from 1 to 3 are classified as Moderate and use
+yellow as notification color.
+
 The license list as visible in <<fig-rhc-detail-license-list>>
 shows a derived threat in the Effective License Threat column. The
 Declared License column details the license information found in pom
@@ -7192,6 +7596,35 @@ headers and license files. The next columns for the GAV parameters
 allow you to identify the artifact. The last column Security Issues
 displays an indicator for potentially existing security issue for the
 same artifact.
+
+Licences such as GPL-2.0 or GPL-3.0 are classified as the highest
+License Threat and labelled as Copyleft and use red as signalling color. 
+
+Non Standard or Not Provided license are classified as a moderate
+threat and use orange. Non Standard as a classification is triggered
+by the usage of atypical licenses for open source software such as
+http://charityware.info/[CharityWare license], http://en.wikipedia.org/wiki/Beerware[BeerWare],
+http://en.wikipedia.org/wiki/University_of_Illinois/NCSA_Open_Source_License[NCSA
+Open Source License] and many others. Not Provided is trigged as
+classification if no license information was found anywhere.
+
+Licenses such as CDDL-1.0, EPL-1.0 or GPL-2.0-CPE receive a Weak
+Copyleft classification and yellow as notication color.
+
+Liberal licences that are generally friendly to inclusion in
+commercial products are using blue and include licences such as
+Apache-2.0, MIT or BSD.
+
+A general description about the implications of the different licenses
+is available when hovering over the specific category in the License
+Analysis Summary. Further information about the different licenses can
+be obtained from the http://opensource.org/licenses/index.html[Open
+Source Initiative]. Mixed license scenarios like a mixture of licenses
+such as Apache-1.1, Apache-2.0, LGPL and LGPL-2.1 can be complicated
+to assess in its impact and might be legally invalid depending on the
+combination of licenses observed.  Detailed implications to your
+business and software are best discussed with your lawyers.
+
 
 [[fig-rhc-detail-license-list]]
 .The License Data in the Detailed Repository Health Check Report
@@ -7205,12 +7638,118 @@ and caused Nexus to download them to local storage.
 To determine which project and build caused this download to be able
 to fix the offending dependency by upgrading to a newer version or
 removing it with an alternative solution with a more suitable license
-you will have to investigate all your project.
+you will have to investigate all your projects.
 
 Sonatype Insight itself helps with these tasks by enabling monitoring
 of builds and products, analyzing release artifacts and creating bill
 of material and other reports. 
 
+=== Using Repository Health Check Results For Component Lifecycle Management
+
+==== Example: Analyzing a Spring Beans Vulnerability
+
+The following example details how you can analyze security issues of
+an artifact found in your repository health check and determine a
+solution with the help of information available in Nexus.
+
+After performing a repository health check as documented in the prior
+sections of <<rhc>>, you noticed the artifact with the Group
+org.springframework, the Artifact spring-beans and Version 2.5.4. Upon
+further inspection of your software build and the components used, you
+can confirm that this artifact is indeed part of your shipping
+software.
+
+TIP: http://links.sonatype.com/products/insight/ci/home[Sonatype
+Insight for CI] can help you with the detection of license and
+security issues during continuous integration builds. 
+http://links.sonatype.com/products/insight/ac/home[Sonatype App Health
+Check] allows you to analyze already assembled application archives
+
+A GAV search for the artifact in Nexus as documented in
+<<using-sect-searching>> allows you to inspect the Insight tab for the
+artifact displayed in <<fig-rhc-spring-insight>>.
+
+[[fig-rhc-spring-insight]]
+.Insight tab for org.springframework:spring-beans:2.5.4
+image::figs/web/rhc-spring-insight.png[scale=50]
+
+After reading the summary and inspecting the entries for the security
+issues in the security databases linked in the Problem Code column,
+you decide that these issues affect your software and a fix is
+required. In order to determine your next steps you search for all
+versions of the spring-beans artifact. As a result you receive the
+list of all versions available partially displayed in
+<<fig-rhc-spring-list>>. The security column in the search results
+list displays the count of two security issues for the version 2.5.4
+of the library.
+
+[[fig-rhc-spring-list]]
+.Viewing Multiple Versions of org.springframework:spring-beans:x
+image::figs/web/rhc-spring-list.png[scale=50]
+
+Looking at the Security Issues column in the results, allows you to
+determine that with the uprade of the library to version 2.5.6.SEC02
+the count of security issues dropped to zero. The same applies to
+version 2.5.6.SEC03, which appears to be the latest version of the 2.x
+version of the artifact. In addition the table shows that early versions of
+the 3.x releases were affected by security issues as well.
+
+With these results, you decide that an immediate update to version
+2.5.6.SEC03 will be required as your next step. In the longer term an
+update to a newer version of the 3.x releases will follow.
+
+The necessary steps to upgrade depend on your usage of the
+spring-beans library. A direct usage of the library will allow you to
+upgrade it directly. In most cases this will require an upgrade of
+other SpringFramework libraries. If you are indirectly using
+spring-beans as a transitive dependency, you will need to figure out
+how to upgrade either the dependency causing the inclusion or override
+the version used. 
+
+The necessary steps will depend on the build system used, but in all
+cases you now have the information at your hands why you should
+upgrade and what version to upgrade to, which allows you to carry out
+your component lifecycle management effectively.
+
+
+==== Example: Resolving a License Issue
+
+The following example details how you can analyze a license issue of
+an artifact found in your repository health check and determine a
+solution with the help of information available in Nexus.
+
+Your repository health check detail report indicated that Hibernate
+3.2.7.GA might have issues due to its Threat Level declared as
+Non-Standard. Looking at your software artifacts you found that you
+are indeed using this version of Hibernate. Searching for the artifact
+in Nexus provides you with the search results list and the Insight tab
+for the specific version displayed in <<fig-rhc-hibernate>>.
+
+[[fig-rhc-hibernate]]
+.Viewing License Analysis Results for Hibernate
+image::figs/web/rhc-hibernate.png[scale=40]
+
+The Insight tab displays the declared license of Hibernate
+is the LGPL-3.0 license. Contrary to that the licenses observed in the
+source code include Apache-1.1, Apache-2.0, LGPL-2.1, LGPL and
+Non-Standard. 
+
+Looking at newer versions of Hibernate you find that the observed
+license in the source code changed to Not-Provided. Given this change
+you can conclude that the license headers in the individual source
+code files were removed or otherwise altered and the declared license
+was modified to LGPL-2.1.
+
+With this information in hand you determine that you will need to
+contact your lawyers to figure out if you are okay to upgrade to a
+newer version of Hibernate to remedy the uncertainty of the
+license. In addition you will need to decide if the LGPL-2.0 is
+compatible with the distribution mechanism of your software and
+approved by your lawyers.
+
+In the above steps Nexus provided you with a lot of information
+allowing you to effectively carry out our component lifecycle
+management with a minimum amount of effort.
 
 [[settings]]
 == Managing Maven Settings
@@ -7909,12 +8448,12 @@ form of a NuGet repository, so that NuGet can access any NuGet
 packages deployed to the releases repository.
 
 [[fig-nuget-virtual-releases]]
-.A Virtual NuGet Repository for the Maven Releases Repository
+.A Virtual NuGet Repository for the Releases Repository
 image::figs/web/nuget-virtual-releases.png[scale=60]
 
 The NuGet feed is immediately updated as packages are deployed or
 deleted from the shadowed repository. If for some reason you ever need
-to rebuild the feed for a virtual NuGet repository you can manually
+to rebuild the feed for a virtual NuGet repository, you can manually
 schedule a Synchronize Shadow Repository task.
 
 [[nuget-nuget_group_repositories]]
@@ -8045,19 +8584,21 @@ Studio ready for install.
 [[sites-sect-intro]]
 === Introduction
 
-Nexus Professional provides a new hosted repository type: a Maven Site
-repository. This repository can be used to hold a Maven-generated web
-site. This chapter details the process of configuring a Maven Site
-repository and configuring a simple Maven project to publish a
-Maven-generated project site to an instance of Nexus Professional.
+Nexus provides a repository provider for hosting static websites - the
+"Site" format. Hosted repositories with this format can be used to
+hold a Maven-generated web site. This chapter details the process of
+configuring a site repository and configuring a simple Maven
+project to publish a Maven-generated project site to an instance of
+Nexus.
+
 
 === Creating a New Maven Project
 
 In this chapter, you will be creating a simple Maven project with a
-simple web site that will be published to a Nexus Professional Maven
-Site repository. To create a new Maven project, use the archetype
-plugin's archetype:generate goal on the command line, and supply the
-following identifiers:
+simple web site that will be published to a Nexus Site repository. To
+create a new Maven project, use the archetype plugin's
+archetype:generate goal on the command line, and supply the following
+identifiers:
 
 * groupId: org.sonatype.books.nexus
 
@@ -8112,36 +8653,12 @@ sub-directory.
 
 === Configuring Maven for Site Deployment
 
-To deploy a site to a Nexus Professional Maven Site repository, you
-will need to configure the project's distribution management settings,
-add site deployment information, and then update your Maven settings
-to include the appropriate credentials for Nexus.
+To deploy a site to a Nexus Site repository, you will need to
+configure the project's distribution management settings, add site
+deployment information, and then update your Maven settings to include
+the appropriate credentials for Nexus.
 
-----
-~/examples$ cd sample-site
-~/examples/sample-site$ more pom.xml
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.sonatype.books.nexus</groupId>
-  <artifactId>sample-site</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>sample-site</name>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-</project>
-----
-
-Add the following section to sample-site/pom.xml after the
+Add the following section to sample-site/pom.xml before the
 dependencies element.  This section will tell Maven where to publish
 the Maven-generated project web site:
 
@@ -8156,23 +8673,25 @@ the Maven-generated project web site:
 </distributionManagement>
 ----
 
-NOTE: In <<ex-sites-dist-man>>, there is a Nexus
-Professional installation running on localhost port 8081. In your
-environment you will need to customize this URL to point to your own
-Nexus instance.
+NOTE: In <<ex-sites-dist-man>>, there is a Nexus installation running
+on localhost port 8081. In your environment you will need to customize
+this URL to point to your own Nexus instance.
 
 The url in the distribution management is not parameterized, which
 means that any redeployment overwrites old content and potentially
 leaves old stale files behind. To have a new deployment directory for
-each version you can change the url to 
+each version you can change the url to a parameterized setup.
 
+
+[[ex-sites-dist-parameterized]]
+.Parameterized Distribution Management for Site Deployment
 ----
 <url>
 dav:http://localhost:8081/nexus/content/sites/site/${project.groupId}/${project.artifactId}/${project.version}
 </url>
 ----
 
-If you combine this approach reapwith a redirector or a static page that
+If you combine this approach with a redirector or a static page that
 links to the different copies of your site you can e.g. maintain
 separate sites hosting your javadoc and other documentation for
 different release of your software.
@@ -8180,6 +8699,8 @@ different release of your software.
 The dav protocol used by for deployment to Nexus requires that you add
 the implementing library as a build extension to your Maven project:
 
+[[ex-sites-dav]]
+.Build Extension for DAV Support
 ----
  <build>
    <extensions>
@@ -8193,15 +8714,15 @@ the implementing library as a build extension to your Maven project:
 
 In addition to the distributionManagement element and the build
 extension, you will want to add the following build element that will
-configure Maven to use version 3.1 of the Maven Site plugin.
+configure Maven to use version 3.2 of the Maven Site plugin.
 
-.Configuring the Maven Site Plugin for Nexus Site Deployment
+.Configuring Version 3.2 of the Maven Site Plugin
 ----
 <build>
   <plugins>
     <plugin>
       <artifactId>maven-site-plugin</artifactId>
-      <version>3.1</version>
+      <version>3.2</version>
     </plugin>
   </plugins>
 </build>
@@ -8210,12 +8731,11 @@ configure Maven to use version 3.1 of the Maven Site plugin.
 
 === Adding Credentials to Your Maven Settings
 
-When the Maven Site plugin deploys a site to Nexus, it will need to
+When the Maven Site plugin deploys a site to Nexus, it needs to
 supply the appropriate deployment credentials to Nexus. To configure
-this, you will need to add credentials to your Maven Settings.  Open
+this, you need to add credentials to your Maven Settings.  Open
 up your ~/.m2/settings.xml and add the following server configuration
-to the servers element. If you already have a servers element, just
-add a new server element with the appropriate id, and password
+to the servers element.
 
 [[ex-sites-deploy-credentials]]
 .Configuring Deployment Credentials for Nexus Site Deployment
@@ -8236,19 +8756,20 @@ deployment user and the default deployment user password. You will need
 to configure the username and password to match the values expected by
 your Nexus installation.
 
-=== Creating a Maven Site Repository
+=== Creating a Site Repository
 
-To create a Maven Site Repository, log in as a user with
-Administrative privileges, and click on "Repositories" under
-Views/Repositories in the Nexus menu. Under the Repositories tab, click on
-the Add... drop-down and choose "Hosted Repository" as shown in <<fig-sites-add-hosted>>.
+To create a site repository, log in as a user with Administrative
+privileges, and click on "Repositories" under Views/Repositories in
+the Nexus menu. Under the Repositories tab, click on the
+Add... drop-down and choose "Hosted Repository" as shown in
+<<fig-sites-add-hosted>>.
 
 [[fig-sites-add-hosted]]
 .Adding a Hosted Repository
 image::figs/web/sites-add-hosted.png[scale=60]
 
-In the New Hosted Repository form, click on the Repository Type
-drop-down and chose the Maven Site Repository format as shown in
+In the New Hosted Repository form, click on the Provider
+drop-down and chose the Site provider as shown in
 <<fig-sites-new-site-repo>>. Although you can use any arbitrary name
 and identifier for your own Nexus repository, for the chapter's
 example, use a Repository ID of "site" and a Repository Name of "Maven
@@ -8258,39 +8779,45 @@ Site".
 .Creating a New Maven Site Repository
 image::figs/web/sites-new-repo.png[scale=60]
 
-After creating a new Maven Site repository, it should appear in the
-list of Nexus repositories as shown in <<fig-sites-newly-created>>. Note that the Repository Path
-shown in <<fig-sites-newly-created>>, is the same as
-the repository path referenced in <<ex-sites-dist-man>>.
+After creating a new Site repository, it should appear in the list of
+Nexus repositories as shown in <<fig-sites-newly-created>>. Note that
+the Repository Path shown in <<fig-sites-newly-created>>, is the same
+as the repository path referenced in <<ex-sites-dist-man>>.
 
 [[fig-sites-newly-created]]
-.Newly Created Maven Site Repository
+.Newly Created Site Repository
 image::figs/web/sites-new-repo-listed.png[scale=60]
+
+TIP: The Site provider support is implemented in the Nexus Site
+Repository Plugin and is installed by default in Nexus Open Source as
+well as Nexus Professional.
 
 === Add the Site Deployment Role
 
-In the Maven Settings shown in <<ex-sites-deploy-credentials>>, you configured your Maven
-instance to use the default deployment user and password. To
-successfully deploy a site to Nexus, you will need to make sure that
-the deployment user has the appropriate role and permissions. To add
-the site deployment role to the deployment user, click on Users under
-the Security section of the Nexus menu, and then highlight the
-deployment user as shown in <<fig-sites-add-role>>.
+In the Maven Settings shown in <<ex-sites-deploy-credentials>>, you
+configured your Maven instance to use the default deployment user and
+password. To successfully deploy a site to Nexus, you will need to
+make sure that the deployment user has the appropriate role and
+permissions. To add the site deployment role to the deployment user,
+click on Users under the Security section of the Nexus menu, and click
+on the Add button the Role Management section. This will trigger the
+display of the Add Role dialog that will allow you to apply a filter
+value of Site to locate the applicable roles as shown in <<fig-sites-add-role>>.
 
 [[fig-sites-add-role]]
 .Adding the Site Deployment Role to the Deployment User
 image::figs/web/sites-deploy-role.png[scale=60]
 
-Locate the "Repo: All Maven Site Repositories (Full Control)" role in
-the Available Roles list, click this role, and drag it over to the
-Selected Roles list. Once the role is in the Selected Roles list,
-click on the Save button to update the roles for the deployment
-user. The deployment user will now have the ability to publish sites
-to a Maven Site repository.
+Check the box beside the "Repo: All Site Repositories (Full Control)"
+role in the list and press OK in the dialog. After the dialog closed,
+you should see the new role in the Role Management section. Click on
+the Save button to update the roles for the deployment user. The
+deployment user now has the ability to publish sites to a Maven Site
+repository.
 
 === Publishing a Maven Site to Nexus
 
-To publish a site to a Maven Site repository in Nexus Professional,
+To publish a site to a Maven Site repository in Nexus,
 run mvn site-deploy from the sample-site/ project created earlier
 in this chapter.  The Maven Site plugin will deploy this site to Nexus
 using the credentials stored in your Maven Settings.
@@ -8819,13 +9346,13 @@ signed up for an account.
 
 Once User Sign Up has been activated via the Server settings as shown
 in <<user-account-sect-configuring>>, users will see a Sign Up link
-next to the Log In link in the Nexus interface. Clicking on this Sign
-Up link will display the Nexus Sign Up dialog shown in
-<<fig-user-account-sign-up-form>>. This form accepts a username,
-password, the first and last name of the new user, and an email account. It also
-asks the users to type in some text from a captcha form element. If a
-user cannot read the text in the captcha, they can click on the
-captcha to refresh it with new text.
+next to the Log In link in the top right hand corner of the Nexus
+interface. Clicking on this Sign Up link will display the Nexus Sign
+Up dialog shown in <<fig-user-account-sign-up-form>>. This form
+accepts a username, password, the first and last name of the new user,
+and an email account. It also asks the users to type in some text from
+a captcha form element. If a user cannot read the text in the captcha,
+they can click on the captcha to refresh it with new text.
 
 [[fig-user-account-sign-up-form]]
 .Nexus Sign Up Form
@@ -8840,7 +9367,12 @@ email.
 image::figs/web/user-account_sign-up-succeed.png[scale=60]
 
 The user will then receive an email containing an activation
-link. When a user signs up for a Nexus account, the newly created
+link. 
+
+WARNING: The SMTP settings in your Nexus Server configuration need to
+be set up for the activation email to be sent successfully.
+
+When a user signs up for a Nexus account, the newly created
 account is disabled until they click on the activation link contained
 in this email. A sample of the activation email is shown in <<fig-user-account-activation-email>>.
 
@@ -9502,90 +10034,126 @@ request.
 === Using the Nexus Plugin Archetype
 
 To create a new Nexus Plugin, you can use the Nexus Plugin Archetype
-by running archetype:generate with the following identifiers:
+by with the Maven Archtetype Plugins generate goal with the filter set
+to "nexus-plugin-archetype" as displayed in
+<<fig-nexus-plugin-archetype>>. 
 
-archetypeGroupId:: org.sonatype.nexus.archetypes
-archetypeArtifactId:: nexus-plugin-archetype
-archetypeVersion:: 1.2
+Enter the number of the nexus-plugin-archetype at the first prompt and
+select the version corresponding to the version of Nexus you are
+using. Supply the desired values for the groupId, artifactId, version,
+and package name for the generated plugin next and confirm you values
+provided.
 
-Once you run archetype:generate, you will be prompted for the groupId,
-artifactId, version, and package name for the generated project.
-
+[[fig-nexus-plugin-archetype]]
+.Creating a Sample Nexus Plugin using the Archetype
 ----
-$ mvn archetype:generate -DarchetypeGroupId=org.sonatype.nexus.archetypes \
--DarchetypeArtifactId=nexus-plugin-archetype \
--DarchetypeVersion=1.2
+$ mvn archetype:generate -Dfilter=nexus-plugin-archetype
 [INFO] Scanning for projects...
 [INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------
 [INFO] Building Maven Stub Project (No POM) 1
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] >>> maven-archetype-plugin:2.1:generate (default-cli) @ standalone-pom >>>
-[INFO] 
-[INFO] <<< maven-archetype-plugin:2.1:generate (default-cli) @ standalone-pom <<<
-[INFO] 
-[INFO] --- maven-archetype-plugin:2.1:generate (default-cli) @ standalone-pom ---
+[INFO] ------------------------------------------
+...
 [INFO] Generating project in Interactive mode
-[INFO] Archetype repository missing. Using the one from [org.sonatype.nexus.archetypes:nexus-plugin-archetype:1.2] found in catalog remote
-Define value for property 'groupId': : org.sonatype.book.nexus
+[INFO] No archetype defined. Using maven-archetype-quickstart 
+(org.apache.maven.archetypes:maven-archetype-quickstart:1.0)
+Choose archetype:
+1: remote -> org.sonatype.nexus.archetypes:nexus-plugin-archetype (-)
+Choose a number or apply filter (format: [groupId:]artifactId, 
+case sensitive contains): : 1
+Choose org.sonatype.nexus.archetypes:nexus-plugin-archetype version: 
+1: 1.0
+2: 1.1
+3: 1.2
+4: 2.1-RC1
+5: 2.1
+6: 2.1.1
+7: 2.1.2
+8: 2.2-SNAPSHOT
+9: 2.2
+10: 2.2-01
+11: 2.2.1
+Choose a number: 11: 11
+Define value for property 'groupId': : org.sonatype.nexus.plugins
 Define value for property 'artifactId': : sample-plugin
 Define value for property 'version':  1.0-SNAPSHOT: : 
-Define value for property 'package':  org.sonatype.book.nexus: : 
-[INFO] Using property: nexusVersion = 1.4.1
+Define value for property 'package':  org.sonatype.nexus.plugins: : 
+[INFO] Using property: nexusVersion = 2.2.1
 Confirm properties configuration:
-groupId: org.sonatype.book.nexus
+groupId: org.sonatype.nexus.plugins
 artifactId: sample-plugin
 version: 1.0-SNAPSHOT
-package: org.sonatype.book.nexus
-nexusVersion: 1.4.1
+package: org.sonatype.nexus.plugins
+nexusVersion: 2.2.1
  Y: : 
-[INFO] ----------------------------------------------------------------------------
-[INFO] Using following parameters for creating project from Archetype: nexus-plugin-archetype:1.2
-[INFO] ----------------------------------------------------------------------------
-[INFO] Parameter: groupId, Value: org.sonatype.book.nexus
+[INFO] --------------------------------------------------
+[INFO] Using following parameters for creating project from Archetype:
+ nexus-plugin-archetype:2.2.1
+[INFO] --------------------------------------------------
+[INFO] Parameter: groupId, Value: org.sonatype.nexus.plugins
 [INFO] Parameter: artifactId, Value: sample-plugin
 [INFO] Parameter: version, Value: 1.0-SNAPSHOT
-[INFO] Parameter: package, Value: org.sonatype.book.nexus
-[INFO] Parameter: packageInPathFormat, Value: org/sonatype/book/nexus
-[INFO] Parameter: package, Value: org.sonatype.book.nexus
+[INFO] Parameter: package, Value: org.sonatype.nexus.plugins
+[INFO] Parameter: packageInPathFormat, Value: org/sonatype/nexus/plugins
+[INFO] Parameter: package, Value: org.sonatype.nexus.plugins
 [INFO] Parameter: version, Value: 1.0-SNAPSHOT
-[INFO] Parameter: nexusVersion, Value: 1.4.1
-[INFO] Parameter: groupId, Value: org.sonatype.book.nexus
+[INFO] Parameter: nexusVersion, Value: 2.2.1
+[INFO] Parameter: groupId, Value: org.sonatype.nexus.plugins
 [INFO] Parameter: artifactId, Value: sample-plugin
-[INFO] project created from Archetype in dir: /Users/anders/dev/sample-plugin
-[INFO] ------------------------------------------------------------------------
+[INFO] project created from Archetype in dir: 
+                  /Users/manfred/Projects/sample-plugin
+[INFO] --------------------------------------------------
 [INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 54.206s
-[INFO] Finished at: Thu Oct 27 11:12:13 CEST 2011
-[INFO] Final Memory: 7M/265M
-[INFO] ------------------------------------------------------------------------
+[INFO] --------------------------------------------------
+[INFO] Total time: 45.655s
+[INFO] Finished at: Thu Nov 08 20:55:03 PST 2012
+[INFO] Final Memory: 15M/153M
+[INFO] --------------------------------------------------
 ----
 
 Once the Archetype plugin has created the project, you will have a
-project with the layout shown in <<fig-plugdev-project-layout>>.
+project with the layout shown in <<fig-plugdev-project-layout>> in a
+directory using the name of the artifactId value supplied.
 
 [[fig-plugdev-project-layout]]
 .Layout of a Nexus Plugin Project
-image::figs/web/plugdev_filesystem.png[scale=60]
+----
+pom.xml
+src
+    main
+        java
+            org
+                sonatype
+                    nexus
+                        plugins
+                            VirusScanner.java
+                            VirusScannerRepositoryCustomizer.java
+                            VirusScannerRequestProcessor.java
+                            XYVirusScanner.java
+                            events
+                                InfectedItemFoundEvent.java
+                            rest
+                                HelloWorldPlexusResource.java
+----
 
 The generated project contains the following classes:
 
-org.sonatype.book.nexus.XYVirusScanner:: An implementation of the
-VirusScanner Interface
-
-org.sonatype.book.nexus.VirusScannerRequestProcessor:: A class which
-customizes the request handling process in Nexus
-
-org.sonatype.book.nexus.VirusScannerRepositoryCustomizer:: A class
-which customizes the repositories affected by the VirusScanner
-
-org.sonatype.book.nexus.VirusScanner:: A VirusScanner interface
+VirusScanner:: A VirusScanner interface
 described in <<plugdev-sect-complex>>.
 
-org.sonatype.book.nexus.events.InfectedItemFoundEvent:: A simple event
+VirusScannerRepositoryCustomizer:: A class
+which customizes the repositories affected by the VirusScanner
+
+VirusScannerRequestProcessor:: A class which
+customizes the request handling process in Nexus
+
+XYVirusScanner:: An implementation of the
+VirusScanner Interface
+
+InfectedItemFoundEvent:: A simple event
 which is fired by the VirusScanner
+
+HelloWorldPlexusResource:: what is that.. TODO
 
 [[plugdev-sect-target-version]]
 === Set the Target Nexus Version
@@ -9603,8 +10171,7 @@ to target a specific Nexus version.
 <project>
   ...
   <properties>
-    <!-- Set the Nexus version here, against which you build the plugin -->
-    <nexus-version>1.4.1</nexus-version>
+    <nexus.version>2.2.1</nexus.version>
   </properties>
   ...
 </project>
@@ -9615,18 +10182,24 @@ during the creation of a new project. To do that, you would set the
 "nexusVersion" system property value on the command-line:
 
 ----
-$ mvn archetype:generate -DarchetypeGroupId=org.sonatype.nexus.archetypes \
+$ mvn archetype:generate \
+-DarchetypeGroupId=org.sonatype.nexus.archetypes \
 -DarchetypeArtifactId=nexus-plugin-archetype \
--DarchetypeVersion=1.2 \
--DnexusVersion=1.9.2
+-DarchetypeVersion=2.2.1 \
+-DnexusVersion=2.2
 ----
 
 [[plugdev-sect-building]]
 === Building a Nexus Plugin Project
 
-To build your Nexus plugin project, just run mvn install in the newly
-generated project directory. Once the build is completed, your
-plugin's JAR will be available in the project's target/ folder.
+To build your Nexus plugin project, just run 
+
+----
+mvn clean install 
+----
+
+in the newly generated project directory. Once the build is completed,
+your plugin's JAR will be available in the project's target/ folder.
 
 WARNING: Nexus plugin development requires you to use Apache Maven 3.
 
@@ -9634,30 +10207,22 @@ The Nexus Plugin project, as created by the Nexus Plugin archetype,
 depends on a number of artifacts which may not be available from the
 Maven Central repository. If you experience missing artifacts during
 your Nexus plugin project build, you should make sure that the
-following repositories are added to your environment:
+Sonatype Public Grid Repository is available as release repository. 
 
-* The Sonatype Forge Repository:
-  http://repository.sonatype.org/content/groups/forge
-
-* The Codehaus Snapshot Repository:
-  http://snapshots.repository.codehaus.org
-
-If you experience any difficulty with the build, you may also want to
-remove the section of the generated POM that is labelled with the
-#ITSet label.
+----
+http://repository.sonatype.org/content/groups/sonatype-public-grid/
+----
 
 If you are using Nexus, and you have configured your build to work
 against a public group, you will want to make sure that you have added
-both of the repositories listed above to your public group. You will
-also want to make sure that the Repository Policy setting for the
-Sonatype Forge Repository is set to "Release".
+the repository to your public group. 
 
 [[plugdev-sect-complex]]
 === Creating a Complex Plugin
 
-In this section, we will step through a skeletal, sample project that
-implements a virus scanner plugin for Nexus. This plugin will consist
-of:
+In this section, we will step through the skeletal, sample project
+that implements a virus scanner plugin for Nexus as created with the
+archetype. This plugin will consist of:
 
 * A managed "virus scanner" component
 
@@ -9718,7 +10283,7 @@ public class XYVirusScanner implements VirusScanner {
 }
 ----
 
-The next class is a request processor which virus scans an artifact
+The next class is a request processor which scans an artifact for viruses
 before it is cached locally. If a virus is found in an artifact, this
 plugin will refuse to cache the artifact and trigger an event which
 will signal that a virus was found in a file item. Note the use of
@@ -9803,12 +10368,12 @@ implements RequestProcessor {
 }
 ----
 
-The last extension is RepositoryCustomizer, that simply injects our
-virus scanner RequestProcessor into proxy repositories only (the only
-way to get an artifact into Nexus from uncontrolled Internet. Local
-uploads are considered "safe" for this example). Note how the request
-processor is injected into this repository customizer with @Inject and
-@Named.
+The last component is the RepositoryCustomizer. It simply injects our
+virus scanner RequestProcessor into proxy repositories only. For his
+example local uploads are considered safe, so the only way to get an
+artifact into Nexus from the uncontrolled Internet is a proxy
+repository. Note how the request processor is injected into this
+repository customizer with @Inject and @Named.
 
 .The Virus Scanner Repository Customizer
 ----
@@ -9850,16 +10415,17 @@ public class VirusScannerRepositoryCustomizer
 === Nexus Plugin Descriptor Maven Plugin
 
 Nexus plugins have a custom packaging "nexus-plugin" which is
-introduced by the NexusPD Maven Plugin. A "nexus-plugin" packaged
+introduced by the app-lifecycle-maven-plugin. A "nexus-plugin" packaged
 plugin:
 
 * is a plain JAR
 * has a META-INF/nexus/plugin.xml embedded Nexus Plugin Metadata embedded
 * has static resources embedded into the plugin JAR
 
-The NexusPD Maven plugin introduces a new project path (i.e.
+The plugin introduces a new project path (i.e.
 src/main/static-resources). Static resources such as JavaScript files,
-images, and CSS which are referenced in
+images, and CSS should be located in this folder and will be packaged
+appropriately.
 
 [[plugdev-sect-plugin-descriptor]]
 === The Nexus Plugin Descriptor
