@@ -18,7 +18,7 @@ cp -r figs target
 cp -r images target
 cp -r promos/* target
 
-a2x --no-xmllint -v -k -fpdf -dbook --xsl-file=docbook-xsl/fo.xsl --dblatex-opts=" -P latex.output.revhistory=0 -s ./latex/custom-docbook.sty" -D target book-nexus.doc
+a2x --no-xmllint -v -k -fpdf -dbook --xsl-file=docbook-xsl/fo.xsl --dblatex-opts=" --param=doc.lot.show=figure,table -P latex.output.revhistory=0 -s ./latex/custom-docbook.sty" -D target book-nexus.doc
 
 #gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=target/tmp.pdf pdf/nexus-book-cover.pdf pdf/title-page.pdf pdf/blank-page.pdf target/book-nexus.pdf
 
