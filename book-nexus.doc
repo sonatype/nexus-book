@@ -1691,7 +1691,16 @@ well as any necessary authentication parameters that Nexus needs to
 connect to the mail server. To configure the SMTP settings following
 the instructions in <<config-sect-smtp>>.
 
-==== Step 3: Enable Remote Index Downloads
+==== Step 3: Configure Default HTTP Proxy Setting
+
+In many deployments the internet, and therefore any remote
+repositories that Nexus needs to proxy, can only be reached via a HTTP
+proxy server internal to the deployment company. In these cases the
+connection details to that proxy server need to be configured in
+Nexus, as documented in <<config-default-http-proxy>> in order for
+Nexus to be able to proxy remote repositories at all.
+
+==== Step 4: Enable Remote Index Downloads
 
 Nexus ships with three important proxy repositories for the Maven
 Central repository, Apache Snapshot repository, and the Codehaus
@@ -1724,7 +1733,7 @@ will not show in the repository tree when you are browsing a
 repository. When browsing a repository, you will only be shown
 artifacts which have been downloaded from the remote repository.
 
-==== Step 4: Change the Deployment Password
+==== Step 5: Change the Deployment Password
 
 The deployment user's password defaults to deployment123. Change this
 password to make sure that only authorized developers can deploy
@@ -1733,7 +1742,7 @@ password: log in as an administrator, click on Security to expand the
 Security menu, then click on Users. You should then see a list of
 users. Right-click on the deployment user and select "Set Password".
 
-==== Step 5: If necessary, set the LANG Environment Variable
+==== Step 6: If necessary, set the LANG Environment Variable
 
 If your Nexus instance needs to store configuration and data using an
 international character set, you should set the LANG environment
@@ -1744,7 +1753,7 @@ service, place this environment variable in the start-up script found
 in /etc/init.d/nexus. For more information about locale settings in
 Ubuntu read https://help.ubuntu.com/community/Locale
 
-==== Step 6: Configure Routes
+==== Step 7: Configure Routes
 
 A route defines patterns used to define in which repositories artifacts
 are searched for. Typically internal artifacts are not available in
@@ -3354,6 +3363,7 @@ it will use the Base URL when it is generating emails.
 .Administration Application Server Settings
 image::figs/web/config-administration-application-server.png[scale=60]
 
+[[config-default-http-proxy]]
 ==== Default HTTP Proxy Settings
 
 If you Nexus instance needs to reach public repositories like the
@@ -3368,6 +3378,11 @@ required by your proxy server.
 [[fig-config-administration-http-prxy]]
 .Administration Default HTTP Proxy Settings
 image::figs/web/config-administration-http-proxy.png[scale=60]
+
+TIP: This is a critical, initial step for Nexus deployment in many
+enterprise deployments of Nexus, since these environments are
+typically secured via a HTTP proxy server.
+
 
 ==== System Notification Settings
 
