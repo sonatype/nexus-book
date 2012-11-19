@@ -1,0 +1,364 @@
+[[ssl]]
+[appendix]
+== Configuring Nexus for SSL
+
+[[ssl-sect-introduction]]
+=== Introduction
+
+This chapter contains two sections: the first section details a
+procedure for connecting Nexus to a remote repository which requires
+client-side SSL certificates and the second section details the
+configuration for serving SSL directly from Nexus. When you set up a
+repository manager for a team of developers spread out over a variety
+of locations both internal and external to a corporate network, you
+will likely want to secure your repository using SSL. The instructions
+in this chapter assume that you are running Nexus embedded in Jetty.
+
+[[ssl-sect-client-cert]]
+=== Importing a SSL Client Certificate
+
+If you need to configure Nexus to proxy a remote repository which
+requires a SSL Client Certificate, you'll need to import the
+certificate included with your Nexus license into the JVM used to run
+your Nexus instance. To make this process simpler, you can use our
+import-ssl tool. We've created a simple command-line utility which
+automates the process of loading the Server SSL Chain and the client
+certificate into a JVM.
+
+==== Downloading the SSL Import Tool
+
+The import-ssl tool can be downloaded from:
+http://central.sonatype.com/help/import-ssl.jar
+
+==== Importing a Client Certificate
+
+Importing a client certificate involves two steps: importing the
+server's SSL chain and importing the client SSL key/certificate
+pair. Some notes about the location of the key-store and default
+key-store passwords:
+
+* If you are using the default JSSE key-store locations on either a
+Linux or OS X platform, you must run the commands below as the
+root user. You can do this either by changing to the root user (su -),
+or by using the sudo command: sudo [command].
+
+* The default password used by Java for the built-in key-stores is
+changeit. If your key-store uses a different password, you'll need to
+specify that password as the last parameter on the command lines
+above.
+
+* If you want to specify your own key-store location, provide that in
+place of <keystore_dir> in the examples below.
+
+* If you're using a password other than 'changeit' for your keystore,
+you should supply it immediately following the keystore path in the
+commands below.
+
+* If you specify a keystore location that doesn't exist, the
+import-ssl utility will create it on-demand.
+
+Before you begin the process of importing a Server SSL Chain and a
+client certificate you will need three things:
+
+* Network access to the SSL server you are connecting to,
+
+* An SSL client certificate, 
+
+* and a certificate password.
+
+==== Import the Server SSL Chain
+
+The first command imports the entire self-signed SSL certificate chain
+for central.sonatype.com into your JSSE keystore:
+
+----
+$ java -jar import-ssl.jar server central.sonatype.com \
+<keystore_dir>
+----
+
+You would substitute the server name used in the previous listing with
+the server name you are attempting to connect to. This particular
+command will connect to https://central.sonatype.com, retrieve, and
+import the server's SSL certificate chain.
+
+==== Import the Client SSL Key/Certificate Pair
+
+The second command imports your client-side SSL certificate into the
+JSSE keystore, so Nexus can send it along to the server for
+authentication:
+
+----
+$ java -jar import-ssl.jar client <your-certificate.p12> \
+<your-certificate-password> <keystore_dir>
+----
+
+When the client command completes, you should see a line containing
+the keystore path, like the one that follows. This path is important;
+you will use it in your Nexus configuration below, so make a note of
+it!
+
+----
+...
+Writing keystore: /System/Library/Frameworks/JavaVM.framework/\
+Versions/1.6.0/Home/lib/security/jssecacerts
+----
+
+==== Configuring Nexus Start-up
+
+Once both sets of SSL certificates are imported to your keystore, you
+can modify the Nexus $NEXUS_HOME/conf/nexus.properties file
+to inject the JSSE system properties necessary to use these
+certificates, as seen below.
+
+----
+javax.net.ssl.keyStore=<keystore_dir>
+javax.net.ssl.keyStorePassword=<keystore_password>
+----
+
+Once you have configured the Nexus start-up option shown above, restart
+Nexus and attempt to proxy a remote repository which requires an SSL
+client certificate. Nexus will use the keystore location and keystore
+password to configure the SSL interaction to accept the server's SSL
+certificate and send the appropriate client SSL certificate.
+
+[[ssl-sect-ssl-direct]]
+=== Configuring Nexus to Serve SSL
+
+If you need to serve repository content using SSL, you can always
+proxy Nexus with a server like Apache httpd. Apache httpd can easily
+be configured to serve SSL content using mod_ssl, and there is a large
+amount of reference material available for configuring httpd to serve
+secure content. Jetty can also be configured to serve SSL content
+directly, and if you would like to avoid the extra work of putting a
+web server like Apache httpd in front of Nexus, this section shows you
+how to do that. To configure Nexus to serve SSL directly to clients,
+you'll need to perform the following steps.
+
+NOTE: All examples given here can be found in the
+https://github.com/sonatype/nexus/tree/master/nexus/nexus-oss-webapp/src/main/resources/content/conf/examples[Nexus
+source], or in the Nexus distribution under
+'+++$(NEXUS_HOME)/conf/examples+++'. Before you customize your Nexus
+configuration to serve SSL, keep in mind the following:
+
+* Customizations in this Appendix assume that your are
+running Nexus 1.9.2.
+
+* Any custom Jetty configuration must be contained in the
+'+++$(NEXUS_HOME)/conf/jetty.xml+++' file, or else in the location referenced
+by the jetty.xml property in '+++$(NEXUS_HOME)/conf/nexus.properties+++' (in
+case you've customized this location).
+
+* While the instructions below will work with Nexus Open Source, these
+instructions assume the filesystem of Nexus Professional. If you are
+missing Jetty JAR files, you should obtain them from the Jetty project
+page: http://www.mortbay.org/jetty/
+
+==== Configure the Java Keystore
+
+Follow the instructions on the
+http://docs.codehaus.org/display/JETTY/How+to+configure+SSL[How to
+configure SSL] on the Jetty Wiki to setup the appropriate keys and
+certificates in a form that Jetty can use. Pay particular attention to
+steps 1-3, and the section at the bottom called Password Issues.
+
+The jetty-util jar and the main Jetty jar can be found in
+$NEXUS_HOME/runtime/apps/lib/nexus. The command line used to import
+an OpenSSL key+cert in PKCS12 format is:
+
+----
+$ java -classpath jetty-util-6.1.12.jar:jetty-6.1.12.jar \
+org.mortbay.jetty.security.PKCS12Import <pkcs12-file> <keystore>
+----
+
+The command line used to generate an obfuscated password hash is:
+
+----
+$ java -classpath jetty-util-6.1.12.jar:jetty-6.1.12.jar \
+org.mortbay.jetty.security.Password <your-password>
+<your-password>
+OBF:1t2x1toq1to41t39
+MD5:6f1ed002ab5595859014ebf0951522d9 
+----
+
+The OBF line in the previous output will be used in the jetty.xml
+three times. You'll need to run the previous command three times to
+generate the obfuscated hash-codes for three passwords:
+
+* The Key Password
+
+* The Trust Store Password
+
+* The Key Store Password
+
+In the next section, the key store and trust store are the same
+file, with the same password.
+
+==== Configure Nexus/Jetty to Use the New Keystore
+
+NOTE: A jetty.xml with the modifications in this section can be found
+in $NEXUS_HOME/conf/examples/jetty-ssl.xml, inside your Nexus
+distribution.
+
+Modify the https://docs.sonatype.com/display/NX/Jetty+Configuration#JettyConfiguration-Equivalentbasejetty.xml[nexus-equivalent jetty.xml]
+
+----
+<Call name="addConnector">
+  <Arg>
+    <New class="org.mortbay.jetty.nio.SelectChannelConnector">
+      <Set name="host">${application-host}</Set>
+      <Set name="port">${application-port}</Set>
+    </New>
+  </Arg>
+</Call>
+----
+
+with this:
+
+----
+<Call name="addConnector">
+  <Arg>
+    <New class="org.mortbay.jetty.security.SslSelectChannelConnector">
+      <Set name="host">${application-host}</Set>
+      <Set name="port">${application-port}</Set>
+      <Set name="maxIdleTime">30000</Set>
+      <Set name="keystore">/etc/ssl/keystore</Set>
+      <Set name="truststore">/etc/ssl/keystore</Set>
+      <Set name="password">OBF:1v2j1uum1xtv1zej1zer1xtn1uvk1v1v</Set>
+      <Set name="keyPassword">OBF:1v2j1uum1xtv1zej1zer1xtn1uvk1v1v</Set>
+      <Set name="trustPassword">OBF:1v2j1uum1xtv1zej1zer1xtn1uvk1v1v</Set>
+    </New>
+  </Arg>
+</Call>
+----
+
+==== Modify the application-port for SSL connections
+
+The application-port property, referenced in the configuration above,
+has a default configuration that many people would more naturally
+associate with non-SSL connections. You may wish to modify this port
+to something like 8443, or even 443 (if you have root access from
+which to start Nexus). To change this property, modify the
+'+++$(basedir)/conf/nexus.properties+++'
+
+NOTE: You may wish to enable both types of connections, with
+appropriate rewrite rules between them. Such a configuration is beyond
+the scope of this section; if you're interested, please refer to the
+http://docs.codehaus.org/display/JETTY/Jetty+Wiki[Jetty Wiki] for some
+information to get you started. Additionally, you may need to add
+extra port properties to the nexus.properties configuration file to
+accommodate both SSL and non-SSL connections.
+
+[[ssl-sect-redirecting]]
+=== Redirecting Non-SSL Connections to SSL
+
+If you want to make it very easy for people to use your Nexus
+repository, you will want to configure the automatic redirect from the
+non-SSL port (default 80) to the SSL port (default 443). When this
+feature is configured, browsers and clients that attempt to interact
+with the non-SSL port will be seamlessly redirected to the SSL
+port. If you do not turn on the automatic redirect to SSL, users who
+attempt to load the Nexus interface via the default port 80 will see a
+network error.
+
+If you are proxying your Nexus instance with a web server like Apache
+httpd, you could configure mod_rewrite to automatically redirect
+browsers to the SSL port, or you can configure Jetty to perform this
+redirection. To do this in Jetty you use a custom rewrite rule for
+Jetty that is bundled with Nexus, inside the plexus-jetty6 library
+found in $NEXUS_HOME/runtime/apps/nexus/lib
+
+To enable this feature, configure Jetty to serve SSL directly as
+demonstrated in <<ssl-sect-ssl-direct>>. After you
+having configured Jetty to serve SSL directly, open your jetty.xml and
+replace the existing handler/context-collection declaration with a
+stand-alone context-collection declaration, by replacing this section:
+
+----
+<Set name="handler">
+  <New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection">
+  <!-- The following configuration is REQUIRED, and MUST BE FIRST.
+       It makes the Plexus container available for use in the Nexus webapp. -->
+    <Call name="addLifeCycleListener">
+      <Arg>
+        <New  
+            class="org.sonatype.plexus.jetty.custom.InjectExistingPlexusListener" />
+      </Arg>
+    </Call>
+
+    <!-- The following configuration disables JSP taglib support, 
+         the validation of which slows down Jetty's start-up significantly. -->
+    <Call name="addLifeCycleListener">
+      <Arg>
+        <New class="org.sonatype.plexus.jetty.custom.DisableTagLibsListener" />
+      </Arg>
+    </Call>
+  </New>
+</Set>
+----
+
+with this one:
+
+----
+<New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection">
+  <!-- The following configuration is REQUIRED, and MUST BE FIRST.
+       It makes the Plexus container available for use in the Nexus webapp. -->
+  <Call name="addLifeCycleListener">
+    <Arg>
+      <New 
+         class="org.sonatype.plexus.jetty.custom.InjectExistingPlexusListener" />
+    </Arg>
+  </Call>
+
+  <!-- The following configuration disables JSP taglib support, the 
+      validation of which slows down Jetty's start-up significantly. -->
+  <Call name="addLifeCycleListener">
+    <Arg>
+      <New class="org.sonatype.plexus.jetty.custom.DisableTagLibsListener" />
+    </Arg>
+  </Call>
+</New>
+----
+
+Now, configure the rewrite handler for Jetty by adding the following
+section just above the line with stopAtShutdown in it:
+
+----
+<Set name="handler">
+  <New id="Handlers" class="org.mortbay.jetty.handler.rewrite.RewriteHandler">
+    <Set name="rules">
+      <Array type="org.mortbay.jetty.handler.rewrite.Rule">
+        <Item>
+          <New id="redirectedHttps"
+             class="org.sonatype.plexus.jetty.custom.RedirectToHttpsRule">
+            <Set name="httpsPort">${application-port-ssl}</Set>
+          </New>
+        </Item>
+      </Array>
+    </Set>
+    <Set name="handler">
+      <New id="Handlers" class="org.mortbay.jetty.handler.HandlerCollection">
+        <Set name="handlers">
+          <Array type="org.mortbay.jetty.Handler">
+            <Item><Ref id="Contexts"/></Item>
+            <Item>
+              <New id="DefaultHandler" 
+                class="org.mortbay.jetty.handler.DefaultHandler"/></Item>
+            <Item>
+              <New id="RequestLog" 
+                class="org.mortbay.jetty.handler.RequestLogHandler"/></Item>
+          </Array>
+        </Set>
+      </New>
+    </Set>
+  </New>
+</Set>
+----
+
+Modify $NEXUS_HOME/conf/nexus.properties
+and add a new property, application-port-ssl. This will
+allow you to customize both the SSL and non-SSL ports
+independently:
+
+----
+application-port-ssl=8443
+----

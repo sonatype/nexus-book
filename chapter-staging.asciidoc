@@ -1,0 +1,1489 @@
+[[staging]]
+== Build Promotion with the Nexus Staging Suite
+
+[[staging-sect-intro]]
+=== Introduction
+
+If you release software, you will often need to test a release before
+deploying it to a production system or an externally accessible
+repository. For example, if you are developing a large, enterprise web
+application you may want to stage a release candidate to a staging
+system and perform a series of rigorous tests before a release manager
+makes a decision to either return a system to development or deploy a
+system to production.
+
+The Staging Suite in Nexus Professional allows an organization
+to create a temporary staging repository and to manage the promotion
+of artifacts from a staging repository to a release repository. This
+ability to create an isolated, release candidate repository that can be
+discarded or promoted makes it possible to support the decisions that
+go into certifying a release, while the certification process is done
+on the same binaries that will ultimately be released.
+
+[[staging-sect-without]]
+==== Releasing Software without a Staging Repository
+
+Without the Staging Suite, when a developer deploys an artifact to a
+hosted repository such as the Release repository, this artifact is
+published and immediately made available - there is no oversight,
+there is no approval or certification process. There is no chance to
+test the artifact before writing the artifact to a hosted
+repository. If there is a mistake in the release, often the only
+option available is to republish the artifacts to the release
+repository or deploy a new version of the artifacts.
+
+.Release Deployment Without the Nexus Staging Suite
+image::figs/web/staging_without_staging.png[scale=60]
+
+While this is acceptable for some users, organizations and enterprises
+with a QA cycle often need a temporary storage for potential release
+candidates: a staging repository. With the Nexus Staging Suite, an
+organization can automatically stage releases to a temporary
+repositor,y which can then be used to test and certify a set of
+artifacts, before they are published to a final release
+repository. This temporary repository can then be promoted as a whole
+or dropped depending on the results of testing. When used the binary
+artifacts being tested and certified are the identical artifacts that
+will ultimately be released and not a clean fresh build kicked off
+after the certification finished as is often the case without a
+staging suite being used.
+
+[[staging-sect-how]]
+==== How the Staging Suite Works
+
+Here's how staging works in Nexus Professional:
+
+. A developer deploys an artifact (or a set of artifacts) to Nexus
+Professional
+
+. The staging suite intercepts this deployment and determines if the
+deployment matches for a staging profile 
+
+. If a match is found a temporary staging repository is created and
+the artifacts are deployed to this repository.
+
+. Once the developer has deployed a set of artifacts to Nexus, they
+will then "Close" the staging repository.
+
+. The Staging Suite will then add this temporary staging repository to
+one or more Target Repository Groups.
+
+Once the staging repository is closed and has been added to a target
+repository group, the artifacts in the staging repository are
+available to Nexus users for testing and certification via a
+repository group. Tests can be performed on the artifacts as if they
+were already published in a hosted repository. At this point, one of
+two things can happen to a staging repository:
+
+Release:: A Nexus user can "release" a staging repository and select a
+hosted repository to publish artifacts to. Releasing the contents of a
+repository publishes all artifacts from the staging repository to a
+hosted repository and deletes the temporary staging repository.
+
+Drop:: A Nexus user can "drop" a staging repository. Dropping a
+staging repository will remove it from any groups and delete the
+temporary staging repository.
+
+Promote:: If your Nexus installation contains Build Promotion
+profiles, you will also see an option to "promote" a staging
+repository to a Build Promotion Group. When you promote a staging
+repository you expose the contents of that staging repository via
+additional groups. Build Promotion profiles are explained in detail in
+the next section.
+
+.Release Deployment with the Nexus Staging Suite
+image::figs/web/staging_with_staging.png[scale=60]
+
+[[fig-staging-release-description]]
+.The Stages of a Staging Repository starting with Deployment and Ending with a Release or a Drop of the Repository
+image::figs/web/staging-workflow.png[scale=60]
+
+
+[[staging-sect-prepare-nexus]]
+=== Configuring the Nexus Staging Suite
+
+==== Overview
+
+The Staging Suite is part of the default Nexus Professional install
+and is accessible with the menu items Staging Profiles, Staging
+Repositories, Staging Ruleset, and Staging Upload options in the
+left-hand navigation menu of the Nexus interface called Build
+Promotion.
+
+Staging Profiles define the rules by which artifact deployments from
+your project are intercepted by Nexus and staged in Staging
+Repositories. 
+
+Staging Repositories are dynamically created by Nexus as they are
+needed. They are temporary holding repositories for your artifacts
+that are used for the different staging related steps. Using them in
+the Nexus user interface users can promote the contents of the
+staging repository to a hosted repository, discard them and more.
+
+Staging Rulesets allow you to define rules that the artifacts being
+deployed have to follow in order to allow successful deployment. 
+
+Staging Upload allows you to manually upload artifacts to Nexus via
+the user interface rather than by using your build system.
+
+==== Configuring a Staging Profile
+
+Staging profiles control the process by which artifacts are selected
+for staging. When you define a Staging profile, you are defining a set
+of rules which will control the way in which Nexus intercepts an
+artifact deployment and what actions to perform during and after
+staging the artifacts. When you click on Staging Profiles in the Nexus
+menu, you will see a list of configured staging profiles.  Clicking on
+Add... will display the drop-down menu shown in
+<<fig-staging-add-staging-profile>>.
+
+[[fig-staging-add-staging-profile]]
+.Adding a Staging Profile
+image::figs/web/staging_add-staging-profile.png[scale=60]
+
+Selecting Staging Profile will create a new Staging Profile and
+display the form shown in <<fig-staging-edit-profile>>.
+
+<<fig-staging-edit-profile>> defines a Staging Profile named Test.  It
+is configured to only intercept explicit deployments in the Profile
+Selection Strategy using the Profile ID and the Nexus Staging Maven
+Plugin. It uses the template "Maven2 (hosted, release)" for newly
+created temporary staging repositories, and it will automatically add
+closed staging repositories to the Public Repositories group.
+
+[[fig-staging-edit-profile]]
+.Creating a New Staging Profile
+image::figs/web/staging_profile-edit.png[scale=60]
+
+The form allows you to configure a profile with the following fields:
+
+Profile ID and Deploy URL:: These two fields are only available as
+read only display once a profile has been created. The Profile ID
+displays the unique identifier that can be used for staging to this
+repository using the Nexus Staging Maven Plugin. The Deploy URL
+displays the generic staging URL that can be used with the default
+Maven Deploy Plugin together with the Repository Target configuration
+to intercept the deployment and move the artifacts into the Staging
+Suite instead.
+
+Profile Name:: The name of the staging profile. This can be an arbitrary
+value. It is simply a convenience for the Nexus Administrator, and
+it is also used to create Nexus roles that are used to grant
+permissions to view and manipulate staging repositories created by
+this profile.
+
+Profile Selection Strategy:: Select the strategy used by Nexus to
+select this staging profile. Explicit or Implicit is the default
+behaviour and causes Nexus to select the profile by the provided
+staging profile identifier and if none is provided fall back to an
+automatic determination. It is necessary to be used with
+the Maven Deploy Plugin and the correct staging profile is determined
+using Repository Targets together with the generic Deploy URL of Nexus.
++
+When using the Nexus Staging Maven Plugin for deployments, and
+therefore an explicitly defined staging profile in the project POM, the
+setting should be changed to Explicit Only. This will prevent the
+profile from implicitly capturing a deployment in this repository due
+to the matching defined and allow Nexus to ensure that the deployment
+reaches the Staging Profile with the configured Staging Profile ID
+even if the default matching and staging profile order could
+potentially cause a deployment to end up in a different profile.
+
+Searchable Repositories:: The default value of enabling this
+feature will cause any new artifacts in this staging profile to be
+added to the indexes and therefore be available in search
+queries. Disable this feature to "hide" artifacts in staging.
+
+Staging Mode:: This field contains the options "Deploy," "UI Upload,"
+and "Deploy and UI Upload." This controls how artifacts can be staged
+to this staging profile. If Deploy is selected, artifacts can only be
+deployed using Maven to upload build artifacts. If UI Upload is
+selected, users can upload artifacts to Nexus using the Nexus user
+interface.
+
+Template:: Defines the template for the format of the temporary
+staging repositories created by this staging profile. The current
+version of Nexus Professional provides the option "Maven2 (hosted,
+release)" only. Additional templates can be supplied by plugins that
+enable staging for other repository types. An example for such a
+plugin is the http://code.google.com/p/nexus-yum-plugin/[Nexus Yum
+Plugin].
+
+Repository Target:: When a developer deploys an artifact to the
+generic Deploy URL, the Staging Suite will check to see if the
+artifact matches the patterns defined in this Repository Target. The
+repository target defines the "trigger" for the creation of a staging
+repository from this staging profile and is only needed for implicit
+deployments with the Deploy URL and not for explicit deployments using
+the Profile ID.
+
+Release Repository:: Staged artifacts are stored in a temporary
+staging repository which is made available via Target Groups. Once a
+staged deployment has been successfully tested, artifacts contained in
+the temporary staging repository are promoted to a hosted repository
+as their final storage place. The Release Repository setting
+configures this target release repository for this staging profile.
+
+Content Type:: Nexus can create staging repositories for repositories
+of type Maven2. This value is automatically selected based on the chosen
+template. 
+
+Target Groups:: When a Staging Repository is "closed" and is made
+available to users and developers involved in the testing process, the
+temporary Staging Repository is added to one or more Repository
+Groups. This field defines those groups.
+
+Close Repository Notification Settings:: After a developer has
+deployed a set of related release artifacts, a staging repository is
+"closed". This means that no further artifacts can be deployed to the
+same staging repository.  A repository would be closed when a
+developer is satisfied that a collection of staged artifacts is ready
+to be certified by a manager or a quality assurance resource. In this
+setting, it is possible to define email addresses and roles which
+should be notified of a staging repository being closed. A
+notification email will be sent to all specified email addresses, as
+well as all Nexus users in the specified roles, informing that a
+staging repository has been closed. It is also possible to select that
+the creator of the staging repository receives this notification.
+
+Promote Repository Notification Settings:: Once a closed staging
+repository has been certified by whoever is responsible for testing
+and checking a staged release, it can then be promoted (published) or
+dropped (discarded). In this setting, it is possible to define email
+addresses and Nexus security roles which should be notified of a
+staging repository being promoted. A notification email will be sent
+to all specified email addresses, as well as all Nexus users in the
+specified roles, informing that a staging repository has been
+promoted. It is also possible to select that the creator of the
+staging repository receives this notification.
+
+Drop Repository Notification Settings:: In this setting, it is
+possible define email addresses and roles which should be notified of
+a staging repository being dropped.  A notification email will be sent
+to all specified email addresses, as well as all Nexus users in the
+specified roles, informing that a staging repository has been
+dropped. It is also possible to select that the creator of the staging
+repository receives this notification.
+           
+Close Repository Staging Rulesets:: This defines the rulesets which
+will be applied to a staging repository before it can be closed. If
+the staging repository does not pass the rules defined in the
+specified rulesets, you will be unable to close it. For more
+information about rulesets, see <<staging-sect-rulesets>>.
+
+Promote Repository Staging Rulesets:: This defines the rulesets which
+will be applied to a staging repository on promotion. If the staging
+repository does not pass the rules defined in the specified rulesets,
+the promotion will fail with an error message supplied by the failing
+rule. For more information about rulesets, see
+<<staging-sect-rulesets>>.
+
+
+[[staging-sect-config-build-profile]]
+==== Configuring Build Promotion Profiles
+
+A Build Promotion profile is used when you need to add an additional
+step between initial staging and final release. To add a new Build
+Promotion profile, open the Staging Profiles link from the Nexus menu
+and click on Add... to display the drop-down menu shown in
+<<fig-staging-build-promo-link>>. Select Build Promotion Profile from
+this drop-down to create a new Build Promotion Profile.
+
+[[fig-staging-build-promo-link]]
+.Multi-level Staging and Build Promotion
+image::figs/web/staging_add-build-promotion-orilfe.png[scale=60]
+
+After creating a new Build Promotion profile, you will see the
+form shown in <<fig-staging-build-promo-profile>>. This
+form contains the following configuration fields:
+
+Profile Name:: This is the name for the Build Promotion profile which
+will be displayed in the promotion dialog shown in
+<<fig-staging-promote-stating>>. This name will also be associated
+with repositories created from this promotion profile.
+
+Template:: This is the template for repositories generated by this
+Build Promotion profile. The default value for this field is "Maven2
+(group)".
+
+Target Groups:: This is the most important configuration field for a
+Build Promotion profile. It controls the group that promoted artifacts
+will be made available through. Artifacts can be made available
+through one or more groups.
+
+[[fig-staging-build-promo-profile]]
+.Configuring a Build Promotion Profile
+image::figs/web/staging_closed-beta-promotion-group.png[scale=60]
+
+[[staging-sect-security]]
+==== Staging Related Security Setup
+
+Staging Suite is controlled by three roles:
+
+- Staging: Deployer
+- Staging: Promoter
+- Staging: Repositories
+
+These roles are available as general 'admin' roles that apply to all
+staging profiles with the respective access. When you create a new
+staging profile, Nexus will create new roles that grant permissions
+specific to that staging profile. If you created the staging profile
+named 'Test', Nexus created the three new and profile specific roles:
+
+Staging: Repositories (Test):: This role grants a user read and view
+access to the staging repositories created by the 'Test' staging
+profile.
+ 
+Staging: Deployer (Test):: This role grants all of the privileges from
+the Staging: Repositories role and in addition grants the user
+permission to deploy artifacts, close and drop any staging repository
+created by the 'Test' staging profile.
+
+Staging: Promoter (Test):: This role grants all of the privileges from
+the Staging: Deployer role and in addition grants the user permission
+to promote abt staging repository created by the 'Test' staging
+profile.
+
+To perform a staged deployment, the user deploying the artifact must
+have the "Staging: Deployer (admin)" role or the "Staging: Deployer"
+role for a specific Staging Profile.
+
+To configure the deployment user with the appropriate staging role,
+click on Users under the Security menu in the Nexus menu. Once you see
+the Users panel , click on the deployment user to edit this user's
+roles. Click on the Add button in the Role Management section of the
+Config tab visible in <<fig-staging-user-add-role>> for the user to be
+able to add new roles to the user.
+
+
+[[fig-staging-user-add-role]]
+.Adding a Role to a User 
+image::figs/web/staging-user-add-role.png[scale=60]
+
+Use the Filter section with the keyword Staging and press the Apply
+ Filter button to see all available staging related roles as displayed
+ in <<fig-staging-user-add-role>>.
+
+[[fig-staging-user-add-role-dialog]]
+.Available Roles for Staging with a Test Staging Profile 
+image::figs/web/staging-user-add-role-dialog.png[scale=30]
+
+You should see the "Staging: Deployer (admin)" role listed as well as
+the 'Test' staging profile specific role, the promoter and
+repositories ones for 'admin' and 'Test' and a few staging user
+interface related roles. If you need to add a specific permission to
+activate a single Staging Profile, you would select that specific
+role.
+
+Once the deployment user has the "Staging: Deployer (admin)" role, you
+can then use this user to deploy to the staging URL and trigger any
+staging profile. Without this permission, the deployment user would
+not be able to publish a staged artifact. 
+
+In a similar fashion you can assign the promoter role to users.
+
+==== Using Repository Targets for Staging 
+
+The Staging Suite intercepts deployments to Nexus using Repository
+Targets as documented in <<confignx-sect-managing-repo-targets>> when
+using implicit matching as a profile selection strategy based on the
+artifacts path in the repository.
+
+For example, if you wanted to intercept all deployments to the
+com.sonatype.sample groupId, you would create a repository target
+with a pattern with a regular expression of
+`^/com/sonatype/sample/.*` and use that repository target in your
+Staging Profile configuration.
+
+[[staging-sect-deployment]]
+=== Configuring your Project for Deployment
+
+Once Nexus is configured to receive artifacts in the staging suite as
+documented in <<staging-sect-prepare-nexus>>, you will have to update
+your project build configuration to deploy to the staging suite.
+
+The preferred way to do this is to take advantage of the features
+provided by the Nexus Staging Maven Plugin or the Nexus Staging Ant
+Tasks  as documented in
+<<staging-sect-deployment-nexus-staging-maven-plugin>>
+and <<staging-sect-deployment-nexus-staging-ant-tasks>>.
+
+If you need to continue to use the Maven Deploy Plugin you can read
+about using it with the Nexus Staging Suite in 
+<<staging-sect-deployment-maven-deploy-plugin>>. 
+
+With all tools you can use the manual upload of your artifacts
+documented in <<staging-sect-deployment-manual>>.
+
+[[staging-sect-deployment-nexus-staging-maven-plugin]]
+==== Deployment with the Nexus Staging Maven Plugin
+
+The Nexus Staging Maven Plugin is a Nexus specific and more powerful
+replacement for the Maven Deploy Plugin with a number of features
+specifically geared towards usage with the Nexus Staging Suite. The
+simplest usage can be configured by adding it to the project build plugins
+section as an extension:
+
+----
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.sonatype.plugins</groupId>
+      <artifactId>nexus-staging-maven-plugin</artifactId>
+      <version>1.2</version>
+      <extensions>true</extensions>
+      <configuration>
+        <serverId>local-nexus</serverId>
+        <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+      </configuration>
+    </plugin>
+----
+
+Following Maven best practices the version should be pulled out into a
+pluginManagement section in a company POM or parent POM.
+
+This configuration works only in Maven 3 and automatically replaces
+the deploy goal invocation of the Maven Deploy Plugin in the deploy
+Maven lifecycle phase with the deploy goal invocation of the Nexus
+Staging Maven Plugin. 
+
+The minimal required configuration parameters for the Nexus Staging Maven Plugin are:
+
+serverId:: the id of the server element in `settings.xml` from which
+the user credentials for accessing Nexus should be retrieved 
+nexusUrl:: the base URL at which the Nexus server to be used for
+staging is available
+
+With this configuration the Nexus Staging Maven Plugin will stage the
+artifacts locally and connect to Nexus. Nexus will try to determine
+the appropriate Staging Profile by matching the artifact path with any
+repository targets configured with staging profiles with an activated
+implicit profile selection strategy. If an appropriate staging profile
+is found a staging repository is created on the fly and the artifacts
+are deployed into it. If no profile is found the upload will fail.
+
+To successfully deploy to your Nexus instance, you will
+need to update your Maven Settings with the credentials for the
+deployment user. These credentials are stored in the Maven Settings file
+in ~/.m2/settings.xml. 
+
+To add these credentials, add the following element to the servers
+element in your ~/.m2/settings.xml file as shown in
+<<ex-staging-deployment-credentials>>.
+
+[[ex-staging-deployment-credentials]]
+.Listing deployment credentials in Maven Settings
+----
+<settings>
+  ...
+  <servers>
+    ...
+    <server>
+      <id>nexus</id>
+      <username>deployment</username>
+      <password>deployment123</password>
+    </server>
+  </servers>
+  ...
+</settings>
+----
+
+Note that the server identifier listed in
+<<ex-staging-deployment-credentials>> should match the serverId
+parameter you are passing to the Nexus Staging Maven Plugin and in the
+example contains the default password for the Nexus deployment user -
+deployment123.  You should change this password to match the
+deployment password for your Nexus installation.
+
+If more control is desired over when the plugins deploy goal is
+activated or if Maven 2 is used, you have to explicitly deactivate the
+Maven Deploy Plugin and replace the Maven Deploy Plugin invocation
+with the Nexus Staging Maven Plugin like visible in
+in <<fig-staging-maven2and3>>.
+
+[[fig-staging-maven2and3]]
+.Usage of Nexus Staging Maven Plugin for Maven 2
+----
+<build> 
+  <plugins> 
+    <plugin> 
+      <groupId>org.apache.maven.plugins</groupId> 
+      <artifactId>maven-deploy-plugin</artifactId> 
+      <configuration>
+        <skip>true</skip> 
+      </configuration> 
+    </plugin> 
+    <plugin> 
+      <groupId>org.sonatype.plugins</groupId> 
+      <artifactId>nexus-staging-maven-plugin</artifactId>
+      <executions> 
+        <execution> 
+          <id>default-deploy</id> 
+          <phase>deploy</phase> 
+          <goals> 
+            <goal>deploy</goal> 
+          </goals> 
+        </execution> 
+      </executions> 
+      <configuration> 
+        <serverId>local-nexus</serverId>
+        <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+        <!-- explicit matching using the staging profile id -->
+        <stagingProfileId>129341e09f2ee275</stagingProfileId>
+      </configuration> 
+    </plugin>
+...
+----
+
+The implicit matching relies on the setup of repository targets as
+well as the correct order of staging profiles and is therefore an
+error prone approach when many staging profiles are in use. 
+
+The preferred way to work in this sceneario is to change the profile
+selection strategy on all staging profiles to explicit only and pass
+the staging profile id to the Nexus Staging Maven Plugin using the
+`stagingProfileId` configuration parameter as documented above. A full
+example pom.xml for deployment of snapshot as well as release builds
+with the Nexus Staging Maven Plugin using explicit matching for the
+staging profile and locally staged builds and atomic uploads is
+available in <<fig-staging-example-pom>>.
+
+[[fig-staging-example-pom]]
+.Full example pom.xml for Nexus Staging Maven Plugin usage
+----
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.sonatype.training.nxs301</groupId>
+  <artifactId>explicit-staging-example</artifactId>
+  <version>1.0.0</version>
+
+  <distributionManagement>
+    <snapshotRepository>
+    <id>nexus-snapshots</id>
+    <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.2</version>
+        <extensions>true</extensions>
+        <configuration>
+	      <serverId>nexus-releases</serverId>
+          <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+          <!-- update this to the correct id! -->
+          <stagingProfileId>1296f79efe04a4d0</stagingProfileId>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+----
+
+In order to deploy project artifacts to Nexus with the above setup you
+would invoke a build with
+
+----
+mvn clean deploy
+----
+
+The build will locally stage the artifacts for deployment in
+`target/nexus-staging`, on the console and create a closed staging repository in Nexus
+holding the build artifacts. This execution of the `deploy`
+goal of the Nexus Staging Maven Plugin performs the following actions:
+
+- the artifacts are staged locally, 
+
+- a staging profile is selected either implicitly or explicitly
+
+- a staging repository is either created on the fly if needed or just
+  selected
+
+- an atomic upload to the staging repository is performed
+
+- and the staging repository is closed (or dropped if upload fails)
+
+The log of a successful deployment would look similar to this:
+
+----
+[INFO] --- nexus-staging-maven-plugin:1.1.1:deploy (injected-nexus-deploy) @ staging-example ---
+[INFO] Using server credentials with ID="nexus-releases" from Maven settings.
+[INFO] Preparing staging against Nexus on URL http://localhost:8081/nexus/
+[INFO]  * Remote Nexus reported itself as version 2.2.1 and edition "Professional"
+[INFO]  * Using staging profile ID "12a1656609231352" (matched by Nexus).
+[INFO] Staging locally (stagingDirectory=
+"/Users/manfred/dev/explicit-staging-example/target/nexus-staging/12a1656609231352")...
+Uploading: file: ... explicit-staging-example-1.0.0.jar
+Uploaded: file: ... explicit-staging-example-1.0.0.jar (4 KB at 1051.1 KB/sec)
+Uploading: file: ... explicit-staging-example-1.0.0.pom
+Uploaded: file: ... explicit-staging-example-1.0.0.pom (4 KB at 656.2 KB/sec)
+Downloading: file: ...maven-metadata.xml
+Uploading: file: ...maven-metadata.xml
+Uploaded: file: ... maven-metadata.xml (322 B at 157.2 KB/sec)
+[INFO] Staging remotely...
+[INFO] Uploading locally staged directory: 12a1656609231352
+[INFO] Performing staging against Nexus on URL http://localhost:8081/nexus/
+[INFO]  * Remote Nexus reported itself as version 2.2.1 and edition "Professional"
+[INFO]  * Created staging repository with ID "test-002", 
+applied tags: {javaVersion=1.6.0_37, localUsername=manfred}
+[INFO]  * Uploading locally staged artifacts to: 
+http://localhost:8081/nexus/service/local/staging/deployByRepositoryId/test-002
+[INFO]  * Upload of locally staged artifacts done.
+[INFO]  * Closing staging repository with ID "test-002".
+[INFO] Finished staging against Nexus with success.
+---- 
+
+Failures are accompanied by error reports that reveal further details:
+
+----
+[ERROR] Error while trying to close staging repository with ID "test-003".
+[ERROR] 
+[ERROR] Nexus Staging Rules Failure Report
+[ERROR] ==================================
+[ERROR] 
+[ERROR] Repository "Test-003 (u:admin, a:127.0.0.1)" (id=n/a) failures
+[ERROR]   Rule "RepositoryWritePolicy" failures
+[ERROR]     * Artifact updating: Repository ='releases:Releases' does
+not allow updating 
+artifact='/com/sonatype/training/nexus/explicit-staging-example/t1.0.0/staging-example-1.0.0.jar'
+[ERROR]     * Artifact updating: Repository ='releases:Releases' does 
+not allow updating 
+artifact='/com/sonatype/training/nexus/explicit-staging-example/1.0.0/staging-example-1.0.0.pom'
+[ERROR] 
+[ERROR] 
+----
+
+If the configuration parameter
+`skipStagingRepositoryClose` set to `true` is passed to the plugin
+execution, the remote staging repository will not be closed.
+
+Instead of Nexus creating a staging repository based on the implicit
+or explicit staging profile selection, you can explicitly configure
+the staging repository to use by providing the staging repository name
+as value of the `stagingRepositoryId` configuration property via the
+plugin configuration or command line invocation. 
+
+The identifier of a staging repository can be determined by looking at
+the name column in the list of staging repositories. The name column
+used the capitalized id and adds the username and address the staging
+was deployed from in brackets. For example a name could be 
+`Test-003 (u: admin, a: 127.0.0.1)`. The ID of this staging repository
+is `test-003`.
+
+Together with skipping the closing of the repository using
+`skipStagingRepositoryClose` it is possible to get multiple builds to
+deploy to the same staging repository and therefore have a number of
+artifacts go through the staging workflow together. An alternative to
+this approach would be to create an aggregating project that assembles
+all artifacts together e.g. in an assembly and then use this project
+for staging.
+
+
+Finally to override all staging you can define the full repository URL to
+deploy to with the `deployUrl` configuration parameter e.g.
+
+---- 
+http://localhost:8081/nexus/content/repositories/releases/`.
+----
+
+This would cause any staging to be skipped and a straight upload of
+the artifacts to the repository to occur.
+
+As part of the configuration section for the plugin you can define
+tags with arbitrary key and value names. For example you could create
+a tag with key localUsername and a value of the current user picked up
+from the USER environment variable:
+
+----
+...
+<configuration>
+...  
+  <tags>
+    <localUsername>${env.USER}</localUsername>
+    <javaVersion>${java.version}</javaVersion>
+  </tags>
+...
+----
+
+
+Once artifacts are released these tags are transformed into attributes
+stored along the artifacts in the release repository and  can be
+accessed via the REST interface and therefore any plugin and user
+interface integration. 
+
+In addition to the above documented configuration options that
+determine the behvaiour of the Nexus Staging Maven Plugin, further
+configuration can be provided with the following parameters:
+
+altStagingDirectory:: defaulting to target/nexus-staging you can
+set the property to set a different folder for the local staging 
+description:: allows you to provide a description for the staging
+repository action like close or drop carried out as part of the plugin
+execution. The description will then be used in any notification just
+like a description provided in the user interface.
+keepStagingRepositoryOnFailure:: setting this flag to true will cause
+the plugin to skip any clean up operations like dropping a staging
+repository for failed uploads, by default these clean up operations
+occur
+skipStaging:: set to false by default this flag will cause to skip any
+execution of the plugin when set to true
+skipRemoteStaging:: if this flag is set to true any step related to
+remote staging will be skipped and only local staging will be
+performed, the default setting is false
+
+With `skipRemoteStaging` set to true, only the local staging
+happens. This local staging can then be picked up for the remote
+staging and closing by running the `deploy-staged` goal of the plugin
+explicitly like this
+
+----
+mvn nexus-staging:deploy-staged
+----
+
+Besides the default `deploy` goal the Nexus Staging Maven Plugin
+supports a number of additional goals. By configuring executions of
+the goals as part of your POM or manually invoking them further
+automation of a staged release process can be achieved.
+
+deploy-staged:: perform full staging deployment workflow for a locally
+staged project e.g. with the artifacts in target/nexus-staging
+
+close:: close the staging repository for current context
+
+drop:: drop the staging repository for current context
+
+release:: release the staging repository for current context
+
+promote:: promote the staging repository for the current context
+
+Closing, dropping and releasing the staging repository using the goals
+relies on content of a local staging folder .
+
+Promoting additionally needs the build promotion profile name passed in
+via the `buildPromotionProfileId` configuration parameter.
+
+While the above goals need the context of a project with configuration
+for the Nexus Staging Plugin in the POM file, it is possible to
+execute staging repository related tasks without a project as
+well. The Nexus Staging Maven Plugin offers remote-control goals to
+control staging in Nexus:
+
+rc-close:: close a specified staging repository 
+
+rc-drop:: drop a specified staging repository 
+
+rc-release:: release a specified staging repository 
+
+rc-promote:: promote a specified staging repository
+
+When invoking these goals outside a project context you need to have
+the Nexus Staging Maven Plugin groupId specified as a pluginGroup in
+your settings.xml:
+
+----
+ <pluginGroups>
+       <pluginGroup>org.sonatype.plugins</pluginGroup>
+ </pluginGroups>
+----
+
+In addition you need to specify all parameters on the command line as
+properties passed in via `-Dkey=value`.
+
+At a minimum the required parameters `serverId` and `nexusUrl` have to
+be specified:
+----
+ mvn nexus-staging:rc-close -DserverId=local-nexus -DnexusUrl=http://localhost:8081/nexus
+---- 
+
+Depending on the goal you will have to configure the staging
+repositories you want to close, drop or release with
+
+----
+ -DstagingRepositoryId=repo-001,repo-002
+----
+
+and you can also supply a description like this
+
+----
+-Ddescription="Dropping since QA of issue 123 failed"
+----
+
+For promoting you need to add the required parameter that specifies
+the build promotion profile identifier:
+
+----
+-DbuildPromotionProfileId=12a25eabf8c8b3f2
+----
+
+A successful remote control drop would be logged in the command line
+similar to this
+
+---- 
+— nexus-staging-maven-plugin:1.2:rc-drop (default-cli) @ standalone-pom —
+[INFO] Connecting to Nexus...
+[INFO] Using server credentials with ID="nexus-releases" from Maven settings.
+[INFO] RC-Dropping staging repository with IDs=[test-003]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+----
+
+WARNING: The Nexus Maven Plugin in versions earlier than 2.1.0 had goals
+to work with staging repositories. These goals have been deprecated in
+favour of the remote control goals of the Nexus Staging Maven Plugin.
+
+[[staging-sect-deployment-nexus-staging-ant-tasks]]
+==== Deployment with the Nexus Staging Ant Tasks
+
+The Nexus Staging Ant Tasks provide equivalent features to the Nexus
+Staging Maven Plugin for Apache Ant users covering all use cases for
+interacting with the Nexus Staging Suite.
+
+To use the Ant tasks in your Ant build file you need to download the
+complete jar with the included dependencies. You can find it at
+the Central Repository. Simply search for 'nexus-staging-ant-tasks'
+and download the jar file with the `uber` classifier
+e.g. `nexus-staging-ant-tasks-1.0-uber.jar`.
+
+After downloading, put the jar file somewhere in your
+project or in your system so you can add it to the classpath in your
+build file with a task definition. In the following example the jar
+file is placed in a `tasks` folder within the project.
+
+----
+<taskdef uri="antlib:org.sonatype.nexus.ant.staging" 
+         resource="org/sonatype/nexus/ant/staging/antlib.xml">
+  <classpath>
+    <fileset dir="tasks" includes="nexus-staging-ant-tasks-*uber.jar" />
+  </classpath>
+</taskdef>
+----
+
+The deployment related information for your project is captured in a
+`nexusStagingInfo` section in your build file that contains all the
+necessary configuration.
+
+----
+<staging:nexusStagingInfo id="target-nexus" 
+    stagingDirectory="target/local-staging">
+  <staging:projectInfo groupId="org.sonatype.nexus.ant"
+      artifactId="nexus-staging-ant-tasks"
+      version="1.0" />
+  <staging:connectionInfo 
+      baseUrl="http://localhost:8081/nexus">
+    <staging:authentication 
+      username="deployment" 
+      password="deployment123" />
+  </staging:connectionInfo>
+</staging:nexusStagingInfo>
+----
+
+nexusStagingInfo:id:: the identifier that allows you to reference the
+staging information in the Ant build file
+
+stagingInfo:stagingDirectory:: the local staging directory, a place
+where local staging will happen. Ensure that this directory is cleaned
+up by "clean" tasks (or alike, if any).
+
+projectInfo:: the project information targetting a staging
+profile. This can be done explicitly with the stagingProfileId or
+implicitly with groupId, artifactId and version. stagingRepositoryId
+can also be part of projectInfo identifying a staging repository for
+interaction
+
+connectionInfo:baseUrl:: the base URL of the Nexus server you want to
+deploy to and interact with
+
+If necessary the connection Info can have a nested proxy section
+
+----
+<staging:proxy 
+    host="proxy.mycorp.com" 
+    port="8080">
+  <staging:authentication 
+      username="proxyUser" 
+      password="proxySecret" />
+</staging:proxy>
+----
+
+With the above setup you are ready to add a deploy target to your
+build file that stages the artifacts locally as well as remotely and
+closes the staging repository. 
+
+----
+<target name="deploy" description="Deploy: Local and Remote Staging">
+
+  <staging:stageLocally>
+    <staging:nexusStagingInfo 
+        refid="target-nexus" />
+      <fileset dir="target/local-repo" 
+        includes="**/*.*" />
+    </staging:stageLocally>
+
+  <staging:stageRemotely>
+    <staging:nexusStagingInfo 
+        refid="target-nexus" />
+  </staging:stageRemotely>
+
+</target>
+----
+
+Similarily you can create a target that releases the staged artifacts
+by adding the closeStagingRepository task to the end of the target:
+
+----
+<staging:releaseStagingRepository>
+  <staging:nexusStagingInfo 
+      refid="target-nexus" />
+</staging:releaseStagingRepository>
+----
+
+The stageLocally task takes a fileset as configuration. The
+stageRemotely task has additional configuration options 
+
+keepStagingRepositoryOnFailure:: set to true this causes the remote
+staging repository to be kept rather than deleted in case of a failed
+upload, default setting is false
+
+skipStagingRepositoryClose:: by default a staging repository is
+automatically closed, setting this parameter to true will cause the
+staging repository to remain open
+
+In addition to the tasks for local and remote staging the Nexus
+Staging Ant Tasks includes tasks for closing, dropping, releasing and
+promoting a staging repository:
+
+- closeStagingRepository
+
+- dropStagingRepository
+
+- releaseStagingRepository
+
+- promoteStagingRepository
+
+All these tasks take the context information from the local staging
+directory or from the optional parameter `stagingRepositoryId`. The
+task to promote a repository has the additional, mandatory attribute
+`buildPromotionProfileId` to specify the build promotion profile to
+promote.
+
+
+[[staging-sect-deployment-maven-deploy-plugin]]
+==== Deployment with the Maven Deploy Plugin
+
+When using the Maven Deploy Plugin with the Nexus Staging Suite, you
+rely on implicit matching of the artifacts against a staging profile
+based on a repository target definition. 
+
+To deploy a staged release, a developer needs to deploy to the
+staging URL. To configure a project to deploy to the Staging URL, add
+the a distributionManagement element to your project's POM. 
+
+[[ex-staging-dist-management]]
+.Listing the Staging URL in distributionManagement
+----
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+...
+  <distributionManagement>
+    <repository>
+      <id>nexus</id>
+      <name>Nexus Staging Repo</name>
+      <url>http://localhost:8081/nexus/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+...
+</project>
+----
+
+This configuration element, distributionManagement, defines the
+repository to which our deployment will be made. It references the
+Staging Suite's Staging URL:
+http://localhost:8081/nexus/service/local/staging/deploy/maven2
+
+This URL acts as a something of a virtual repository to be published
+to.  If an artifact being published matches one of the Repository
+Targets in a Staging Profile, that Staging Profile is "activated" and
+a temporary Staging Repository is created.
+
+Once the sample project's distributionManagement has been set
+to point at the Nexus Staging URL and your deployment credentials are
+updated in your ~/.m2/settings.xml file, you can deploy to the Staging
+URL. To do this, run mvn deploy
+
+----
+$ mvn deploy
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Building staging-test
+[INFO]    task-segment: [deploy]
+[INFO] ------------------------------------------------------------------------
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [compiler:compile]
+[INFO] Nothing to compile - all classes are up to date
+[INFO] [resources:testResources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [compiler:testCompile]
+[INFO] Nothing to compile - all classes are up to date
+[INFO] [surefire:test]
+[INFO] Surefire report directory: /private/tmp/staging-test/target/surefire-reports
+
+...
+[INFO] [jar:jar]
+[INFO] [install:install]
+[INFO] Installing /private/tmp/staging-test/target/staging-test-1.0.jar to \
+~/.m2/repository/com/sonatype/sample/staging-test/1.0/staging-test-1.0.jar
+[INFO] [deploy:deploy]
+altDeploymentRepository = null
+Uploading: http://localhost:8081/nexus/service/local/staging/deploy/maven2/\
+com/sonatype/sample/staging-test/1.0/staging-test-1.0.jar
+2K uploaded
+[INFO] Uploading project information for staging-test 1.0
+[INFO] Retrieving previous metadata from nexus
+[INFO] repository metadata for: 'artifact com.sonatype.sample:staging-test' 
+could not be found on repository: nexus, so will be created
+[INFO] Uploading repository metadata for: 'artifact com.sonatype.sample:staging-test'
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+----
+
+If the Staging Suite is configured correctly, any deployment to the
+staging URL matching in a repository target configured for a stating
+profile should be intercepted by the Staging Suite and placed in a
+temporary staging repository. Deployment with the Maven Deploy Plugin
+will not automatically close the staging repository. Closing the
+staging repository has to be done with the Nexus user interface or the
+Nexus Staging Maven Plugin.  Once this repository has been closed, it
+will be made available in the Target Group you selected when you
+configured the Staging Profile.
+
+
+[[staging-sect-deployment-manual]]
+==== Manually Uploading a Staged Deployment in Nexus
+
+You can also upload a staged deployment via the Nexus interface. To
+upload a staged deployment, select Staging Upload from the Nexus
+menu. Clicking Staging Upload will show the panel shown in
+<<fig-staging-artifact-upload>>.
+
+[[fig-staging-artifact-upload]]
+.Uploading a Staged Deployment in Nexus
+image::figs/web/staging_artifact-upload.png[scale=60]
+
+To upload an artifact, click on Select Artifact(s) for Upload... and
+select an artifacts from the filesystem to upload. Once you have
+selected an artifact, you can modify the classifier and the extension
+before clicking on the Add Artifact button. Repeat this process to
+upload mutltiple artifacts for the same Group, Artficat and Version
+(GAV) coordinates like a jar, the pom and maybe a sources and javadoc
+jar in addition. Once you have added all the artifacts, you can then
+configure the source of the Group, Artifact, Version (GAV) parameters.
+
+If the artifact you are uploading is a JAR file that was created by
+Maven it will already have POM information embedded in it, but if you
+are uploading a JAR from a vendor you will likely need to set the
+Group Identifier, Artifact Identifier, and Version manually. To do
+this, select GAV Parameters from the GAV Definition drop-down at the
+top of this form.  Selecting GAV Parameters will expose a set of form
+fields which will let you set the Group, Artifact, Version, and
+Packaging of the artifacts being uploaded. If you would prefer to set
+the Group, Artifact, and Version from a POM file which was associated
+with the uploaded artifact, select From POM in the GAV Definition
+drop-down. Selecting From POM in this drop-down will expose a button
+labelled "Select POM to Upload". Once a POM file has been selected for
+upload, the name of the POM file will be displayed in the form field
+below this button.
+
+The Staging Upload panel supports multiple artifacts with the same
+Group, Artifact, and Version identifiers. For example, if you need to
+upload multiple artifacts with different classifiers, you may do so by
+clicking on Select Artifact(s) for Upload and Add Artifact multiple
+times.  This interface also accepts an Artifact Bundle which is a JAR
+that contains more than one artifact, which is documented in more
+detail in <<bundles>>.
+
+Once a staging artifact upload has been completely configured, click
+on Upload Artifact(s) button to begin the upload process. Nexus will
+upload the artifacts to the Staging URL which will trigger any staging
+profiles that are activated by the upload by explicity matching using
+the repository targets configured with the staging profiles. If a
+staging profile is activated, a new staging repository will be created
+and can be managed using the procedures outlined in
+<<staging-sect-managing-staging>>.
+
+
+[[staging-sect-managing-staging]]
+=== Managing Staging Repositories in Nexus
+
+Once you completed the process outlined in <<staging-sect-deployment>>,
+you will have an automatically generated Staging Repository. In
+this section, you will walk through the process of managing staging
+repositories. Once a staging repository has been created, there are
+two steps in the lifecycle of a staging repository. Once you have
+deployed a set of related artifacts, you must "Close" the repository
+moving it from an "Open" to a "Closed" state. Once a repository is in
+the "Closed" state it is added to a Repository Group and is made
+available for testing purposes. Once testing is completed, a Nexus
+administrator can either Promote or Drop a Closed repository. 
+
+If the repository is Dropped, the repository is discarded and removed
+from the Repository Group. If the repository is Promoted, the Nexus
+administrator can select a Hosted repository and publish the contents
+of the temporary staging repository to a Hosted repository.
+
+[[staging-sect-closing]]
+==== Closing an Open Repository
+
+Once you deploy an artifact that triggers a staging
+profile, Nexus Staging Suite will create a repository that contains the
+artifacts you deployed. A separate staging repository is created for
+every combination of User ID, IP Address, and User Agent. This means
+that you can perform more than one deployment to a single Staging
+Repository as long as you perform the deployment from the same IP, with
+the same deployment user, and the same installation of Maven. 
+
+You can perform multiple deployments to an "Open" staging repository,
+to see a list of these temporary "Open" Staging repositories, select
+"Staging" from the Nexus menu and click on the appropriate Staging
+Profile to browse a list of staging repositories which correspond to a
+staging profile.
+
+.Listing Repositories Associated with a Staging Profile
+image::figs/web/staging_close-repository.png[scale=60]
+
+Once you are ready to start testing the staging repository, you
+will need to transition the staging repository from the "Open" state to
+the "Closed" state. This will close the temporary staging repository to
+more deployments. 
+
+To close a repository, right-click on the repository in the Staging
+Repositories panel and select "Close". This will bring up the
+following dialog for a staging deployer to describe the contents of a
+staging repository. This description field can be used to pass
+essential information to the person that needs to test a
+deployment. 
+
+In <<fig-staging-close-description>>, the description field is used to
+describe the release for the user that needs to certify and promote a
+release.
+
+[[fig-staging-close-description]]
+.Confirmation and Description Dialog for Closing a Staging Repository
+image::figs/web/staging_close-confirm.png[scale=60]
+
+Confirming this state transition will close the repository and add
+the repository to a repository group. Once a repository has been closed,
+it will be listed as "Closed" in the Profile's Repositories tab.
+
+.Closed Repository After Selecting Finish
+image::figs/web/staging_closed-repository.png[scale=60]
+
+[[staging-sect-using-repository]]
+==== Using the Staging Repository
+
+Once the Staging Repository has been closed, it will automatically be
+added to the Repository Group that was specified in the Staging
+Profile. <<fig-staging-add-to-group>> shows an instance of a staging
+repository appended to the end of a group named "Public Repositories".
+
+This has the effect of making the staged artifacts available to
+everyone who is referencing this public group.  Developers who are
+referencing this public repository group can now test and interact
+with the staged artifacts as if they were published to a Hosted
+repository. 
+
+While the artifacts are made available in a repository group, the fact
+that they are held in a temporary staging directory gives the
+administrator the option of promoting this set of artifacts to a
+Hosted repository or dropping this temporary staging repository if
+there are problems discovered during the testing and certification
+process for a release.
+
+[[fig-staging-add-to-group]]
+.Staging Repository Added to the End of a Repository Group
+image::figs/web/staging_staged-to-group.png[scale=60]
+
+Once a staging repository is closed, you can also browse and
+search the repository. To view Staging Repositories, click on Browse
+Repositories and then select Nexus Managed Repositories as shown in
+<<fig-staging-selecting-nexus>>.
+
+[[fig-staging-selecting-nexus]]
+.Viewing Nexus Managed Repositories
+image::figs/web/staging_select-nexus-managed.png[scale=60]
+
+Once you've selected Nexus Managed Repositories, Nexus will then
+show you all of the repositories that have been created by the Nexus
+Staging Suite. You can select and browse this temporary Staging
+Repository as you would any other repository.
+
+.Browsing a Staging Repository
+image::figs/web/staging_browsing-staged.png[scale=60]
+
+You can browse the contents of a staging repository from the
+Staging Repositories panel. Click on Staging Repositories in the Nexus
+menu, click on a Staging Repository to browse the contents and perform
+operations a staging repository.
+
+.Browsing Repository via Staging Profiles
+image::figs/web/staging_browsing-via-profiles.png[scale=60]
+
+[[staging-sect-releasing]]
+==== Releasing a Staging Repository
+
+Once you are finished testing or certifying that the contents of a
+Staging Repository are correct, you are ready to either Release or
+Drop the Staging Repository. Dropping the Staging Repository will
+delete the temporary staging repository from Nexus and remove any
+reference to this repository from the groups it was associated with.
+Releasing the Staging Repository allows you to publish the contents of
+this temporary repository to a Hosted repository.
+
+To release a Staging Repository select Staging from the Nexus menu
+and then click on the appropriate Staging Profile. This will display a
+list of Staging Repositories associated with that Staging Profile. To
+release the contents of a repository, load the list of Staging
+Repositories, check the box next to the staging repository you which to
+promote and then click the Release button shown in <<fig-staging-promote>>.
+
+[[fig-staging-promote]]
+.Promoting a Staging Repository
+image::figs/web/staging_promote-repository.png[scale=60]
+
+Once you click Release, the Nexus Staging Suite will ask you to supply
+a description for this release action.
+
+.Selecting the Destination Repository for Staged Repository Promotion
+image::figs/web/staging_promote-confirm.png[scale=60]
+
+Supplying a description and clicking on Release will publish the
+contents of a Staging Repository to a Hosted repository and delete the
+Staging Repository from Nexus.
+
+.Confirmation Dialog for Repository Promotion
+image::figs/web/staging_success-promote.png[scale=60]
+
+[[staging-sect-promoting]]
+==== Promoting a Staging Repository
+
+If you have a staging repository that you want to promote to a
+Build Promotion profile, open the list of Staging Repositories by
+selecting Staging Repositories from the Nexus menu, select the
+repository you intend to promote, and click the Promote button as shown
+in <<fig-staging-promote-button>>.
+
+[[fig-staging-promote-button]]
+.Promoting a Staging Repository
+image::figs/web/staging_promote-to-group-button.png[scale=60]
+
+After clicking the Promote button the Promote Staging Repository shown
+in <<fig-staging-promote-stating>> will be displayed. In this dialog,
+you can choose the Build Promotion profile to promote the staging
+repository to, and you can supply a short description of the
+promotion. Clicking on the Promote button in this dialog will promote
+the staging profile to a build promotion profile and expose the
+contents of the selected staging repository through a group associated
+with the build promotion profile.
+
+[[fig-staging-promote-stating]]
+.Multi-level Staging and Build Promotion
+image::figs/web/staging_promote-to-group.png[scale=60]
+
+After you promote a staging repository to a Build Promotion
+profile the build promotion profile will create a temporary repository
+which contains the contents of the promoted staging repository. The
+staging repository will be a Group Member of the Build Promotion
+repository. One or more staging repositories can be promoted to a
+single Build Promotion profile, and you can browse the Group Member by
+selecting the Build Promotion repository and viewing the Group Member
+tab as shown in <<fig-staging-group-members>>.
+
+[[fig-staging-group-members]]
+.Multi-level Staging and Build Promotion
+image::figs/web/staging_browse-group-members.png[scale=60]
+
+[[staging-sect-using-build]]
+==== Releasing, Promoting, and Dropping Build Promotion Profiles
+
+When you configure a Build Promotion profile and promote Staging
+Repositories to promotion profiles, each Build Promotion profile creates
+a repository which contains one or more Staging Repositories. Just like
+you can promote the contents of a Staging Repository to a Build
+Promotion profile, you can also promote the contents of a Build
+Promotion profile to another Build Promotion profile. When you do this
+you can create hierarchies of staging repositories and build promotion
+profiles which can then be dropped or released together.
+
+[[fig-staging-build-promo-agg]]
+.Releasing, Promoting, and Dropping Build Promotion Profiles
+image::figs/web/staging-promotion.png[scale=60]
+
+When you promote a staging repository to a build promotion
+profile, you make the contents of a staging repository available via a
+repository group associated with a build promotion profile. 
+
+
+For example, if you staged a few artifacts to a QA Staging Repository
+and then subsequently promoted that repository to a Closed Beta Build
+Promotion group, the contents of the QA Staging Repository would
+initially be made available via a QA Repository Group. After a build
+promotion, these artifacts would also be available via a Closed Beta
+repository group.  
+
+You can take it one step further and promote the contents of the
+Closed Beta Build Promotion profile to yet another Build Promotion
+profile. In this way you can have an arbitrary number of intermediate
+steps between the initial staging deployment and the final release.
+
+If you drop the contents of a build promotion profile, you roll back
+to the previous state. For example, if you decided to drop the
+contents of the Closed Beta build promotion group, Nexus will revert
+the status of the Staging Repository from promoted to closed, and make
+the artifacts available via the QA Staging Repository. The effects of
+promoting, dropping, and releasing artifacts through a series of
+Staging Profiles and Build Promotion Profiles is shown in
+<<fig-staging-build-promo-agg>>.
+
+When you perform a release on a Build Promotion profile, each Staging
+Repository is going to release artifacts to the Release Repository
+configured in <<fig-staging-edit-profile>>.  Because a Build
+Repository can contain one or more promoted staging repositories, this
+means that releasing a Build Promotion profile can cause artifacts to
+be published to more than one Release Repository.  Build Promotion
+profiles are not directly related to release repositories, only
+staging profiles are directly associated with target release
+repositories. <<fig-staging-multi-to-one>> illustrates this behaviour
+with two independent Staging Repositories each configured with a
+separate Release Repository. Releasing the Build Promotion profile
+causes Nexus to publish each Staging Repository to a separate hosted
+repository.
+
+[[fig-staging-multi-to-one]]
+.Promoting Multiple Repositories to the Same Build Promotion Profile
+image::figs/web/multiple-promotion-release.png[scale=60]
+
+
+
+
+[[staging-sect-multi]]
+==== Multi-level Staging and Build Promotion
+
+Nexus also supports multi-level staging and build
+promotion. With multi-level staging, a staging repository can be
+tested and then promoted to a separate "build promotion" profile and
+exposed through different repository groups to allow for additional
+testing and qualification before a final
+frelease. <<fig-staging-multi-scenario>> illustrates a potential use
+for multi-level staging:
+
+Stage:: A developer publishes artifacts to a QA staging profile which
+exposes the staged artifacts in a QA repository group used by an
+internal quality assurance team for testing.
+
+Promote to Beta:: Once the QA team has successfully completed
+testing, they promote the temporary staging repository to build
+promotion profile which will expose the staged artifacts to a limited
+set of customers who have agreed to act as a beta testers for a new
+feature.
+
+Release:: Once this closed beta testing period is finished, the
+staged repository is then released and the artifacts it contains are
+published to a hosted release repository and exposed via the public
+repository group.
+
+[[fig-staging-multi-scenario]]
+.Multi-level Staging and Build Promotion
+image::figs/web/multi-level-staging.png[scale=60]
+
+To support this multi-level staging feature, you can configure Build
+Promotion profiles as detailed in
+<<staging-sect-config-build-profile>>. Once you have promoted a
+Staging Repository to a Build Promotion profile, you can drop,
+promote, or release the artifacts it contains as detailed in
+<<staging-sect-prepare-nexus>>.
+
+
+[[staging-sect-rulesets]]
+=== Enforcing Standards for Deployment and Promotion with Rulesets
+
+Nexus has the ability to define staging rules that must be satisfied
+to allow successful deployment or before a staging repository can be
+promoted.
+
+[[staging-sect-staging-rulesets]]
+==== Managing Staging Rulesets
+
+Staging Rulesets are groups of rules that are applied to a Staging
+repository at promotion time. A staging repository associated with a
+staging ruleset cannot be promoted until all of the rules associated
+with the rulesets have been satisfied. This feature allows you to set
+standards for your own hosted repositories, and it is the mechanism
+that is used to guarantee the consistency of artifacts stored in the
+Maven Central repository.
+
+Nexus Professional contains the following rules:
+
+Staging Javadoc Validation:: The Staging Javadoc Validation rule will
+verify that every project has an artifact with the javadoc
+classifier. If you attempt to promote a staging repository which
+contains artifacts not accompanied by "-javadoc.jar" artifacts, this
+validation rule will fail.
+
+Staging Artifact Uniqueness Validation:: This rule checks to see that
+the artifact being released, promoted, or staged is unique in a
+particular Nexus instance.
+
+Staging Checksum Validation:: This rule validates file checksums
+against published artifacts.
+
+Staging No Release Repository:: This rule will fail if a particular
+staging profile is not defined with a release repository.
+
+Staging POM Validation:: The Staging POM Validation rule will verify
+Project URL - project/url, Project Licenses - project/licenses and
+Project SCM Information - project/scm.  If any of these POM elements
+are missing or empty, this Staging Ruleset will cause a promotion to
+fail.
+
+Staging Signature Validation:: The Staging Signature Validation rule
+verifies that every item in the repository has a valid PGP
+signature. If you attempt to promote a staging repository which
+contains artifacts not accompanied by valid PGP signature, this
+validation will fail.
+
+Staging Sources Validation:: The Staging Sources Validation rule will
+verify that every project has an artifact with the sources
+classifier. If you attempt to promote a staging repository which
+contains artifacts not accompanied by "-sources.jar" artifacts, this
+validation rule will fail.
+
+To create a Staging Ruleset, click on the Staging Ruleset link in the
+Nexus Menu. This will load the interface shown in
+<<fig-staging-rulesets>>.  The Staging Ruleset panel is used to define
+sets of rules that can be applied to Staging
+Profiles. <<fig-staging-rulesets>> shows a ruleset which contains all
+four predefined staging rules.
+
+[[fig-staging-rulesets]]
+.Creating a Staging Ruleset
+image::figs/web/staging-rulesets.png[scale=60]
+
+[[staging-sect-defining-rulesets]]
+==== Defining Rulesets for Promotion
+
+To define a ruleset to be used for promotion, click on Staging in the
+Nexus menu and select a Staging Profile. Click on the Configuration
+tab, and scroll down to the Promote Repository Staging Rulesets
+section of the Staging Profile configuration as shown in
+<<fig-staging-associate-ruleset>>. The next time you attempt to
+promote a staging repository that was created with this profile, Nexus
+Professional will check that all of the rules in the associated
+rulesets are being adhered to.
+
+[[fig-staging-associate-ruleset]]
+.Associating a Staging Ruleset with a Staging Profile
+image::figs/web/staging-rulesets-associate.png[scale=60]

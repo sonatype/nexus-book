@@ -1,0 +1,230 @@
+[[smartproxy]]
+== Nexus Smart Proxy 
+
+=== Introduction
+
+Typically an organization runs one single Nexus instance to proxy
+external artifacts as well as host internally produced artifacts. When
+a build is running against this Nexus instance it will look for any
+new artifacts in the proxied remote repositories. This adds additional
+network traffic that in many cases will just be a response from the
+remote server indicating that there are no changes.
+
+This polling approach is fine for smaller deployment even though
+performance is impacted by this behaviour. Depending on your proxy
+timeout settings this polling won't actually result in updated
+artifacts as soon as they become available upstream either.  If you
+try to support distributed instances, the only way you are going to
+achieve assurance that everything is up to date is by setting you
+expiration times to zero and constantly polling.
+
+With the increased usage of Nexus in globally distributed teams or
+used by projects that span multiple organizations, each with their own
+Nexus instance hosting their own artifacts as well as proxying the
+other servers, this polling can result in significant traffic and a
+performance hit for all involved servers.
+
+The Smart Proxy feature replaces this constant polling approach with a
+Publish-Subscribe based messaging approach between Nexus instances
+sharing a mutual trust. The result is a significantly improved
+performance due to nearly immediate availability of upstream artifact
+information directly in the downstream Nexus instances.
+
+With Smart Proxy enabled the repositories involved will be able to
+keep their content in sync without sacrificing performance. This in
+turn allows collocating proxy servers with the involved development
+teams reducing build times and improving availability and performance
+of the used repository servers. The payoff grows with the number of
+involved Nexus servers in the network.
+
+[[smartproxy-enabling_smart_proxy_publishing]]
+=== Enabling Smart Proxy Publishing
+
+In order to enable the Smart Proxy feature on your Nexus instance, you
+need to navigate to the global Smart Proxy configuration screen. It is
+available in the left hand navigation in the Enterprise
+section. Selecting Smart Proxy will show you the configuration screen
+displayed in <<fig-smart-proxy-global-config>>.
+ 
+[[fig-smart-proxy-global-config]]
+.Global Configuration for Smart Proxy
+image::figs/web/smart-proxy-global-config.png[scale=50]
+
+The Network Settings section allows you to enable the Smart Proxy
+server with a check-box. This will need to be enabled on all servers
+that will publish events in the Smart Proxy network, while servers
+that will only act as subscribers can leave this option disabled.
+
+In addition you can configure the address and port at which the
+publishing server will be available. The default address of 0.0.0.0
+will cause the proxy to listen on all addresses. The default port
+number of 0 will trigger usage of a random available port number for
+connection listening. If a random port is used, it will be chosen when
+the server (re)starts.
+
+With the Advertised URI field it is possible to configure a specific
+address to be broad-casted by the proxy to the subscribing Smart
+Proxy clients enabling e.g. usage of a publicly available fully
+qualified host-name including the domain or also just usage of an
+externally reachable IP number. 
+
+TIP: It is important to enable the configured connection ports on any
+firewall between the servers to allow the direct socket connection
+between the servers and to avoid using random ports.
+
+The Status field below the form will show the current status of the
+Smart Proxy including the full address and port.
+
+The Public Key field displays the key identifying this server
+instance. It is automatically populated with the certificate associated
+with the public/private key pair that is generated when the server is
+first run.
+
+TIP: The key is stored in sonatype-work/nexus/conf/keystore/private.ks
+and identifies this server. If you copy the sonatype work folder from
+one server to another as part of a migration or a move from testing to
+staging or production you will need to ensure that keys are not
+identical between multiple servers. To get a new key generated simply
+remove the key-store file and restart Nexus.
+
+[[smartproxy-establishing_trust]]
+=== Establishing Trust
+
+The servers publishing as well as subscribing to events identify
+themselves with their Public Key. This key has to be registered with
+the other servers in the Trusted Certificates section of the Smart
+Proxy configuration screen.
+
+To configure two Nexus repository servers as trusted Smart Proxies,
+you copy the Public Key from the certificate of the other server
+in the Trusted Certificates configuration section by adding a new
+trusted certificate with a meaningful description as displayed in
+<<fig-smart-proxy-copy-certificate>> and
+<<fig-smart-proxy-add-certificate>>.
+
+[[fig-smart-proxy-copy-certificate]]
+.Copying a Certificate
+image::figs/web/smart-proxy-copy-certificate.png[scale=40]
+
+[[fig-smart-proxy-add-certificate]]
+.Adding a Trusted Certificate
+image::figs/web/smart-proxy-add-certificate.png[scale=40]
+
+All the key generation and certificates related to the trust
+management is handled by Nexus itself and no external configuration or
+usage of external keys is necessary or possible.
+
+[[smartproxy-repository_specific_smart_proxy_configuration]]
+=== Repository Specific Smart Proxy Configuration
+
+Once Smart Proxy has been configured and enabled as described above,
+you have to configure, which repositories' content should be
+synchronized between the servers. This is done in the Repositories
+administration interface in a separate configuration tab titled Smart
+Proxy, which allows you to configure repository specific details as
+compared to server wide details described above.
+
+On the publishing Nexus server you have to enable Smart Proxy on the
+desired hosted, virtual or proxy repositories in the repository
+configuration. This is accomplished by selecting the Publish Updates
+check-box in the Publish section of the Smart Proxy configuration for a
+specific repository as displayed in
+<<fig-smart-proxy-repo-list-hosted>> and pressing save.
+
+[[fig-smart-proxy-repo-list-hosted]]
+.Smart Proxy Settings for a Hosted Repository
+image::figs/web/smart-proxy-repo-list-hosted.png[scale=60]
+
+On the Nexus instance subscribing to the publishing server you have to
+create a new proxy repository to hold the synchronized artifacts. The
+Smart Proxy configuration for this repository displayed in
+<<fig-smart-proxy-repo-list-proxy>> allows you to activate the Receive
+Updates check-box in the Subscribe configuration section.
+
+[[fig-smart-proxy-repo-list-proxy]]
+.Smart Proxy Settings for a Proxy Repository
+image::figs/web/smart-proxy-repo-list-proxy.png[scale=60]
+
+With a working trust established between the publishing and
+subscribing Nexus servers the Smart Proxy configuration of the proxy
+repository on the subscribing Nexus will display connection status as
+displayed in <<fig-smart-proxy-subscribe-connected>>.
+
+[[fig-smart-proxy-subscribe-connected]]
+.Subscription with Smart Proxy Connected
+image::figs/web/smart-proxy-subscribe-connected.png[scale=60]
+
+[[smartproxy-smart_proxy_security_and_messages]]
+=== Smart Proxy Security and Messages
+
+Smart Proxy messages are started with an initial handshake via
+HTTP. This handshake allows the two server to exchange their keys and
+confirm that they are configured with a valid trust relationship to
+communicate. After successful handshake, messages are sent in the
+middleware layer and can be configured to be sent via SSL encrypted
+messages. 
+ 
+The following events are broad-casted via Smart Proxy.
+
+- a new artifact has been deployed
+- an artifact has been deleted
+- an artifact has been changed
+- repository cache or a part of it has been cleared
+- Smart Proxy publishing has been disabled
+
+On the recipient side this will cause the changes to be applied
+mimicking what happened on the publisher. Only deletion will not be
+executed on the client, but ignored. If Smart Proxy is disabled the
+subscription will be stopped.
+
+[[smartproxy-example_setup]]
+=== Example Setup
+
+In our example we are going to configure Smart Proxy for two Nexus
+servers, Server A and Server B. These servers provide proxying of
+external repositories like the Central Repository to the two
+development teams Team A and Team B. Both team deploy SNAPSHOT as well
+as release artifacts to their own Server A and Server B in the
+respective release and snapshot repositories. These snapshot and
+release artifacts are needed by the other team respectively. In
+addition both servers receive third party artifacts from another
+company wide Nexus instance for third party artifacts called Server T.
+
+////
+Tim to make a omnigraffle image for this maybe
+////
+To configure Smart Proxy between these three servers you have to 
+
+- add the public key of Server A as trusted certificate to Server B
+  and Server T
+
+- add the public key of Server B as trusted certificate to Server A
+  and Server T
+
+- add the public key of Server T as trusted certificate to Server A
+  and Server B
+
+- set up the third party repository on Server T to publish updates
+
+- set up a new third party proxy repository on Server A and Server B
+  and configure it to receive updates from Server T
+
+- set up a new snapshot and a new release proxy repository on Server A
+  that proxies Server B
+
+- set up a new snapshot and a new release proxy repository on Server B
+  that proxies Server A
+
+- add all the new proxy repositories to the public group on Server A
+  and Server B
+
+- configure the snapshot and release hosted repositories on Server A
+  and Server B to publish updates
+
+- configure the new snapshot and new release proxy repositories on
+  Server A and Server B to receive updates
+
+With this setup the snapshot and release repositories of both servers
+will be available to both teams and always be synchronized and up to
+date. In addition both servers will have up to date content in their
+third party proxy repository.  
