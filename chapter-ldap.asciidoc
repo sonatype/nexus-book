@@ -3,33 +3,35 @@
 
 === Introduction 
 
-Nexus Open Source has a Lightweight Directory Access Protocol
-(LDAP) Authentication realm which provides Nexus with the
-capability to authenticate users against an LDAP server.  In
-addition to handling authentication, Nexus can be configured to map
-Nexus roles to LDAP user is a member of a group that matches
-the ID of a Nexus role, Nexus will grant that user the matching Nexus
-Role. In addition to this highly configurable user and group mapping
+Nexus Open Source has a Lightweight Directory Access Protocol (LDAP)
+Authentication realm which provides Nexus with the capability to
+authenticate users against an LDAP server.  In addition to handling
+authentication, Nexus can be configured to map Nexus roles to LDAP
+user groups. If a user is a member of a group that matches the ID of a
+Nexus role, Nexus will grant that user the matching Nexus role. In
+addition to this highly configurable user and group mapping
 capability, Nexus can augment LDAP group membership with
 Nexus-specific user-role mapping.
 
-Nexus Professional offers LDAP support features for enterprise LDAP
-deployments including the ability to cache authentication information,
-support for multiple LDAP servers and backup mirrors, the ability to test
-user logins, support for common user/group mapping templates, and the
-ability to support more than one schema across multiple servers.
+In addition to the basic LDAP support from Nexus Open Source, Nexus
+Professional offers LDAP support features for enterprise LDAP
+deployments. These include the ability to cache authentication information,
+support for multiple LDAP servers and backup mirrors, the ability to
+test user logins, support for common user/group mapping templates, and
+the ability to support more than one schema across multiple servers.
 
 [[ldap-sect-enabling]]
 === Enabling the LDAP Authentication Realm
 
-Authentication realm, you will need to add the Nexus LDAP
-Authentication Realm to the Selected Realms in the Security section of
-the Server configuration panel. To load the Server configuration
-panel, click on the Server link under Administration in the Nexus
-menu. Once you have the Server configuration panel loaded, select
-Enterprise LDAP Authentication Realm (or OSS LDAP Authenication Realm) in the Available Realms
-list under the Security section and click the Add button (or Left
-Arrow) as shown in <<fig-ldap-selecting-realm>>.
+In order to use LDAP authentication in Nexus, you will need to add the
+Nexus LDAP Authentication Realm to the Selected Realms in the Security
+section of the Server configuration panel. To load the Server
+configuration panel, click on the Server link under Administration in
+the Nexus menu. Once you have the Server configuration panel loaded,
+select Enterprise LDAP Authentication Realm (or OSS LDAP Authenication
+Realm) in the Available Realms list under the Security section and
+click the Add button (or Left Arrow) as shown in
+<<fig-ldap-selecting-realm>>.
 
 [[fig-ldap-selecting-realm]]
 .Adding the LDAP Authentication Realm to Available Realms
@@ -48,29 +50,31 @@ Next, click on the Save button at the bottom of the Server
 configuration panel to have the change applied.
 
 [[fig-ldap-move-realm-after-xml]]
-.Move the LDAP Authentication Realm to the Top of Selected
+.Move the LDAP Authentication Realm after the XML Realms
 image::figs/web/ldap_moving_ldap_realm_after_xml.png[scale=60]
       
 [[ldap-sect-configuring]]
 === Configuring Nexus LDAP Integration
 
-To configure LDAP integration, click on the LDAP Configuration link in
-the Nexus menu as shown in <<fig-ldap-config-link>>. LDAP
-Configuration is under Security in the Nexus menu.
+To configure LDAP integration, click on the Enterprise LDAP menu item
+in Nexus Professional or the LDAP Configuration menu item in Nexus
+Open Source in the Security menu as shown in
+<<fig-ldap-config-link>>. 
 
 [[fig-ldap-config-link]]
-.LDAP Configuration Option in the Nexus Security Menu
+.Enterprise LDAP Option in the Security Menu
 image::figs/web/ldap_loading_ldap_configuration_panel.png[scale=60]
 
-Clicking on the LDAP Configuration link will load the LDAP
-Configuration panel.  The following sections outline the
+Clicking on the Enterprise LDAP/LDAP Configuration menu item will load
+the LDAP Configuration panel. The following sections outline the
 configuration options available in the LDAP Configuration Panel.
 
 [[ldap-sect-connect-auth]]
 === Connection and Authentication
 
-The following figure shows Nexus configured to connect to an LDAP
-server running on localhost port 10389 using the search base of
+<<fig-ldap-connection-authentication>> shows a simpligied LDAP
+configuration for Nexus configured to connect to an LDAP server
+running on localhost port 10389 using the search base of
 "ou=system". On a more standard installation, you would likely not
 want to use Simple Authentication as it sends the password in clear
 text over the network, and you would also use a search base which
@@ -78,44 +82,41 @@ corresponds to your organization's top-level domain components such as
 "dc=sonatype,dc=com".
 
 [[fig-ldap-connection-authentication]]
+.A Simple LDAP Connection and Authentication Setup
 image::figs/web/ldap_configure_connection_and_authentication.png[scale=60]
 
-<<tbl-ldap-connection-config>> and <<tbl-ldap-authentication-config>>
-contain detailed descriptions of the configuration fields in both the
-Connection and Authentication sections of the LDAP Configuration
-panel.
+The following parameters can be configured in the Connection and
+Authentiation sections of the LDAP Configuration panel.
 
-[[tbl-ldap-connection-config]]
-.Connection Configuration for LDAP Integration
-[cols="2,5",options="header"]
-|====
-|Field Name|Description
-|Protocol| Valid values in this drop-down are ldap and ldaps which correspond to the Lightweight Directory Access Protocol and the Lightweight Directory Access Protocol over SSL
-|Hostname| The hostname or IP address of the LDAP
-|Port|The port on which the LDAP server is listening. Port 389 is the default port for the ldap protocol, and port 636 is the default port for the ldaps
-|Search Base| The search base is the Distinguished Name (DN) to be appended to the LDAP. The search base usually corresponds to the domain name of an organization. For example, the search base on the Sonatype LDAP server is "dc=sonatype,dc=com"
-|====
+Protocol:: Valid values in this drop-down are ldap and ldaps which
+correspond to the Lightweight Directory Access Protocol and the
+Lightweight Directory Access Protocol over SSL.
 
-[[tbl-ldap-authentication-config]]
-.Authentication Configuration for LDAP Integration
-[cols="2,5",options="header"]
-|====
-|Field Name|Description
-|Authentication Method|
-Nexus provides four distinct authentication methods to be used when
-connecting to the LDAP Server:
+Hostname:: The hostname or IP address of the LDAP
 
-Simple Authentication:: Simple authentication is not recommended for
+Port:: The port on which the LDAP server is listening. Port 389 is the
+default port for the ldap protocol, and port 636 is the default port
+for the ldaps.
+
+Search Base:: The search base is the Distinguished Name (DN) to be
+appended to the LDAP query. The search base usually corresponds to the
+domain name of an organization. For example, the search base on the
+Sonatype LDAP server could be "dc=sonatype,dc=com".
+
+Authentication Method:: Nexus provides four distinct authentication
+methods to be used when connecting to the LDAP Server:
+
+Simple Authentication;; Simple authentication is not recommended for
 production deployments not using the secure ldaps protocol as it sends
 a clear-text password over the network.
 
-Anonymous Authentication:: Used when Nexus only needs read-only access
+Anonymous Authentication;; Used when Nexus only needs read-only access
 to non-protected entries and attributes when binding to the LDAP
 
-Digest-MD5:: This is an improvement on the CRAM-MD5 authentication
+Digest-MD5;; This is an improvement on the CRAM-MD5 authentication
 method. For more information, see http://www.ietf.org/rfc/rfc2831.txt
 
-CRAM-MD5:: The Challenge-Response Authentication Method (CRAM) based
+CRAM-MD5;; The Challenge-Response Authentication Method (CRAM) based
 on the HMAC-MD5 MAC algorithm. In this authentication method, the
 server sends a challenge string to the client, the client responds
 with a username followed by a Hex digest which the server compares to
@@ -125,31 +126,25 @@ For a full discussion of LDAP authentication approaches, see
 http://www.ietf.org/rfc/rfc2829.txt and
 http://www.ietf.org/rfc/rfc2251.txt
 
-|SASL Realm|
-
-The Simple Authentication and Security Layer (SASL) Realm to connect
+SASL Realm:: The Simple Authentication and Security Layer (SASL) Realm to connect
 with. The SASL Realm is only available if the authentication method is
 Digest-MD5 or CRAM-MD5.
 
-|Username|
-
-Username of an LDAP User to connect (or bind) with. This is a
-Distinguished Name of a user who has read access to all users and
+Username:: Username of an LDAP User to connect (or bind) with. This is
+a Distinguished Name of a user who has read access to all users and
 groups
 
-|Password|
-
-Password for an Administrative LDAP User
-
-|====
+Password:: Password for an Administrative LDAP User
 
 [[ldap-sect-user-group-mapping]]
 === User and Group Mapping
 
-The LDAP Configuration panel contains sections to manage User Element
+The LDAP Configuration panel in Nexus Open Source contains sections to manage User Element
 Mapping and Group Element Mapping in the User and Group
-Settings tab. The User & Group Templates drop down displayed in
-<<fig-ldap-user-group_templates>> will adjust the rest of the user
+Settings tab. These configuration sections are located in a separate
+panel called User and Group Settings in Nexus Professional. This panel
+provided a User & Group Templates drop down displayed in
+<<fig-ldap-user-group_templates>> that will adjust the rest of the user
 interface based on your template selection.
 
 [[fig-ldap-user-group_templates]]
@@ -194,7 +189,12 @@ E-Mail Attribute:: This is the attribute of the Object class which
 supplies the email address of the user. Nexus will use this attribute
 when it needs to send an email to a user.
 
-
+Password Attribute:: This control is only available in Nexus Open
+Source and replaced by the Use Password Attribute section from
+<<fig-ldap-use-password-attribute>> in Nexus Professional. It can be
+used to configure the Object class, which supplies the password
+("userPassword").
+ 
 [[fig-ldap-user-element-mapping]]
 .User Element Mapping 
 image::figs/web/ldap_user_element_mapping.png[scale=60]
@@ -280,11 +280,15 @@ Nexus LDAP Integration to refer to an attribute on the User entry to
 derive group membership. To do this, select Dynamic Groups in the
 Group Type field in Group Element Mapping.
 
-Once you have configured the User & Group Settings you can check and
-save your configuration or cancel changes with the buttons provided at
-the bottom of the user interface: Check User Mapping, Check Login,
-Save and Cancel as visible in
-<<fig-ldap-group-element-mapping-static>>.
+Once you have configured the User & Group Settings you can check the
+correctness of you user mapping by pressing the Check ser Mapping
+button visible in <<fig-ldap-group-element-mapping-static>>.
+
+Nexus Professional offers a button "Check Login" to check an
+individual users login and can be used as documented in
+<<ldap-sect-testing-user-login>>.
+
+Press the Save button after successful configuration.
 
 
 [[ldap-sect-mapping-active-directory]]
@@ -646,6 +650,7 @@ shown in the following figure.
 .Using User &amp; Group Mapping Templates
 image::figs/web/ldap-templates.png[scale=60]
 
+[[ldap-sect-testing-user-login]]
 ==== Testing a User Login
 
 Nexus Professional provides you with the ability to test a user
@@ -668,6 +673,8 @@ via the administrative interface.
 .Supply a User's Login Credentials
 image::figs/web/ldap-login-credentials.png[scale=60]
 
+////
 /* Local Variables: */
 /* ispell-personal-dictionary: "ispell.dict" */
 /* End:             */
+////
