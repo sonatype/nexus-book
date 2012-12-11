@@ -13,4 +13,3 @@ cp -r site/css/book.css target/site/reference/css
 
 cp target/book-nexus.pdf target/site/pdf/nxbook-pdf.pdf
 python template.py
-rsync -e ssh -av target/site/* deployer@marketing01.int.sonatype.com:/var/www/domains/sonatype.com/www/shared/books/nexus-book/
