@@ -458,29 +458,25 @@ perform the following operations as the root user:
 .. Change NEXUS_HOME to the absolute folder location e.g. 
 +++ NEXUS_HOME="/usr/local/nexus"+++
 
-.. Optionally change PIDDIR to /var/run
-
-.. If Java is not on the default path for the user running Nexus, add
-a JAVA_HOME variable which points to your local Java installation and 
-add a '+++$JAVA_HOME/bin+++' to the PATH
-
-. (Recommended) Set the RUN_AS_USER to "nexus" or any users with
+.. Set the RUN_AS_USER to "nexus" or any users with
   restricted rights you want to run the service. You should not be
-  running Nexus as root. If you do this, you will
-  need to:
+  running Nexus as root. 
 
-.. Create a nexus user
-
-.. Change the Owner and Group of your nexus install directory
-   to nexus
-
-NOTE: If you set the "RUN_AS_USER" variable, you'll have to change the
-"pid" directory to point to a directory where this user has read/write
+.. Change PIDDIR to a directory where this user has read/write
 permissions. In most Linux distributions, /var/run is only writable by
-root. The properties that would need to be added to customize the PID
+root. The properties you need to add to customize the PID
 file location is "wrapper.pid". For more information about this
 property and how it would be configured in wrapper.conf, see:
 http://wrapper.tanukisoftware.com/doc/english/properties.html
+
+. Create a "nexus" user with sufficient access rights to run the service
+
+. Change the Owner and Group of your nexus directories
+   to "nexus"
+
+. If Java is not on the default path for the user running Nexus, add
+a JAVA_HOME variable which points to your local Java installation and 
+add a '+++$JAVA_HOME/bin+++' to the PATH
 
 ++++
 <?dbhtml-include href="promo_nexusService.html"?>

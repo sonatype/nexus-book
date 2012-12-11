@@ -7,8 +7,8 @@ do
  if [[ ! -e $DEST_IMAGE || $IMAGE -nt $DEST_IMAGE ]] 
  then
      convert $IMAGE -verbose -compress jpeg \
-            -quality 80 -bordercolor None -border 10x10 \
-            \( +clone -background black -shadow 80x3+5+5 \) \
+            -quality 80 -bordercolor None -border 3x3 \
+            \( +clone -background black -shadow 80x1+1+1 \) \
             -compose DstOver -composite -compose Over \
             $DEST_IMAGE
  fi
