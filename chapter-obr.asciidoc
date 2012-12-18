@@ -1,0 +1,199 @@
+[[osgi]]
+== OSGi Bundle Repositories
+
+[[osgi-sect-intro]]
+=== Introduction
+
+Nexus Professional supports the OSGi Bundle Repository format. The
+OSGi Bundle format is defined by the http://www.osgi.org/Download/File?url=/download/rfc-0112_BundleRepository.pdf[OSGi
+RFC 112 "Bundle Repository"]. It is a format for the
+distribution of OSGi "bundles" which includes any components that are
+described by the OSGi standards set forth in RFC 112. An OBR
+repository has a single XML file which completely describes the
+contents of the entire repository.  Nexus Professional can read this
+OBR repository XML and create proxy repositories which can download
+OSGi bundles from remote OBR repositories.  Nexus Professional can
+also act as a hosting platform for OSGi bundles, you can configure
+your builds to publish OSGi bundles to Nexus Professional, and then
+you can expose these bundle repositories to internal or external
+developers using Nexus Professional as a publishing and distribution
+platform.
+
+Nexus Professional can also act as a bridge between Maven repositories
+and OSGi bundle repositories. When you configure a virtual OBR
+repository which uses a Maven 2 repository as a source repository,
+Nexus Professional will expose artifacts with the appropriate metadata
+from the Maven repository as OSGi bundles. In this way, you can unify
+your OSGi and non-OSGi development efforts and publish artifacts with
+the appropriate OSGi metadata to Nexus Professional. Non-OSGi clients
+can retrieve software artifacts from a Maven repository, and
+OSGi-aware clients can retrieve OSGi bundles from a virtual OBR
+repository.  
+
+The following sections detail the procedures for creating and managing
+OBR repositories.
+
+[[osgi-sect-proxy]]
+=== Proxy OSGi Bundle Repositories
+
+Nexus can proxy an OSGi Bundle Repository, using the OBR
+repository XML as the remote storage location. To create a new proxy OBR
+repository:
+
+. Login as an Administrator.
+
+. Click Repositories in the Left Navigation Menu.
+
+. Click the Add.. button above the list of Nexus repositories,
+and choose Proxy repository from the drop-down of repository
+types.
+
+. In the New Proxy Repository window,
+
+.. Select OBR as the Provider.
+
+.. Supply an id and a repository name.
+
+.. Enter the URL to the remote repository OBR XML as the
+Remote Storage location.
+
+.. Click Save.
+
+<<fig-obr-create-proxy>> provides some sample
+configuration used to create a proxy of the Apache Felix OBR repository.
+
+[[fig-obr-create-proxy]]
+.Creating an OSGi Bundle Proxy Repository
+image::figs/web/obr_create_proxy.png[scale=60]
+
+To verify that the OBR proxy repository has been properly
+configured, you can then load the OBR XML from Nexus Professional. If
+Nexus Professional is properly configured, you will be able load the
+obr.xml by navigating to the
+obr.xml
+directory:
+
+----
+$curl http://localhost:8081/nexus/content/repositories/felix-proxy/.meta/obr.xml
+<?xml version='1.0' encoding='utf-8'?>
+<?xml-stylesheet type='text/xsl' href='http://www2.osgi.org/www/obr2html.xsl'?>
+<repository name='Felix OBR Repository' lastmodified='1247493075615'>
+    <resource id='org.apache.felix.javax.servlet/1.0.0' 
+              presentationname='Servlet 2.1 API' 
+              symbolicname='org.apache.felix.javax.servlet' 
+    uri='../bundles/org.apache.felix.javax.servlet-1.0.0.jar' 
+              version='1.0.0'>
+        <description>
+            Servlet 2.1 API
+        </description>
+        <documentation>
+            http://www.apache.org/
+        </documentation>
+        <license>
+            http://www.apache.org/licenses/LICENSE-2.0.txt
+        </license>
+        ...
+----
+
+[[osgi-sect-hosted]]
+=== Hosted OSGi Bundle Repositories
+
+Nexus can host an OSGi Bundle Repository, providing you
+with a way to publish your own OBR bundles. To create an OBR hosted
+repository:
+
+. Login as an Administrator.
+
+. Click Repositories in the Left Navigation Menu.
+
+. Click the Add.. button above the list of Nexus repositories,
+and choose Hosted repository from the drop-down of repository
+types.
+
+. In the New Hosted Repository window,
+
+.. Select OBR as the Provider.
+
+. Supply an id and a repository name.
+
+. Click Save.
+
+<<fig-obr-create-hosted>> provides some sample
+configuration used to create a hosted OBR repository.
+
+[[fig-obr-create-hosted]]
+.Creating a Hosted OSGi Bundle Repository
+image::figs/web/obr_create_hosted.png[scale=60]
+
+[[osgi-sect-virtual]]
+=== Virtual OSGi Bundle Repositories
+
+Nexus Professional can also be configured to convert a
+traditional Maven repository into an OSGi Bundle repository using a
+virtual OBR repository. To configure a virtual OBR repository:
+
+. Login as an Administrator.
+
+. Click Repositories in the Left Navigation Menu.
+
+. Click the Add.. button above the list of Nexus repositories,
+and choose Virtual repository from the drop-down of repository
+types.
+
+. In the New Virtual Repository window,
+
+.. Select OBR as the Provider.
+
+.. Select another repository's ID in the Source Nexus
+Repository ID drop-down
+
+.. Supply an id and a repository name.
+
+.. Click Save.
+
+The next figure provides some sample
+configuration used to create a virtual OBR repository which transforms
+the proxy repository for Maven Central into an OBR repository.
+
+[[fig-obr-create-virtual]]
+.Creating a Virtual OSGi Bundle Repository from a Maven Repository
+image::figs/web/obr_create_virtual.png[scale=60]
+
+[[osgi-sect-grouping]]
+=== Grouping OSGi Bundle Repositories
+
+Just like Nexus can group Maven repositories, Eclipse update
+sites, and P2 repositories, Nexus can also be configured to group OSGi
+Bundle Repositories. To group OSGi bundle repositories:
+
+. Login as an Administrator.
+
+. Click Repositories in the Left Navigation Menu.
+
+. Click the Add.. button above the list of Nexus repositories, and
+choose Repository Group from the drop-down of repository types.
+
+. In the New Repository Group window,
+
+.. Select OBR Group as the Provider.
+
+.. Drag and drop one or more hosted, proxy, or virtual OSGi
+Bundle repositories into the new group.
+
+.. Supply an id and a repository name.
+
+.. Click Save.
+
+<<fig-obr-create-group>> shows an example of the a
+new repository group which contains a hosted OSGi Bundle repository, a
+virtual OSGi Bundle repository, and a OSGi Bundle proxy repository.
+
+[[fig-obr-create-group]]
+.Creating a new OSGi Bundle Repository Group
+image::figs/web/obr_create_group.png[scale=60]
+
+////
+/* Local Variables: */
+/* ispell-personal-dictionary: "ispell.dict" */
+/* End:             */
+////

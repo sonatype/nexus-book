@@ -1,0 +1,565 @@
+[[plugins]]
+== Using Nexus Plugins
+
+Nexus Open Source and Nexus Professional are built using a plugin
+architecture, where Professional simply includes additional
+plugins. Besides the default installed plugins you can install optional
+plugins shipped with Nexus as well as plugins you or somebody else
+created.
+ 
+[[install-additional-plugins]]
+=== Installing Additional Plugins
+
+Optional plugins supplied by Sonatype can be found in the directory
++++$NEXUS_HOME/nexus/WEB-INF/optional-plugins+++. To install any of
+these simply copy the folder containing the desired plugin into
++++$NEXUS_HOME/nexus/WEB-INF/plugin-repository+++. 
+
+WARNING: When updating Nexus you will have to redo the install of any
+optinal plugins using the newest version shipping with the download of
+the new Nexus version. Any configuration of the plugin will be
+preserved from one version to the other.
+
+Plugins supplied by third parties like the
+http://code.google.com/p/nexus-yum-plugin/[Nexus Yum Plugin] and
+others, are installed by copying the folder with the plugin code into
++++sonatype-work/nexus/plugin-repository+++.
+
+After a restart of Nexus the new plugins will be active and ready
+to use. Upgrades are done by simply copying over the newer plugin and
+removing the older one.
+
+Plugins can be removed by deleting the respective folder in the
+plugin-repository and restarting Nexus.
+
+[[nexus-outreach-plugin]]
+=== Nexus Outreach Plugin
+
+The Nexus Outreach Plugin is installed by default in Nexus Open Source
+and Nexus Professional. It allocates space in the user
+interface left navigation and welcome page for linking to further
+documentation and support resources. This data is retrieved from Sonatype
+servers.
+
+In a case where this outgoing traffic from your Nexus instance or the
+resulting documentation and links are not desired, the plugin can be
+disabled. The plugin can be disabled by disabling the advanced
+'Outreach : Management' capability in the Capabilities section found
+in the Administration left hand navigation menu.
+
+You can safely remove the plugin as well without any other negative side effects. To do so
+simply remove the 'nexus-outreach-plugin-X.Y.Z' folder in
+'$NEXUS_HOME/nexus/WEB-INF/plugin-repository/' and restart your Nexus
+instance.
+
+[[custom-metadata-plugin]]
+=== Custom Metadata Plugin
+
+The custom metadata plugin is an optional plugin that comes as part of
+any Nexus download. It allows you to view, edit and search for
+additional metadata about any artifact in your Nexus repositories.
+
+The directory containing the plugin code is called
+nexus-custom-metadata-plugin-X.Y.Z. Install the plugin following the
+instructions in <<install-additional-plugins>>.
+
+==== Viewing Artifact Metadata
+
+The Custom Metadata Plugin gives you the ability to view artifact
+metadata. When browsing repository storage or a repository index,
+clicking on an artifact will load the Artifact Information panel.
+Selecting the Artifact Metadata tab will display the interface shown
+in <<fig-using-viewing-metadata>>.
+
+[[fig-using-viewing-metadata]]
+.Viewing Artifact Metadata
+image::figs/web/meta_existing-meta-value.png[scale=60]
+
+Artifact metadata consists of a key, a value, and a namespace.
+Existing metadata from an artifact's POM is given a urn:maven
+namespace, and custom attributes are stored under the urn:nexus/user
+namespace.
+
+==== Editing Artifact Metadata
+
+The Custom Metadata Plugin gives you the ability to add custom
+attributes to artifact metadata. To add a custom attribute, click on
+an artifact in Nexus, and select the Artifact Metadata tab. On the
+Artifact Metadata tab, click on the Add... button and a new row will
+be inserted into the list of attributes. Supply a key and value and
+click the Save button to update an artifact's
+metadata. <<fig-using-editing-metadata>> shows the Artifact Metadata
+panel with two custom attributes: "approvedBy" and "approved".
+
+[[fig-using-editing-metadata]]
+.Editing Artifact Metadata
+image::figs/web/meta_setting-meta-value.png[scale=60]
+
+==== Searching Artifact Metadata
+
+The Custom Metadata Plugin provides you with the ability to configure
+custom artifact metadata and search for artifacts with specific
+metadata. To search for artifacts using metadata, click on the
+Advanced Search link directly below the search field in the Nexus
+application menu to open the Search panel. Once in the search panel,
+click on the Keyword Search and click on Metadata Search in the search
+type drop-down as shown in <<fig-using-search-metadata>>.
+
+[[fig-using-search-metadata]]
+.Searching Artifact Metadata
+image::figs/web/meta_search-selection.png[scale=60]
+
+Once you select the Metadata Search you will see two search fields and
+an operator drop-down. The two search fields are the key and value of
+the metadata you are searching for. The key corresponds to the key of
+the metadata you are searching for, and the value contains the value
+or value range you are searching for. The operator drop-down can be set
+to Equals, Matches, Bounded, or Not Equal.
+
+.Metadata Search Results for Custom Metadata
+image::figs/web/meta_search-function.png[scale=60]
+
+Once you locate a matching artifact in the Metadata Search interface,
+click on the artifact and then select the Artifact Metadata to examine
+an artifacts metadata as shown in <<fig-using-search-metadata-results>>.
+
+[[fig-using-search-metadata-results]]
+.Metadata Search Results for Custom Metadata
+image::figs/web/meta_search-result-0.png[scale=60]
+
+
+[[user-account]]
+=== User Account Plugin
+
+Nexus Professional's User Account Plugin allows anonymous users to
+sign-up for a Nexus account without administrative intervention.  This
+"self-serve" capability for user account creation is especially
+important when an open source project is using Nexus as a primary
+means for distribution. In such an environment, there may be hundreds
+of Nexus users who all need a basic level of read-only access, and
+making these users wait for an administrator to create an account
+makes little sense. In such a setting, anyone can create an account,
+activate the account via a verification email, and then access a
+repository with a default level of access you can
+define.
+
+[[user-account-sect-installation]]
+==== Installing the User Account Plugin
+
+The user account plugin is an optional plugin that comes as part of the
+Nexus Professional download. The directory containing the plugin code is called
+nexus-user-account-plugin-X.Y.Z. Install the plugin following the
+instructions in <<install-additional-plugins>>.
+ 
+[[user-account-sect-configuring]]
+==== Configuring the User Account Plugin
+
+After a restart of Nexus the installed plugin will be available for
+use but still be deactivated.  To configure the User Account Plugin,
+click on Server under the Administration section of the Nexus menu,
+and scroll down to the section named "User Sign Up". The User Sign Up
+section is shown in <<fig-user-account-user-sign-up-preference>>.
+
+[[fig-user-account-user-sign-up-preference]]
+.Configuring the User Account Plugin
+image::figs/web/user-account_user-sign-up-preference.png[scale=60]
+
+To activate the User Sign Up feature, set the "User Sign Up" feature
+to "On". This will expose a "Sign Up" link next to the "Log In" link
+in the Nexus user interface. The Selected Roles in this configuration
+section are the default roles assigned to users who successfully
+signed up for an account.
+
+In addition it is necessary for the anonymous user to have the role
+"UI: User Account Sign Up" assigned. This should be automatically
+configured during the plugin install. You can use the Role Tree tab for
+the anonymous user to inspect if that is correctly configured, and if
+necessary add the role
+
+[[user-account-sect-sign-up]]
+==== Signing Up for an Account
+
+Once User Sign Up has been activated via the Server settings as shown
+in <<user-account-sect-configuring>>, users will see a Sign Up link
+next to the Log In link in the top right hand corner of the Nexus
+interface. Clicking on this Sign Up link will display the Nexus Sign
+Up dialog shown in <<fig-user-account-sign-up-form>>. This form
+accepts a username, password, the first and last name of the new user,
+and an email account. It also asks the users to type in some text from
+a captcha form element. If a user cannot read the text in the captcha,
+they can click on the captcha to refresh it with new text.
+
+[[fig-user-account-sign-up-form]]
+.Nexus Sign Up Form
+image::figs/web/user-account_sign-up-form.png[scale=60]
+
+Once the new user clicks on the Sign Up button, they will receive a
+confirmation dialog which instructs them to check for an activation
+email.
+
+[[fig-user-account-sign-up-confirm]]
+.Nexus Sign Up Confirmation
+image::figs/web/user-account_sign-up-succeed.png[scale=60]
+
+The user will then receive an email containing an activation
+link. 
+
+WARNING: The SMTP settings in your Nexus Server configuration need to
+be set up for the activation email to be sent successfully.
+
+When a user signs up for a Nexus account, the newly created
+account is disabled until they click on the activation link contained
+in this email. A sample of the activation email is shown in <<fig-user-account-activation-email>>.
+
+[[fig-user-account-activation-email]]
+.Nexus Activation Email
+image::figs/web/user-account_activation-email.png[scale=50]
+
+Upon successful login from the activation email link, the user will be
+directed to the Summary panel of the users Profile.
+
+NOTE: The example activation email in <<fig-user-account-activation-email>>, points to
+localhost:8081. You can change this URL by changing the Base URL
+setting in the Application Server Settings section of the Server
+configuration.  To change this setting, click on the Server link under
+Administration in the Nexus menu.
+
+[[user-account-sect-manual-activate]]
+==== Manual Activation of New Users
+
+If a user does not receive the activation email after signing up for a
+new account, an Administrator may need to manually activate a new
+user. To do this, go to the list of Nexus users by clicking on the
+Users link under Security in the Nexus menu. Locate and select the new
+user in the list of Nexus users, and change the Status from Disabled
+to Enabled as shown in <<fig-user-account-activation>>.
+
+[[fig-user-account-activation]]
+.Manually Activating a Signed Up User
+image::figs/web/user-account_sign-up-admin-activate.png[scale=60]
+
+[[user-account-sect-default-user]]
+==== Modifying Default User Permissions
+
+The default user permissions in the User Sign Up feature only includes
+"UI: Base UI Privileges". If a user signs up with just this simple
+permission, the only thing they will be able to do is login, change
+their password, and logout. <<fig-user-account-base-ui>>, shows the
+interface a user would see after logging in with only the base UI
+privileges.
+
+[[fig-user-account-base-ui]]
+.User Interface with only the Base UI Privileges
+image::figs/web/user-account_sign-up-default-permissions.png[scale=20]
+
+To provide some sensible default permissions, click on the Server
+under the Administration section of the Nexus menu and scroll down to
+the User Sign Up section of the Server settings. Make sure that the
+selected default roles for new users contain some ability to browse,
+search, and view repositories.
+
+[[fig-user-account-default-roles]]
+.Selecting Default Roles for New Users
+image::figs/web/user-account_sign-up-more-default-permissions.png[scale=60]
+
+WARNING: <<fig-user-account-default-roles>> shows a
+default User Sign Up role containing the Nexus Deployment Role. If
+your server were available to the public this wouldn't be a wise
+default role as it would allow anyone to sign up for an account,
+activate an account, and start publishing artifacts to hosted
+repositories with little or no oversight. Such a default role may only
+make sense if you are running an internal, corporate instance of Nexus
+Professional and you are comfortable granting any developer in the
+organization deployment permissions.
+
+[[crowd]]
+=== Nexus Atlassian Crowd Plugin
+
+Atlassian's Crowd is a single sign-on and identity management product
+that many organizations use to consolidate user accounts and control
+which users and groups have access to which applications. Nexus
+Professional contains an optional security plugin that allows you to
+configure Nexus to authenticate against an Atlassian Crowd
+instance. For more information about Atlassian Crowd, go to
+http://www.atlassian.com/software/crowd/
+
+[[crowd-sect-installation]]
+==== Installing the Crowd Plugin
+
+The Nexus Atlassian Crowd plugin is an otional plugin that comes as part of any
+Nexus Professional download. The directory containing the plugin code
+is called enterprise-crowd-plugin-X.Y.Z. Install the plugin following
+the instructions in <<install-additional-plugins>>.
+ 
+[[crowd-sect-config]]
+==== Configuring the Crowd Plugin
+
+Once the Atlassian Crowd plugin is installed, restart Nexus and login
+as a user with Administrative privileges. To configure the Crowd
+plugin, click on the Crowd Configuration in the Security section of
+the Nexus menu as shown in <<fig-crowd-menu-link>>.
+
+[[fig-crowd-menu-link]]
+.Crowd Menu Link in the Security Section of the Nexus Menu
+image::figs/web/crowd_menu-link.png[scale=60]
+
+Clicking on the Crowd Configuration link will load the form shown in
+<<fig-crowd-config>>. This configuration panel contains
+all of the options that need to be configured to connect your Nexus
+instance to Crowd for authorization and authentication.
+
+[[fig-crowd-config]]
+.Crowd Configuration Panel
+image::figs/web/crowd_server-config.png[scale=60]
+
+The following sections outline all of the settings in the Crowd
+Configuration Pane.
+
+[[crowd-sect-access]]
+==== Crowd Access Settings
+
+The Access Settings section of the Crowd configuration is shown in
+<<fig-crowd-access-settings>>. This section contains
+the following fields:
+
+Application Name:: This field contains the application name of a Crowd
+application. This value should match the value in the Name field of
+the form shown in <<fig-crowd-app>>.
+
+Application Password:: This field contains the application password of
+a Crowd application. This value should match the value in the Password
+field of the form shown in <<fig-crowd-app>>.
+
+Crowd Server URL:: This is the URL of the Crowd Server, this URL
+should be accessible to the Nexus process as it is the URL that Nexus
+will use to connect to Crowd's SOAP services.
+
+Authentication Interval:: This is the number of minutes that a Crowd
+authentication is valid for. This value is in units of minutes, and a
+value of 30 means that Nexus will only require re-authentication if
+more than 30 minutes have elapsed since a previously authenticated
+user has accessed Nexus.
+
+Use Groups:: If clicked, Use Groups allows Nexus to use Crowd Groups
+when calculating Nexus Roles. When selected, you can map a Nexus Role
+to a Crowd Group.
+
+[[fig-crowd-access-settings]]
+.Crowd Access Settings
+image::figs/web/crowd_server-config-access-settings.png[scale=60]
+
+===== Crowd HTTP Settings
+
+You can control the concurrency of connections to Crowd in the HTTP
+Settings section shown in <<fig-crowd-http-settings>>. If you have a
+high-traffic instance of Nexus, you will want to limit the number of
+simultaneous connections to the Crowd server to a reasonable value
+like 20. The HTTP Timeout specifies the number of milliseconds Nexus
+will wait for a response from Crowd. A value of zero for either of
+these properties indicates that there is no limit to either the number
+of connections or the timeout.
+
+[[fig-crowd-http-settings]]
+.Crowd HTTP Settings
+image::figs/web/crowd_server-config-http-settings.png[scale=60]
+
+===== Crowd HTTP Proxy Settings
+
+If your Nexus installation is connecting to Crowd via an HTTP Proxy
+server, the HTTP Proxy Settings section of the Crowd Configuration
+allows you to specify the host, port, and credentials for a HTTP Proxy
+server. The HTTP Proxy Settings section is shown in <<fig-crowd-http-proxy>>.
+
+[[fig-crowd-http-proxy]]
+.Crowd HTTP Proxy Settings
+image::figs/web/crowd_server-config-http-proxy.png[scale=60]
+
+===== Miscellaneous Settings
+
+The miscellaneous settings section shown in
+<<fig-crowd-misc-settings>>, allows you to configure settings that
+control the name of the Single Sign-on cookie and the various keys
+that are used to retrieve values that relate to authentication and the
+auth token. This dialog is only relevant if you have modified optional
+Crowd settings in your $CROWD_HOME/etc/crowd.properties. For more
+information about customizing these options see the
+http://confluence.atlassian.com/display/CROWD/The+crowd.properties+File[Atlassian
+Crowd documentation]
+
+[[fig-crowd-misc-settings]]
+.Crowd Miscellaneous Settings
+image::figs/web/crowd_server-config-misc.png[scale=60]
+
+[[crowd-sect-auth-realm]]
+==== Adding the Crowd Authentication Realm
+
+Once you have configured Nexus to connect to Crowd, you must select
+the Crowd authorization realm from the list of available realms in
+your Nexus Server settings. <<fig-crowd-activate-realm>>, shows the
+Security settings section in the Nexus Server
+configuration. To load the Nexus server configuration panel, click on
+Server under Administration in the Nexus menu. Drag Crowd from the
+list of available realms to the list of selected realms and then save
+the Nexus server configuration.
+
+[[fig-crowd-activate-realm]]
+.Configuring the Crowd Authentication Realm
+image::figs/web/crowd_activate-realm.png[scale=60]
+
+[[crowd-sect-nx]]
+==== Configuring a Nexus Application in Crowd
+
+To connect Nexus to Atlassian's Crowd, you will need to configure
+Nexus as an application in Crowd. To do this, login to Crowd as a user
+with Administrative rights, and click on the Applications tab. Once
+you click on this tab, you should see two options under the
+Applications tab: Search Applications and Add Application. Click on
+Add Application to display the form shown in <<fig-crowd-app>>, and
+create a new application with the following values in the Details tab
+of the Add Application form:
+
+* Application Type: Generic Application
+
+* Name: nexus
+
+* Description: Sonatype Nexus Professional
+
+Choose a password for this application. Nexus will use this password
+to authenticate with the Crowd server. Click on the Next button.
+
+[[fig-crowd-app]]
+.Creating a Nexus Crowd Application
+image::figs/web/crowd_new-app.png[scale=60]
+
+Clicking on Next will advance the form to the Connection tab shown in
+<<fig-crowd-app-connection>>. In this tab you need to supply the URL
+Nexus and the remote IP address for
+Nexus. <<fig-crowd-app-connection>>, shows the Connection form
+configured for a local instance of Nexus. If you were configuring
+Crowd and Nexus in a production environment, you would supply the URL
+that users would use to load Nexus in a web browser and you would
+supply the IP address that Nexus will be connecting from. Once you
+have completed the Connection form, click on Next to advance to the
+Directories form.
+
+[[fig-crowd-app-connection]]
+.Creating a Nexus Crowd Application Connection
+image::figs/web/crowd_new-app-connection.png[scale=60]
+
+Clicking on Next advances to the Directories form shown in
+<<fig-crowd-app-directories>>.  In this example, the Nexus application
+in Crowd is going to use the default "User Management"
+directory. Click on the Next button to advance to the "Authorisation"
+form.
+
+[[fig-crowd-app-directories]]
+.Creating a Nexus Crowd Application Directories
+image::figs/web/crowd_new-app-directories.png[scale=60]
+
+Clicking on the Next button advances to the "Authorisation" form shown
+in <<fig-crowd-app-authorization>>. If any of the
+directories selected in the previous form contain groups, each group
+is displayed on this form next to a checkbox. You can select "Allow
+all users" for a directory, or you can select specific groups which
+are allowed to authenticate to Crowd through Nexus. This option would
+be used if you wanted to limit Nexus access to specific subgroups
+within a larger Crowd directory. If your entire organization is stored
+in a single Crowd directory, you may want to limit Nexus access to a
+group that contains only Developers and Administrators.
+
+[[fig-crowd-app-authorization]]
+.Creating a Nexus Crowd Application Authorization
+image::figs/web/crowd_new-app-authorization.png[scale=60]
+
+[[crowd-sect-mapping]]
+==== Mapping Crowd Groups to Nexus Roles
+
+To map a Crowd Group to a Nexus Role, open up the Roles panel by
+clicking on the Roles link under the Security section of the Nexus
+menu. Click on the Add... button and select External Role Mapping as
+shown in <<fig-crowd-add-ext-role-map>>.
+
+[[fig-crowd-add-ext-role-map]]
+.Adding an External Role Mapping
+image::figs/web/crowd_add-ext-role-map.png[scale=60]
+
+Selecting External Role Mapping will show the Map External Role dialog
+shown in <<fig-crowd-map-ext-role>>.
+
+[[fig-crowd-map-ext-role]]
+.Mapping an External Crowd Group to a Nexus Role
+image::figs/web/crowd_map-ext-role.png[scale=60]
+
+Once you have mapped a Crowd Group to a Nexus Role, these Roles will
+appear in the list of Nexus Roles with a mapping value of "Crowd" as
+shown in <<fig-crowd-mapped-rules" os=">>.
+
+[[fig-crowd-mapped-rules]]
+.Two Crowd Groups Mapped to Nexus Roles
+image::figs/web/crowd_mapped-roles.png[scale=60]
+
+[[crowd-sect-role]]
+==== Adding a Crowd Role to a Nexus User
+
+To illustrate this feature, consider the crowd-manager user with an id
+of "brian". This user's groups are shown in
+<<fig-crowd-view-user-groups-brian>>.
+
+[[fig-crowd-view-user-groups-brian]]
+.Crowd Groups for User "brian"
+image::figs/web/crowd_view-user-groups-brian.png[scale=60]
+
+To add an external user role mapping, open up the Users panel by
+clicking on Users in the Security section of the Nexus panel. Click on
+the Add... button and select External User Role Mapping from the
+drop-down as shown in <<fig-crowd-add-ext-user-role-map>>.
+
+[[fig-crowd-add-ext-user-role-map]]
+.Adding an External User Role Mapping
+image::figs/web/crowd_add-ext-user-role-map.png[scale=60]
+
+Selecting External User Role Mapping will show the dialog shown in
+<<fig-crowd-find-external-user" os=">>.
+
+[[fig-crowd-find-external-user]]
+.Locating a Crowd User in the User Role Mapping Dialog
+image::figs/web/crowd_find-external-user.png[scale=60]
+
+Once you locate the Crowd user that you want to add a Nexus Role
+to... You can use the configuration panel shown in
+<<fig-crowd-assign-user-role>>, to add a Role to the Crowd-managed
+"brian" user.
+
+[[fig-crowd-assign-user-role]]
+.Adding a Nexus Role to a Crowd User
+image::figs/web/crowd_assign-user-role.png[scale=60]
+
+[[nexus-branding-plugin]]
+=== Nexus Branding Plugin
+
+The branding plugin is an optional plugin that comes as part of Nexus
+Professional. It features the possibility to brand your Nexus instance
+by replacing the default Sonatype Nexus logo with your logo (or an
+image of your choice).
+
+The new logo needs to be a PNG image. To blend in well in the UI, it
+is recommended that it is of 60 pixels height and has a transparent
+background.
+
+By default, the branding plugin will look for the new logo in a file
+called sonatype-work/nexus/conf/branding.png. However, it is possible
+to configure this path by adding a branding.image.path property to
+'+++$NEXUS_HOME/conf/nexus.properties+++':
+
+----
+branding.image.path=/data/images/nexus_logo.png
+----
+
+If it fails to find a new logo, the plugin will fall back to using
+the default Sonatype Nexus logo.
+
+////
+/* Local Variables: */
+/* ispell-personal-dictionary: "ispell.dict" */
+/* End:             */
+////

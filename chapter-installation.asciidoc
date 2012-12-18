@@ -1,0 +1,1001 @@
+[[install]]
+== Installing and Running Nexus
+
+=== Nexus Prerequisites
+
+Nexus Open Source and Nexus Professional only have one prerequisite, a
+Java Runtime Environment (JRE) compatible with Java 6 or Java 7. Nexus
+is most often run with the JRE that is bundled with a Java Development
+Kit (JDK) installation, and it can be run with Oracle's JDK for Java 6
+or Java 7. To download the latest release of the Oracle JDK, go to
+http://www.oracle.com/technetwork/java/javase/downloads/index.html ,
+and download the latest Java 6 or Java 7 JDK.
+
+At a minium Java 6 Update 30 or Java 7u2 are required. IBM Java versions 6 and 7 are
+supported as well. In all instances we recommend tha latest available
+version.
+
+When encountering problems related to IPv6 usage with Nexus or Maven
+as is the default with Java 7, a known workaround is to configure
+
+----
+java.net.preferIPv4Stack=true
+----
+
+
+WARNING: While known to work for most use-cases OpenJDK is not
+officially supported.
+
+[[install-sect-downloading]]
+=== Downloading Nexus
+
+There are two distributions of Nexus: http://nexus.sonatype.org/[Nexus
+Open Source] and http://links.sonatype.com/products/nexus/pro/home[Nexus
+Professional].  Nexus Open Source is a fully-featured repository
+manager which can be freely used, customized, and distributed under
+the Eclipse Public License (EPL Version 1. Nexus Professional is a
+distribution of Nexus with features that are relevant to large
+enterprises and organizations which require complex procurement and
+staging work-flows in addition to more advanced LDAP integration,
+Atlassian Crowd support, and other development infrastructure. The
+differences between Nexus Open Source and Nexus Professional are
+explored in the previous chapter.
+
+==== Downloading Nexus Open Source
+
+To download Nexus Open Source go to http://www.sonatype.org/nexus/go
+and download the latest Nexus Open Source distribution by clicking on
+the appropriate button for a ZIP or a Gzip TAR archive (TGZ) shown in
+<<fig-installing-open-source-dl>>. Your download will be file named
+nexus-2.2-01-bundle.zip or nexus-2.2-01-bundle.tar.gz
+
+[[fig-installing-open-source-dl]]
+.Downloading Nexus Open Source
+image::figs/web/installing-open-source-dl.png[scale=80]
+
+Older versions can be downloaded following the link at the bottom of
+<<fig-installing-open-source-dl>> and selecting a version and archive
+type in the page displayed in
+<<fig-installing-open-source-dl-select>>.
+
+[[fig-installing-open-source-dl-select]]
+.Selecting a Specific Version of Nexus Open Source to Download
+image::figs/web/installing-open-source-dl-select.png[scale=70]
+
+Nexus Open Source can also be deployed as a web application in a
+servlet container like Jetty or Tomcat or an application server like
+Glassfish or JBoss. Instructions for installing Nexus as a WAR are
+found in <<install-sect-as-a-war>>.
+
+==== Downloading Nexus Professional
+
+The trial version of Nexus Professional can be downloaded as zip or
+tar.gz archive from
+http://links.sonatype.com/products/nexus/pro/home[the
+Nexus Professional web site]. Existing customers with access to the
+support system can also download it directly from the
+http://links.sonatype.com/products/nexus/pro/support[Nexus
+Professional Support landing page].
+
+===  Installing Nexus
+
+The following instructions are for installing Nexus Open Source or
+Nexus Professional as a stand-alone server. Nexus comes bundled with a
+Jetty instance which listens to all configured IP addresses on a host
+(0.0.0.0) and runs on port 8081 by default. If you would like to run
+Nexus as a web application in an existing application server or
+servlet container, please refer to the instructions in
+<<install-sect-as-a-war>>.
+
+Installing Nexus is straightforward. Unpack the Nexus web
+application archive in a directory. If you are installing Nexus on a
+local workstation to give it a test run, you can install it in your
+home directory or wherever you like; Nexus doesn't have any hard coded
+directories, it will run from any directory. If you downloaded the ZIP
+
+----
+$ unzip nexus-2.2-01-bundle.zip
+----
+
+And, if you download the GZip'd TAR archive, run:
+
+----
+$ tar xvzf nexus-2.2-01-bundle.tar.gz
+----
+
+For Nexus professional the equivalent commands would be 
+
+----
+$ unzip nexus-professional-2.2.1-bundle.zip
+$ tar xvzf nexus-professional-2.2.1-bundle.tar.gz
+----
+
+NOTE: There are some known incompatibilities with the version of tar
+provided by Solaris and the gzip tar format. If you are installing
+Nexus on Solaris, you must use the GNU tar application, or you will
+end up with corrupted files.
+
+NOTE: If you are installing Nexus on a server, you might want to use a
+directory other than your home directory. On a Unix machine, this book
+assumes that Nexus is installed in /usr/local/nexus-2.2.1
+with a symbolic link /usr/local/nexus to the nexus directory. Using a
+generic symbolic link nexus to a specific version is a common practice
+which makes it easier to upgrade when a newer version of Nexus is made
+available.
+
+----
+$ sudo cp nexus-2.2-01-bundle.tar.gz /usr/local
+$ cd /usr/local
+$ sudo tar xvzf nexus-2.2-01-bundle.tar.gz
+$ ln -s nexus-2.2-01 nexus
+----
+
+Although it isn't required for Nexus to run, you may want to set an
+environment variable NEXUS_HOME in your environment which
+points to the installation directory of Nexus. This chapter will refer
+to this location as '+++$NEXUS_HOME+++'
+
+NOTE: On Windows you should install Nexus outside +++Program Files+++
+to avoid problems with Windows file registry virtualization. If you
+plan to run Nexus as a specific user you could install into the
+AppData/Local directory of that users home directory. Otherwise simply
+go with e.g. C:\nexus or something similar.
+
+The Nexus installation directory nexus-2.2-01 or nexus-professional-2.2.1
+has a sibling directory named sonatype-work. This directory contains
+all of the repository and configuration data for Nexus and is stored
+outside of the Nexus installation directory to make it easier to
+upgrade to a newer version of Nexus.
+
+By default, this directory is always a sibling to the nexus
+installation directory; if you installed nexus in the /usr/local
+directory it would also contain a sonatype-work sub-directory with a
+nested nexus directory containing all of the content and
+configuration. The location of the sonatype-work directory can be
+customized by altering the nexus-work property in
+'+++$NEXUS_HOME/conf/nexus.properties+++'
+
+[[install-sect-upgrading]]
+=== Upgrading Nexus
+
+Since Nexus separates its configuration and data storage from the
+application, it is easy to upgrade an existing Nexus installation. 
+
+To upgrade Nexus, unpack the Nexus archive in the directory which
+contains the existing Nexus installation. Once the archive is
+unpacked, the new Nexus application directory should be a sibling to
+your existing sonatype-work/ directory. 
+
+If you have defined a symbolic link for the version of Nexus to use,
+stop the server and change that to point at the new Nexus application
+directory. When you start the new instance of Nexus it will read the
+existing repository configuration from the sonatype-work directory.
+Depending on the version you upgrade from and to, some maintenance
+tasks like rebuilding the internal indices can be necessary. Please
+refer to the
+http://links.sonatype.com/products/nexus/oss/upgrading[upgrade
+notes] of the new release for more information on this. In addition a
+review of the
+http://links.sonatype.com/products/nexus/oss/release-notes[release
+notes] can be very useful to get a better understanding of potential,
+additional steps required.
+
+If you are using any additional plugins supplied by Sonatype, the new
+version of Nexus you downloaded will contain a newer version of the
+plugin. Be sure to copy the new version from the optional-plugins
+folder to the plugin-repository folder as documented in
+<<install-additional-plugins>> and restart Nexus.
+
+Externally supplied plugins are updated by simply replacing the folder
+with the plugin with the new version.
+
+NOTE: The same upgrade process can be used to change from the open
+source to the professional version of Nexus.
+
+[[install-sect-running]]
+=== Running Nexus
+
+When you start Nexus, you are starting a web server on the default
+port of 0.0.0.0:8081. Nexus runs within a servlet container called
+Jetty and it is started with a native service wrapper called the
+http://wrapper.tanukisoftware.org/doc/english/introduction.html[Tanuki
+Java Service Wrapper]. This service wrapper can be configured to run
+Nexus as a Windows service or a Unix daemon. Nexus ships with generic
+startup scripts for Unix-like platforms called +++nexus+++ and for
+Windows platforms called +++nexus.bat+++ in the +++$NEXUS_HOME/bin+++
+folder. To start Nexus on a Unix-like platform like Linux, MacOSX or
+Solaris use
+
+----
+cd /usr/local/nexus
+./bin/nexus console
+----
+
+Similarly starting on Windows can be done with the nexus.bat
+file. Starting Nexus with the console command will leave Nexus running
+in the current shell and display the log output right there.
+
+On Unix system you can start Nexus detached from the starting shell
+with the start command even when not yet installed as a service.
+
+----
+./bin/nexus start
+----
+
+When executed you should see a feedback message and can then follow
+the start-up process viewing the log file +++logs/wrapper.log+++
+changes.  
+----
+Starting Nexus Repository Manager...
+Started Nexus Repository Manager.
+$ tail -f logs/wrapper.log 
+----
+
+At this point, Nexus will be running and listening on all IP addresses
+(0.0.0.0) that are configured for the current host on port 8081. To
+use Nexus, fire up a web browser and type in the URL
+http://localhost:8081/nexus and you should see the Nexus user
+interface as displayed in <<fig-installing-nexus-default-screen>>
+
+While we use "localhost" throughout this book, you may need to use the
+IP Loopback Address of "127.0.0.1" or the IP address assigned to the
+machine running Nexus. 
+
+++++
+<?dbhtml-include href="promo_group.html"?>
+++++
+
+
+When first starting Nexus Professional you are presented with a
+form that allows you to request a trial activation. This page
+displayed in <<fig-installing-trial-form>> contains a link to
+the license activation screen in 
+<<fig-installing-license-activation>>. 
+
+[[fig-installing-trial-form]]
+.Nexus Trial Activation Form
+image::figs/web/installing-trial-form.png[scale=10]
+
+After submitting the form for your trial activation you will receive a
+license key via email that you can use in the license activation screen to
+activate Nexus Professional. If you already have a license key or
+license file you can use the same screen to upload the file and
+register your license.
+
+[[fig-installing-license-activation]]
+.Nexus License Activation 
+image::figs/web/installing-license-activation.png[scale=10]
+
+Once you have agreed to the End User License Agreement you will be
+directed to the Nexus Professional Evaluation Welcome screen displayed in 
+<<fig-installing-pro-eval-welcome>>.
+
+[[fig-installing-pro-eval-welcome]]
+.Nexus Professional Evaluation Welcome Screen 
+image::figs/web/installing-pro-eval-welcome.png[scale=20]
+
+Click on the "Log In" link in the upper
+right-hand corner of the web page, and you should see the login dialog
+displayed in <<fig-installing-nexus-login-dialog>>. 
+
+TIP: The default administrator username and password combination is
+"admin" and "admin123".
+
+[[fig-installing-nexus-login-dialog]]
+.Nexus Login Dialog (default login/password is admin/admin123)
+image::figs/web/installing-nexus-login-dialog.png[scale=80]
+
+When you are logged into your evaluation version of Nexus Professional
+you will see some helpful links to the Nexus Pro Evaluation Guide,
+Sample Projects and the Knowledgebase below the search input on the
+Welcome screen.
+
+With a full license for Nexus these links will be removed and you will
+get the Nexus Application Window displayed in <<fig-installing-nexus-default-screen>>.
+
+Nexus Open Source will not need to be activated with a license key and
+will display a number of links to Resources and Support on the Welcome
+screen to logged in users.
+
+[[fig-installing-nexus-default-screen]]
+.Nexus Application Window
+image::figs/web/installing-nexus-default-screen.png[scale=80]
+
+
+The files from Java Service Wrapper used for the start up process can
+be found in +++$NEXUS_HOME/bin/jsw+++ and are separated into generic
+files like the +++wrapper.conf+++ configuration file in conf and a
+number of libraries in +++lib+++. An optional wrapper.conf include
+allows you to place further configuration optionally in
++++$NEXUS_HOME/conf/wrapper-override.conf+++.
+
+
+The platform specific directories are available for backwards
+compatibility with older versions only and should not be used. A full
+list of directories follows:
+
+----
+$ cd /usr/local/nexus/bin/jsw
+$ ls -1                                                                             
+conf
+lib
+license
+linux-ppc-64
+linux-x86-32
+linux-x86-64
+macosx-universal-32
+macosx-universal-64
+solaris-sparc-32
+solaris-sparc-64
+solaris-x86-32
+windows-x86-32
+windows-x86-64
+----
+
+TIP: The start-up script +++nexus+++ supports the common service
+commands +++start+++, +++stop+++, +++restart+++, +++status+++,
++++console+++ and +++dump+++.
+
+[[install-sect-repoman-post-install]]
+=== Post-Install Checklist
+
+Nexus ships with some default passwords and settings for repository
+indexing that need to be changed for your installation to be useful
+(and secure). After installing and running Nexus, you need to make
+sure that you complete the following tasks:
+
+==== Step 1: Change the Administrative Password and Email Address
+
+The administrative password defaults to admin123. The first thing you
+should do to your new Nexus installation is change this password. To
+change the administrative password login as "admin" with the password
+"admin123", and click on Change Password under the Security menu in
+the left-hand side of the browser window. For more detailed
+instructions, see <<using-sect-user-profile>>.
+
+==== Step 2: Configure the SMTP Settings
+
+Nexus can send user-name and password recovery emails, to enable this
+feature, you will need to configure Nexus with a SMTP Host and Port as
+well as any necessary authentication parameters that Nexus needs to
+connect to the mail server. To configure the SMTP settings following
+the instructions in <<config-sect-smtp>>.
+
+==== Step 3: Configure Default HTTP Proxy Setting
+
+In many deployments the internet, and therefore any remote
+repositories that Nexus needs to proxy, can only be reached via a HTTP
+proxy server internal to the deployment company. In these cases the
+connection details to that proxy server need to be configured in
+Nexus, as documented in <<config-default-http-proxy>> in order for
+Nexus to be able to proxy remote repositories at all.
+
+==== Step 4: Enable Remote Index Downloads
+
+Nexus ships with three important proxy repositories for the Maven
+Central repository, Apache Snapshot repository, and the Codehaus
+Snapshot repository. Each of these repositories contains thousands (or
+tens of thousands) of artifacts and it would be impractical to
+download the entire contents of each. To that end, most repositories
+maintain an index which catalogues the entire contents and provides
+for fast and efficient searching. Nexus uses these remote indexes to
+search for artifacts, but we've disabled the index download as a
+default setting. To download remote indexes:
+
+. Click on Repositories under the VIews/Repositories menu in the
+  left-hand side of the browser window.
+
+. Select each of the three proxy repositories and change Download
+  Remote Indexes to true in the Configuration tab. You'll need to load
+  the dialog shown in <<fig-repo-config>> for each of
+  the three repositories.
+
+This will trigger Nexus to re-index these repositories, during which
+the remote index files will be downloaded. It might take Nexus a few
+minutes to download the entire index, but once you have it, you'll be
+able to search the entire contents of the Maven repository.
+
+Once you've enabled remote index downloads, you still will not be able
+to browse the complete contents of a remote repository. Downloading
+the remote index allows you to search for artifacts in a repository,
+but until you download those artifacts from the remote repository they
+will not show in the repository tree when you are browsing a
+repository. When browsing a repository, you will only be shown
+artifacts which have been downloaded from the remote repository.
+
+==== Step 5: Change the Deployment Password
+
+The deployment user's password defaults to deployment123. Change this
+password to make sure that only authorized developers can deploy
+artifacts to your Nexus installation. To change the deployment
+password: log in as an administrator, click on Security to expand the
+Security menu, then click on Users. You should then see a list of
+users. Right-click on the deployment user and select "Set Password".
+
+==== Step 6: If necessary, set the LANG Environment Variable
+
+If your Nexus instance needs to store configuration and data using an
+international character set, you should set the LANG environment
+variable. The Java Runtime will adapt to the value of the LANG
+environment variable and ensure that configuration data is saved using
+the appropriate character type. If you are starting Nexus as a
+service, place this environment variable in the start-up script found
+in /etc/init.d/nexus. For more information about locale settings in
+Ubuntu read https://help.ubuntu.com/community/Locale
+
+==== Step 7: Configure Routes
+
+A route defines patterns used to define in which repositories artifacts
+are searched for. Typically internal artifacts are not available in
+e.g. the Central Repository. A route as documented in
+<<confignx-sect-managing-routes>>should be configured so that any
+requests for internal artifacts do not leak to external repositories.
+
+
+[[install-sect-service]]
+=== Configuring Nexus as a Service
+
+When installing Nexus for production usage you should configure Nexus
+as a service, so it starts back up after server reboots. It is good
+practice to run that service or daemon as a specific user that has
+only the required access righs. The following sections provide
+instructions for configuring Nexus as a service or daemon on various
+operating systems.
+
+==== Running as a Service on Linux
+
+You can configure Nexus to start automatically, by copying the nexus
+script to the /etc/init.d directory. On a Linux system 
+perform the following operations as the root user:
+
+. Copy either '+++$NEXUS_HOME/bin/nexus+++' to /etc/init.d/nexus
+
+. Make the /etc/init.d/nexus script executable - chmod 755
+  /etc/init.d/nexus
+
+. Edit this script changing the following variables:
+
+.. Change NEXUS_HOME to the absolute folder location e.g. 
++++ NEXUS_HOME="/usr/local/nexus"+++
+
+.. Set the RUN_AS_USER to "nexus" or any users with
+  restricted rights you want to run the service. You should not be
+  running Nexus as root. 
+
+.. Change PIDDIR to a directory where this user has read/write
+permissions. In most Linux distributions, /var/run is only writable by
+root. The properties you need to add to customize the PID
+file location is "wrapper.pid". For more information about this
+property and how it would be configured in wrapper.conf, see:
+http://wrapper.tanukisoftware.com/doc/english/properties.html
+
+. Create a "nexus" user with sufficient access rights to run the service
+
+. Change the Owner and Group of your nexus directories
+   to "nexus"
+
+. If Java is not on the default path for the user running Nexus, add
+a JAVA_HOME variable which points to your local Java installation and 
+add a '+++$JAVA_HOME/bin+++' to the PATH
+
+++++
+<?dbhtml-include href="promo_nexusService.html"?>
+++++
+
+
+===== Add Nexus as a Service on Red Hat, Fedora, and CentOS
+
+This script has the appropriate chkconfig directives, so all you need
+to do to add Nexus as a service is run the following commands:
+
+----
+$ cd /etc/init.d
+$ chkconfig --add nexus
+$ chkconfig --levels 345 nexus on
+$ service nexus start
+Starting Sonatype Nexus...
+$ tail -f /usr/local/nexus/logs/wrapper.log
+----
+
+The second command adds nexus as a service to be started and stopped
+with the service command and managed by the chkconfig manages the
+symbolic links in /etc/rc[0-6].d which control the services to be
+started and stopped when the operating system restarts or transitions
+between run-levels. The third command adds nexus to run-levels 3, 4,
+and 5. The service command starts Nexus, and the last command tails
+the wrapper.log to verify that Nexus has been started successfully. If
+Nexus has started successfully, you should see a message notifying you
+that Nexus is listening for HTTP
+
+===== Add Nexus as a Service on Ubuntu and Debian
+
+The process for setting Nexus up as a service on Ubuntu differs
+slightly from the process used on a Red Hat variant. Instead of running
+chkconfig, you should run the following sequence of commands once
+you've configured the start-up script in /etc/init.d
+
+----
+$ cd /etc/init.d
+$ update-rc.d nexus defaults
+$ service nexus start
+Starting Sonatype Nexus...
+$ tail -f /usr/local/nexus/logs/wrapper.log
+----
+
+====  Running as a Service on Mac OS X
+
+The standard way to run a service on Mac OS X is by using launchd,
+which uses plist files for configuration. An example plist file for
+Nexus in shown <<ex-nexus-plist>>.
+
+[[ex-nexus-plist]]
+.A sample com.sonatype.nexus.plist file
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" 
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.sonatype.nexus</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/nexus/bin/nexus</string>
+        <string>console</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>
+----
+
+After saving the file as "com.sonatype.nexus.plist" in
+/Library/LaunchDaemons/ you have to change the ownership and access
+rights.
+
+----
+sudo chown root:wheel /Library/LaunchDaemons/com.sonatype.nexus.plist
+sudo chmod 644 /Library/LaunchDaemons/com.sonatype.nexus.plist
+----
+
+
+TIP: Consider setting up a different user to run Nexus and adapt
+permissions and the RUN_AS_USER setting in the nexus startup script.
+ 
+With this setup Nexus will start as a service at boot time. To
+manually start it after the configuration you can use
+
+----
+sudo launchctl load /Library/LaunchDaemons/com.sonatype.nexus.plist
+----
+
+==== Running as a Service on Windows
+
+The start-up script for Nexus on Windows platforms is
++++bin/nexus.bat+++. Besides the standard commands for starting and
+stopping the service it has the additional commands +++install+++ and
++++uninstall+++. Running these commands with elevated privileges will
+set up the service for you or remove it as desired. Once installed as
+a service with the +++install+++ command the batch file can be used to
+start and stop the service. In addition the service will be available
+in the usual Windows service management console.
+
+[[install-sect-proxy]]
+=== Running Nexus Behind a Proxy
+
+The Nexus installation bundle is based on the high-performance servlet
+container Eclipse Jetty running the Nexus web application. This
+achieves a very high performance of Nexus and make installation of a
+separate proxy for performance improvements unnecessary.
+
+However in many cases organizations run applications behind a proxy
+for security concerns, familiarity with securing a particular proxy
+server or to consolidate multiple disparate applications using tools
+like mod_rewrite.
+
+Some brief instructions for establishing such a setup with Apache
+httpd follow as an example. We assume that you've already installed
+Apache 2, and that you are using a Virtual Host for
+www.somecompany.com.
+
+Let's assume that you wanted to host Nexus behind Apache HTTPd at the
+URL http://www.somecompany.com. To do this, you'll need to change the
+context path that Nexus is served from.
+
+. Edit nexus.properties in '+++$NEXUS_HOME/conf+++'. You'll see an
+  element named nexus-webapp-context-path. Change this value from
+  "/nexus" to "/"
+
+. Restart Nexus and Verify that it is available on
+  http://localhost:8081/
+
+. Clear the Base URL in Nexus as shown in
+  <<fig-config-administration-application-server>> under Application
+  Server Settings.
+
+At this point, edit the HTTPd configuration file for the
+www.somecompany.com virtual host. Include the following to expose
+Nexus via mod_proxy at http://www.somecompany.com/.
+
+----
+ProxyRequests Off 
+ProxyPreserveHost On 
+
+<VirtualHost *:80> 
+  ServerName www.somecompany.com 
+  ServerAdmin admin@somecompany.com 
+  ProxyPass / http://localhost:8081/
+  ProxyPassReverse / http://localfhost:8081/
+  ErrorLog logs/somecompany/nexus/error.log 
+  CustomLog logs/somecompany/nexus/access.log common 
+</VirtualHost>
+----
+
+If you just wanted to continue to serve Nexus at the /nexus context
+path, you would not change the nexus-webapp-context-path in and you
+would include the context path in your ProxyPass and ProxyPassReverse
+
+----
+  ProxyPass /nexus/ http://localhost:8081/nexus/
+  ProxyPassReverse /nexus/ http://localhost:8081/nexus/
+----
+
+Apache configuration is going to vary based on your own application's
+requirements and the way you intend to expose Nexus to the outside
+world. If you need more details about Apache HTTPd and mod_proxy,
+please see http://httpd.apache.org
+
+[[install-sect-as-a-war]]
+=== Installing the Nexus WAR
+
+The Nexus Open Source WAR can run on most Java application servers.
+To download the Nexus Open Source WAR, go to
+http://www.sonatype.org/nexus/go.  Click on the Download Site link and
+then download the Nexus WAR. Once you have downloaded the Nexus Open
+Source WAR, you can install it in a servlet container or application
+server.
+
+WARNING: Testing of the WAR file install is currently only done on
+Tomcat and Jetty. The complexity of the task to get Nexus to
+run on an application server may vary depending on the server and the
+server version. It is strongly recommend to use the bundle install with
+the included Jetty application server instead of the WAR file. Support
+for Nexus Professional is only provided for the bundle install.
+
+The process for installing a WAR in an servlet container or
+application server is going to vary for each specific
+application. Often, this installation process is as simple as dropping
+a WAR file in a special directory and restarting the container. In
+many cases it will be required to expand the war into a folder rather
+than deploying the unextracted WAR file for the plugin manager to work
+with all installed plugins and allow installation of additional
+plugins.
+
+For example, to install the Nexus WAR in Tomcat, drop the
+nexus-2.2-01.war file in '+++$TOMCAT_HOME/webapps+++' and restart your
+Tomcat instance. Assuming that Tomcat is configured on port 8080 once
+Tomcat is started, Nexus will be available on
+http://localhost:8080/nexus-2.2-01
+
+If you would like a less verbose URL, copy nexus-2.2-01.war to a
+file named nexus.war before copying the distribution to
+'+++$TOMCAT_HOME/webapps+++'
+
+++++
+<?dbhtml-include href="promo_nexusWAR.html"?>
+++++
+
+
+NOTE: When installing Nexus as a WAR in an application server or
+servlet container, it automatically creates a sonatype-work directory
+in the home directory of the user running the application server. This
+directory contains all of the necessary configuration and repository
+storage for Nexus. 
+
+[[install-sect-licensing]]
+=== Installing a Nexus Professional License
+
+When starting a Nexus Professional trial installation you can upload your
+license file as described in <<install-sect-running>> on the license
+screen visible in <<fig-installing-license-activation>>.
+
+If you are currently using an evaluation license or need to replace your
+current license with a new one, click on Licensing in the
+Administration menu. This will bring up the panel shown
+in <<fig-installations-licensing>>. To upload your
+Nexus Professional license, click on Browse..., select the file, and
+click on Upload.
+
+[[fig-installations-licensing]]
+.Nexus Professional Licensing Panel
+image::figs/web/repository-manager_license.png[scale=50] 
+
+Once you have selected a license and uploaded it to Nexus, Nexus
+Professional will display a dialog box with the Nexus Professional
+End-user License Agreement as shown in <<fig-installation-eula>>. If
+you agree with the terms and conditions, click on "I Agree".
+
+[[fig-installation-eula]]
+.Nexus Professional End-user License Agreement
+image::figs/web/installing_license_eula.png[scale=60] 
+
+Once you have agreed to the terms and conditions contained in the End
+User License Agreement, Nexus Professional will then display a dialog
+box confirming the installation of a Nexus Professional license as
+shown in <<fig-installation-license-upload-config>>.
+
+[[fig-installation-license-upload-config]]
+.License Upload Finished Dialog
+image::figs/web/installing_license_uploaded.png[scale=60]
+
+If you need to remove your Nexus Professional license, you can click on
+the "Uninstall License" button at the bottom of the Licensing
+Panel. Clicking on this button will show the dialog in
+<<fig-installation-config-uninstall>> which confirms that you want to
+uninstall a license.
+
+[[fig-installation-config-uninstall]]
+.Uninstall License Confirmation Dialog
+image::figs/web/installing_uninstall_license.png[scale=60]
+
+Clicking Yes in this dialog box will uninstall the license from Nexus
+Professional and display another dialog which confirms that the
+license has been successfully uninstalled.
+
+.License Uninstall Completed Dialog
+image::figs/web/installing_uninstall_completed.png[scale=60]
+
+==== License Expiration
+
+When a Nexus Professional license expires, the Nexus user interface
+will have all functionality disabled except for the ability to install
+a new license file.
+ 
+[[install-sect-dirs]]
+=== Nexus Directories
+
+The following sections describe the various directories that are a
+part of any Nexus installation. When you install Nexus Open Source or
+Nexus Professional, you are creating two directories: a directory
+which contains the Nexus runtime and application often symlinked as
+nexus and a directory which contains your own configuration and data -
+sonatype-work/nexus. When you upgrade to a newer version of Nexus, you
+replace the Nexus application directory and retain all of your own
+custom configuration and repository data in sonatype-work/
+
+[[sect-installing-work-dir]]
+==== Sonatype Work Directory
+
+The Sonatype Work directory sonatype-work is installed as a sibling to
+the nexus application directory, and the location of this directory
+can be configured via the nexus.properties file which is described in
+<<sect-installing-conf-dir>>. <<fig-installing-sonatype-work-tree>>
+shows the Sonatype Nexus work directory with some of its
+sub-directories.
+
+[[fig-installing-sonatype-work-tree]]
+.The Sonatype Work Directory
+image::figs/web/installing-sonatype-work-tree.png[scale=80]
+
+The Sonatype Work Nexus directory sonatype-work/nexus/ contains a
+number of sub-directories. Depending on the plugins installed and used
+some directories may or may be not present in your installation:
+
+access/:: This directory contains a log of all IP addresses
+accessing Nexus. The data can be viewed by clicking on Active Users
+Report in the Administration - Licensing tab in the Nexus user
+interface.
+
+aether-local-repository/:: This holds temporary files created when
+running Maven dependency queries in the user interface.
+
+backup/:: If you have configured a scheduled job to backup Nexus
+configuration, this directory is going to contain a number of ZIP
+archives that contain snapshots of Nexus configuration.  Each ZIP file
+contains the contents of the conf/ directory. (Automated backups are a
+feature of Nexus Professional.)
+
+broker/:: The broker directory and its sub-directories contains the
+storage backend for the Smart Proxy messaging component.
+
+conf/:: This directory contains the Nexus configuration.  Settings
+that define the list of Nexus repositories, the logging configuration,
+the staging and procurement configuration, and the security settings
+are all captured in this directory.
+
+conf/keystore/:: Contains the automatically generated key used to
+identify this Nexus instance for Smart Proxy usage
+
+db/:: Contains the database storing the User Token information, if
+that feature is enabled.
+
+error-report-bundles/:: Contains the bundled archives of data
+assembled for problem reporting.
+
+health-check/:: Holds cached reports from the Repository Health Check
+plugin.
+
+indexer/:: Contains a Nexus index for all repositories and repository
+groups managed by Nexus. A Nexus index is a Lucene index which is the
+standard for indexing and searching a Maven repository. Nexus
+maintains a local index for all repositories, and can also download a
+Nexus index from remote repositories.
+
+logs/:: The nexus.log file that contains information about a running
+instance of Nexus. This directory also contains archived copies of
+Nexus log files. Nexus log files are rotated every day. To reclaim
+disk space, you can delete old log files from the logs directory.
+
+nuget/:: Contains the database supporting queries against NuGet
+repositories used for .NET package support in Nexus.
+
+p2/:: If you are using the P2 repository management features of Nexus
+Professional, this directory contains a local cache of P2 repository
+artifacts.
+
+plugin-repository/:: This directory contains any additionally
+installed plugins from third parties as documented in
+<<install-additional-plugins>>.
+
+proxy/:: Stores data about the files contained in a remote
+repository. Each proxy repository has a sub-directory in the
+proxy/attributes/ directory and every file that Nexus has interacted
+with in the remote repository has an XML file which captures such data
+as the: last requested timestamp, the remote URL for a particular
+file, the length of the file, and the digests for a particular file
+among other things. If you need to backup the local cached contents of
+a proxy repository, you should also back up the contents of the proxy
+repository's directory under proxy/attributes/
+
+storage/:: Stores artifacts and metadata for Nexus repositories. Each
+repository is a sub-directory which contains the artifacts in a
+repository. If the repository is a proxy repository, the storage
+directory will contain locally cached artifacts from the remote
+repository. If the repository is a hosted repository, the storage
+directory will contain all artifacts in the repository. If you need to
+backup the contents of a repository, you should backup the contents of
+the storage directory.
+
+template-store/:: Contains templates for default repositories. If you
+examine the XML files in this directory, you will see that they
+contain default templates for each different type of repository. For
+example, the repository-default_proxy_release.xml file contains
+defaults for a Proxy repository with a release policy.
+
+timeline/:: Contains an index which Nexus uses to store events and
+other information to support internal operations. Nexus uses this
+index to store feeds and history.
+
+tmp/:: Folder used for temporary storage.
+
+trash/:: If you have configured scheduled jobs to remove snapshot
+artifacts or to delete other information from repositories, the
+deleted data will be stored in this directory.  To empty this trash
+folder, view a list of Nexus repositories, and then click on the Trash
+icon in the Nexus user interface.
+
+The conf/ directory contains a number of files which allow for
+configuration and customization of Nexus. All of the files contained
+in this directory are altered by the Nexus administrative user
+interface. While you can change the configuration settings contained
+in these files with a text editor, Sonatype recommends that you modify
+the contents of these files using the Nexus administrative user
+interface. Depending on your Nexus version and the installed plugins
+the complete list of files may differ slightly.
+
+broker.groovy:: A groovy script for configuring low level properties
+for Smart Proxy.
+
+capabilities.xml:: Further Smart Proxy backend configuration.
+
+healthcheck.properties:: Configuration for the Repository Health Check.
+
+logback.properties, logback.xml and logback-*.xml:: Contains logging
+configuration. If you need to customize the detail of log messages,
+the frequency of log file rotation, or if you want to connect your
+own, custom logging appenders, you should edit the logback-nexus.xml
+configuration file as desired. If you find log4j.properties files as
+well you can safely remove them since they are remnants from an old
+version and are not used anymore.
+
+lvo-plugin.xml:: Contains configuration for the latest version
+plugin. This XML file contains the location of the properties file
+which Nexus queries to check for a newer version of Nexus.
+
+nexus.xml:: The bulk of the configuration of Nexus is contained in
+this file. This file maintains a list of repositories, and all
+server-wide configuration like the SMTP settings, security realms,
+repository groups, targets, and path mappings.
+
+pgp.xml:: Contains PGP key server configuration.
+
+nexus-obr-plugin.properties:: Contains configuration for the Nexus
+OSGi Bundle repository plugin in Nexus Professional.
+
+procurement.xml:: Contains configuration for the Nexus Procurement
+plugin in Nexus Professional.
+
+security-configuration.xml:: Contains global security configuration. 
+
+security.xml:: Contains security configuration about users and roles.
+
+staging.xml:: Contains configuration for the Nexus Staging Plugin in
+Nexus Professional.
+
+[[sect-installing-conf-dir]]
+==== Nexus Configuration Directory
+
+After installing Nexus and creating the nexus symlink as described
+earlier, your nexus folder contains another conf directory. This
+directory contains configuration for the Jetty servlet container. You
+will only need to modify the files in this directory if you are
+customizing the configuration of Jetty servlet container, or the
+behaviour of the scripts that start Nexus.
+
+The files and folders contained in this directory are:
+
+classworlds.conf:: Defines the order in which resources and classes
+are loaded from the classpath. It is unlikely that even the most
+advanced Nexus users will ever need to customize the contents of this
+file.
+
+nexus.properties:: This file contains configuration variables which
+control the behaviour of Nexus and the Jetty servlet container. If you
+are customizing the port and host that Nexus will listen to, you would
+change the application-port and application-host properties defined in
+this file. If you wanted to customize the location of the Sonatype
+work directory, you would modify the value of the nexus-work property
+in this configuration file. Changing nexus-webapp-context-path allows
+you to configure the server context path Nexus will be available at.
+
+jetty.xml:: If this file is present in the conf/ directory, it will be
+used to configure Jetty.
+
+The conf/examples/ directory contains sample Jetty configuration files
+which can be used to customize the behaviour of the Jetty servlet
+container:
+
+jetty.xml:: contains a jetty.xml sample with no customizations. This
+sample file listens on the "application-port" defined in
+nexus.properties
+
+jetty-ajp.xml:: Contains a jetty.xml sample which will configure Nexus
+to listen on an AJP port 8009. This configuration can be used if you
+are proxying your Nexus server with web server which understands the
+AJP protocol such as Apache httpd with the mod_proxy_ajp module.
+
+jetty-dual-ports-with-ssl.xml:: Contains a jetty.xml sample which
+configures Nexus to listen on both the "application-port" and
+"application-port-ssl" (as defined in nexus.properties). This
+sample configuration also contains the SSL redirect rule.
+
+jetty-faster-windows.xml:: Contains a jetty.xml sample which
+configures a response buffer size that will address performance issues
+on Windows 2003 Server, for more information about this fix see
+http://docs.codehaus.org/display/JETTY/Slow+Win2003[the Jetty Wiki]
+
+jetty-header-buffer.xml:: Contains a jetty.xml sample which increases
+the headerBufferSize to 8k from the default of 4k. Documentation about
+the header buffer size can be found on
+http://docs.codehaus.org/display/JETTY/Configuring+Connector[the Jetty
+Wiki]
+
+jetty-simple-https-proxy.xml:: Contains a jetty.xml sample which
+should be used if you are proxying a Nexus instance with a web server
+that is handling SSL. For example, if you were proxying Nexus with
+Apache httpd server using mod_ssl you would use this configuration to
+configure the Jetty RewriteHandler
+
+jetty-ssl.xml:: Contains a jetty.xml sample which will only serve SSL
+encrypted content from "application-port" (as defined in
+nexus.properties
+
+The conf/examples/proxy-https/ directory contains two files:
+apache2.conf and jetty.xml contains sample mod_proxy directives to
+configure Apache httpd to handle SSL.
+
+////
+/* Local Variables: */
+/* ispell-personal-dictionary: "ispell.dict" */
+/* End:             */
+////

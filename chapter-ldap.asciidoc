@@ -1,0 +1,680 @@
+[[ldap]]
+== Nexus LDAP Integration
+
+=== Introduction 
+
+Nexus Open Source has a Lightweight Directory Access Protocol (LDAP)
+Authentication realm which provides Nexus with the capability to
+authenticate users against an LDAP server.  In addition to handling
+authentication, Nexus can be configured to map Nexus roles to LDAP
+user groups. If a user is a member of a group that matches the ID of a
+Nexus role, Nexus will grant that user the matching Nexus role. In
+addition to this highly configurable user and group mapping
+capability, Nexus can augment LDAP group membership with
+Nexus-specific user-role mapping.
+
+In addition to the basic LDAP support from Nexus Open Source, Nexus
+Professional offers LDAP support features for enterprise LDAP
+deployments. These include the ability to cache authentication information,
+support for multiple LDAP servers and backup mirrors, the ability to
+test user logins, support for common user/group mapping templates, and
+the ability to support more than one schema across multiple servers.
+
+[[ldap-sect-enabling]]
+=== Enabling the LDAP Authentication Realm
+
+In order to use LDAP authentication in Nexus, you will need to add the
+Nexus LDAP Authentication Realm to the Selected Realms in the Security
+section of the Server configuration panel. To load the Server
+configuration panel, click on the Server link under Administration in
+the Nexus menu. Once you have the Server configuration panel loaded,
+select Enterprise LDAP Authentication Realm (or OSS LDAP Authenication
+Realm) in the Available Realms list under the Security section and
+click the Add button (or Left Arrow) as shown in
+<<fig-ldap-selecting-realm>>.
+
+[[fig-ldap-selecting-realm]]
+.Adding the LDAP Authentication Realm to Available Realms
+image::figs/web/ldap_moving_ldap_realm_over.png[scale=60]
+
+Next, ensure that the LDAP realms is located below the XML realms in
+the list. If the LDAP realm is on top of the list after adding, drag
+it after the XML realms as shown in <<fig-ldap-move-realm-after-xml>>.
+
+This is necessary, so that Nexus can be used by anonymous, admin and
+other users configured in the XML realms even with LDAP authentication
+offline or unavailable. Any user account not found in the XML realms,
+will be passed through to LDAP authentication.
+
+Next, click on the Save button at the bottom of the Server
+configuration panel to have the change applied.
+
+[[fig-ldap-move-realm-after-xml]]
+.Move the LDAP Authentication Realm after the XML Realms
+image::figs/web/ldap_moving_ldap_realm_after_xml.png[scale=60]
+      
+[[ldap-sect-configuring]]
+=== Configuring Nexus LDAP Integration
+
+To configure LDAP integration, click on the Enterprise LDAP menu item
+in Nexus Professional or the LDAP Configuration menu item in Nexus
+Open Source in the Security menu as shown in
+<<fig-ldap-config-link>>. 
+
+[[fig-ldap-config-link]]
+.Enterprise LDAP Option in the Security Menu
+image::figs/web/ldap_loading_ldap_configuration_panel.png[scale=60]
+
+Clicking on the Enterprise LDAP/LDAP Configuration menu item will load
+the LDAP Configuration panel. The following sections outline the
+configuration options available in the LDAP Configuration Panel.
+
+[[ldap-sect-connect-auth]]
+=== Connection and Authentication
+
+<<fig-ldap-connection-authentication>> shows a simpligied LDAP
+configuration for Nexus configured to connect to an LDAP server
+running on localhost port 10389 using the search base of
+"ou=system". On a more standard installation, you would likely not
+want to use Simple Authentication as it sends the password in clear
+text over the network, and you would also use a search base which
+corresponds to your organization's top-level domain components such as
+"dc=sonatype,dc=com".
+
+[[fig-ldap-connection-authentication]]
+.A Simple LDAP Connection and Authentication Setup
+image::figs/web/ldap_configure_connection_and_authentication.png[scale=60]
+
+The following parameters can be configured in the Connection and
+Authentiation sections of the LDAP Configuration panel.
+
+Protocol:: Valid values in this drop-down are ldap and ldaps which
+correspond to the Lightweight Directory Access Protocol and the
+Lightweight Directory Access Protocol over SSL.
+
+Hostname:: The hostname or IP address of the LDAP
+
+Port:: The port on which the LDAP server is listening. Port 389 is the
+default port for the ldap protocol, and port 636 is the default port
+for the ldaps.
+
+Search Base:: The search base is the Distinguished Name (DN) to be
+appended to the LDAP query. The search base usually corresponds to the
+domain name of an organization. For example, the search base on the
+Sonatype LDAP server could be "dc=sonatype,dc=com".
+
+Authentication Method:: Nexus provides four distinct authentication
+methods to be used when connecting to the LDAP Server:
+
+Simple Authentication;; Simple authentication is not recommended for
+production deployments not using the secure ldaps protocol as it sends
+a clear-text password over the network.
+
+Anonymous Authentication;; Used when Nexus only needs read-only access
+to non-protected entries and attributes when binding to the LDAP
+
+Digest-MD5;; This is an improvement on the CRAM-MD5 authentication
+method. For more information, see http://www.ietf.org/rfc/rfc2831.txt
+
+CRAM-MD5;; The Challenge-Response Authentication Method (CRAM) based
+on the HMAC-MD5 MAC algorithm. In this authentication method, the
+server sends a challenge string to the client, the client responds
+with a username followed by a Hex digest which the server compares to
+an expected value. For more information, see RFC 2195
+
+For a full discussion of LDAP authentication approaches, see
+http://www.ietf.org/rfc/rfc2829.txt and
+http://www.ietf.org/rfc/rfc2251.txt
+
+SASL Realm:: The Simple Authentication and Security Layer (SASL) Realm to connect
+with. The SASL Realm is only available if the authentication method is
+Digest-MD5 or CRAM-MD5.
+
+Username:: Username of an LDAP User to connect (or bind) with. This is
+a Distinguished Name of a user who has read access to all users and
+groups
+
+Password:: Password for an Administrative LDAP User
+
+[[ldap-sect-user-group-mapping]]
+=== User and Group Mapping
+
+The LDAP Configuration panel in Nexus Open Source contains sections to manage User Element
+Mapping and Group Element Mapping in the User and Group
+Settings tab. These configuration sections are located in a separate
+panel called User and Group Settings in Nexus Professional. This panel
+provided a User & Group Templates drop down displayed in
+<<fig-ldap-user-group_templates>> that will adjust the rest of the user
+interface based on your template selection.
+
+[[fig-ldap-user-group_templates]]
+.User & Group Templates Selection Drop Down
+image::figs/web/ldap_user_group_templates.png[scale=60]
+
+The User Element Mapping displayed in
+<<fig-ldap-user-element-mapping>> has been prepopulated by the Active
+Directory selection in the template drop down and needs to be
+configured as required by your LDAP server. The available fields are:
+
+Base DN:: Corresponds to the Base DN containing user entries. This DN
+is going to be relative to the Search Base which was specified in
+<<fig-ldap-connection-authentication>>. For example, if your users are
+all contained in "ou=users,dc=sonatype,dc=com" and you specified a
+Search Base of "dc=sonatype,dc=com" you would use a value of
+"ou=users"
+
+User Subtree:: True if there is a tree below the Base DN which can
+contain user entries. False if all users are contain within the
+specified Base DN. For example, if all users are in
+"ou=users,dc=sonatype,dc=com" this field should be false. If users can
+appear in organizational units within organizational units such as
+"ou=development,ou=users,dc=sonatype,dc=com" this field should be
+true.
+
+Object Class:: This value defaults to inetOrgPerson which is a
+standard object class defined in
+http://www.faqs.org/rfcs/rfc2798.html[RFC 2798].  inetOrgPerson
+contains standard fields such as mail, uid. Other possible values are
+posixAccount or a custom class.
+
+User ID Attribute:: This is the attribute of the Object class which
+supplies the User ID. Nexus will use this attribute as the Nexus User
+ID.
+
+Real Name Attribute:: This is the attribute of the Object class which
+supplies the real name of the user. Nexus will use this attribute when
+it needs to display the real name of a user.
+
+E-Mail Attribute:: This is the attribute of the Object class which
+supplies the email address of the user. Nexus will use this attribute
+when it needs to send an email to a user.
+
+Password Attribute:: This control is only available in Nexus Open
+Source and replaced by the Use Password Attribute section from
+<<fig-ldap-use-password-attribute>> in Nexus Professional. It can be
+used to configure the Object class, which supplies the password
+("userPassword").
+ 
+[[fig-ldap-user-element-mapping]]
+.User Element Mapping 
+image::figs/web/ldap_user_element_mapping.png[scale=60]
+
+Once the checkbox for Use Password Attribute has been selected, the
+interface from <<fig-ldap-use-password-attribute>> allows you to
+configure the optional attribute. When not configured authentication
+will occur as a bind to the LDAP server. Otherwise this is the
+attribute of the Object class which supplies the password of the
+user. Nexus will use this attribute when it is authenticating a user
+against an LDAP server.
+
+[[fig-ldap-use-password-attribute]]
+image::figs/web/ldap_use_password_attribute.png[scale=60]
+
+The Group Type drop down displayed in
+<<fig-ldap-group-element-mapping-dynamic>> and
+<<fig-ldap-group-element-mapping-static>> determines, which fields are
+available in the user interface.  Groups are generally one of two
+types in LDAP systems - static or dynamic. A static group contains a
+list of users. A dynamic group is where the user contains a list of
+groups the user belongs to. In LDAP a static group would be captured
+in an entry with an Object class groupOfUniqueNames which contains one
+or more uniqueMember attributes. In a dynamic group configuration,
+each user entry in LDAP contains an attribute which lists group
+membership.
+
+[[fig-ldap-group-element-mapping-dynamic]]
+.Dynamic Group Element Mapping
+image::figs/web/ldap_group_element_mapping_dynamic.png[scale=60]
+
+Dynamic groups are configured via the Member of Attribute parameter.
+Nexus will inspect this attribute of the user entry to get a list of
+groups that the user is a member of. In this configuration, a user
+entry would have an attribute such as memberOf which would contain the
+name of a group. 
+
+[[fig-ldap-group-element-mapping-static]]
+.Static Group Element Mapping
+image::figs/web/ldap_group_element_mapping_static.png[scale=60]
+ 
+
+Static groups are configured with the following parameters:
+
+Base DN:: This field is similar to the Base DN field described for
+User Element Mapping. If your groups were defined under
+"ou=groups,dc=sonatype,dc=com", this field would have a value of
+"ou=groups"
+
+Group Subtree:: This field is similar to the User Subtree field
+described for User Element Mapping. If all groups are defined under
+the entry defined in Base DN, this field should be false, if a group
+can be defined in a tree of organizational units under the Base DN,
+this field should be true.
+
+Object Class:: This value defaults to groupOfUniqueNames which is a
+standard object class defined in
+http://www.faqs.org/rfcs/rfc2798.html[RFC 4519] groupOfUniqueNames is
+simply a collection of references to unique entries in an LDAP
+directory and can be used to associate user entries with a
+group. Other possible values are posixGroup or a custom class.
+
+Group ID Attribute:: Specifies the attribute of the Object class which
+specifies the Group ID. If the value of this field corresponds to the
+ID of a Nexus Role, members of this group will have the corresponding
+Nexus privileges. Defaults to "cn". 
+
+Group Member Attribute:: Specifies the attribute of the Object class
+which specifies a member of a group. A groupOfUniqueNames has multiple
+uniqueMember attributes for each member of a group. Defaults to
+"uniqueMember".
+
+Group Member Format:: This field captures the format of the Group
+Member Attribute and it is used by Nexus to extract a username from
+this attribute. For example, if the Group Member Attribute has the
+format "uid=brian,ou=users,dc=sonatype,dc=com", then the Group Member
+Format would be "uid=$username,ou=users,dc=sonatype,dc=com".  If the
+Group Member Attribute had the format "brian", then the Group Member
+Format would be "$username".
+
+If your installation does not use Static Groups, you can configure
+Nexus LDAP Integration to refer to an attribute on the User entry to
+derive group membership. To do this, select Dynamic Groups in the
+Group Type field in Group Element Mapping.
+
+Once you have configured the User & Group Settings you can check the
+correctness of you user mapping by pressing the Check ser Mapping
+button visible in <<fig-ldap-group-element-mapping-static>>.
+
+Nexus Professional offers a button "Check Login" to check an
+individual users login and can be used as documented in
+<<ldap-sect-testing-user-login>>.
+
+Press the Save button after successful configuration.
+
+
+[[ldap-sect-mapping-active-directory]]
+=== Mapping Users and Groups with Active Directory
+
+When mapping users and groups to an Active Directory
+installation, try the common configuration values listed in
+<<tbl-ldap-ad-user-element>> and <<tbl-ldap-ad-group-element>>.
+
+.Connection and Authentication Configuration for Active Directory
+[cols="2,5",options="header"]
+|====
+|Configuration Element|Configuration Value
+|Protocol|ldap
+|Hostname|Hostname of Active Directory Server
+|Port|389 (or port of AD server)
+|Search Base|DC=yourcompany,DC=com (customize for your organization)
+|Authentication|Simple Authentication
+|Username|CN=Administrator,CN=Users,DC=yourcompany,DC=com
+|====
+
+[[tbl-ldap-ad-user-element]]
+.User Element Mapping Configuration for Active Directory
+[cols="2,5",options="header"]
+|====
+|Configuration Element|Configuration Value
+|Base DN|cn=users
+|User Subtree|false
+|Object Class|user
+|User ID Attribute|sAMAccountName
+|Real Name Attribute|cn
+|E-Mail Attribute|mail
+|Password Attribute|(Not Used)
+|====
+
+[[tbl-ldap-ad-group-element]]
+.Group Element Mapping Configuration for Active Directory
+[cols="2,5",options="header"]
+|====
+|Configuration Element|Configuration Value
+|Group Type|Dynamic Groups
+|Member Of Attribute|memberOf
+|====
+
+WARNING: You should connect to the AD through port 3268 if you have a
+multi-domain, distributed Active Directory forest. Connecting directly
+to port 389 might lead to errors.
+
+[[ldap-sect-mapping-posix]]
+=== Mapping Users and Groups with posixAccount
+
+When mapping users and groups to LDAP entries of type
+posixAccount, try the common configuration values listed in
+<<tbl-ldap-posix-user-element>> and <<tbl-ldap-posix-group-element>>.
+
+[[tbl-ldap-posix-user-element]]
+.User Element Mapping Configuration for posixAccount
+[cols="2,5",options="header"]
+|====
+|Configuration Element|Configuration Value
+|Base DN|(Not Standard)
+|User Subtree|false
+|Object Class|posixAccount
+|User ID Attribute|sAMAccountName
+|Real Name Attribute|uid
+|E-Mail Attribute|mail
+|Password Attribute|(Not Used)
+|====
+
+[[tbl-ldap-posix-group-element]]
+.Group Element Mapping Configuration for posixGroup
+[cols="2,5",options="header"]
+|====
+|Configuration Element|Configuration Value
+|Group Type|Static Groups
+|Base DN|(Not Standard)
+|Group Subtree|false
+|Object Class|posixGroup
+|Group ID Attribute|cn
+|Group Member Attribute|memberUid
+|Group Member Format|${username}
+|====
+
+[[ldap-sect-mapping-roles-ldap]]
+=== Mapping Roles to LDAP Users
+
+Once User and Group Mapping has been configured, you can start
+verifying how LDAP users and groups are mapped to Nexus Roles. If a
+user is a member of an LDAP group that has a Group ID corresponding to
+the ID of a Nexus Role, that user is granted the appropriate
+permissions in Nexus. For example, if the LDAP user entry in
+"uid=brian,ou=users,dc=sonatype,dc=com" is a member of a
+groupOfUniqueNames attribute value of admin, when this user logs into
+Nexus, it will be granted the Nexus Administrator Role if Group
+Element Mapping is configured properly. To verify the User Element
+Mapping and Group Element Mapping, click on Check User Mapping in the
+LDAP Configuration panel directly below the Group Element Mapping
+section, <<fig-ldap-verify-user-mapping>> shows the results of this
+check.
+
+[[fig-ldap-verify-user-mapping]] 
+.Checking the User and Group Mapping in LDAP Configuration
+image::figs/web/ldap_verifying_user_mapping.png[scale=60]
+
+In <<fig-ldap-verify-user-mapping>>, Nexus LDAP Integration locates a
+user with a User ID of "brian" who is a member of the "admin"
+group. When brian logs in, he will have all of the rights that the
+admin Nexus Role has.
+
+[[ldap-sect-mapping-nexus-roles-ext]]
+=== Mapping Nexus Roles for External Users
+
+If you are unable to map all of the Nexus roles to LDAP groups, you
+can always augment the Role information by adding a specific user-role
+mapping for an external LDAP user in Nexus. In other words, if you
+need to make sure that a specific user in LDAP gets a specific Nexus
+role and you don't want to model this as a group membership, you can
+add a role mapping for an external user in Nexus. Nexus will keep
+track of this association independent of your LDAP server. Nexus
+continues to delegate authentication to the LDAP server for this user,
+Nexus will continue to map the user to Nexus roles based on the group
+element mapping you have configured, but Nexus will also add any roles
+specified in the User panel. You are augmenting the role information
+that Nexus gathers from the group element mapping.
+
+Once the User and Group Mapping has been configured, click on the
+Users link under Security in the Nexus menu. The Users tab is going to
+contain all of the "configured" users for this Nexus instance as shown
+in <<fig-ldap-all-configured-users-initial>>. A configured user is a
+user in a Nexus-managed Realm or an External User which has an
+explicit mapping to a Nexus role. In
+<<fig-ldap-all-configured-users-initial>>, you can see the three
+default users in the Nexus-managed default realm plus the brian user
+from LDAP. The brian user appears because this user has been mapped to
+a Nexus role.
+
+[[fig-ldap-all-configured-users-initial]] 
+.Viewing All Configured Users
+image::figs/web/ldap_ad_all_configured_users_initial.png[scale=60]
+
+The list of users in <<fig-ldap-all-configured-users-initial>> is a
+combination of all of the users in the Nexus default realm and all of
+the External Users with role mappings. To explore these two sets of
+users, click on the All Configured Users drop-down and choose "Default
+Realm Users". Once you select this, click in the search field and
+press Enter. Searching with a blank string in the Users panel will
+return all of the users of the selected type. In
+<<fig-ldap-all-default-realm>> you see a dialog containing all three
+default users from the Nexus default realm.
+
+[[fig-ldap-all-default-realm]]
+.All Default Realm Users
+image::figs/web/ldap_ad_all_default_realm_users.png[scale=60]
+
+If you wanted to see a list of all LDAP users, select "LDAP" from the
+"All Configured Users" drop-down shown in
+<<fig-ldap-all-configured-users-initial>> and click on the search
+button (magnifying glass) with an empty search field. Clicking search
+with an empty search field will return all of the LDAP users as shown
+in <<fig-ldap-all-ldap-realm>>.
+
+NOTE: Note that the user "tobrien" does not show up in the "All
+Configured Users" list. This is by design. Nexus is only going to show
+you information about users with external role mappings. If an
+organization has an LDAP directory with thousands of developers, Nexus
+doesn't need to retain any configuration information for users that
+don't have custom Nexus role mappings.
+
+[[fig-ldap-all-ldap-realm]]
+.All LDAP Users
+image::figs/web/ldap_ad_all_ldap_realm_users.png[scale=60]
+
+To add a mapping for an external LDAP user, you would click on the
+"All Configured Users" drop-down and select LDAP. Once you've selected
+LDAP, type in the user ID you are searching for and click the search
+button (magnifying glass icon to right of the search field). In
+<<fig-ldap-search-ldap-users>>, a search for "brian" yields one user
+from the LDAP server.
+
+[[fig-ldap-search-ldap-users]]
+.Search LDAP Users
+image::figs/web/ldap_ad_searching_ldap_users.png[scale=60]
+
+To add a Nexus role mapping for the external user "brian" shown in
+<<fig-ldap-search-ldap-users>>, click on the user in the results table
+and drag a role from Available Roles to Selected Roles as shown in
+<<fig-ldap-mapping-deploy>>. In this case, the user "brian" is mapped
+to the Administrative group by virtue of his membership in an "admin"
+group in the LDAP server. In this use case, a Nexus administrator
+would like to grant Brian the Deployment Role without having to create
+a LDAP group for this role and modifying his group memberships in LDAP
+
+[[fig-ldap-mapping-deploy]] 
+.Mapping the Deployment Role to an External User
+image::figs/web/ldap_ad_mapping_ldap_deployment.png[scale=60]
+
+The end result of this operation is to augment the Group-Role mapping
+that is provided by the LDAP integration. You can use LDAP groups to
+manage coarse-grained permissions to grant people administrative
+privileges and developer roles, and if you need to perform more
+targeted privilege assignments in Nexus you can Map LDAP users to
+Nexus roles with the techniques shown in this section.
+
+[[ldap-sect-external-role-mapping-config]]
+=== Mapping External Roles to Nexus Roles
+
+Nexus makes it very straightforward to map an external role to an
+internal Nexus role. This is something you would do, if you want to
+grant every member of an externally managed group (such as an LDAP
+group) a certain privilege in Nexus. For example, assume that you have
+a group in LDAP named "svn" and you want to make sure that everyone in
+the "svn" group has Nexus Administrative privileges. To do this, you
+would click on the Add.. drop-down in the Role panel as shown in
+<<fig-ldap-select-ext-role-map>>. This drop-down can be found in the
+Role management panel which is opened by clicking on Roles in the
+Security menu.
+
+[[fig-ldap-select-ext-role-map]] 
+.Selecting External Role Mapping in the Role Management Panel
+image::figs/web/ldap_mapping-external-role.png[scale=60]
+
+Selecting External Role Mapping under Add... will show you a dialog
+which contains a drop-down of External Realms. Selecting an external
+realm such as LDAP will then bring up a list of roles managed by that
+external realm. The dialog shown in <<fig-ldap-select-ext-role>> shows
+the external realm LDAP selected and the role "svn" being selected to
+map to a Nexus role.
+
+[[fig-ldap-select-ext-role]]
+.Selecting an Externally Managed Role to Map to a Nexus Role
+image::figs/web/ldap_mapping-external-role-select.png[scale=60]
+
+Once the external role has been selected, Nexus will create a
+corresponding Nexus Role. You can then assign other Roles to this new
+externally mapped Role. <<fig-ldap-external-role-config>> shows that
+the SVN role from LDAP is being assigned the Nexus Administrator
+Role. This means that any user that is authenticated against the
+external LDAP Realm who is a member of the svn LDAP group will be
+assigned a Nexus role that maps to the Nexus Administrator Role.
+
+[[fig-ldap-external-role-config]]
+.Mapping an External Role to a Nexus Role
+image::figs/web/ldap_mapping-external-role-config.png[scale=60]
+
+[[ldap-sect-enterprise]]
+=== Enterprise LDAP Support
+
+The following sections outline Enterprise LDAP features which are
+available in Nexus Professional.  
+
+==== Enterprise LDAP Fail-over Support 
+
+When an LDAP server fails, the applications authenticating
+against it can also become unavailable. Because a central LDAP server
+is such a critical resource, many large software enterprises will
+install a series of primary and secondary LDAP servers to make sure
+that the organization can continue to operate in the case of an
+unforeseen failure. Nexus Professional's Enterprise LDAP plugin now
+provides you with the ability to define multiple LDAP servers for
+authentication. To configure multiple LDAP servers, click on
+Enterprise LDAP under Security in the Nexus application menu. You
+should see the Enterprise LDAP panel shown in the following figure.
+
+.Defining Multiple LDAP Servers in Nexus Professional
+image::figs/web/multiple-ldap-servers.png[scale=60]
+
+You can use the Backup Mirror setting for an LDAP repository. This
+backup mirror is another LDAP server which will be consulted if the
+original LDAP server cannot be reached. Nexus Professional assumes
+that the backup mirror is a carbon copy of the original LDAP server,
+and it will use the same user and group mapping configuration as the
+original LDAP server.  Instead of using the backup mirror settings,
+you could also define multiple LDAP backup mirrors in the list of
+configured LDAP servers shown in the previous figure. When you
+configure more than one LDAP server, Nexus Professional will consult
+the servers in the order they are listed in this panel. If Nexus can't
+authenticate against the first LDAP server, Nexus Professional will
+move on to the next LDAP server until it either reaches the end of the
+list or finds an LDAP server to authenticate against.  
+
+.Use Multiple LDAP Servers in a Fail-over Scenario 
+image::figs/web/ldap-backup.png[scale=60]
+
+The feature just described is one way to increase the reliability of
+your Nexus instance. In the previous case, both servers would have the
+same user and group information. The secondary would be a mirror of
+the primary. But, what if you wanted to connect to two LDAP servers
+that contained different data? Nexus Professional also provides…
+
+==== Support for Multiple Servers and LDAP Schemas
+
+The same ability to list more than one LDAP server also allows you
+to support multiple LDAP servers which may or may not contain the same
+user authentication information. Assume that you had an LDAP server for
+the larger organization which contained all of the user information
+across all of the departments. Now assume that your own department
+maintains a separate LDAP server which you use to supplement this larger
+LDAP installation. Maybe your department needs to create new users that
+are not a part of the larger organization, or maybe you have to support
+the integration of two separate LDAP servers that use different schema
+on each server.
+
+A third possibility is that you need to support authentication
+against different schema within the same LDAP server. This is a common
+scenario for companies which have merged and whose infrastructures has
+not yet been merged. To support multiple servers with different
+user/group mappings or to support a single server with multiple
+user/group mappings, you can configure these servers in the Enterprise
+LDAP panel shown above. Nexus will iterate through each LDAP server
+until it can successfully authenticate a user against an LDAP
+server.
+
+.Supporting Multiple LDAP Schemas with Nexus Professional
+image::figs/web/ldap-multiple.png[scale=60]
+
+==== Enterprise LDAP Performance Caching and Timeout
+
+If you are constantly authenticating against a large LDAP server,
+you may start to notice a significant performance degradation. With
+Nexus Professional you can cache authentication information from LDAP.
+To configure caching, create a new server in the Enterprise LDAP panel,
+and scroll to the bottom of the Connect tab. You should see the
+following input field which contains the number of seconds to cache the
+results of LDAP queries.
+
+.Setting the LDAP Query Cache Duration (in Seconds)
+image::figs/web/ldap-caching.png[scale=60]
+
+You will also see options to alter the connection timeout and
+retry interval for an LDAP server. If you are configuring a number of
+different LDAP servers with different user and group mappings, you will
+want to make sure that you've configured low timeouts for LDAP servers
+at the beginning of your Enterprise LDAP server list. If you do this
+properly, it will take Nexus next to no time to iterate through the list
+of configured LDAP servers.
+
+.Setting the LDAP Connection Timeout (in Seconds)
+image::figs/web/ldap-timeout.png[scale=60]
+
+We improved the overall caching in this release. The cache duration is
+configurable and applies to authentication and authorization, which
+translates into pure speed! Once you've configured LDAP caching in
+Nexus Professional, authentication and other operations that involve
+permissions and credentials once retrieved from an external server
+will run in no time.
+
+==== User and Group Templates
+
+If you are configuring your Nexus Professional instance to connect
+to an LDAP server there is a very good chance that your server follows
+one of several, well-established standards. Nexus Professional's LDAP
+server configuration includes these widely used user and group mapping
+templates which great simplify the setup and configuration of a new LDAP
+server. To configure user and group mapping using a template, select a
+LDAP server from the Enterprise LDAP panel, and choose the User and
+Group Settings. You will see a User &amp; Group Templates section as
+shown in the following figure.
+
+.Using User &amp; Group Mapping Templates
+image::figs/web/ldap-templates.png[scale=60]
+
+[[ldap-sect-testing-user-login]]
+==== Testing a User Login
+
+Nexus Professional provides you with the ability to test a user
+login directly. To test a user login, go to the User and Group Settings
+tab for a server listed in the Enterprise LDAP panel. Scroll to the
+ bottom of the form, and you should see a button named "Check
+Login".
+
+.Testing a User Login
+image::figs/web/ldap-check-login.png[scale=60]
+
+If you click on Check Login, you will then be presented with the
+login credentials dialog shown below. You can use this dialog to login
+as an LDAP user and test the user and group mapping configuration for a
+particular server. This feature allows you to test user and group
+mapping configuration directly. This feature allows you to quickly
+diagnose and address difficult authentication and access control issues
+via the administrative interface.
+
+.Supply a User's Login Credentials
+image::figs/web/ldap-login-credentials.png[scale=60]
+
+////
+/* Local Variables: */
+/* ispell-personal-dictionary: "ispell.dict" */
+/* End:             */
+////

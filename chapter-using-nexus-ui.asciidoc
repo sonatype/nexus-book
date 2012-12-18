@@ -1,0 +1,643 @@
+[[using]]
+== Using the Nexus User Interface
+
+[[using-sect-intro]]
+=== Introduction
+
+Nexus provides anonymous access for users who only need to search
+repositories, browse repositories, and peruse the system feeds. This
+anonymous access level changes the navigation menu and some of the
+options available when you right-click on a repository. This read-only
+access displays the user interface shown in
+<<fig-repoman-anonymous-interface>>.
+
+[[fig-repoman-anonymous-interface]]
+.Nexus Interface for Anonymous Users
+image::figs/web/repository-manager_public-interface.png[scale=80]
+
+[[using-sect-browsing]]
+=== Browsing Repositories
+
+One of the most straightforward uses of the Nexus is to browse the
+structure of a repository. If you click on the Repositories menu item
+in the Views/Repositories menu, you should see the following
+display. The top-half of <<fig-nexus-browse-repo>> shows you a list of
+groups and repositories along with the type of the repository and the
+repository status. To browse the artifacts that are stored in a local
+Nexus instance, click on the Browse Storage tab for a repository as
+shown in <<fig-nexus-browse-repo>>.
+
+[[fig-nexus-browse-repo]]
+.Browsing a Repository Storage
+image::figs/web/repository-manager_browse-repositories.png[scale=80]
+When you are browsing a repository, you can right click on any file
+and download it directly to your browser. This allows you to retrieve
+specific artifacts manually, or examine a POM file in
+the browser. In addition artifacts as well as directories can be
+deleted using right-click.
+
+NOTE: When browsing a remote repository you might notice that the tree
+doesn't contain all of the artifacts in a repository. When you browse
+a proxy repository, Nexus is displaying the artifacts which have been
+cached locally from the remote repository. If you don't see an
+artifact you expected to see through Nexus, it only means that Nexus
+has yet to cache the artifact locally. If you have enabled remote
+repository index downloads, Nexus will return search results that may
+include artifacts not yet downloaded from the remote
+repository. <<fig-nexus-browse-repo>>, is just an example, and you may
+or may not have the example artifact available in your
+installation of Nexus.
+
+A Nexus proxy repository acts as a local cache for a remote
+repository, in addition to downloading and caching artifacts locally,
+Nexus will also download an index of all the artifacts stored in a
+particular repository. When searching or browsing for artifacts, it is
+often more useful to search and browse the repository index. To view
+the repository index, click on the Browse Index tab for a particular
+repository to load the interface shown in
+<<fig-nexus-browse-repo-index>>.
+
+[[fig-nexus-browse-repo-index]]
+.Browsing a Repository Index
+image::figs/web/repository-manager_browse-repository-index.png[scale=80]
+
+As shown in <<fig-nexus-browse-repo-index>>, if an
+artifact has been downloaded from a remote repository and cached in
+Nexus, the artifact or folder will display a small Nexus logo.
+
+
+[[using-artifact-information]]
+==== Viewing the Artifact Information
+
+Once you located an archive in the repository index or storage the
+right hand panel will at minimum show the Artifact Information tab as
+visible in <<fig-using-artifact-information>>. Besides showing details
+like the Repository Path, Size, Checksums, location of the artifact
+and other details you are able to download and delete the artifact
+with the respective buttons.
+
+[[fig-using-artifact-information]]
+.Viewing the Artifact Information
+image::figs/web/using-artifact-information.png[scale=80]
+
+[[using-artifact-maven-information]]
+==== Viewing the Artifact Maven Information
+
+If the artifact you are looking at in the browser is a Maven related
+artifact like a pom file or a jar you will see the Maven Information
+tab in the right hand panels. As visible in
+<<fig-using-maven-information>> the GAV parameters are displayed above
+an XML snippet identifying the artifact that you can just cut and
+paste into a Maven pom.xml file.
+
+[[fig-using-maven-information]]
+.Viewing the Maven Information
+image::figs/web/using-maven-information.png[scale=80]
+
+
+[[using-artifact-archive-browser]]
+==== Using the Artifact Archive Browser
+
+For binary artifacts like jar files Nexus displays an Archive Browser
+panel as visible in <<fig-using-artifact-archive-browser>> that allows
+you to view the contents of the archive. Clicking on invidiual files
+in the browser will download them and potentially display them in your
+browser. This can be useful for quickly checking out the contents of
+an archive without manually downloading and extracting it.
+
+[[fig-using-artifact-archive-browser]]
+.Using the Archive Browser
+image::figs/web/using-archive-browser.png[scale=80]
+
+
+[[using-sect-dependencies]]
+==== Viewing the Artifact Dependencies
+
+Nexus Professional provides you with the ability to browse an
+artifact's dependencies. Using the artifact metadata found in an
+artifact's POM, Nexus will scan a repository or a repository group and
+attempt to resolve and display an artifact's dependencies. To view an
+artifact's dependencies, browse the repository storage or the
+repository index, select an artifact (or an artifact's POM), and then
+click on the Maven Dependency tab.
+
+On the Maven Dependency tab, you will see the following form elements:
+
+Repository:: When resolving an artifact's dependencies, Nexus will
+query an existing repository or repository group. In many cases it
+will make sense to select the same repository group you are
+referencing in your Maven Settings. If you encounter any problems
+during the dependency resolution, you need to make sure that you are
+referencing a repository or a group which contains these dependencies.
+
+Mode:: An artifact's dependencies can be list as either a tree or a
+list. When dependencies are displayed in a tree, you can inspect
+direct dependencies and transitive dependencies. This can come in
+handy if you are assessing an artifact based on the dependencies it is
+going to pull into your project's build. When you list dependencies as
+a list, Nexus is going to perform the same process used by Maven to
+collapse a tree of dependencies into a list of dependencies using
+rules to merge and override dependency versions if there are any
+overlaps or conflicts.
+
+Once you have selected a repository to resolve against and a mode to
+display an artifact's dependencies, click on the Resolve button as
+shown in <<fig-using-dependencies>>. Clicking on this button will
+start the process of resolving dependencies, depending on the number
+of artifacts already cached by Nexus, this process can take anywhere
+from a few seconds to minute. Once the resolution process is finished,
+you should see the artifact's dependencies as shown in
+<<fig-using-dependencies>>.
+
+[[fig-using-dependencies]]
+.View an Artifact's Dependencies
+image::figs/web/using_dependencies.png[scale=55]
+
+Once you have resolved an artifact's dependencies, you can use the
+Filter text input to search for particular artifact dependencies.  If
+you double click on a row in the tree or list of dependencies you can
+navigate to other artifacts within the Nexus interface.
+
+[[using-sect-insight]]
+==== Viewing the Artifact Insight Data
+
+One of the added features of Nexus Professional is the usage of data
+from Sonatype Insight. This data contains security and license
+information about artifacts and is accessible for a whole repository
+in the Repository Health Check feature described in <<rhc>>.  Details
+about the vulnerability and security issue ratings and others can be
+found there as well.
+
+The Insight tab displays the security and licence information
+available for a specific artifact. It is available in browsing or
+search results, once a you have selected an artifact in the search
+results list or repository tree view. An example search for Jetty, with
+the Insight tab visible, is displayed in <<fig-insight-tab-jetty>>.  It
+displays the results from the License Analysis and any found Security
+Issues. 
+
+The License Analysis reveals a medium threat triggered by the fact
+that Non-Standard license headers were found in the source code as visible
+in the Observed License(s) in Source column. The license found in the
+pom.xml file associated to the project only documented Apache-2.0 or
+EPL-1.0 as the Declared License(s).
+
+[[fig-insight-tab-jetty]]
+.Insight Data Displaying Security Vulnerabilities for an Old Version of Jetty 
+image::figs/web/insight-tab-jetty.png[scale=20]
+
+The Security Issues section displays two issues of Threat Level 5. The
+Summary column contains a small summary description of the security
+issue. The Problem Code column contains the codes, which link to the
+respective entries in the Common Vulnerabilities and Exposures CVE
+list as well as the Open Source Vulnerability DataBase OSVDB displayed
+in <<fig-insight-cve-jetty>> and <<fig-insight-osvdb-jetty>>.
+
+[[fig-insight-cve-jetty]]
+.Common Vulnerabilities and Exposures CVE Entry for a Jetty Security Issue
+image::figs/web/insight-cve-jetty.png[scale=20]
+  
+[[fig-insight-osvdb-jetty]]
+.Open Source Vulnerability DataBase OSVDB Entry for a Jetty Security Issue
+image::figs/web/insight-osvdb-jetty.png[scale=20]
+
+[[using-sect-browse-groups]]
+=== Browsing Groups
+
+Nexus contains ordered groups of repositories which allow you to
+expose a series of repositories through a single URL. More often than
+not, an organization is going to point Maven at the two default Nexus
+groups: Public Repositories and Public Snapshot Repositories. Most
+end-users of Nexus are not going to know what artifacts are being
+served from what specific repository, and they are going to want to be
+able to browse the Public Repository. To support this use case, Maven
+allows you to browse the contents of a Nexus Group as if it were a
+single merged repository with a tree structure.
+<<fig-nexus-browse-group>>, shows the browsing storage interface for a
+Nexus Group. There is no difference to the user experience of browsing
+a Nexus Group vs. browsing a Nexus Repository.
+
+[[fig-nexus-browse-group]]
+.Browsing a Nexus Group
+image::figs/web/repository-manager_browse-group.png[scale=70]
+
+When browsing a Nexus group's storage, you are browsing the underlying
+storage for all of the repositories which are contained in a group. If
+a Nexus group contains proxy repositories, the Browse Storage tab will
+show all of the artifacts in the Nexus group that have been download
+from the remote repositories. To browse and search all artifacts
+available in a Nexus group, click on the Browse Index tab to load the
+interface shown in <<fig-nexus-browse-group-index>>.
+
+[[fig-nexus-browse-group-index]]
+.Browsing a Nexus Group Index
+image::figs/web/repository-manager_browse-group-index.png[scale=60]
+
+[[using-sect-searching]]
+=== Searching for Artifacts
+
+==== Search Overview
+
+In the left-hand navigation area, there is an Artifact Search text
+field next to a magnifying glass. To search for an artifact by groupId
+or artifactId, type in some text and click the magnifying glass.
+Typing in the search term "junit" and clicking the
+magnifying glass should yield a search result similar to
+<<fig-search-results>>.
+
+[[fig-search-results]]
+.Results of an Artifact Search for "junit"
+image::figs/web/search-results.png[scale=60]
+
+The groupId in the Group column and the artifactId in the Artifact
+column identify each row in the search results table. Each row
+represents an aggregration of all artifacts in this Group and
+Artifact coordinate.
+
+The Version column displays the lastest version number available as
+well as a links to Show All Versions.
+
+The Most Popluar Version column displays the version that has the most
+downloads by all users accessing the Central Repository. This data can
+help with the selection of an appropriate version to use for a
+particular artifact.
+
+The Download column displays direct links to all the artifacts
+available for the latest version of this artifacts. A typical list of
+downloadable artifacts would include the Java archive (jar), the Maven
+pom.xml file (pom), a Javadoc archive (javadoc.jar) and a Sourcecode
+archive (sources.jar), but other download options are also added if
+more artifacts are available. Click on the link to download an
+artifact.
+
+Each of the columns in the search results table can be used to sort
+the table in Ascending or Descending order. In addition you can choose
+to add and remove colums with the sort and column drop down options
+visible in <<fig-search-results-column-options>>.
+
+[[fig-search-results-column-options]]
+.Sort and Column Options in the Search Results Table
+image::figs/web/search-results-column-options.png[scale=80]
+
+The repository browser interface below the search results table will
+displays the artifact selected in the list in the repository structure
+with the same information panels available documented in
+<<using-sect-browsing>>. An artifact could be present in more than one
+repository. If this is the case, click on the value next to "Viewing
+Repository" to switch between multiple matching repositories.
+
+WARNING: Let me guess? You installed Nexus, ran to the search box,
+typed in the name of a group or an artifact, pressed search, and saw
+absolutely nothing. No results. Nexus isn't going to retrieve the
+remote repository indexes by default, you need to activate downloading
+of remote indexes for the three proxy repositories that Nexus ships
+with. Without these indexes, Nexus has nothing to search. Fifnd
+instructions for activating index downloads in
+<<confignx-sect-manage-repo>>.
+
+
+==== Advanced Search
+
+Clicking on the (Show All Versions) link in the Version column visible
+in <<fig-search-results>> will kick of an Advanced Search by the
+groupId and artifactId of the row and result in a view similar to
+<<fig-search-results-all-versions>>.
+
+[[fig-search-results-all-versions]]
+.Advanced Search Results for a GAV Search Activated by the Show All Versions Link
+image::figs/web/search-results-advanced-gav.png[scale=50]
+
+The header for the Advanced Search contains a selector for the type of
+search and one or more text input fields to define a search and a
+button to run a new search with the specified parameters.
+
+The search results table contains one row per Group (groupId),
+Artifact (artifactId) and Version(version). 
+
+In addition the Age column displays the age of the artifacts being
+available on the Central Repository. Since most artifacts are
+published to the Central Repository when released, this age gives you a
+good indication of the actual time since the release of the artifact.
+
+The Popularity column shows a relative popularity as compared to the
+other results in the search table. This can give you a good idea
+on the take up of a new release. For example if a newer version has a
+high Age value, but a low Popularity compared to an older version, you
+might want to check the upstream project and see if there is any
+issues stopping other users from upgrading that might affect you as
+well. Another reason could be that the new version does not provide
+signifcant improvements to warrant an upgrade for most users.
+
+The Security Issues column shows the number of known security issues
+for the specific artifact. The License Threat column shows a colored
+square with blue indicating no license threat and yellow, orange and
+red indicating increased license threats. More information about both
+indicators can be seen in the Insight panel below the list of
+artifacts for the specific artifact.
+
+The Download column provides download links for all the available
+artifacts.
+
+The following advanced searches are available:
+
+Keyword Search:: Identical to the Artifact Search in the left hand
+navigation, this search will look for the specified strings in the
+groupId and artifactId.
+
+Classname Search:: Rather than looking at the coordinates of an
+artifact in the repository, the Classname Search will look at the
+contents of the artifacts and look for Java classes with the specified
+name. For example try a search for a classname of "Pair" to see how
+many library authors saw a need to implement such a class, saving you
+from potentially implementing yet another version.
+
+GAV Search:: The GAV search allows a search using the Maven
+coordinatess of an artifact. These are Group (groupId), Artifact
+(artifactId), Version (version), Packaging (packaging) and Classifier
+(classifier). At a minimum you need to specify a Group, Artifact or
+Version in your search. An example search would be with an Artifact
+"guice and a Classifier "no_aop".
+
+Checksum Search:: Sometimes it is necessary to determine the version
+of a jar artifact in order to migrate to a qualified version. When
+attempting this and neither the filename nor the contents of the
+manfiest file in the jar contain any useful information about the
+exact version of the jar you can use Checksum Search to identify the
+artifact. Create a sha1 checksum, e.g. with the sha1sum command
+available on Linux, and use the created string in a Checksum
+search. This will return one result, which will provide you with the
+GAV coordinates to replace the jar file with a dependency declaration.
+ 
+TIP: The Checksum Search can be a huge timesaver when migrating a
+legacy build system, where the used libraries are checked into the
+version control system as binary artifacts with no version information
+available.
+
+==== Nexus OpenSearch Integration
+
+OpenSearch a standard which facilitates searching directly from your
+browser's search box. If you are using Internet Explorer 7+ or Firefox
+2+ you can add any Nexus instance as an OpenSearch provider.  Then you
+can just type in a search term into your browser's search field and
+quickly search for Maven artifacts. To configure OpenSearch, load
+Nexus in a browser and then click on the drop-down next to the search
+tool that is embedded in your
+browser. <<fig-using-opensearch-configure>> shows the Add Nexus option
+that is present in Firefox's OpenSearch provider drop-down.
+
+[[fig-using-opensearch-configure]]
+.Configuring Nexus as an OpenSearch Provider
+image::figs/web/using_opensearch-config.png[scale=60] 
+
+Once you have added Nexus to the list of OpenSearch providers, click
+on the drop-down next to the search term and select Nexus (localhost)
+from the list of OpenSearch providers. Type in a groupId, artifactId,
+or portion of a Maven identifier and press enter. Your
+opensearch-friendly web browser will then take you to the search
+results page of Nexus displaying all the artifacts that match your
+search term.
+
+.OpenSearch Search Results in Nexus
+image::figs/web/using_opensearch-search.png[scale=50]
+
+Once you have configured your browser to use Nexus as an OpenSearch
+provider, searching for a Maven artifact is as simple as typing in a
+groupId or artifactId, selecting Nexus from the drop-down shown in
+<<fig-using-permanent-opensearch-option>>, and
+performing a search.
+
+[[fig-using-permanent-opensearch-option]]
+.Nexus Available as an Option in the Firefox OpenSearch Provider List
+image::figs/web/using_opensearch-permanent.png[scale=60]
+
+
+[[using-sect-uploading]]
+=== Uploading Artifacts 
+
+When your build makes use of proprietary or custom dependencies which
+are not available from public repositories, you will often need to
+find a way to make them available to developers in a custom Maven
+repository. Nexus ships with a pre-configured 3rd Party repository that
+was designed to hold 3rd Party dependencies which are used in your
+builds. To upload artifacts to a repository, select a hosted
+repository in the Repositories panel and then click on the Artifact
+Upload tab. Clicking on the Artifact Upload tab will display the tab
+shown in <<fig-using-artifact-upload>>.
+
+[[fig-using-artifact-upload]]
+.Artifact Upload Form
+image::figs/web/using_artifact-upload.png[scale=50]
+
+To upload an artifact, click on Select Artifact(s) for Upload... and
+select one or more artifacts from the file-system to upload. Once you
+have selected an artifact, you can modify the classifier and the
+extension before clicking on the Add Artifact button. Once you have
+clicked on the Add Artifact button, you can then configure the source
+of the Group, Artifact, Version (GAV) parameters. 
+
+If the artifact you are uploading is a JAR file that was created by
+Maven it will already have POM information embedded in it. If you are
+uploading a JAR from a vendor you will likely need to set the Group
+Identifier, Artifact Identifier, and Version manually. To do this,
+select GAV Parameters from the GAV Definition drop-down at the top of
+this form. Selecting GAV Parameters will expose a set of form fields
+which will let you set the Group, Artifact, Version, and Packaging of
+the artifacts being uploaded. 
+
+If you would prefer to set the Group, Artifact, and Version from a POM
+file associated with the uploaded artifact, select From POM in the GAV
+Definition drop-down.  Selecting From POM in this drop-down will
+expose a button labelled "Select POM to Upload". Once a POM file has
+been selected for upload, the name of the POM file will be displayed
+in the form field below this button.
+
+The Artifact Upload panel supports multiple artifacts with the same
+Group, Artifact, and Version identifiers. For example, if you need to
+upload multiple artifacts with different classifiers, you may do so by
+clicking on Select Artifact(s) for Upload and Add Artifact multiple
+times.
+
+[[using-sect-feeds]]
+=== Browsing System Feeds
+
+Nexus provides feeds that capture system events, you can browse these
+feeds by clicking on System Feeds under the View menu.  Clicking on
+System Feeds will show the panel in <<fig-repoman-system-feeds>>. You
+can use these simple interface to browse the most recent reports of
+artifact deployments, cached artifacts, broken artifacts, and storage
+changes that have occurred in Nexus.
+
+[[fig-repoman-system-feeds]]
+.Browsing Nexus System Feeds
+image::figs/web/repository-manager_system-feed.png[scale=60]
+
+These feeds can come in handy if you are working at a large
+organization with multiple development teams deploying to the same
+instance of Nexus. In such an arrangement, all developers in an
+organization can subscribe to the RSS feeds for New Deployed Artifacts
+as a way to ensure that everyone is aware when a new release has been
+pushed to Nexus. Exposing these system events as RSS feeds also opens
+to the door to other, more creative uses of this information, such as
+connecting Nexus to external automated testing systems. To access the
+RSS feeds for a specific feed, select the feed in the System Feeds
+view panel and then click on the Subscribe button. Nexus will then
+load the RSS feed in your browse and you can subscribe to the feed in
+your favourite RSS
+
+There are a number of system feeds available in the System Feeds view,
+and each has a URL which resembles the following URL
+
+----
+http://localhost:8081/nexus/service/local/feeds/recentlyChangedFiles
+----
+
+Where recentChanges would be replaced with the identifier of the feed
+you were attempting to read. Available system feeds include:
+
+- Authenication and Authorization Events
+
+- Broken artifacts in all Nexus repositories
+
+- Broken files in all Nexus repositories
+
+- Error and Warning events
+
+- New artifacts in all Nexus repositories
+
+- New cached artifacts in all Nexus repositories
+
+- New cached files in all Nexus repositories
+
+- New cached release artifacts in all Nexus repositories
+
+- New deployed artifacts in all Nexus repositories
+
+- New deployed files in all Nexus repositories
+
+- New deployed release artifacts in all Nexus repositories
+
+- New files in all Nexus repositories
+
+- New release artifacts in all Nexus repositories
+
+- Recent artifact storage changes in all Nexus repositories
+
+- Recent file storage changes in all Nexus repositories
+
+- Recent release artifact storage changes in all Nexus repositories
+
+- Repository Status Changes in Nexus
+
+- System changes in Nexus
+ 
+[[using-sect-system-files]]
+=== System Files
+
+
+
+The System Files is only visible to Administrative users under the
+Administrationmenu. Click on this option brings up the dialog shown in
+<<fig-nexus-logs>>. From this screen you can view the Nexus log file
+as well as the configuration files documented in
+<<sect-installing-work-dir>>.
+
+The nexus.log file is the general application log for Nexus. Unless
+you are an administrative user, you might not have must interest in
+the information in this log. If you are trying to debug an error, or
+if you have uncovered a bug in Nexus, you can use this log viewer to
+diagnose problems with Nexus.
+
+[[fig-nexus-logs]]
+.Browsing Nexus Logs and Configuration
+image::figs/web/repository-manager_log-file.png[scale=50]
+
+You can load, view and download the various files by using the buttons
+and the dropdown to select the files to examine.
+
+In <<fig-nexus-logs>> there is a "tail" checkbox. If this box is
+checked, then Nexus will always show you the end of a log file. This
+can come in handy if you want to see a continuously updated log
+file. When this tail box is checked, a drop-down at the bottom of the
+panel allows you to set the update frequency. The contents of this
+drop-down are shown in <<fig-using-update-freq>>. If an update
+interval is selected, Nexus will periodically refresh the selected log
+file.
+
+[[fig-using-update-freq]]
+.Selecting the Update Frequency when Tailing a Log File
+image::figs/web/using_tail-frequency.png[scale=60]
+
+
+[[using-sect-user-profile]]
+=== Working with Your User Profile
+
+As a logged in user, you can click on your user name in the top right
+hand corner of the Nexus user interface to expose a drop down with an
+option to Logout as well as to access your user Profile displayed in
+<<fig-using-user-dropdown>>.
+
+[[fig-using-user-dropdown]]
+.Drop Down on User Name with Logout and Profile Options
+image::figs/web/using-user-dropdown.png[scale=60]
+
+Once you have selected to display your profile you will get access to
+the Summary section of the Profile tab as displayed in
+<<fig-using-profile-summary>>.
+
+[[fig-using-profile-summary]]
+.Summary Section of the Profile Tab
+image::figs/web/using-profile-summary.png[scale=50]
+
+The Summary section allows you to edit your First Name, Last Name and
+Email directly in the form. 
+
+==== Changing Your Password
+
+In addition to changing your name and email, the user profile allows
+you to change your password by clicking on the Change Password
+text. The dialog displayed in <<fig-using-profile-change-password>>
+will be displayed and allow you to supply your current password, and
+choose a new password. When you click on Change Password, your Nexus
+password will be changed.
+
+[[fig-using-profile-change-password]]
+.Changing Your Nexus Password
+image::figs/web/repository-manager_change-password.png[scale=60]
+
+The password change feature only works with the Nexus built in XML
+Realm security realm. If you are using a different security realm like
+LDAP or Crowd, this option will not be visible.
+
+==== Additional User Profile Tabs
+
+The Profile tab can be used by other plugins and features to
+change or access user specific data and functionality. One such use
+case is the User Token access documented in <<config-sect-usertoken>>.
+
+[[using-sect-filing-report]]
+=== Filing a Problem Report
+
+If you encounter a problem with Nexus, you can use the Nexus UI to
+report a bug or file an issue against the Nexus project in Sonatype's
+JIRA instance.
+
+To file a problem report, you will first need to sign up for an
+account on http://issues.sonatype.org. You can click on Report Problem
+in the left hand Help menu, supply your Sonatype JIRA credentials, and
+file a problem report. Supply your JIRA username and password along
+with a short title and a description as shown in the following figure.
+
+When you file a Nexus problem report, Nexus will create a new issue in
+JIRA and attach your configuration and logs to the newly filed issue.
+
+.Generating a Nexus Problem Report
+image::figs/web/configuring-generate-report.png[scale=60]
+
+The submitted files are stored in zip archive files in
+sonatype-work/nexus/error-report-bundles.
+
+////
+/* Local Variables: */
+/* ispell-personal-dictionary: "ispell.dict" */
+/* End:             */
+////
