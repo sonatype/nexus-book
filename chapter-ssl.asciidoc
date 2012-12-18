@@ -32,9 +32,29 @@ http://central.sonatype.com/help/import-ssl.jar
 
 ==== Importing a Client Certificate
 
-Importing a client certificate involves two steps: importing the
-server's SSL chain and importing the client SSL key/certificate
-pair. Some notes about the location of the key-store and default
+Importing a client certificate involves two steps: 
+
+* importing the server's SSL chain and 
+* importing the client SSL key/certificate pair.
+
+The Java Virtual Machine running Nexus uses the
+http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html[Java
+Secure Socket Extension (JSSE)] to enable secure Internet
+communication. It uses two certificate stores - the truststore and the
+keystore.
+
+A truststore contains certificates from servers run by other parties
+that you expect to communicate with, or from Certificate Authorities
+that you trust to identify other parties. This truststore ships with a
+number of CA's out of the box - trusted root certifactes.
+
+A keystore contains private keys, and the certificates with their
+corresponding public keys.
+
+Typically they are stored in separate files stored in the default location of
+${JRE_HOME}/lib/security/cacerts.
+
+Some notes about the location of the key-store and default
 key-store passwords:
 
 * If you are using the default JSSE key-store locations on either a
@@ -43,11 +63,11 @@ root user. You can do this either by changing to the root user (su -),
 or by using the sudo command: sudo [command].
 
 * The default password used by Java for the built-in key-stores is
-changeit. If your key-store uses a different password, you'll need to
+'changeit'. If your key-store uses a different password, you'll need to
 specify that password as the last parameter on the command lines
 above.
 
-* If you want to specify your own key-store location, provide that in
+* If you want to specify your own key-store/truststore file, provide that in
 place of <keystore_dir> in the examples below.
 
 * If you're using a password other than 'changeit' for your keystore,
@@ -66,14 +86,22 @@ client certificate you will need three things:
 
 * and a certificate password.
 
+For server certificates you should either import directly into
+${JRE_HOME}/lib/security/cacerts, or make a copy of the file and
+import into that. 
+
+WARNING: If you replace the existing truststore rather than adding to
+it or if you override the truststore location, you will lose all of
+the trusted CA root certificates of the JRE and no SSL sites will be
+accessible.
+
 ==== Import the Server SSL Chain
 
 The first command imports the entire self-signed SSL certificate chain
 for central.sonatype.com into your JSSE keystore:
 
 ----
-$ java -jar import-ssl.jar server central.sonatype.com \
-<keystore_dir>
+$ java -jar import-ssl.jar server central.sonatype.com <keystore>
 ----
 
 You would substitute the server name used in the previous listing with
@@ -89,7 +117,7 @@ authentication:
 
 ----
 $ java -jar import-ssl.jar client <your-certificate.p12> \
-<your-certificate-password> <keystore_dir>
+<your-certificate-password> keystore
 ----
 
 When the client command completes, you should see a line containing
@@ -103,15 +131,32 @@ Writing keystore: /System/Library/Frameworks/JavaVM.framework/\
 Versions/1.6.0/Home/lib/security/jssecacerts
 ----
 
+If you want to make a new keystore to import your keys into, you will
+have to use the keytool that ships with your Java installation to
+create an empty keystore:
+
+----
+keytool -genkey -alias foo -keystore keystore 
+keytool -delete -alias foo -keystore keystore 
+----
+
+TIP: Make sure to use the keytool commands for your Java version used
+to run Nexus. The documentation for keytool is available online for
+http://docs.oracle.com/javase/6/docs/technotes/tools/windows/keytool.html[Java
+6] as well as
+http://docs.oracle.com/javase/7/docs/technotes/tools/windows/keytool.html[Java
+7].
+
+
 ==== Configuring Nexus Start-up
 
 Once both sets of SSL certificates are imported to your keystore, you
-can modify the Nexus $NEXUS_HOME/conf/nexus.properties file
+can modify the 'nexus.properties' file located in '$NEXUS_HOME/conf/'
 to inject the JSSE system properties necessary to use these
 certificates, as seen below.
 
 ----
-javax.net.ssl.keyStore=<keystore_dir>
+javax.net.ssl.keyStore=<keystore>
 javax.net.ssl.keyStorePassword=<keystore_password>
 ----
 
@@ -139,9 +184,6 @@ https://github.com/sonatype/nexus/tree/master/nexus/nexus-oss-webapp/src/main/re
 source], or in the Nexus distribution under
 '+++$(NEXUS_HOME)/conf/examples+++'. Before you customize your Nexus
 configuration to serve SSL, keep in mind the following:
-
-* Customizations in this Appendix assume that your are
-running Nexus 1.9.2.
 
 * Any custom Jetty configuration must be contained in the
 '+++$(NEXUS_HOME)/conf/jetty.xml+++' file, or else in the location referenced
