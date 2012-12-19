@@ -3,39 +3,44 @@
 
 === Introduction
 
-Typically an organization runs one single Nexus instance to proxy
-external artifacts as well as host internally produced artifacts. When
-a build is running against this Nexus instance it will look for any
-new artifacts in the proxied remote repositories. This adds additional
-network traffic that in many cases will just be a response from the
-remote server indicating that there are no changes.
+*Default is Polling*
 
-This polling approach is fine for smaller deployment even though
-performance is impacted by this behaviour. Depending on your proxy
-timeout settings this polling won't actually result in updated
-artifacts as soon as they become available upstream either.  If you
-try to support distributed instances, the only way you are going to
-achieve assurance that everything is up to date is by setting you
-expiration times to zero and constantly polling.
+Typically an organization runs a single Nexus instance to proxy
+external components as well as host internally produced
+components. When a build is running against this Nexus instance it
+will look for any new components in the proxied remote
+repositories. This adds additional network traffic that in many cases
+will just be a response from the remote server indicating that there
+are no changes.
 
-With the increased usage of Nexus in globally distributed teams or
-used by projects that span multiple organizations, each with their own
-Nexus instance hosting their own artifacts as well as proxying the
-other servers, this polling can result in significant traffic and a
-performance hit for all involved servers.
+This polling approach is fine for smaller deployment.It will however
+not result in immediately updated components as soon as they become
+available upstream. In distributed teams with multiple Nexus
+instances, this delay can result in build failures and delays. The
+only way you are going to achieve assurance that everything is up to
+date is by setting you expiration times to zero and constantly
+polling.
+
+
+*Smart Proxy Introduces Publish-Subscribe*
+
+Increasingly Nexus is used in globally distributed teams or used by
+projects that span multiple organizations. In many cases it is
+advisable for each physical location to host their own Nexus
+instance. This local instance hosts their own components and proxies
+the other servers.
+
+An example deployment scenario is displayed in
+<<fig-smart-proxy-scenario>>. Using the traditional polling
+approach, specifically when used with snapshot repositories, can
+result in significant traffic and a performance hit for all involved
+servers.
 
 The Smart Proxy feature replaces this constant polling approach with a
 Publish-Subscribe based messaging approach between Nexus instances
 sharing a mutual trust. The result is a significantly improved
 performance due to nearly immediate availability of upstream artifact
 information directly in the downstream Nexus instances.
-
-With Smart Proxy enabled the repositories involved will be able to
-keep their content in sync without sacrificing performance. This in
-turn allows collocating proxy servers with the involved development
-teams reducing build times and improving availability and performance
-of the used repository servers. The payoff grows with the number of
-involved Nexus servers in the network.
 
 [[smartproxy-enabling_smart_proxy_publishing]]
 === Enabling Smart Proxy Publishing
@@ -48,7 +53,7 @@ displayed in <<fig-smart-proxy-global-config>>.
  
 [[fig-smart-proxy-global-config]]
 .Global Configuration for Smart Proxy
-image::figs/web/smart-proxy-global-config.png[scale=50]
+image::figs/web/smart-proxy-global-config.png[scale=60]
 
 The Network Settings section allows you to enable the Smart Proxy
 server with a check-box. This will need to be enabled on all servers
@@ -104,11 +109,11 @@ trusted certificate with a meaningful description as displayed in
 
 [[fig-smart-proxy-copy-certificate]]
 .Copying a Certificate
-image::figs/web/smart-proxy-copy-certificate.png[scale=40]
+image::figs/web/smart-proxy-copy-certificate.png[scale=50]
 
 [[fig-smart-proxy-add-certificate]]
 .Adding a Trusted Certificate
-image::figs/web/smart-proxy-add-certificate.png[scale=40]
+image::figs/web/smart-proxy-add-certificate.png[scale=50]
 
 All the key generation and certificates related to the trust
 management is handled by Nexus itself and no external configuration or
@@ -133,7 +138,7 @@ specific repository as displayed in
 
 [[fig-smart-proxy-repo-list-hosted]]
 .Smart Proxy Settings for a Hosted Repository
-image::figs/web/smart-proxy-repo-list-hosted.png[scale=60]
+image::figs/web/smart-proxy-repo-list-hosted.png[scale=70]
 
 On the Nexus instance subscribing to the publishing server you have to
 create a new proxy repository to hold the synchronized artifacts. The
@@ -143,7 +148,7 @@ Updates check-box in the Subscribe configuration section.
 
 [[fig-smart-proxy-repo-list-proxy]]
 .Smart Proxy Settings for a Proxy Repository
-image::figs/web/smart-proxy-repo-list-proxy.png[scale=60]
+image::figs/web/smart-proxy-repo-list-proxy.png[scale=70]
 
 With a working trust established between the publishing and
 subscribing Nexus servers the Smart Proxy configuration of the proxy
@@ -152,7 +157,7 @@ displayed in <<fig-smart-proxy-subscribe-connected>>.
 
 [[fig-smart-proxy-subscribe-connected]]
 .Subscription with Smart Proxy Connected
-image::figs/web/smart-proxy-subscribe-connected.png[scale=60]
+image::figs/web/smart-proxy-subscribe-connected.png[scale=70]
 
 [[smartproxy-smart_proxy_security_and_messages]]
 === Smart Proxy Security and Messages
@@ -180,54 +185,58 @@ subscription will be stopped.
 [[smartproxy-example_setup]]
 === Example Setup
 
-In our example we are going to configure Smart Proxy for two Nexus
-servers, Server A and Server B. These servers provide proxying of
-external repositories like the Central Repository to the two
-development teams Team A and Team B. Both team deploy SNAPSHOT as well
-as release artifacts to their own Server A and Server B in the
-respective release and snapshot repositories. These snapshot and
-release artifacts are needed by the other team respectively. In
-addition both servers receive third party artifacts from another
-company wide Nexus instance for third party artifacts called Server T.
+The deployment scenario displayed in <<fig-smart-proxy-scenario>> is a
+typical use case for Smart Proxy. Component development is spread out
+across four distributed teams located in New York, London, Bangalor
+and San Jose. Each of the teams has a Nexus instance deployed in their
+local network to provide the best performance for each developer team
+and any locally running continuous integration server and other
+integrations
 
-////
-Tim to make a omnigraffle image for this maybe
-////
-To configure Smart Proxy between these three servers you have to 
+[[fig-smart-proxy-scenario]]
+.Deployment Scenario for a Smart Proxy Use Case
+image::figs/web/smart-proxy-scenario.png[scale=40]
 
-- add the public key of Server A as trusted certificate to Server B
-  and Server T
+When the development team in New York does a commit to their component
+build a continuous integration server deploys a new component snapshot
+version to the Nexus 1 instance.
 
-- add the public key of Server B as trusted certificate to Server A
-  and Server T
+With Smart Proxy enabled, this deployment is immediately followed by
+notifications, sent to the trusted smart proxy subscribers in Nexus 2,
+Nexus 3 and Nexus 4. These are collocated with the developers in
+London, Bangalore and San Jose and can be configured to immediately
+fetch the new components available. At a minimum they will know about
+the availability of new component versions, without the need to poll
+Nexus 1 repeatedly, therefore keeping performance high for everyone. 
 
-- add the public key of Server T as trusted certificate to Server A
-  and Server B
+When a user of Nexus 2, 3 or 4 build a component that depends on a
+snapshot version of the component from Nexus 1, smart proxy guarantees
+that the latest version published to Nexus 1 is used. 
 
-- set up the third party repository on Server T to publish updates
+To configure Smart Proxy between these servers for the snapshots
+repository you have to 
 
-- set up a new third party proxy repository on Server A and Server B
-  and configure it to receive updates from Server T
+. add the public key of Nexus 1 as trusted certificate to Nexus 2, 3
+  and 4
 
-- set up a new snapshot and a new release proxy repository on Server A
-  that proxies Server B
+. add the public keys of Nexus 2, 3 and 4 as trusted certificate to Server 2
 
-- set up a new snapshot and a new release proxy repository on Server B
-  that proxies Server A
+. enable smart proxy publishing on the snapshot repository on Nexus 1
 
-- add all the new proxy repositories to the public group on Server A
-  and Server B
+. set up new proxy repositories to proxy the Nexus 1 snapshot
+  repository on Nexus 2, 3 and 4
 
-- configure the snapshot and release hosted repositories on Server A
-  and Server B to publish updates
+. enable smart proxy subscription on the new proxy repositories
 
-- configure the new snapshot and new release proxy repositories on
-  Server A and Server B to receive updates
+. optionally enable pre-fetching of components
 
-With this setup the snapshot and release repositories of both servers
-will be available to both teams and always be synchronized and up to
-date. In addition both servers will have up to date content in their
-third party proxy repository.  
+. add the new proxy repositories to the public group on Nexus 2, 3 and
+  4
+
+
+With this setup any snapshot deployment from the New York team on
+Nexus 1 is immediately available to the development team in London,
+Bangalor and San Jose.
 
 ////
 /* Local Variables: */
