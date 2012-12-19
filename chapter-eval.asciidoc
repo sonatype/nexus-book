@@ -1,0 +1,215 @@
+[[eval]]
+== Nexus Professional Evaluation Guide
+
+[[eval-getting-started]]
+=== Getting Started
+
+* *Step 1:* Download the Nexus Professional Installer
+
+* *Step 2:* Run the Nexus Professional Installer
+
+* *Step 3:* Start Nexus from the Nexus Professional Installer
+
+When Nexus has started, go to
+*http://localhost:8081/nexus[http://localhost:8081/nexus]*
+
+Once Nexus is started, go to the Evaluation Guide directory. The
+Evaluation Guide directory contains some important software you’ll
+need to take advantage of your Nexus Professional Trial, including:
+
+. A distribution of Maven 3.0.4 for use with Nexus Professional.
+
+. Custom Maven Settings to configure download and deploys with Nexus
+Professional
+
+. Sample projects to help demonstrate the powerful features of Nexus
+Professional
+
+This directory also contains two scripts +build+ and +build.bat+ which are
+simple wrappers to invoke Maven 3.0.4. These wrapper files configure
+the location of the included Maven 3.0.4 distribution, the installer
+customized +settings. xml+ file location, and the base directory of the
+evaluation guide installation, which is used to configure the location
+of the local repository.
+
+==== Requesting a Trial License
+
+Open a browser and go to:
+http://localhost:8081/nexus[http://localhost:8081/nexus]. To request a
+14-day trial, please supply: your full name, email address,
+organization, and loca- tion. Once you’ve supplied this information,
+click on “Submit Activation Request”.
+
+NOTE: If you don’t see the Trial Activation Form your browser you may
+need to visit:
+https://licensing.sonatype.com/nexus/form/trial[https://licensing.sonatype.com/nexus/form/trial]
+
+You will receive an email from Sonatype with the subject “Your Nexus
+Professional Trial License” which contains your trial license key.
+
+You will then paste this license key into your Nexus Pro- fessional
+instance. Click Activate to activate your 14-day Nexus Professional
+Trial. Once your trial is activated you will be presented with the
+Nexus
+
+==== Logging Into Nexus as an Administrator
+
+Once you have installed and started Nexus, log into Nexus as an
+Administrator. To do this, go to http://localhost:8081/nexus/ and
+click on the Login button in the upper right-hand corner of the
+interface. The default username and password are:
+
+Username:: admin
+Password:: admin123
+
+The Nexus Professional Trial evaluation guide assumes that you are
+logged in as an administrator.
+
+==== Getting Started with Nexus Professional Evaluation
+
+To make it easier to evaluate Nexus, we’ve created a set of projects
+to demonstrate the features of Nexus Professional. When you downloaded
+the trial distribution of Nexus Professional, your server is also
+preconfigured to demonstrate important features.
+
+The Nexus trial distribution contains the following customizations:
+
+- Nexus has been preconfigured to download the search index from
+  Central.
+
+- Nexus proxies NuGet Gallery so that you can quickly evaluate support
+  for .NET development.
+
+- A Staging profile has been configured to demonstrate release
+  management.
+
+- Procurement has been preconfigured so you can quickly define rules
+  for the OSS components.
+
+=== The Basics: Proxying and Publishing
+
+If you are new to repository management, the first step is to evaluate
+the two basic benefits of running a repository manager: proxying and
+publishing.
+
+==== Proxying Artifacts
+
+If you use a dependency in your software, your build downloads
+artifacts from a remote repository, such as Central. Your systems
+depend on these components, so if Central becomes unavailable your
+productivity can grind to a halt.
+
+This is where Nexus can help. Nexus is configured to proxy a remote
+repository like Central and maintain a local cache. Your build is more
+reliable when you depend on cached artifacts providing dramatic
+efficiency and speed improvements across your entire development
+effort.
+
+In this example, you will...
+
+- See how proxying remote repositories leads to improvements in build
+  reliability
+
+To get started:
+
+- Go to the Nexus evaluation guide directory you configured during the
+  Nexus Professional installer and execute the following command:
++
+On OSX or Linux:
+----
+$ ./build -f simple-project/pom.xml clean install
+----
+On Windows:
+----
+$ .\build -f simple-project\pom.xml clean install
+----
+
+- As this Maven project builds you will notice that it is download
+  artifacts from your local Nexus instance installed on
+  http://localhost:8081/nexus.
+
+- After the build has successfully completed, try the following:
++
+On OSX or Linux:
+----
+$ rm -rf repository
+$ ./build -f simple-project/pom.xml clean install
+----
+On Windows:
+----
+$ rmdir repository
+$ .\build -f simple-project\pom.xml clean install
+----
+
+- To verify that artifacts are being cached in Nexus, open the
+  Repositories panel by clicking on +Repositories+ in the left-hand
+  navigation menu of Nexus Pro. Once the list of repositories is
+  displayed, select Central. Click on the +Browse Storage+ tab shown
+  in this illustration.
+
+*Your builds will be faster and more reliable now that you are caching
+artifacts in Nexus. Once Nexus has cached an artifact locally, there
+is no need to make another round-trip to the server.*
+
+==== Publishing Artifacts
+
+Nexus makes it easier to share artifacts internally. How do you
+distribute and deploy your own applications? Without Nexus, internal
+code is often distributed and deployed using an SCM, a shared file
+system, or some other inefficient method for sharing binary artifacts.
+
+With Nexus you create hosted repositories, giving you a place to
+upload your own artifacts to Nexus. You can then feed your artifacts
+back into the same repositories referenced by all developers in your
+organization.
+
+In this example, you will...
+
+- Publish an artifact to Nexus
+
+- Watch another project download a dependency from Nexus
+
+
+To get started:
+
+- Go to the Nexus evaluation guide directory you configured during the
+  Nexus Professional installer and execute the following command:
++
+On OSX or Linux:
+----
+$ ./build -f simple-project/pom.xml clean deploy
+----
+On Windows:
+----
+$ .\build -f simple-project\pom.xml clean deploy
+----
+
+- This project has been preconfigured to publish an artifact to your
+  local instance of Nexus Professional.
+
+- Once this artifact has been published, return to the evaluation
+  sample projects directory +nexus-evalguide/+ and execute the following
+  commands:
++
+On OSX or Linux:
+----
+$ ./build -f another-project/pom.xml clean install
+----
+On Windows:
+----
+$ .\build -f another-project\pom.xml clean install
+----
+
+- This second project has a Maven dependency on the first
+  project. During the build, it is relying on Nexus when it attempts
+  to retrieve the artifact from simple-project.
+
+- To verify that the simple-project artifact was deployed to Nexus,
+  click on Repositories and then select the Snapshots
+  repository. Select the +Browse Storage+ tab as shown in this
+  illustration.
+
+*Nexus Professional can serve as an important tool for collaboration
+between different develop- ers and different development groups. It
+removes the need to store binaries in source control or shared
+file-systems and makes collaboration more efficient.*
