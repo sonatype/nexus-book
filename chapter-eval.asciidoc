@@ -165,6 +165,13 @@ The Nexus trial distribution contains the following customizations:
 
 === The Basics: Proxying and Publishing
 
+[quote, Build Engineer, FInancial Industry]
+____
+After a few weeks the importance of having a repository manager is so
+obvious no one on my team can believe we used to develop software
+without one.
+____
+
 If you are new to repository management, the first step is to evaluate
 the two basic benefits of running a repository manager: proxying and
 publishing.
@@ -184,8 +191,11 @@ effort.
 
 *In this example, you will...*
 
-* See how proxying remote repositories leads to improvements in build
-  reliability
+* Configure your builds to download artifacts from Nexus
+
+* Pre-cache dependencies and build artifacts with an initial build
+
+* Note organization-wide improvements in build reliability
 
 *To get started:*
 
@@ -264,8 +274,8 @@ $ .\build -f simple-project\pom.xml clean deploy
   local instance of Nexus Professional.
 
 * Once this artifact has been published, return to the evaluation
-  sample projects directory +nexus-evalguide/+ and execute the following
-  commands:
+  sample projects directory +nexus-evalguide/+ and execute the
+  following commands:
 +
 On OSX or Linux:
 ----
@@ -306,12 +316,54 @@ exploits. According to a joint study by Aspect Security and Sonatype
 released in 2012, Global 500 corporations downloaded 2.8 million
 flawed components in one year. 
 
+The Repository Health Check in Nexus Professional 2.0 turns your
+repository manager into the first line of defense against security
+vulnerabilities. Nexus Professional scans artifacts and finds cached
+components with known vulnerabilities from the Common Vulnerabilities
+and Exposures (CVE) database. You can get an immediate view of your
+exposure from the Repository Health Check summary report with
+vulnerabilities grouped severity according to the Common Vulnerability
+Scoring System (CVSS).
+
+As your developers download, they may be unwittingly downloading
+components with critical security vulnerabilities that may expose your
+applications to known exploits. According to a joint study by Aspect
+Security and Sonatype released in 2012, Global 500 corporations
+downloaded 2.8 million flawed components in one year. Nexus becomes an
+effective way to discover flawed components in your repositories so
+you can avoid falling victim to known exploits.
+
 .Security Vulnerability Summary Display from Repository Health Check
 image::figs/web/eval-security.png[scale=60]
 
+*To evaluate the Repository Health Check:*
 
-Nexus becomes an effective way to discover flawed components in your
-repositories so you can avoid falling victim to known exploits.
+* Connect your project’s build to Nexus
+
+* Build your software and download artifacts from Maven Central
+
+* Download artifacts such as Tomcat 6.0.33 or other artifacts with
+known security vulnerabilities
+
+* Once your Proxy repository for Maven Central has cached artifacts,
+open the Nexus interface and click on the green Analyze button next to
+your Central proxy
+
+* Nexus Pro will show you a summary report detailing the number and
+type of security vulnerabilities present in you repository.
+
+*To get started:*
+
+* Proxying a Remote Repository in Nexus (http://bit.ly/HQZBI2)
+
+* Configuring Maven for Nexus (http://bit.ly/IVjfSL)
+
+* Execute a Your Build using Nexus as a Proxy for Central
+
+* View Security Vulnerabilities on the Health Check Summary Report
+(http://bit.ly/HQ6jNh)
+
+
 
 ==== Governance - Track Your Exposure to OSS Licenses
 
@@ -321,6 +373,22 @@ tool that you can use to imple- ment policy and govern the open source
 licenses used in development. If you are inadvertently shipping
 software with an AGPL or other copyleft dependency, Nexus can now
 alert you to unacceptable licensing risks.
+
+With Open Source Software (OSS) becoming the de-factor standard for
+enterprise application development, the importance of tracking and
+identifying your exposure to OSS licenses is becoming an essential
+part of the software development lifecycle. Organizations need tools
+that let them govern, track, and manage the adoption of open source
+projects and the evaluation of the licenses and obligations that are
+part of OSS development.
+
+With Nexus Professional’s Repository Health Check, your repository
+becomes more than just a place to file binary artifacts, it becomes a
+tool that you can use to implement policy and govern the open source
+licenses used in development. If you are inadvertently shipping
+software with an AGPL or other copyleft dependency, Nexus can now
+alert you to unacceptable licensing risks.
+
 
 .License Analysis Summary Display from Repository Health Check 
 image::figs/web/eval-license.png[scale=60]
@@ -364,6 +432,33 @@ $ .\build -f simple-project\pom.xml clean deploy
   download the array of security vulnerabilities present in your
   project’s dependencies.
 
+*To evaluate the Repository Health Check:*
+
+* Connect your project’s build to Nexus
+
+* Build your software and download components from the Central Repository
+
+* Download artifacts covered by licenses such as Neo4J or Extjs
+
+* Once your Proxy repository for Maven Central has cached artifacts,
+open the Nexus interface and click on the green Analyze button next to
+your Central proxy
+
+* Nexus Professional will show you a summary report detailing your
+exposure to OSS licenses categorized by license type
+
+*To get started:*
+
+* Proxying a Remote Repository in Nexus (http://bit.ly/HQZBI2)
+
+* Configuring Maven for Nexus (http://bit.ly/IVjfSL)
+
+* Execute a Your Build using Nexus as a Proxy for Central
+
+* View OSS Licenses on the Health Check Summary Report
+(http://bit.ly/HQ6jNh)
+
+
 .Repository Heath Check Summary
 image::figs/web/eval-rhc-overview.png[scale=40]
 
@@ -401,6 +496,21 @@ artifacts you depend on. If NuGet Gallery has availability problems,
 your developers can continue to be productive. Caching artifacts
 locally will also result in a faster response for developers
 downloading .NET dependencies.
+
+The NuGet project provides a package management solution for .NET
+developers that is integrated directly into Visual Studio. NuGet makes
+it easy to add, remove and update libraries and tools in Visual Studio
+projects that use the .NET Framework, and Nexus can act as a proxy
+between your developer’s Visual Studio instances and the public NuGet
+Gallery.
+
+When you configure Nexus Pro to act as a proxy for NuGet Gallery you
+gain a more reliable build that depends on locally cached copies of
+the artifacts you depend on. If NuGet Gallery has availability
+problems, your developers can continue to be productive. Caching
+artifacts locally will also result in a faster response for developers
+downloading .NET dependencies.
+
 
 *In this example, you will...*
 
@@ -446,9 +556,41 @@ instructions:
 consume .NET artifacts from Nexus:
 https://support.sonatype.com/entries/21273753-configuring-visual-studio-to-download-nuget-libraries-from-nexus
 
+
+To evaluate support for proxying NuGet Gallery:
+
+* Create a Proxy repository for NuGet Gallery
+
+* Install NuGet using the Visual Studio Extension Manager
+
+* Configure your Visual Studio instance to download NuGet
+packages from your local Nexus server
+
+* Consume artifacts from NuGet Gallery via Nexus
+
+* Note improvements in reliability and speed that result from
+having a cache of local NuGet packages
+
+*To get started:*
+
+* Create a Proxy Repo for NuGet Gallery (http://bit.ly/HDvcJR)
+
+* Create a Hosted Repo for NuGet Packages
+(http://bit.ly/ILl5Gy)
+
+* Create a Repository Group for NuGet (http://bit.ly/HKMneu)
+
+* Install NuGet in Visual Studio (http://bit.ly/HKeQmi)
+
+* Configure NuGet to Download from Nexus
+(http://bit.ly/IN8YJ0)
+
+
 *When your developers are consuming OSS .NET artifacts through a Nexus
 proxy of NuGet gal- lery your builds will become more stable and
 reliable over time.*
+
+
 
 ==== .NET Integration - Publish and Share .NET Artifacts with NuGet
 
@@ -461,6 +603,20 @@ these components to a hosted NuGet repository on Nexus 2.0. This makes
 it as easy for projects within your organization to start publishing
 and consuming NuGet packages using Nexus as a central hub for
 collaboration.
+
+Nexus Professional can improve collaboration and control while
+speeding .NET development. NuGet defines a packaging standard that
+organizations can use to share code.
+
+If your organization needs to share .NET components you can publish
+these components to a hosted NuGet repository on Nexus 2.0. This makes
+it as easy for projects within your organization to start publishing
+and consuming NuGet packages using Nexus as a central hub for
+collaboration.
+
+Once NuGet packages are published to your Nexus Pro instance they can
+be added to a NuGet repository group and your internal packages will
+be as easy to consume as packages from NuGet Gallery.
 
 *In this example, you will...*
 
@@ -490,7 +646,35 @@ instructions:
 
 ** Create a NuGet Package in Visual Studio (https://support.sonatype.com/entries/21281427-creating-a-nuget-package-to-publish-to-nexus-professional)
 
-** Publish a NuGet Package to Nexus Pro (https://support.sonatype.com/entries/21284166-publishing-a-nuget-package-to-nexus-professional)
+** Publish a NuGet Package to Nexus Pro
+   (https://support.sonatype.com/entries/21284166-publishing-a-nuget-package-to-nexus-professional)
+
+*To evaluate Nexus Professional’s support for .NET:*
+
+* Install NuGet using the Visual Studio Extension Manager
+
+* Configure your Visual Studio instance to download NuGet
+packages from your local Nexus server
+
+* Consume artifacts from NuGet Gallery via Nexus and note the
+improvements in reliability and speed that result from having
+a cache of local NuGet packages
+
+* Publish NuGet packages to a Hosted NuGet repository and
+distribute custom .NET components using Nexus Professional
+
+*To get started:*
+
+* Create a Hosted Repo for NuGet Packages (http://bit.ly/ILl5Gy)
+
+* Activate the NuGet API Security Realm (http://bit.ly/HJtonx)
+
+* Install NuGet in Visual Studio (http://bit.ly/HKeQmi)
+
+* Create a NuGet Package in Visual Studio (http://bit.ly/IKICta)
+
+* Publish a NuGet Package to Nexus Pro (http://bit.ly/HLD2o
+
 
 *Once NuGet packages are published to your Nexus Pro instance they can
  be added to a NuGet repository group and your internal packages will
@@ -549,6 +733,31 @@ is committed to a release repository.
 .Closing a Staging Repository in Nexus User Interface
 image::figs/web/eval-staging.png[scale=40]
 
+*To evaluate support for Staged releases:*
+
+* Configure a project to publish artifacts to Nexus
+
+* Define a Staging Profile to intercept artifact deployments to a
+hosted release repository and send an email notification
+when artifacts have been staged
+
+* Deploy a release and view the deployed artifacts in a
+temporary staging repository
+
+* Promote or discard the contents of this temporary staging
+repository
+
+
+*To get started:*
+
+* Configure Maven to publish to Nexus (http://bit.ly/Ib80EJ)
+
+* Create a Staging Profile (http://bit.ly/I2jec5)
+
+* Stage a Release to Nexus with Maven (http://bit.ly/I2jiJ1)
+
+* Promote a Staged Release with Nexus (http://bit.ly/HQdTJa)
+
 *Staging gives you a standard interface for controlling and managing
  releases. A collection of related release artifacts can be staged for
  qualification and testing as a single atomic unit. These staged
@@ -579,6 +788,31 @@ deliver reliable software.
 * Create Procurement Rules (http://www.sonatype.com/books/nexus-book/reference/procure-sect-config-rule.html)
 
 * Execute Your Build Using Maven as a Procured Proxy
+
+
+*To evaluate the Procurement feature:*
+
+* Create a Hosted repository named “Procured Central”
+
+* In the administrative interface, establish a relationship
+between your Central proxy and this Procured Central Hosted
+repository
+
+* Configure access rules for which artifacts can be referenced in
+this Procured version
+
+*To get started:*
+
+* Proxying a Remote Repository in Nexus (http://bit.ly/HQZBI2)
+
+* Configuring Maven for Nexus (http://bit.ly/IVjfSL)
+
+* Configure Procurement in Nexus (http://bit.ly/HQdTJa)
+
+* Create Procurement Rules (http://bit.ly/JympZs)
+
+* Execute Your Build Using Maven as a Procured Proxy
+
 
 *Procurement is a useful tool if you are operating in an environment
  that needs to qualify every single dependency before it can be used
@@ -817,6 +1051,7 @@ Settings on a local workstation.
 
 To get started
 
-* Manage Maven Settings Templates (http://www.sonatype.com/books/nexus-book/reference/settings-sect-install.html)
+* Manage Maven Settings Templates ->
+  http://www.sonatype.com/books/nexus-book/reference/settings-sect-install.html[Read more...]
 
 * Download Settings from Nexus (http://www.sonatype.com/books/nexus-book/reference/settings-sect-downloading.html)
