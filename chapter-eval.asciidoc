@@ -36,8 +36,8 @@ Windows shell commands.
 |Task | Bash Shell | Window Shell 
 |Delete a file          | +rm filename+                 | +del filename+
 |Delete a directory | +rm -rf directoryname+  | +rmdir directoryname+
-| Remove a folder in users home directory | +rm -rf
-  ~/.m2/repository+  | rmdir %HOMEPATH%\.m2\repository +
+| Delete a directory in users home directory | +rm -rf
+  ~/.m2/repository+  | +rmdir %HOMEPATH%\.m2\repository+
 | Change to the users home directory | +cd ~+ | +cd %HOMEPATH%+
 |======================
 
@@ -80,7 +80,7 @@ OS name: "mac os x", version: "10.8.2", arch: "x86_64", family: "mac"
 [[eval-prereq-nuget]]
 ==== Microsoft Visual Studio and NuGet
 
-Microsoft Visual Studio and NuGet are neeed to evaluate the .Net
+Microsoft Visual Studio and NuGet are needed to evaluate the .Net
 support of Nexus Professional. There are a number of different Visual
 Studio distributions.  Someone of these distributions, may have NuGet
 already installed while others do not.  Even if your Visual Studio
@@ -92,10 +92,10 @@ new packages available on NuGet Gallery may not be compatible with
 older versions of the NuGet package manager.
 
 For detailed instructions on installing NuGet in Visual Studio, please
-go to the NuGet project's documentation.  There is a page named
-http://docs.nuget.org/docs/start-here/installing-nuget [Installing
-NuGet], which provides the official installation instructions for
-installing NuGet.
+go to the http://docs.nuget.org/[NuGet project's documentation site]
+and refer to the
+http://docs.nuget.org/docs/start-here/installing-nuget[Installing
+NuGet] instructions.
 
 [[eval-getting-started]]
 === Getting Started
@@ -156,13 +156,9 @@ to demonstrate the features of Nexus Open Source and Nexus
 Professional. These example projects are bundled with the trial
 installer for your convenience. In additiona they are available as the
 nexus-book-examples project on GitHub at
-
-----
-https://github.com/sonatype/nexus-book-examples
-----
-
-for you to download and inspect separately, if desired. The latest
-version of all the examples is available at
+https://github.com/sonatype/nexus-book-examples for you to download
+and inspect separately, if desired. The latest version of all the
+examples is available as a zip archive at
 https://github.com/sonatype/nexus-book-examples/archive/master.zip.
 
 
@@ -491,6 +487,7 @@ OSS License compliance and security assessments are not something you
 ****
 
 
+[[eval-nuget-proxy]]
 === .NET Integration - Consume .NET Artifacts from NuGet Gallery
 
 The NuGet project provides a package management solution for .NET
@@ -500,12 +497,12 @@ projects that use the .NET Framework, and Nexus can act as a proxy
 between your developer’s Visual Studio instances and the public NuGet
 Gallery.
 
-When you configure Nexus Pro to act as a proxy for NuGet Gallery you
-gain a more reliable build that depends on locally cached copies of
-the components you depend on. If NuGet Gallery has availability
-problems, your developers can continue to be productive. Caching
-components locally will also result in a faster response for developers
-downloading .NET dependencies.
+When you configure Nexus Professional to act as a proxy for NuGet
+Gallery you gain a more reliable build that depends on locally cached
+copies of the components you depend on. If NuGet Gallery has
+availability problems, your developers can continue to be
+productive. Caching components locally will also result in a faster
+response for developers downloading .NET dependencies.
 
 *In this example, you will...*
 
@@ -530,62 +527,59 @@ following NuGet repositories:
 image::figs/web/eval-nuget.png[scale=50]
 
 
-To consume .NET componentns from Nexus Professional you will need to
+To consume .NET components from Nexus Professional you will need to
 install the NuGet feature in Visual Studio as referenced in
-<<eval-prereq-nuget>>.
+<<eval-prereq-nuget>> and configure it appropriately:
 
-* Install NuGet in Visual Studio -> https://support.sonatype.com/entries/21280777-installing-nuget-in-visual-studio[Read more...]
+. Open Nexus Professional, click on Repositories in the left-hand
+   navigation menu and locate the 'NuGet Group' repository group. This
+   is the aggregating group from which Visual Studio should download
+   packages. Click on this repository group in the list of
+   repositories.
 
-* To configure Visual Studio to download packages from Nexus, follow these steps:
-
-** Open Nexus Professional, click on Repositories in the left-hand
-   navigation menu and locate the NuGet repository group you want
-   Visual Studio to download packages from. Click on this repository
-   group and then select the NuGet repository.
-
-** The NuGet tab contains the URL you are going to enter into Visual
-    Studio’s NuGet Package Man- ager settings. Your URL would be:
+. Select the NuGet tab below the list of repositories with the NuGet
+    Group selected and copy the URL in the 'Package Source' field to
+    your clipboard. The
+    value should be
     http://localhost:8081/nexus/service/local/nuget/nuget-group/
 
-* Copy this URL on to your clipboard.
+. Now in Visual Studio, right-click on a Visual Studio project and
+select 'Add Library Reference'
 
-* Refer to https://support.sonatype.com/entries/21273753-configuring-visual-studio-to-download-nuget-libraries-from-nexus[these instructions] to configure Visual Studio to
-consume .NET artifacts from Nexus
+. In the 'Add Library Package Reference' click on the 'Settings'
+button in the lower left-hand corner.
 
-To evaluate support for proxying NuGet Gallery:
+. This will bring up an 'Options' button.   Remove the initial NuGet
+repository location and replace it with a reference to your Nexus
+instance.  Clicking 'Add' to add the reference to your Nexus Instance.  
 
-* Create a Proxy repository for NuGet Gallery
+. Click on 'OK' to return to the 'Add Library Package Reference'
+dialog.
 
-* Install NuGet using the Visual Studio Extension Manager
+. Select the 'Online' item in the left-hand side of the dialog, at this
+point Visual Studio will interrogate your Nexus instance for a list of
+NuGet packages.
 
-* Configure your Visual Studio instance to download NuGet
-packages from your local Nexus server
+. You can now locate the package you need and install it.  
 
-* Consume artifacts from NuGet Gallery via Nexus
+. To verify that the NuGet package components are being served from
+Nexus you can return to the Nexus web interface and browse the local
+storage of your NuGet proxy repository.
+ 
+NOTE: Watch http://www.youtube.com/v/HXksSdhoqbA?version=3[this video]
+of the steps being performed in Visual Studio.
 
-* Note improvements in reliability and speed that result from
-having a cache of local NuGet packages
-
-*To get started:*
-
-* Create a Proxy Repo for NuGet Gallery (http://bit.ly/HDvcJR)
-
-* Create a Hosted Repo for NuGet Packages
-(http://bit.ly/ILl5Gy)
-
-* Create a Repository Group for NuGet (http://bit.ly/HKMneu)
-
-* Install NuGet in Visual Studio (http://bit.ly/HKeQmi)
-
-* Configure NuGet to Download from Nexus
-(http://bit.ly/IN8YJ0)
-
+The above instructions were created using Visual Studio 10 Web
+Developer Express. Your configuration steps may vary if you are using
+a different version of Visual Studio. 
 
 .Conclusion
 ****
 When your developers are consuming OSS .NET artifacts through a Nexus
-proxy of NuGet gal- lery your builds will become more stable and
-reliable over time.
+proxy of NuGet gal lery your builds will become more stable and
+reliable over time. Every component will be only downloaded to Nexus
+once and every following download will enjoy the performance and
+reliability of a local download from the Nexus cache.
 ****
 
 
@@ -596,28 +590,17 @@ speeding .NET development. NuGet defines a packaging standard that
 organizations can use to share code.
 
 If your organization needs to share .NET components you can publish
-these components to a hosted NuGet repository on Nexus 2.0. This makes
-it as easy for projects within your organization to start publishing
-and consuming NuGet packages using Nexus as a central hub for
-collaboration.
+these components to a hosted NuGet repository on Nexus
+Professional. This makes it easy for projects within your organization
+to start publishing and consuming NuGet packages using Nexus as a
+central hub for collaboration.
 
-Nexus Professional can improve collaboration and control while
-speeding .NET development. NuGet defines a packaging standard that
-organizations can use to share code.
-
-If your organization needs to share .NET components you can publish
-these components to a hosted NuGet repository on Nexus 2.0. This makes
-it as easy for projects within your organization to start publishing
-and consuming NuGet packages using Nexus as a central hub for
-collaboration.
-
-Once NuGet packages are published to your Nexus Pro instance they can
-be added to a NuGet repository group and your internal packages will
-be as easy to consume as packages from NuGet Gallery.
+Once NuGet packages are published to your Nexus Professional instance
+they are automatically be added to the NuGet repository group and your
+internal packages will be as easy to consume as packages from NuGet
+Gallery.
 
 *In this example, you will...*
-
-* Configure your Visual Studio instance to download NuGet packages from your local Nexus server
 
 * Publish NuGet packages to a Hosted NuGet repository
 
@@ -625,57 +608,33 @@ be as easy to consume as packages from NuGet Gallery.
 
 *Let's get started:*
 
-* Your Nexus Professional Trial instance has been preconfigured with
-  the following NuGet repositories:
+. Follow the example from <<eval-nuget-proxy>> to set up proxying of
+NuGet packages from Nexus 
 
-** A Proxy Repository for NuGet Gallery
+. Activate the NuGet API Security Realm ->
+  https://support.sonatype.com/entries/21285298-activate-the-nuget-api-key-security-realm-in-nexus-professional[Read
+  more...]
 
-** A Hosted Repository for your internal .NET artifacts
+. Create a NuGet Package in Visual Studio ->
+https://support.sonatype.com/entries/21281427-creating-a-nuget-package-to-publish-to-nexus-professional[Read
+more...]
 
-** A Repository Group which combines both the NuGet Gallery Proxy and
-   the Hosted NuGet Reposi- tory
-
-* To consume .NET artifacts from Nexus Professional you will need to
-install the NuGet feature in Visual Studio by following these
-instructions: 
-
-**  Install NuGet in Visual Studio -> https://support.sonatype.com/entries/21280777-installing-nuget-in-visual-studio[Read more...]
-
-** Create a NuGet Package in Visual Studio -> https://support.sonatype.com/entries/21281427-creating-a-nuget-package-to-publish-to-nexus-professional[Read more...]
-
-** Publish a NuGet Package to Nexus Pro -> https://support.sonatype.com/entries/21284166-publishing-a-nuget-package-to-nexus-professional[Read more...]
-
-*To evaluate Nexus Professional’s support for .NET:*
-
-* Install NuGet using the Visual Studio Extension Manager
-
-* Configure your Visual Studio instance to download NuGet
-packages from your local Nexus server
-
-* Consume artifacts from NuGet Gallery via Nexus and note the
-improvements in reliability and speed that result from having
-a cache of local NuGet packages
-
-* Publish NuGet packages to a Hosted NuGet repository and
-distribute custom .NET components using Nexus Professional
-
-*To get started:*
-
-* Create a Hosted Repo for NuGet Packages (http://bit.ly/ILl5Gy)
-
-* Activate the NuGet API Security Realm (http://bit.ly/HJtonx)
-
+. Publish a NuGet Package to Nexus Professional -> https://support.sonatype.com/entries/21284166-publishing-a-nuget-package-to-nexus-professional[Read more...]
 
 
 .Conclusion
 ****
-Once NuGet packages are published to your Nexus Pro instance they can
- be added to a NuGet repository group and your internal packages will
- be as easy to consume as packages from NuGet Gallery.
+Once NuGet packages are published to your Nexus Pro instance and are
+ available via a NuGet repository group, your internal packages will
+ be as easy to consume as packages from NuGet Gallery. 
+
+This will greatly improve sharing of components and reuse of
+ development efforts across your teams and allow you to modularize
+ your software.
 ****
 
 
-==== Process Improvement - Staging a Release with Nexus
+=== Process Improvement - Staging a Release with Nexus
 
 When was the last time you did a software release to a production
 system? Did it involve a QA sign-off? What was the process you used to
@@ -684,16 +643,16 @@ find themselves limited by the amount of time it takes to respond and
 create incremental builds during a release.
 
 The Nexus Staging Suite changes this by providing workflow support for
-binary software artifacts. If you need to create a release artifact
+binary software components. If you need to create a release component
 and deploy it to a hosted repository, you can use the Staging Suite to
 post a release which can be tested, promoted, or discarded before it
 is committed to a release repository.
 
 *In this example, you will...*
 
-* Configure a project to publish artifacts to Nexus
+* Configure a project to publish its build output component to Nexus
 
-* Deploy a release and view the deployed artifacts in a temporary
+* Deploy a release and view the deployed component in a temporary
   staging repository
 
 * Promote or discard the contents of this temporary staging repository
@@ -701,8 +660,7 @@ is committed to a release repository.
 *Let's get started:*
 
 . This example assumes that you have successfully deployed the
-  simple-project sample to Nexus in the “Publishing Artifact” section
-  of this document.
+  simple-project as documented in <<eval-maven-proxy>>.
 
 . Go to the Nexus evaluation guide directory you configured during the
   Nexus Professional installer and execute the following command:
