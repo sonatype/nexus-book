@@ -58,7 +58,7 @@ Java(TM) SE Runtime Environment (build 1.7.0_10-b18)
 Java HotSpot(TM) 64-Bit Server VM (build 23.6-b04, mixed mode)
 ----
 
-[[prereq-maven]]
+[[eval-prereq-maven]]
 ==== Apache Maven
 
 Apache Maven can be retrieved from the
@@ -77,12 +77,24 @@ Default locale: en_US, platform encoding: UTF-8
 OS name: "mac os x", version: "10.8.2", arch: "x86_64", family: "mac"
 ----
 
-==== Microsoft Visual Studio and nuget
+==== Microsoft Visual Studio and NuGet
 
-see ms site and nuget site
+Microsoft Visual Studio and NuGet are neeed to evaluate the .Net
+support of Nexus Professional. There are a number of different Visual
+Studio distributions.  Someone of these distributions, may have NuGet
+already installed while others do not.  Even if your Visual Studio
+installation is bundled with NuGet, you will want to make sure that
+you have upgraded to the latest version of the tool.
 
-and support site links
+http://nuget.org/[NuGet] is a fast-paced project, and you'll find that
+new packages available on NuGet Gallery may not be compatible with
+older versions of the NuGet package manager.
 
+For detailed instructions on installing NuGet in Visual Studio, please
+go to the NuGet project's documentation.  There is a page named
+http://docs.nuget.org/docs/start-here/installing-nuget [Installing
+NuGet], which provides the official installation instructions for
+installing NuGet.
 
 [[eval-getting-started]]
 === Getting Started
@@ -184,6 +196,7 @@ If you are new to repository management, the first step is to evaluate
 the two basic benefits of running a repository manager: proxying and
 publishing.
 
+[[eval-maven-proxy]]
 ==== Proxying Components With Apache Maven
 
 If you use a dependency in your software, your build downloads
@@ -211,7 +224,7 @@ your entire development effort.
 *Let's get started:*
 
 . Ensure that Apache Maven is installed as a prerequisite as
-  documented in <<prereq-maven>>.
+  documented in <<eval-prereq-maven>>.
 
 . Go to the Nexus evaluation guide directory you configured during the
   Nexus Professional install and configure Maven to access Nexus
@@ -245,6 +258,7 @@ http://localhost:8081/nexus/content/groups/public/org/freemarker/freemarker/2.3.
 
 . After the build has successfully completed, delete the local Maven
   repository cache and re-run the build.
++
 ----
 $ rm -rf ~/.m2/repository
 $ mvn clean install
@@ -286,6 +300,8 @@ organization.
 * Watch another project download this component as a dependency from Nexus
 
 *Let's get started*
+
+. Follow the proxying evaluation example from <<eval-maven-proxy>>
 
 . Go to the Nexus evaluation guide directory you configured during the
   Nexus Professional installer and publish the simple-project to Nexus
@@ -358,9 +374,8 @@ corporations downloaded 2.8 million flawed components in one
 year. Nexus becomes an effective way to discover flawed components in
 your repositories so you can avoid falling victim to known exploits.
 
-.Security Vulnerability Summary Display from Repository Health Check
-image::figs/web/eval-security.png[scale=60]
-
+.Repository Heath Check Summary
+image::figs/web/eval-rhc-overview.png[scale=50]
 
 *In this example, you will...*
 
@@ -390,6 +405,10 @@ vulnerabilities present in you repository.
 . Optionally build some of your own applications to get further
   components proxied and see if additional security issues appear.
 
+
+.Security Vulnerability Summary Display from Repository Health Check
+image::figs/web/eval-security.png[scale=60]
+
 Nexus Professional users gain access to further details about all the
 components with security vulnerabilities including their repository
 coordinates to uniquely identify the component as well as links to the
@@ -417,8 +436,6 @@ becomes more than just a place to file binary components. It becomes a
 tool that you can use to implement policies and govern the open source
 licenses used in development.
 
-.License Analysis Summary Display from Repository Health Check 
-image::figs/web/eval-license.png[scale=50]
 
 *In this example, you will...*
 
@@ -448,9 +465,9 @@ components present in you repository.
 . Optionally build some of your own applications to get further
   components proxied and see if additional license issues appear.
 
-.Repository Heath Check Summary
-image::figs/web/eval-rhc-overview.png[scale=40]
 
+.License Analysis Summary Display from Repository Health Check 
+image::figs/web/eval-license.png[scale=50]
 
 Nexus Professional customers can access a detailed report to identify
 specific components with known security vulnerabilities or
@@ -476,15 +493,6 @@ OSS License compliance and security assessments are not something you
 === .NET Integration - Consume .NET Artifacts from NuGet Gallery
 
 The NuGet project provides a package management solution for .NET
-developers that is integrated directly into Visual Studio. When you
-configure Nexus Pro to act as a proxy for NuGet Gallery you gain a
-more reliable build that depends on locally cached copies of the
-artifacts you depend on. If NuGet Gallery has availability problems,
-your developers can continue to be productive. Caching artifacts
-locally will also result in a faster response for developers
-downloading .NET dependencies.
-
-The NuGet project provides a package management solution for .NET
 developers that is integrated directly into Visual Studio. NuGet makes
 it easy to add, remove and update libraries and tools in Visual Studio
 projects that use the .NET Framework, and Nexus can act as a proxy
@@ -493,27 +501,26 @@ Gallery.
 
 When you configure Nexus Pro to act as a proxy for NuGet Gallery you
 gain a more reliable build that depends on locally cached copies of
-the artifacts you depend on. If NuGet Gallery has availability
+the components you depend on. If NuGet Gallery has availability
 problems, your developers can continue to be productive. Caching
-artifacts locally will also result in a faster response for developers
+components locally will also result in a faster response for developers
 downloading .NET dependencies.
-
 
 *In this example, you will...*
 
-* Configure your Visual Studio instance to download NuGet pack- ages
+* Configure your Visual Studio instance to download NuGet packages
   from your local Nexus server
 
-* Consume artifacts from NuGet Gallery via Nexus
+* Consume components from NuGet Gallery via Nexus
 
-*To get started*
+*Let's get started*
 
 Your Nexus Professional Trial instance has been preconfigured with the
 following NuGet repositories:
 
 * A Proxy Repository for NuGet Gallery
 
-* A Hosted Repository for your internal .NET artifacts
+* A Hosted Repository for your internal .NET components
 
 * A Group which combines both the NuGet Gallery Proxy and the Hosted
   NuGet Repository
@@ -522,9 +529,9 @@ following NuGet repositories:
 image::figs/web/eval-nuget.png[scale=50]
 
 
-To consume .NET artifacts from Nexus Professional you will need to
-install the NuGet feature in Visual Studio by follow- ing these
-instructions:
+To consume .NET componentns from Nexus Professional you will need to
+install the NuGet feature in Visual Studio as referenced in
+<<eval-prereq-nuget>>.
 
 * Install NuGet in Visual Studio -> https://support.sonatype.com/entries/21280777-installing-nuget-in-visual-studio[Read more...]
 
