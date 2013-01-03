@@ -660,64 +660,61 @@ is committed to a release repository.
 *Let's get started:*
 
 . This example assumes that you have successfully deployed the
-  simple-project as documented in <<eval-maven-proxy>>.
+  simple-project as documented in <<eval-maven-proxy>>. 
 
-. Go to the Nexus evaluation guide directory you configured during the
-  Nexus Professional installer and execute the following command:
----- 
-      $ ./build -f another-project/pom.xml clean deploy
+. Inspect the pre-configured 'Example Release Profile' staging profile
+by selecting it from the list available after selecting 'Staging
+Profiles' in the the 'Build Promotion' menu in the left hand
+navigation
+
+. Notice that the version of the simple-project in the pom.xml ends
+with -SNAPSHOT. This means that it is in development.
+
+. Change the version of the simple project to release version by
+removing the -SNAPSHOT in a text editor or run the command
++
+----
+$ cd maven/simple-project
+$ mvn versions:set -DnewVersion=1.0.0
 ----
 
-. To view the staging repository, click on “Staging Repositories” and
-  you should see a single staging repository as shown in this
-  illustration.
+. Publish the release to the Nexus Staging suite with
++
+----
+$ mvn clean deploy
+----
 
-. Click on “Close” to close the repository and make it available via
+. To view the staging repository, click on 'Staging Repositories' in
+  the 'Build Promotion' menu and you should see a single staging
+  repository as shown in this illustration.
+
+. Click on 'Close' to close the repository and make it available via
   the public group.
 
 . Experiment with Staging, at this point you can:
 
-.. Click on “Drop” to discard the contents of the repository and stag-
+.. Click on 'Drop' to discard the contents of the repository and stag-
    ing another release.
 
-.. Click on “Release” to publish the contents of the repository to the
+.. Click on 'Release' to publish the contents of the repository to the
    Release repository.
 
+. Once you release the staging repository, you will be able to find
+the release components in the 'Releases' hosted repository
+
 .Closing a Staging Repository in Nexus User Interface
-image::figs/web/eval-staging.png[scale=40]
+image::figs/web/eval-staging.png[scale=50]
 
-*To evaluate support for Staged releases:*
-
-* Configure a project to publish artifacts to Nexus
-
-* Define a Staging Profile to intercept artifact deployments to a
-hosted release repository and send an email notification
-when artifacts have been staged
-
-* Deploy a release and view the deployed artifacts in a
-temporary staging repository
-
-* Promote or discard the contents of this temporary staging
-repository
-
-
-*To get started:*
-
-* Configure Maven to publish to Nexus - > http://bit.ly/Ib80EJ[Read more...]
-
-* Create a Staging Profile -> http://bit.ly/I2jec5[Read more...]
-
-* Stage a Release to Nexus with Maven -> http://bit.ly/I2jiJ1[Read more...]
-
-* Promote a Staged Release with Nexus -> http://bit.ly/HQdTJa[Read more...]
-
+The individual transactions triggered by closing, dropping, promoting
+or releasing a staging repository can be enriched with email
+notifications as well as staging rule inspections of the components.
 
 .Conclusion
 **** 
 Staging gives you a standard interface for controlling and managing
- releases. A collection of related release artifacts can be staged for
+ releases. A collection of related release components can be staged for
  qualification and testing as a single atomic unit. These staged
- release repository can be discarded or released pending testing and
+ release repositories can be discarded or released pending testing and
  evaluation.
 ****
 
