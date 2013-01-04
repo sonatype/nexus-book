@@ -7,17 +7,20 @@ The following evaluation of Sonatype Nexus is based on an assumption
 of installing Nexus itself as well as the various technologies used in
 the specific evaluation example all on one computer. A more extended
 evaluation of Nexus in a team environment should follow the
-instructions for a full installation.
+instructions for a full installation as documented in the book
+http://links.sonatype.com/products/nexus/pro/docs[+Repository
+Management with Nexus+]. Consult the book for further in-depth
+documentation about all features of Nexus.
 
 Besides the installation of Nexus itself, various evaluations will need
 different prerequisites installed on the machine you use for your
-evaluation. The installation of these technologies is documented below
+evaluation. The installation instructions of these technologies follow
+below. Only follow the instructions referenced from the examples you
+are interested to follow. For example you will only need to install
+Visual Studio and NuGet if you want to evaluate the .Net Integration
+of Nexus.
 
 ==== A Note about the Operating System
-
-Nexus, Apache Maven and most other technologies used in this guide run
-on top of the Java Runtime, which is available for most common
-operating systems. 
 
 Some of the tasks described are referencing command line calls. Where
 that is the case this guide will use Unix typical commands and syntax
@@ -43,11 +46,13 @@ Windows shell commands.
 
 ==== Java Runtime
 
+
 Nexus itself as well as some of the technologies used in the
-evaluation require a Java runtime or development kit. We recommend to
-install the latest Oracle Java 6 or Java 7 JDK available from the
+evaluation require a Java runtime or development kit, which is
+available for most operating systems. We recommend to install the
+latest Oracle Java 6 or Java 7 JDK available from the
 http://www.oracle.com/technetwork/java/javase/downloads/index.html[download
-web page] following the installation instructions on the same site.
+web page] and following the installation instructions on the same site.
 
 After a successful installation, you can verify it by running the
 command +java -version+, which should result in an output similar to
@@ -64,9 +69,10 @@ Java HotSpot(TM) 64-Bit Server VM (build 23.6-b04, mixed mode)
 Apache Maven can be retrieved from the
  http://maven.apache.org/download.html[download page] and installed
 following the instructions available there. We recommend the usage of
-the latest available Maven 3 version. After a successful installation
-you can verify it with running the command +mvn --version+, which
-should result in an output similar to
+the latest available Maven 3 version. 
+
+After a successful installation you can verify it with running the
+command +mvn --version+, which should result in an output similar to
 
 ----
 Apache Maven 3.0.4 (r1232337; 2012-01-17 00:44:56-0800)
@@ -83,7 +89,7 @@ OS name: "mac os x", version: "10.8.2", arch: "x86_64", family: "mac"
 Microsoft Visual Studio and NuGet are needed to evaluate the .Net
 support of Nexus Professional. There are a number of different Visual
 Studio distributions.  Someone of these distributions, may have NuGet
-already installed while others do not.  Even if your Visual Studio
+already installed, while others do not.  Even if your Visual Studio
 installation is bundled with NuGet, you will want to make sure that
 you have upgraded to the latest version of the tool.
 
@@ -101,11 +107,12 @@ NuGet] instructions.
 === Getting Started
 
 This guide is based on the usage of Nexus Professional. A lot of the
-core features are available in Nexus Open Source as well and the
-examples and evaluation guide are suitable to assess the open source
-version as well.
+core features are available in Nexus Open Source as well and some
+examples are suitable to assess the open source version as well.
 
-* *Step 1:* Download the Nexus Professional Installer
+* *Step 1:*
+   http://www.sonatype.com/Products/Nexus-Professional/Purchase/Free-Trial[Download
+   the Nexus Professional Trial Installer] for your operating system
 
 * *Step 2:* Run the Nexus Professional Installer
 
@@ -117,19 +124,20 @@ browser window.
 
 ==== Activating Your Nexus Trial
 
-You will see the trial activation form in which you provide your full
-name, email address, organization, and location. Once you’ve supplied
-this information, click on “Submit Activation Request”.
+Once Nexus is started and you are accessing the user interface the
+first time, you will see the trial activation form. Provide your full
+name, email address, organization, and location, click on `Submit
+Activation Request`.
 
 Alternatively you can request the trial license key at
 https://licensing.sonatype.com/nexus/form/trial[https://licensing.sonatype.com/nexus/form/trial]
 
-After you received an email from Sonatype with the subject “Your Nexus
-Professional Trial License” which contains your trial license key, you
-can paste this license key into the license field in the Nexus Professional 
-user interface. Click Activate to activate your 14-day Nexus Professional
-Trial. Once your trial is activated you will be presented with the
-Nexus user interface.
+You will immediately receive an email from Sonatype with the subject
+“Your Nexus Professional Trial License”, which contains your trial
+license key. Paste this license key into the license field in the
+Nexus Professional user interface. Click `Activate` to activate your
+14-day Nexus Professional Trial. Once your trial is activated you will
+be presented with the Nexus user interface.
 
 ==== Logging Into Nexus as an Administrator
 
@@ -141,10 +149,7 @@ interface.
 .Nexus User Interface with Log In 
 image::figs/web/eval-login.png[scale=40]
 
-The default username and password are:
-
-Username:: admin
-Password:: admin123
+The administrator username is `admin` and password is `admin123`.
 
 The Nexus Professional Trial evaluation guide assumes that you are
 logged in as an administrator.
@@ -154,24 +159,21 @@ logged in as an administrator.
 To make it easier to evaluate Nexus, we’ve created a set of projects
 to demonstrate the features of Nexus Open Source and Nexus
 Professional. These example projects are bundled with the trial
-installer for your convenience. In additiona they are available as the
-nexus-book-examples project on GitHub at
-https://github.com/sonatype/nexus-book-examples for you to download
-and inspect separately, if desired. The latest version of all the
-examples is available as a zip archive at
-https://github.com/sonatype/nexus-book-examples/archive/master.zip.
+installer for your convenience. 
 
+In addition they are available as the nexus-book-examples project on
+GitHub at https://github.com/sonatype/nexus-book-examples for you to
+download and inspect separately, if desired. The latest version of all
+the examples is available as a zip archive at
+https://github.com/sonatype/nexus-book-examples/archive/master.zip.
 
 When you downloaded the trial distribution of Nexus Professional, your
 server is also preconfigured to demonstrate important features.
 
 The Nexus trial distribution contains the following customizations:
 
-* Nexus has been preconfigured to download the search index from
-  Central.
-
-* Nexus proxies NuGet Gallery so that you can quickly evaluate support
-  for .NET development.
+* Nexus has been preconfigured to download the search index from the 
+  Central Repository.
 
 * A Staging profile has been configured to demonstrate release
   management.
@@ -179,10 +181,13 @@ The Nexus trial distribution contains the following customizations:
 * Procurement has been preconfigured so you can quickly define rules
   for the OSS components.
 
+* Nexus proxies NuGet Gallery so that you can quickly evaluate support
+  for .NET development.
+
 [[eval-proxy-publish]]
 === The Basics: Proxying and Publishing
 
-[quote, Build Engineer, FInancial Industry]
+[quote, Build Engineer, Financial Industry]
 ____
 After a few weeks the importance of having a repository manager is so
 obvious no one on my team can believe we used to develop software
@@ -197,10 +202,11 @@ publishing.
 ==== Proxying Components With Apache Maven
 
 If you use a dependency in your software, your build downloads
-artifacts from a remote repository, such as the
-http://search.maven.org[Central Repository]. Your systems depend on
-these components, so if one of these critical remote repositories
-becomes unavailable your productivity can grind to a halt.
+components from a remote repository, such as the
+http://search.maven.org[Central Repository] and others. Your systems
+depend on these components. If one of these critical remote
+repositories becomes unavailable, your productivity can grind to a
+halt.
 
 This is where Nexus can help. Nexus is pre-configured to proxy the
 Central Repository and other remote repositories can be easily
@@ -214,7 +220,7 @@ your entire development effort.
 
 * Configure Maven to download components from Nexus
 
-* Pre-cache dependencies and build artifacts with an initial build
+* Pre-cache dependencies and build components with an initial build
 
 * Note organization-wide improvements in build reliability
 
@@ -231,7 +237,7 @@ your entire development effort.
 $ cp maven/settings/setttings.xml ~/.m2/
 ----
 
-. If you do not want to use the default local repository location of
+. Optionally, if you do not want to use the default local repository location of
   Maven in `~/.m2/repository`, change the localRepository settings in
   the settings.xml file to an absolute path.
 
@@ -246,10 +252,8 @@ $ mvn clean install
 from your local Nexus instance installed with requests like
 +
 ----
-Downloading: http://localhost:8081/nexus/content/groups/public/org/freemarker/freemarker/2.3.10/freemarker-2.3.10.pom
-Downloaded:
-http://localhost:8081/nexus/content/groups/public/org/freemarker/freemarker/2.3.10/freemarker-2.3.10.pom
-(1016 B at 3.8 KB/sec)
+Downloading: http://localhost:8081/nexus/content/groups/public/org/apache/maven/plugins/maven-clean-plugin/2.5/maven-clean-plugin-2.5.pom
+Downloaded: http://localhost:8081/nexus/content/groups/public/org/apache/maven/plugins/maven-clean-plugin/2.5/maven-clean-plugin-2.5.pom (4 KB at 1.3 KB/sec)
 ...
 ----
 
@@ -261,9 +265,10 @@ $ rm -rf ~/.m2/repository
 $ mvn clean install
 ----
 
-. Notice how the downloads are occuring much faster since they are no
-  longer retrieved from the remote repositories before being served by
-  Nexus, but rather are supplied straight from the cache in Nexus
+. Notice how the downloads are occurring much faster. The components
+  are no longer retrieved from the remote repositories before being
+  served by Nexus, but rather are supplied straight from the cache in
+  Nexus.
 
 . To verify that components are being cached in Nexus, open the
   Repositories panel by clicking on +Repositories+ in the left-hand
@@ -274,8 +279,9 @@ $ mvn clean install
 .Conclusion
 ****
 Your builds will be faster and more reliable now that you are caching
-components in Nexus. Once Nexus has cached a component locally, there
-is no need to make another round-trip to the server.
+components in Nexus and retrieve them from there.. Once Nexus has
+cached a component locally, there is no need to make another
+round-trip to the remote repository server.
 ****
 
 ==== Publishing Artifacts with Apache Maven
@@ -286,7 +292,7 @@ code is often distributed and deployed using an SCM, a shared file
 system, or some other inefficient method for sharing binary components.
 
 With Nexus you create hosted repositories, giving you a place to
-upload your own artifacts to Nexus. You can then feed your components
+upload your own components to Nexus. You can then feed your components
 back into the same repositories referenced by all developers in your
 organization.
 
@@ -312,8 +318,13 @@ $ mvn clean deploy
   output in the form of a jar component to your local instance of
   Nexus Professional.
 
-. Once this artifact has been published, return to the evaluation
-  sample projects directory and publish the run a build of another-project:
+. To verify that the simple-project component was deployed to Nexus,
+  click on Repositories and then select the Snapshots
+  repository. Select the +Browse Storage+ tab as shown in this
+  illustration.
+
+. Once this component has been published, return to the evaluation
+  sample projects directory and run a build of another-project:
 +
 ----
 $ cd maven/another-project
@@ -335,10 +346,9 @@ $ mvn clean install
 During the build, it is relying on Nexus when it attempts to retrieve
   the component from simple-project.
 
-. To verify that the simple-project component was deployed to Nexus,
-  click on Repositories and then select the Snapshots
-  repository. Select the +Browse Storage+ tab as shown in this
-  illustration.
+Now that you are sharing components of your projects internally, you
+do not build each others software projects anymore just to integrate
+them to a large software.
 
 .Successfully Deployed Components In the Snapshots Repository
 image::figs/web/eval-publish.png[scale=40]
@@ -346,10 +356,10 @@ image::figs/web/eval-publish.png[scale=40]
 
 .Conclusion
 **** 
-Nexus Professional can serve as an important tool for collaboration
-between different developers and different development groups. It
-removes the need to store binaries in source control or shared
-file-systems and makes collaboration more efficient.
+Sonatype Nexus Open Source and Professional can serve as an important
+tool for collaboration between different developers and different
+development groups. It removes the need to store binaries in source
+control or shared file-systems and makes collaboration more efficient.
 ****
 
 === Governance 
@@ -357,7 +367,7 @@ file-systems and makes collaboration more efficient.
 ==== Identify Insecure OSS Components in Nexus
 
 The Repository Health Check in Nexus Professional turns your
-repository manager into the first line of defense against security
+repository manager into the first line of defence against security
 vulnerabilities. Nexus Professional scans components and finds cached
 components with known vulnerabilities from the Common Vulnerabilities
 and Exposures (CVE) database. You can get an immediate view of your
@@ -451,9 +461,9 @@ licenses used in development.
   several components with security vulnerabilities and license issues
   as dependencies.
 
-. Once your Nexus instance has cached the components, open the Nexus
-interface and click on the green Analyze button next to your Central
-proxy repository
+. Once your Nexus instance has cached the components, log in to the
+Nexus interface and click on the green Analyze button next to your
+Central proxy repository in the 'Repositories' list
 
 . After the completion of the analysis, the button will change into an
   indicator of the number of security and license issues found
@@ -465,17 +475,20 @@ components present in you repository.
 . Optionally build some of your own applications to get further
   components proxied and see if additional license issues appear.
 
-
 .License Analysis Summary Display from Repository Health Check 
 image::figs/web/eval-license.png[scale=50]
 
+Nexus Open Source and the Trial version show the summary information
+found by the analysis.
+
 Nexus Professional customers can access a detailed report to identify
 specific components with known security vulnerabilities or
-unacceptable licenses. The component lists can be sorted by OSS license
-or security vulnerabilities, and Nexus Professional provides specific
-information about licenses and security vulnerabilities. A
+unacceptable licenses. The component lists can be sorted by OSS
+license or security vulnerabilities, and Nexus Professional provides
+specific information about licenses and security vulnerabilities. A
 detailed walkthrough of this report is available on the
-http://www.sonatype.com/Products/Nexus-Professional/Features/Repository-Health-Check[Sonatype website].
+http://www.sonatype.com/Products/Nexus-Professional/Features/Repository-Health-Check[Sonatype
+website].
 
 .Repository Health Check Details with License Issues List
 image::figs/web/eval-rhc-detail.png[scale=30]
@@ -484,67 +497,66 @@ image::figs/web/eval-rhc-detail.png[scale=30]
 .Conclusion
 ****
 OSS License compliance and security assessments are not something you
- do when you have the time, it is something that should be a part of
+ do when you have the time. It is something that should be a part of
  your everyday development cycle. With Nexus Professional’s Repository
  Health Check, it is.
 ****
 
 ==== Component Procurement
 
-Consider the default behavior of a proxy repository. Any developer can
-reference any artifact stored in a remote reposi- tory and cause Nexus
-to retrieve the artifact from the remote repository and serve it back
-to a developer. Any developer, anywhere in your organization, can add
-any dependency to your software regardless of the license or security
-of that dependency.
+Consider the default behaviour of a proxy repository. Any developer can
+reference any component stored in a remote repository and cause Nexus
+to retrieve it from the remote repository. Any developer, anywhere in
+your organization, can add any dependency to your software regardless
+of the license or security of that component or any of its
+dependencies, that are automatically added as well as - so called
+transitive dependencies..
 
-If you want control over the artifacts used in a proxy repository, the
-Nexus Procurement feature was designed to give organizations a
-mechanism to limit the artifacts that can be served from Nexus. This
-valuable governance tool can give you the certainty you need to
-deliver reliable software.
+If you want control over the components used in a proxy repository,
+the Nexus Procurement feature was designed to give organizations a
+mechanism to limit the components that are served from Nexus to your
+users. This valuable governance tool can give you the certainty you
+need to deliver reliable software.
 
 *In this example, you will...*
 
-* Configure access rules for which artifacts can be referenced in this Procured version
+* Configure access rules for which components can be referenced in this Procured version
 
-*To get started*
+*Let's get started*
 
-* Create Procurement Rules -> http://www.sonatype.com/books/nexus-book/reference/procure-sect-config-rule.html[Read more...]
+. Your evaluation instance of Nexus has been preconfigured with the
+  following steps
 
-* Execute Your Build Using Maven as a Procured Proxy
+.. A hosted repository named `Procured Central` has been created
 
+.. Artifact Procurement was enabled with the `Central` proxy
+   repository as the source for the procuring into the newly created
+   `Procured Central` repository
 
-*To evaluate the Procurement feature:*
+. Click on `Artifact Procurement` in the `Enterprise` menu in the left
+hand navigation of the Nexus user interface
 
-* Create a Hosted repository named “Procured Central”
+. Select 'Procured Central' from the list 
 
-* In the administrative interface, establish a relationship
-between your Central proxy and this Procured Central Hosted
-repository
+. Define rules for procurement by right clicking on the desired
+sections of the repository structure ->
+http://www.sonatype.com/books/nexus-book/reference/procure-sect-config-rule.html[Read
+more...] including disallowing some components
 
-* Configure access rules for which artifacts can be referenced in
-this Procured version
+. Modify your settings.xml to use the `Repository Path` of the
+procured repository in the url section of the mirror element
 
-*To get started:*
-
-* Proxying a Remote Repository in Nexus -> http://bit.ly/HQZBI2[Read more...]
-
-* Configuring Maven for Nexus -> http://bit.ly/IVjfSL[Read more...]
-
-* Configure Procurement in Nexus -> http://bit.ly/HQdTJa[Read more...]
-
-* Create Procurement Rules -> http://bit.ly/JympZs[Read more...]
-
-* Execute Your Build Using Maven as a Procured Proxy
-
+. Try building a Maven project that references one of the disallowed
+components and see how the procurement rule prevents the build from
+succeeding
 
 .Conclusion
 **** 
 Procurement is a useful tool if you are operating in an environment
- that needs to qualify every single dependency before it can be used
- in development. Using Procurement you can create ex- plicit white and
- blacklists of acceptable artifacts.
+ that needs to qualify every single component before it can be used in
+ development or for QA or release builds. Using Procurement you can
+ create explicit white and blacklists of acceptable components and
+ prevent the inclusion of other components.
 ****
 
 === Process Improvements
@@ -636,17 +648,23 @@ Staging gives you a standard interface for controlling and managing
 
 ==== Hosting Project Web Sites
 
-Nexus Professional is a publishing destination for project
-websites. You don’t have to worry about configuring another web server
-or configuring your builds to distribute the project site using a
-different protocol. Simply point your project at Nexus and deploy the
-project site.
+Nexus Professional and Open Source can be used as a publishing
+destination for project websites. You don’t have to worry about
+configuring another web server or configuring your builds to
+distribute the project site using a different protocol. Simply point
+your Maven project at Nexus and deploy the project site.
 
-With Nexus Professional as a project’s site hosting solution, there’s
+With Nexus as a project’s site hosting solution, there’s
 no need to ask IT to provision extra web servers just to host project
 documentation. Keep your development infrastructure consolidated and
 deploy project sites to the same server that serves your project’s
-artifacts.
+components.
+
+You can use this feature internally, but it is even better suited if
+you are providing an API or components for integration. You can host
+full project web sites with JavaDoc and any other desired
+documentation right with the components you provide to your partners
+and customers.
 
 *In this example, you will...*
 
@@ -656,11 +674,24 @@ artifacts.
 
 *Let's get started*
 
-. Configure Build to Deploy Sites to Nexus -> http://www.sonatype.com/books/nexus-book/reference/_configuring_maven_for_site_deployment.html[Read more...]
+. Create a hosted repository with the 'Site' format and a 'Repository
+ID' called 'site' ->
+http://www.sonatype.com/books/nexus-book/reference/_creating_a_site_repository.html[Read
+more...]
 
-. Create a Site Repository -> http://www.sonatype.com/books/nexus-book/reference/_creating_a_site_repository.html[Read more...]
+. Deploy the simple-project component and site to Nexus
++
+----
+$ cd maven/simple-project
+$ mvn clean deploy site-deploy
+----
 
-. Publish a Site to Nexus -> http://www.sonatype.com/books/nexus-book/reference/_publishing_a_maven_site_to_nexus.html[Read more...]
+. Browse the generate site on Nexus at http://localhost:8081/nexus/content/sites/site/
+
+
+. Optionally configure your own Maven project to deploy a site to Nexus -> http://www.sonatype.com/books/nexus-book/reference/_configuring_maven_for_site_deployment.html[Read more...]
+
+. And publish it to Nexus -> http://www.sonatype.com/books/nexus-book/reference/_publishing_a_maven_site_to_nexus.html[Read more...]
 
 .Conclusion
 ****
@@ -674,8 +705,8 @@ If your projects need to publish HTML reports or a project web site,
 Nexus Professional provides a facility for user-defined, custom
 metadata. If you need to keep track of custom attributes to support
 approval workflow or to associate custom identifiers with software
-artifacts, you can use Nexus to define and manipulate custom
-attributes which can be associated with artifacts in a Nexus
+components, you can use Nexus to define and manipulate custom
+attributes which can be associated with components in a Nexus
 repository.
 
 This advanced functionality can be used to extend Nexus to support
@@ -689,9 +720,9 @@ artifacts during the development process.
 
 * Install the Custom Metadata plugin in Nexus Professional
 
-* Add custom metadata to an artifact via the Nexus interface
+* Add custom metadata to a component via the Nexus interface
 
-* Query artifacts using this custom metadata
+* Query components using this custom metadata
 
 *Let's get started*
 
@@ -706,7 +737,7 @@ artifacts during the development process.
 .Conclusion
 **** 
 If your organization has custom requirements for tracking artifact
- metadata, the Custom Re- pository Metadata can be used to extend the
+ metadata, the Custom Repository Metadata can be used to extend the
  set of attributes stored with a particular attribute.
 ****
 
@@ -716,7 +747,7 @@ If your organization has custom requirements for tracking artifact
 ==== Centralized Maven Settings Management
 
 Nexus Professional along with the Nexus Maven Plugin allows you to
-manage Maven Settings. Once you have devel- oped a Maven Settings
+manage Maven Settings. Once you have developed a Maven Settings
 template, developers can then connect to Nexus Professional using the
 Nexus Maven plugin which will take responsibility for downloading a
 Maven Settings file from Nexus and replacing the existing Maven
@@ -737,21 +768,24 @@ Settings on a local workstation.
 
 .Conclusion
 ****
-TODO
+The distribution of settings.xml is an crucial part of the roll-out of
+Nexus usage. With the help of the the Nexus Maven Plugin and the
+server side settings template it is possible to automate initial
+distribution as well as updates to the used settings,xml files.
 ****
 
 ==== Scaling Nexus Deployments for Distributed Development
 
-Avoid downtime by deploying Nexus in a highly available
-configuration. An enhanced proxy keeps repos in sync without
-sacrificing performance. With a Nexus Professional Smart Proxy two
-distributed teams can work with local instances that will inform each
-other of new artifacts as they are published.
+Avoid downtime by deploying Nexus in a highly available configuration!
+With Nexus an enhanced proxy keeps repos in sync without sacrificing
+performance. With a Nexus Professional Smart Proxy two distributed
+teams can work with local instances of Nexus that will inform each
+other of new components as they are published.
 
 A team in New York can use a Nexus instance in New York and a team in
-Sydney can use an instance in Australia. If an arti- fact has been
+Sydney can use an instance in Australia. If a component has been
 deployed, deleted, or changed, the source repository notifies the
-proxy. Both teams are assured that Nexus will never serve stale
+proxy. Both teams are assured that Nexus will never serves stale
 content. This simple mechanism makes it possible to build complex
 distributed networks of Nexus instances relying on this
 publish/subscribe approach.
@@ -775,8 +809,8 @@ publish/subscribe approach.
 
 .Conclusion
 **** 
-With Smart Proxy, two distributed instances of Nexus can stay
- up-to-date with the latest pub- lished artifacts. If you have
+With Smart Proxy, two or more distributed instances of Nexus can stay
+ up-to-date with the latest published components. If you have
  distributed development teams, Smart Proxy will allow both teams to
  access a high-performance proxy that is guaranteed to be up-to-date.
 ****
@@ -799,41 +833,36 @@ support for multiple LDAP servers and backup mirrors, the ability to
 test user logins, support for common user/group mapping templates, and
 the ability to support more than one schema across multiple servers.
 
-*In this example, you will...*
-
-* Configure Nexus Professional to cache LDAP authentication
-  information
-
-* Configure Nexus Professional to use multiple LDAP servers, each with
-  different User and Group map- pings
-
-* Configure Nexus Professional to use LDAP servers with multiple
-  backup instances and test the ability of Nexus to fail over in the
-  case of an outage
-
 *Let's get started*
 
-. Configure Enterprise LDAP in Nexus Pro -> http://www.sonatype.com/books/nexus-book/reference/ldap-sect-enterprise.html[Read more...]
+. Read more about 
+http://www.sonatype.com/books/nexus-book/reference/ldap-sect-enterprise.html[configuring
+Enterprise LDAP]  and learn about 
 
-. Configure LDAP Caching and Time out
+.. Configuring LDAP Caching and Time out
 
-. Configure and Test LDAP Fail over
+.. Configuring and Testing LDAP Fail over
 
-. Use LDAP User and Group Mapping Templates for:
+.. Using LDAP User and Group Mapping Templates for Active Directory,
+POSIX with Dynamic or Static Groups or Generic LDAP Configuration
 
-.. Active Directory
+With Enterprise LDAP support in Nexus Professional you can 
 
-.. POSIX with Dynamic Groups
+* Cache LDAP authentication information
 
-..  POSIX with Static Groups
+* Use multiple LDAP servers, each with different User and Group
+  mappings
 
-.. Generic LDAP Configuration
+* Use LDAP servers with multiple backup instances and test the ability
+  of Nexus to fail over in the case of an outage
+
+* Augment the roles from LDAP with Nexus specific privileges
 
 .Conclusion
 **** 
-When you need LDAP integration, you’ll benefit Nexus
+When you need LDAP integration, you will benefit Nexus
  Professional. Nexus Pro supports some of the largest development
- efforts with some of the most complex LDAP configurations includ- ing
+ efforts with some of the most complex LDAP configurations including
  multiple servers and support for geographic fail over.
 ****
 
@@ -880,10 +909,6 @@ validation link. If you are working in an environment with hundreds or
 thousands of users the User Account plugin will allow you to support
 the tool without having to create logins for each individual user.
 
-*In this example, you will...*
-
-* TODO
-
 *Let' get started*
 
 . Install and Configuring the User Account Plugin -> http://www.sonatype.com/books/nexus-book/reference/user-account.html[Read more...]
@@ -896,11 +921,8 @@ If you have a public Nexus instance or an internal Nexus instance
  supporting hundreds to thousands of developers, you can give these
  users the ability to sign-up for an account. The self-service
  capability fosters adoption for both internal development teams and
- OSS devel- opment teams.
+ OSS development teams.
 ****
-
-
-
 
 [[eval-nuget-proxy]]
 === .NET Integration 
@@ -993,7 +1015,7 @@ a different version of Visual Studio.
 .Conclusion
 ****
 When your developers are consuming OSS .NET artifacts through a Nexus
-proxy of NuGet gal lery your builds will become more stable and
+proxy of NuGet gallery your builds will become more stable and
 reliable over time. Every component will be only downloaded to Nexus
 once and every following download will enjoy the performance and
 reliability of a local download from the Nexus cache.
