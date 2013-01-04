@@ -352,7 +352,9 @@ removes the need to store binaries in source control or shared
 file-systems and makes collaboration more efficient.
 ****
 
-=== Governance - Identify Insecure OSS Components in Nexus
+=== Governance 
+
+==== Identify Insecure OSS Components in Nexus
 
 The Repository Health Check in Nexus Professional turns your
 repository manager into the first line of defense against security
@@ -418,7 +420,8 @@ The Repository Heath Check of Nexus allows you to get an
  you have proxied into your environment and which might potentially
  be part of the software you are creating.
 ****
-=== Governance - Track Your Exposure to OSS Licenses
+
+==== Track Your Exposure to OSS Licenses
 
 With Open Source Software (OSS) becoming the de-facto standard for
 enterprise application development, the importance of tracking and
@@ -486,9 +489,69 @@ OSS License compliance and security assessments are not something you
  Health Check, it is.
 ****
 
+==== Component Procurement
+
+Consider the default behavior of a proxy repository. Any developer can
+reference any artifact stored in a remote reposi- tory and cause Nexus
+to retrieve the artifact from the remote repository and serve it back
+to a developer. Any developer, anywhere in your organization, can add
+any dependency to your software regardless of the license or security
+of that dependency.
+
+If you want control over the artifacts used in a proxy repository, the
+Nexus Procurement feature was designed to give organizations a
+mechanism to limit the artifacts that can be served from Nexus. This
+valuable governance tool can give you the certainty you need to
+deliver reliable software.
+
+*In this example, you will...*
+
+* Configure access rules for which artifacts can be referenced in this Procured version
+
+*To get started*
+
+* Create Procurement Rules -> http://www.sonatype.com/books/nexus-book/reference/procure-sect-config-rule.html[Read more...]
+
+* Execute Your Build Using Maven as a Procured Proxy
+
+
+*To evaluate the Procurement feature:*
+
+* Create a Hosted repository named “Procured Central”
+
+* In the administrative interface, establish a relationship
+between your Central proxy and this Procured Central Hosted
+repository
+
+* Configure access rules for which artifacts can be referenced in
+this Procured version
+
+*To get started:*
+
+* Proxying a Remote Repository in Nexus -> http://bit.ly/HQZBI2[Read more...]
+
+* Configuring Maven for Nexus -> http://bit.ly/IVjfSL[Read more...]
+
+* Configure Procurement in Nexus -> http://bit.ly/HQdTJa[Read more...]
+
+* Create Procurement Rules -> http://bit.ly/JympZs[Read more...]
+
+* Execute Your Build Using Maven as a Procured Proxy
+
+
+.Conclusion
+**** 
+Procurement is a useful tool if you are operating in an environment
+ that needs to qualify every single dependency before it can be used
+ in development. Using Procurement you can create ex- plicit white and
+ blacklists of acceptable artifacts.
+****
+
 
 [[eval-nuget-proxy]]
-=== .NET Integration - Consume .NET Artifacts from NuGet Gallery
+=== .NET Integration 
+
+==== Consume .NET Artifacts from NuGet Gallery
 
 The NuGet project provides a package management solution for .NET
 developers that is integrated directly into Visual Studio. NuGet makes
@@ -582,8 +645,7 @@ once and every following download will enjoy the performance and
 reliability of a local download from the Nexus cache.
 ****
 
-
-=== .NET Integration - Publish and Share .NET Artifacts with NuGet
+==== Publish and Share .NET Artifacts with NuGet
 
 Nexus Professional can improve collaboration and control while
 speeding .NET development. NuGet defines a packaging standard that
@@ -634,7 +696,9 @@ This will greatly improve sharing of components and reuse of
 ****
 
 
-=== Process Improvement - Staging a Release with Nexus
+=== Process Improvements
+
+==== Staging a Release with Nexus
 
 When was the last time you did a software release to a production
 system? Did it involve a QA sign-off? What was the process you used to
@@ -718,66 +782,114 @@ Staging gives you a standard interface for controlling and managing
  evaluation.
 ****
 
-=== Governance - Component Procurement
 
-Consider the default behavior of a proxy repository. Any developer can
-reference any artifact stored in a remote reposi- tory and cause Nexus
-to retrieve the artifact from the remote repository and serve it back
-to a developer. Any developer, anywhere in your organization, can add
-any dependency to your software regardless of the license or security
-of that dependency.
+==== Hosting Project Web Sites
 
-If you want control over the artifacts used in a proxy repository, the
-Nexus Procurement feature was designed to give organizations a
-mechanism to limit the artifacts that can be served from Nexus. This
-valuable governance tool can give you the certainty you need to
-deliver reliable software.
+Nexus Professional is a publishing destination for project
+websites. You don’t have to worry about configuring another web server
+or configuring your builds to distribute the project site using a
+different protocol. Simply point your project at Nexus and deploy the
+project site.
+
+With Nexus Professional as a project’s site hosting solution, there’s
+no need to ask IT to provision extra web servers just to host project
+documentation. Keep your development infrastructure consolidated and
+deploy project sites to the same server that serves your project’s
+artifacts.
 
 *In this example, you will...*
 
-* Configure access rules for which artifacts can be referenced in this Procured version
+* Create a Hosted repository with the Maven Site provider
 
-*To get started*
+* Configure your project to publish a web site to Nexus Professional
 
-* Create Procurement Rules -> http://www.sonatype.com/books/nexus-book/reference/procure-sect-config-rule.html[Read more...]
+*Let's get started*
 
-* Execute Your Build Using Maven as a Procured Proxy
+. Configure Build to Deploy Sites to Nexus -> http://www.sonatype.com/books/nexus-book/reference/_configuring_maven_for_site_deployment.html[Read more...]
 
+. Create a Site Repository -> http://www.sonatype.com/books/nexus-book/reference/_creating_a_site_repository.html[Read more...]
 
-*To evaluate the Procurement feature:*
+. Publish a Site to Nexus -> http://www.sonatype.com/books/nexus-book/reference/_publishing_a_maven_site_to_nexus.html[Read more...]
 
-* Create a Hosted repository named “Procured Central”
+.Conclusion
+****
+If your projects need to publish HTML reports or a project web site,
+ Nexus provides a consolidated target for publishing project-related
+ content.
+****
 
-* In the administrative interface, establish a relationship
-between your Central proxy and this Procured Central Hosted
-repository
+==== Annotating Components with Custom Metadata
 
-* Configure access rules for which artifacts can be referenced in
-this Procured version
+Nexus Professional provides a facility for user-defined, custom
+metadata. If you need to keep track of custom attributes to support
+approval workflow or to associate custom identifiers with software
+artifacts, you can use Nexus to define and manipulate custom
+attributes which can be associated with artifacts in a Nexus
+repository.
 
-*To get started:*
+This advanced functionality can be used to extend Nexus to support
+complex work flows that can keep track of the state of an
+artifact. Organizations can use the Custom Repository Metadata service
+alongside the rich REST API offered in Nexus to create custom
+solutions that support decision making and the qualification of
+artifacts during the development process.
 
-* Proxying a Remote Repository in Nexus -> http://bit.ly/HQZBI2[Read more...]
+*In this example, you will...*
 
-* Configuring Maven for Nexus -> http://bit.ly/IVjfSL[Read more...]
+* Install the Custom Metadata plugin in Nexus Professional
 
-* Configure Procurement in Nexus -> http://bit.ly/HQdTJa[Read more...]
+* Add custom metadata to an artifact via the Nexus interface
 
-* Create Procurement Rules -> http://bit.ly/JympZs[Read more...]
+* Query artifacts using this custom metadata
 
-* Execute Your Build Using Maven as a Procured Proxy
+*Let's get started*
 
+. Install the Custom Metadata Plugin -> http://www.sonatype.com/books/nexus-book/reference/custom-metadata-plugin.html[Read more...]
+
+. Edit Artifact Metadata -> http://www.sonatype.com/books/nexus-book/reference/custom-metadata-plugin.html#_editing_artifact_metadata[Read more...]
+
+. View Artifact Metadata -> http://www.sonatype.com/books/nexus-book/reference/custom-metadata-plugin.html#_viewing_artifact_metadata[Read more...]
+
+. Search Artifact Metadata -> http://www.sonatype.com/books/nexus-book/reference/custom-metadata-plugin.html#_searching_artifact_metadata[Read more...]
 
 .Conclusion
 **** 
-Procurement is a useful tool if you are operating in an environment
- that needs to qualify every single dependency before it can be used
- in development. Using Procurement you can create ex- plicit white and
- blacklists of acceptable artifacts.
+If your organization has custom requirements for tracking artifact
+ metadata, the Custom Re- pository Metadata can be used to extend the
+ set of attributes stored with a particular attribute.
 ****
 
 
-=== Developer Productivity - Support for Distributed Development
+=== Developer Productivity
+
+==== Centralized Maven Settings Management
+
+Nexus Professional along with the Nexus Maven Plugin allows you to
+manage Maven Settings. Once you have devel- oped a Maven Settings
+template, developers can then connect to Nexus Professional using the
+Nexus Maven plugin which will take responsibility for downloading a
+Maven Settings file from Nexus and replacing the existing Maven
+Settings on a local workstation.
+
+*In this example, you will...*
+
+* Configure a global Maven Settings template in Nexus Professional
+
+* Download a customized, user-specific Maven settings file using the Nexus Maven plugin
+
+*Let's get started*
+
+. Manage Maven Settings Templates ->
+  http://www.sonatype.com/books/nexus-book/reference/settings-sect-install.html[Read more...]
+
+. Download Settings from Nexus -> http://www.sonatype.com/books/nexus-book/reference/settings-sect-downloading.html[Read more...]
+
+.Conclusion
+****
+TODO
+****
+
+==== Scaling Nexus Deployments for Distributed Development
 
 Avoid downtime by deploying Nexus in a highly available
 configuration. An enhanced proxy keeps repos in sync without
@@ -818,7 +930,9 @@ With Smart Proxy, two distributed instances of Nexus can stay
  access a high-performance proxy that is guaranteed to be up-to-date.
 ****
 
-=== Security - Enterprise LDAP Support
+=== Security
+
+==== Integration with Enterprise LDAP Solutions
 
 Organizations with large, distributed development teams often have a
 variety of authentication mechanisms: from multiple LDAP servers with
@@ -872,7 +986,7 @@ When you need LDAP integration, you’ll benefit Nexus
  multiple servers and support for geographic fail over.
 ****
 
-=== Security - Support for Atlassian Crowd
+==== Single Sign On (SSO) Support with Atlassian Crowd
 
 If your organization uses Atlassian Crowd, Nexus Professional can
 delegate authentication and access control to a Crowd server and map
@@ -902,83 +1016,8 @@ If you’ve consolidated authentication and access control using
  easy.
 ****
 
-=== Process Improvement - Custom Repository Metadata
 
-Nexus Professional provides a facility for user-defined, custom
-metadata. If you need to keep track of custom attributes to support
-approval workflow or to associate custom identifiers with software
-artifacts, you can use Nexus to define and manipulate custom
-attributes which can be associated with artifacts in a Nexus
-repository.
-
-This advanced functionality can be used to extend Nexus to support
-complex work flows that can keep track of the state of an
-artifact. Organizations can use the Custom Repository Metadata service
-alongside the rich REST API offered in Nexus to create custom
-solutions that support decision making and the qualification of
-artifacts during the development process.
-
-*In this example, you will...*
-
-* Install the Custom Metadata plugin in Nexus Professional
-
-* Add custom metadata to an artifact via the Nexus interface
-
-* Query artifacts using this custom metadata
-
-*Let's get started*
-
-. Install the Custom Metadata Plugin -> http://www.sonatype.com/books/nexus-book/reference/custom-metadata-plugin.html[Read more...]
-
-. Edit Artifact Metadata -> http://www.sonatype.com/books/nexus-book/reference/custom-metadata-plugin.html#_editing_artifact_metadata[Read more...]
-
-. View Artifact Metadata -> http://www.sonatype.com/books/nexus-book/reference/custom-metadata-plugin.html#_viewing_artifact_metadata[Read more...]
-
-. Search Artifact Metadata -> http://www.sonatype.com/books/nexus-book/reference/custom-metadata-plugin.html#_searching_artifact_metadata[Read more...]
-
-.Conclusion
-**** 
-If your organization has custom requirements for tracking artifact
- metadata, the Custom Re- pository Metadata can be used to extend the
- set of attributes stored with a particular attribute.
-****
-
-=== Process Improvement - Hosting Project Web Sites
-
-Nexus Professional is a publishing destination for project
-websites. You don’t have to worry about configuring another web server
-or configuring your builds to distribute the project site using a
-different protocol. Simply point your project at Nexus and deploy the
-project site.
-
-With Nexus Professional as a project’s site hosting solution, there’s
-no need to ask IT to provision extra web servers just to host project
-documentation. Keep your development infrastructure consolidated and
-deploy project sites to the same server that serves your project’s
-artifacts.
-
-*In this example, you will...*
-
-* Create a Hosted repository with the Maven Site provider
-
-* Configure your project to publish a web site to Nexus Professional
-
-*Let's get started*
-
-. Configure Build to Deploy Sites to Nexus -> http://www.sonatype.com/books/nexus-book/reference/_configuring_maven_for_site_deployment.html[Read more...]
-
-. Create a Site Repository -> http://www.sonatype.com/books/nexus-book/reference/_creating_a_site_repository.html[Read more...]
-
-. Publish a Site to Nexus -> http://www.sonatype.com/books/nexus-book/reference/_publishing_a_maven_site_to_nexus.html[Read more...]
-
-.Conclusion
-****
-If your projects need to publish HTML reports or a project web site,
- Nexus provides a consolidated target for publishing project-related
- content.
-****
-
-=== Security - The User Account Plugin
+==== User Self Provisioning WIth The User Account Plugin
 
 When you are running a large, public instance of Nexus, it is often
 useful to allow users to sign up for an account without the assistance
@@ -1009,29 +1048,3 @@ If you have a public Nexus instance or an internal Nexus instance
  OSS devel- opment teams.
 ****
 
-=== Process Improvement - Maven Settings Management
-
-Nexus Professional along with the Nexus Maven Plugin allows you to
-manage Maven Settings. Once you have devel- oped a Maven Settings
-template, developers can then connect to Nexus Professional using the
-Nexus Maven plugin which will take responsibility for downloading a
-Maven Settings file from Nexus and replacing the existing Maven
-Settings on a local workstation.
-
-*In this example, you will...*
-
-* Configure a global Maven Settings template in Nexus Professional
-
-* Download a customized, user-specific Maven settings file using the Nexus Maven plugin
-
-*Let's get started*
-
-. Manage Maven Settings Templates ->
-  http://www.sonatype.com/books/nexus-book/reference/settings-sect-install.html[Read more...]
-
-. Download Settings from Nexus -> http://www.sonatype.com/books/nexus-book/reference/settings-sect-downloading.html[Read more...]
-
-.Conclusion
-****
-TODO
-****
