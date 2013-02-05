@@ -224,7 +224,7 @@ your entire development effort.
 
 * Note organization-wide improvements in build reliability
 
-*Let's get started using provided scripts:*
+*Let's get started using the provided scripts:*
 
 The eval bundle includes an installation of Apache Maven as well
 scripts that isolate your evaluation from the rest of your system and
@@ -291,14 +291,7 @@ $ cd maven/simple-project/
 $ mvn clean install
 ----
 
-. As the project builds, you will notice that all components are downloaded
-from your local Nexus instance installed with requests like
-+
-----
-Downloading: http://localhost:8081/nexus/content/groups/public/org/apache/maven/plugins/maven-clean-plugin/2.5/maven-clean-plugin-2.5.pom
-Downloaded: http://localhost:8081/nexus/content/groups/public/org/apache/maven/plugins/maven-clean-plugin/2.5/maven-clean-plugin-2.5.pom (4 KB at 1.3 KB/sec)
-...
-----
+. And observe the downloads from the Nexus repository as described above
 
 . After the build has successfully completed, delete the local Maven
   repository cache and re-run the build.
@@ -307,16 +300,8 @@ Downloaded: http://localhost:8081/nexus/content/groups/public/org/apache/maven/p
 $ rm -rf ~/.m2/repository
 ----
 
-. Notice how the downloads are occurring much faster. The components
-  are no longer retrieved from the remote repositories before being
-  served by Nexus, but rather are supplied straight from the cache in
-  Nexus.
-
-. To verify that components are being cached in Nexus, open the
-  Repositories panel by clicking on +Repositories+ in the left-hand
-  navigation menu. Once the list of repositories is
-  displayed, select Central. Click on the +Browse Storage+ tab shown
-  in this illustration.
+. And notice the improved build performance and the cached components
+in Nexus as described earlier. 
 
 .Conclusion
 ****
@@ -344,7 +329,7 @@ organization.
 
 * Watch another project download this component as a dependency from Nexus
 
-*Let's get started*
+*Let's get started using the provided scripts:*
 
 . Follow the proxying evaluation example from <<eval-maven-proxy>>
 
@@ -352,8 +337,8 @@ organization.
   Nexus Professional installer and publish the simple-project to Nexus
 +
 ----
-$ cd maven/simple-project/
-$ mvn clean deploy
+$ cd maven
+$ build -f simple-project/pom.xml clean deploy
 ----
 
 . The simple-project has been preconfigured to publish its build
@@ -369,8 +354,8 @@ $ mvn clean deploy
   sample projects directory and run a build of another-project:
 +
 ----
-$ cd maven/another-project
-$ mvn clean install
+$ cd maven
+$ build -f another-project/pom.xml clean install
 ----
 
 . This second project has a Maven dependency on the first
@@ -380,7 +365,7 @@ $ mvn clean install
 <dependency>
   <groupId>com.example</groupId>
   <artifactId>simple-project</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
 </dependency>
     
 ----
@@ -395,6 +380,24 @@ them to a large software.
 .Successfully Deployed Components In the Snapshots Repository
 image::figs/web/eval-publish.png[scale=40]
 
+
+*Alternatively using your own Apache Maven setup:*
+
+. Follow the steps described above with the modification of building the
+simple-project with
++
+----
+$ cd maven/simple-project/
+$ mvn clean deploy
+----
+
+. And subsequently after the successful deploy of the simple-project,
+build another-project with:
++
+----
+$ cd maven/another-project
+$ mvn clean install
+----
 
 .Conclusion
 **** 
