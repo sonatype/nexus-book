@@ -311,7 +311,7 @@ cached a component locally, there is no need to make another
 round-trip to the remote repository server.
 ****
 
-==== Publishing Artifacts with Apache Maven
+==== Publishing Components with Apache Maven
 
 Nexus makes it easier to share components internally. How do you
 distribute and deploy your own applications? Without Nexus, internal
@@ -629,7 +629,7 @@ is committed to a release repository.
 
 * Promote or discard the contents of this temporary staging repository
 
-*Let's get started:*
+*Let's get started using the provided scripts:*
 
 . This example assumes that you have successfully deployed the
   simple-project as documented in <<eval-maven-proxy>>. 
@@ -646,14 +646,13 @@ with -SNAPSHOT. This means that it is in development.
 removing the -SNAPSHOT in a text editor or run the command
 +
 ----
-$ cd maven/simple-project
-$ mvn versions:set -DnewVersion=1.0.0
+$ build -f simple-project/pom.xml versions:set -DnewVersion=1.0.0
 ----
 
 . Publish the release to the Nexus Staging suite with
 +
 ----
-$ mvn clean deploy
+$ build -f simple-project/pom.xml clean deploy
 ----
 
 . To view the staging repository, click on 'Staging Repositories' in
@@ -680,6 +679,22 @@ image::figs/web/eval-staging.png[scale=50]
 The individual transactions triggered by closing, dropping, promoting
 or releasing a staging repository can be enriched with email
 notifications as well as staging rule inspections of the components.
+
+*Alternatively using your own Apache Maven setup:*
+
+. Follow the steps described above with the modification of setting
+the new version with 
++
+----
+$ cd maven/simple-project
+$ mvn versions:set -DnewVersion=1.0.0
+----
+
+. And publishing to the Nexus Staging suite with 
++
+----
+$ mvn clean deploy
+----
 
 .Conclusion
 **** 
@@ -717,7 +732,7 @@ and customers.
 
 * Configure your project to publish a web site to Nexus Professional
 
-*Let's get started*
+*Let's get started using the provided scripts:*
 
 . Create a hosted repository with the 'Site' format and a 'Repository
 ID' called 'site' ->
@@ -727,8 +742,7 @@ more...]
 . Deploy the simple-project component and site to Nexus
 +
 ----
-$ cd maven/simple-project
-$ mvn clean deploy site-deploy
+$ build -f simple-project/pom.xml clean deploy site-deploy
 ----
 
 . Browse the generate site on Nexus at http://localhost:8081/nexus/content/sites/site/
@@ -737,6 +751,17 @@ $ mvn clean deploy site-deploy
 . Optionally configure your own Maven project to deploy a site to Nexus -> http://www.sonatype.com/books/nexus-book/reference/_configuring_maven_for_site_deployment.html[Read more...]
 
 . And publish it to Nexus -> http://www.sonatype.com/books/nexus-book/reference/_publishing_a_maven_site_to_nexus.html[Read more...]
+
+*Alternatively using your own Apache Maven setup:*
+
+. Follow the steps described above with the modification of deploying
+the site with 
++
+----
+$ cd maven/simple-project
+$ mvn clean deploy site-deploy
+----
+
 
 .Conclusion
 ****
@@ -755,11 +780,11 @@ attributes which can be associated with components in a Nexus
 repository.
 
 This advanced functionality can be used to extend Nexus to support
-complex work flows that can keep track of the state of an
-artifact. Organizations can use the Custom Repository Metadata service
-alongside the rich REST API offered in Nexus to create custom
+complex work flows that can keep track of the state of a
+component. Organizations can use the Custom Repository Metadata
+service alongside the rich REST API offered in Nexus to create custom
 solutions that support decision making and the qualification of
-artifacts during the development process.
+components during the development process.
 
 *In this example, you will...*
 
@@ -781,9 +806,9 @@ artifacts during the development process.
 
 .Conclusion
 **** 
-If your organization has custom requirements for tracking artifact
+If your organization has custom requirements for tracking component
  metadata, the Custom Repository Metadata can be used to extend the
- set of attributes stored with a particular attribute.
+ set of attributes stored with a particular component.
 ****
 
 
@@ -972,7 +997,7 @@ If you have a public Nexus instance or an internal Nexus instance
 [[eval-nuget-proxy]]
 === .NET Integration 
 
-==== Consume .NET Artifacts from NuGet Gallery
+==== Consume .NET Components from NuGet Gallery
 
 The NuGet project provides a package management solution for .NET
 developers that is integrated directly into Visual Studio. NuGet makes
@@ -1059,14 +1084,14 @@ a different version of Visual Studio.
 
 .Conclusion
 ****
-When your developers are consuming OSS .NET artifacts through a Nexus
+When your developers are consuming OSS .NET components through a Nexus
 proxy of NuGet gallery your builds will become more stable and
 reliable over time. Every component will be only downloaded to Nexus
 once and every following download will enjoy the performance and
 reliability of a local download from the Nexus cache.
 ****
 
-==== Publish and Share .NET Artifacts with NuGet
+==== Publish and Share .NET Components with NuGet
 
 Nexus Professional can improve collaboration and control while
 speeding .NET development. NuGet defines a packaging standard that
