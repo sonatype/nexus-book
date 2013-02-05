@@ -224,14 +224,57 @@ your entire development effort.
 
 * Note organization-wide improvements in build reliability
 
-*Let's get started:*
+*Let's get started using provided scripts:*
+
+The eval bundle includes an installation of Apache Maven as well
+scripts that isolate your evaluation from the rest of your system and
+make it extremly easy for you to follow.
+
+. Go to the Nexus evaluation guide directory you configured during the
+  Nexus Professional install and run the command
++
+----
+$ cd maven
+$ build -f simple-project/pom.xml clean install
+----
+
+. As the project builds, you will notice that all components are downloaded
+from your local Nexus instance installed with requests like
++
+----
+Downloading: http://localhost:8081/nexus/content/groups/public/org/apache/maven/plugins/maven-clean-plugin/2.5/maven-clean-plugin-2.5.pom
+Downloaded: http://localhost:8081/nexus/content/groups/public/org/apache/maven/plugins/maven-clean-plugin/2.5/maven-clean-plugin-2.5.pom (4 KB at 1.3 KB/sec)
+...
+----
+
+. After the build has successfully completed, delete the local Maven
+  repository cache and re-run the build.
++
+----
+$ rm repository
+----
+
+. Notice how the downloads are occurring much faster. The components
+  are no longer retrieved from the remote repositories before being
+  served by Nexus, but rather are supplied straight from the cache in
+  Nexus.
+
+. To verify that components are being cached in Nexus, open the
+  Repositories panel by clicking on +Repositories+ in the left-hand
+  navigation menu. Once the list of repositories is
+  displayed, select Central. Click on the +Browse Storage+ tab shown
+  in this illustration.
+
+*Alternatively using your own Apache Maven setup:*
 
 . Ensure that Apache Maven is installed as a prerequisite as
   documented in <<eval-prereq-maven>>.
 
 . Go to the Nexus evaluation guide directory you configured during the
   Nexus Professional install and configure Maven to access Nexus
-  with the provided 'settings.xml'.
+  with the provided 'settings.xml'. Ensure to back up any existing
+  settings file and adapt the port in the mirror url, if you have
+  chosen to use a different port than 8081 in the Nexus trial installer.
 +
 ----
 $ cp maven/settings/setttings.xml ~/.m2/
@@ -262,7 +305,6 @@ Downloaded: http://localhost:8081/nexus/content/groups/public/org/apache/maven/p
 +
 ----
 $ rm -rf ~/.m2/repository
-$ mvn clean install
 ----
 
 . Notice how the downloads are occurring much faster. The components
