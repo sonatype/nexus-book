@@ -472,11 +472,11 @@ $ ant jar
 from your local Nexus instance installed with requests like
 +
 ----
-[ivy:retrieve] 	found org.jbundle.util#org.jbundle.util.jbackup;2.0.0 in nexus
-[ivy:retrieve] 	found org.jbundle.util#org.jbundle.util.apprunner;2.0.0 in nexus
-[ivy:retrieve] 	found commons-net#commons-net;2.2 in nexus
-[ivy:retrieve] 	found commons-httpclient#commons-httpclient;3.1 in nexus
-[ivy:retrieve] 	found commons-logging#commons-logging;1.1.1 in nexus...
+[ivy:retrieve] downloading http://localhost:8081/nexus/content/groups/public/asm/asm-commons/3.2/asm-commons-3.2.jar ...
+[ivy:retrieve] .. (32kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] asm#asm-commons;3.2!asm-commons.jar (313ms)
+...
 ----
 
 . After the build has successfully completed, delete the local Gradle 
@@ -718,7 +718,8 @@ $ ant deploy
 . Observe how Ant logs the upload
 +
 ----
-TODO
+[ivy:publish] :: publishing :: org.sonatype.nexus.trial#simple-project
+[ivy:publish] 	published simple-project to http://localhost:8081/nexus/content/repositories/snapshots/org/sonatype/nexus/trial/simple-project/1.0-SNAPSHOT/simple-project-1.0-SNAPSHOT.jar
 ----
 
 . The simple-project has been preconfigured to publish its build
@@ -743,8 +744,9 @@ $ ant jar
 +
 ----
 <dependencies>
-      <dependency org="org.sonatype.nexus.trial" name="simple-project" rev="1.0.0-SNAPSHOT"/>
-    </dependencies>
+  <dependency org="org.sonatype.nexus.trial" name="simple-project"
+      rev="1.0.0-SNAPSHOT"/>
+</dependencies>
 ----
 +
 During the build, it is relying on Nexus when it attempts to retrieve
