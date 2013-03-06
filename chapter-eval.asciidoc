@@ -75,10 +75,10 @@ After a successful installation you can verify it with running the
 command +mvn --version+, which should result in an output similar to
 
 ----
-Apache Maven 3.0.4 (r1232337; 2012-01-17 00:44:56-0800)
-Maven home: /opt/tools/apache-maven-3.0.4
-Java version: 1.7.0_10, vendor: Oracle Corporation
-Java home: /Library/Java/JavaVirtualMachines/jdk1.7.0_10.jdk/Contents/Home/jre
+Apache Maven 3.0.5 (r01de1472...; 2013-02-19 05:51:28-0800)
+Maven home: /opt/tools/apache-maven-3.0.5
+Java version: 1.7.0_17, vendor: Oracle Corporation
+Java home: /Library/Java/JavaVirtualMachines/jdk1.7.0_17.jdk/Contents/Home/jre
 Default locale: en_US, platform encoding: UTF-8
 OS name: "mac os x", version: "10.8.2", arch: "x86_64", family: "mac"
 ----
@@ -228,7 +228,7 @@ your entire development effort.
 
 The eval bundle includes an installation of Apache Maven as well
 scripts that isolate your evaluation from the rest of your system and
-make it extremly easy for you to follow.
+make it extremely easy for you to follow.
 
 . Go to the Nexus evaluation guide directory you configured during the
   Nexus Professional install and run the command
@@ -606,6 +606,50 @@ Procurement is a useful tool if you are operating in an environment
 
 === Process Improvements
 
+==== Grouping Repositories
+
+Once you have established Nexus and set up your build, provisioning
+and other tools to connect to, you can take advantage of Nexus
+repository groups. The best practice to expose Nexus is to get users
+to connect to the Public Repositories group as configured in the
+settings.xml as documented in <<eval-maven-proxy>>.
+
+When all clients are connecting to Nexus via a group, you can easily
+provide additional repository content to all users by adding new
+repositories to the group.
+
+For example imagine a group in your organization is starting to use
+components provided by the JBoss release repository available at
+https://repository.jboss.org/nexus/content/repositories/releases/. The
+developers are already accessing Nexus via the public group. All you
+have to do is to create a new proxy repository for the JBoss release
+repository and add it to the public group and all developers, CI
+servers and other tools will have access to the additional components.
+
+Want to add the Grails repositories? No problem - proxy them and add
+them to the group. Proxy https://clojars.org/[Clojars]? No
+problem. How about a repository of a business partner or supplier,
+that is protected by user credentials? No problem - the same approach
+applies.
+
+Another advantage of groups is that you can mix release and snapshot
+repositories and easily expose all the components via one easy access
+point.
+
+Besides using the default public group, you can create additional
+groups that expose other contexts. An example would be to create a
+group for all approved components including release, snapshots and
+approved components provisions via procurement.
+
+
+.Conclusion
+**** 
+Using groups allows you to expose multiple repositories, mix snapshot
+and release components and easily administrate it all on the server, so
+that you developers and clients do not have to change any
+configuration to get new access to more components.
+****
+
 ==== Staging a Release with Nexus
 
 When was the last time you did a software release to a production
@@ -619,7 +663,7 @@ binary software components. If you need to create a release component
 and deploy it to a hosted repository, you can use the Staging Suite to
 post a release which can be tested, promoted, or discarded before it
 is committed to a release repository.
-
+f
 *In this example, you will...*
 
 * Configure a project to publish its build output component to Nexus
@@ -947,7 +991,6 @@ This will greatly improve sharing of components and reuse of
  development efforts across your teams and allow you to modularize
  your software.
 ****
-
 
 === Security
 
