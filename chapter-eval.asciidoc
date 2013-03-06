@@ -359,6 +359,8 @@ components in Nexus and retrieve them from there.. Once Nexus has
 cached a component locally, there is no need to make another
 round-trip to the remote repository server.
 ****
+
+[[eval-gradle-proxy]]
 ==== Proxying Components with Gradle
 
 If you use a dependency in your software, your build downloads
@@ -385,12 +387,6 @@ your entire development effort.
 * Note organization-wide improvements in build reliability
 
 *Let's get started using the provided scripts:*
-
-///
-The eval bundle includes an installation of Apache Maven as well
-scripts that isolate your evaluation from the rest of your system and
-make it extremely easy for you to follow.
-///
 
 . Go to the Nexus evaluation guide directory you configured during the
   Nexus Professional install and run the command
@@ -436,9 +432,78 @@ cached a component locally, there is no need to make another
 round-trip to the remote repository server.
 ****
 
+[[eval-ant-ivy-proxy]]
 ==== Proxying Components with Apache Ant/Ivy
 
-todo
+If you use a dependency in your software, your build downloads
+components from a remote repository, such as the
+http://search.maven.org[Central Repository] and others. Your systems
+depend on these components. If one of these critical remote
+repositories becomes unavailable, your productivity can grind to a
+halt.
+
+This is where Nexus can help. Nexus is pre-configured to proxy the
+Central Repository and other remote repositories can be easily
+added. Once set up, Nexus maintains a local cache of the needed
+components from the remote repositories for you. Your build is more
+reliable when your needed components are cached by Nexus. It is
+providing you with dramatic efficiency and speed improvements across
+your entire development effort.
+
+*In this example, you will...*
+
+* Configure Ant to download components from Nexus
+
+* Pre-cache dependencies and build components with an initial build
+
+* Note organization-wide improvements in build reliability
+
+*Let's get started using the provided scripts:*
+
+. Go to the Nexus evaluation guide directory you configured during the
+  Nexus Professional install and run the command
++
+----
+$ cd ant-ivy/simple-project
+$ ant jar
+----
+
+. As the project builds, you will notice that all components are downloaded
+from your local Nexus instance installed with requests like
++
+----
+[ivy:retrieve] 	found org.jbundle.util#org.jbundle.util.jbackup;2.0.0 in nexus
+[ivy:retrieve] 	found org.jbundle.util#org.jbundle.util.apprunner;2.0.0 in nexus
+[ivy:retrieve] 	found commons-net#commons-net;2.2 in nexus
+[ivy:retrieve] 	found commons-httpclient#commons-httpclient;3.1 in nexus
+[ivy:retrieve] 	found commons-logging#commons-logging;1.1.1 in nexus...
+----
+
+. After the build has successfully completed, delete the local Gradle 
+  cache and re-run the build.
++
+----
+$ ant clean-cache
+----
+
+. Notice how the downloads are occurring much faster. The components
+  are no longer retrieved from the remote repositories before being
+  served by Nexus, but rather are supplied straight from the cache in
+  Nexus.
+
+. To verify that components are being cached in Nexus, open the
+  Repositories panel by clicking on +Repositories+ in the left-hand
+  navigation menu. Once the list of repositories is
+  displayed, select Central. Click on the +Browse Storage+ tab shown
+  in this illustration.
+
+.Conclusion
+****
+Your builds will be faster and more reliable now that you are caching
+components in Nexus and retrieve them from there.. Once Nexus has
+cached a component locally, there is no need to make another
+round-trip to the remote repository server.
+****
 
 ==== Publishing Components with Apache Maven
 
@@ -622,7 +687,84 @@ control or shared file-systems and makes collaboration more efficient.
 
 ==== Publishing Components with Apache Ant/Ivy
 
-todo
+Nexus makes it easier to share components internally. How do you
+distribute and deploy your own applications? Without Nexus, internal
+code is often distributed and deployed using an SCM, a shared file
+system, or some other inefficient method for sharing binary components.
+
+With Nexus you create hosted repositories, giving you a place to
+upload your own components to Nexus. You can then feed your components
+back into the same repositories referenced by all developers in your
+organization.
+
+*In this example, you will...*
+
+* Publish a component to Nexus
+
+* Watch another project download this component as a dependency from Nexus
+
+*Let's get started using the provided scripts:*
+
+. Follow the proxying evaluation example from <<eval-ant-ivy-proxy>>
+
+. Go to the Nexus evaluation guide directory you configured during the
+  Nexus Professional installer and publish the simple-project to Nexus
++
+----
+$ cd ant-ivy/simple-project
+$ ant deploy
+----
+
+. Observe how Ant logs the upload
++
+----
+TODO
+----
+
+. The simple-project has been preconfigured to publish its build
+  output in the form of a jar component to your local instance of
+  Nexus Professional.
+
+. To verify that the simple-project component was deployed to Nexus,
+  click on Repositories and then select the Snapshots
+  repository. Select the +Browse Storage+ tab as shown in this
+  illustration.
+
+. Once this component has been published, return to the evaluation
+  sample projects directory and run a build of another-project:
++
+----
+$ cd ant-ivy/another-project
+$ ant jar
+----
+
+. This second project has a dependency on the first
+  project declared in ivy.xml
++
+----
+<dependencies>
+      <dependency org="org.sonatype.nexus.trial" name="simple-project" rev="1.0.0-SNAPSHOT"/>
+    </dependencies>
+----
++
+During the build, it is relying on Nexus when it attempts to retrieve
+  the component from simple-project.
+
+Now that you are sharing components of your projects internally, you
+do not build each others software projects anymore just to integrate
+them to a large software.
+
+.Successfully Deployed Components In the Snapshots Repository
+image::figs/web/eval-publish.png[scale=40]
+
+
+.Conclusion
+****
+Sonatype Nexus Open Source and Professional can serve as an important
+tool for collaboration between different developers and different
+development groups. It removes the need to store binaries in source
+control or shared file-systems and makes collaboration more efficient.
+****
 
 === Governance 
 
