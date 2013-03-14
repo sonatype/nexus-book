@@ -12,4 +12,5 @@ mkdir -p target/site/reference/css
 cp -r site/css/book.css target/site/reference/css
 
 cp target/book-nexus.pdf target/site/pdf/nxbook-pdf.pdf
+cp target/sonatype-nexus-eval-guide.pdf target/site/pdf/sonatype-nexus-eval-guide.pdf
 python template.py
