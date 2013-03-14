@@ -42,6 +42,8 @@ Windows shell commands.
 | Delete a directory in users home directory | +rm -rf
   ~/.m2/repository+  | +rmdir %HOMEPATH%\.m2\repository+
 | Change to the users home directory | +cd ~+ | +cd %HOMEPATH%+
+| Script invocation | +./build+ | +build.bat+
+| Gradle Wrapper script invocation | +./gradlew+ | +gradlew.bat+
 |======================
 
 ==== Java Runtime
@@ -88,7 +90,8 @@ OS name: "mac os x", version: "10.8.2", arch: "x86_64", family: "mac"
 The examples in this guide use the so-called Gradle wrapper script. It
 allows you to get gradle installed automatically by the wrapper and
 invoke all gradle commands via it. To use it you simple invoke all
-gradle commands with +gradlew+ instead of +gradle+.
+gradle commands with +./gradlew+ on Unix based systems and
++gradlew.bat+ on Windows instead of +gradle+.
 
 Alternatively Gradle can be retrieved from the
 http://www.gradle.org/downloads[download page] and installed following
@@ -333,14 +336,14 @@ in <<eval-prereq-antivy>>.
 +
 ----
 $ cd maven
-$ build -f simple-project/pom.xml clean install
+$ ./build -f simple-project/pom.xml clean install
 ----
 +
 to use Apache Maven or if you want to try Gradle use
 +
 ---- 
 $ cd gradle/simple-project
-$ gradlew build
+$ ./gradlew build
 ----
 + 
 With Apache Ant and Ivy you can run
@@ -356,24 +359,31 @@ from your local Nexus instance installed with requests from Apache
 Maven like
 +
 ----
-Downloading: http://localhost:8081/nexus/content/groups/public/org/apache/maven/plugins/maven-clean-plugin/2.5/maven-clean-plugin-2.5.pom
-Downloaded: http://localhost:8081/nexus/content/groups/public/org/apache/maven/plugins/maven-clean-plugin/2.5/maven-clean-plugin-2.5.pom (4 KB at 1.3 KB/sec)
+Downloading: http://localhost:8081/nexus/content/groups/public/org
+  /apache/maven/plugins/maven-clean-plugin/2.5/maven-clean-plugin-2.5.pom
+Downloaded: http://localhost:8081/nexus/content/groups/public/org
+  /apache/maven/plugins/maven-clean-plugin/2.5/maven-clean-plugin-2.5.pom 
+  (4 KB at 1.3 KB/sec)
 ...
 ----
 + 
 or from Gradle
 +
 ----
-Download http://localhost:8081/nexus/content/groups/public/org/codehaus/jackson/jackson-core-asl/1.8.0/jackson-core-asl-1.8.0.jar
-Download http://localhost:8081/nexus/content/groups/public/org/codehaus/jackson/jackson-mapper-asl/1.8.0/jackson-mapper-asl-1.8.0.jar
-Download http://localhost:8081/nexus/content/groups/public/com/google/sitebricks/sitebricks-converter/0.8.5/sitebricks-converter-0.8.5.jar
+Download http://localhost:8081/nexus/content/groups/public/org/
+  codehaus/jackson/jackson-core-asl/1.8.0/jackson-core-asl-1.8.0.jar
+Download http://localhost:8081/nexus/content/groups/public/org/
+  codehaus/jackson/jackson-mapper-asl/1.8.0/jackson-mapper-asl-1.8.0.jar
+Download http://localhost:8081/nexus/content/groups/public/com/
+  google/sitebricks/sitebricks-converter/0.8.5/sitebricks-converter-0.8.5.jar
 ...
 ----
 +
 or from Apache Ivy
 +
 ----
-[ivy:retrieve] downloading http://localhost:8081/nexus/content/groups/public/asm/asm-commons/3.2/asm-commons-3.2.jar ...
+[ivy:retrieve] downloading http://localhost:8081/nexus/content/
+  groups/public/asm/asm-commons/3.2/asm-commons-3.2.jar ...
 [ivy:retrieve] .. (32kB)
 [ivy:retrieve] .. (0kB)
 [ivy:retrieve] 	[SUCCESSFUL ] asm#asm-commons;3.2!asm-commons.jar (313ms)
@@ -383,10 +393,11 @@ or from Apache Ivy
 
 
 . After the build has successfully completed, delete the local Maven
-  repository cache and re-run the build as before
+  repository cache in the eval guide directory and re-run the build as before
 +
 ----
-$ rm repository
+$ cd maven
+$ rm -rf repository
 ----
 + 
 Delete the Gradle cache with 
@@ -486,7 +497,7 @@ simple-project to Nexus with the Maven wrapper script.
 +
 ----
 $ cd maven
-$ build -f simple-project/pom.xml clean deploy
+$ ./build -f simple-project/pom.xml clean deploy
 ----
 +
 With your own Maven installation you can use 
@@ -500,7 +511,7 @@ To deploy the project with Gradle you can run the commands
 +
 ----
 $ cd gradle/simple-project
-$ gradlew upload
+$ ./gradlew upload
 ----
 + 
 The equivalent Ant invocation is
@@ -518,15 +529,20 @@ $ ant deploy
 . Observe how the build tools log the deployment to Nexus e.g. Maven
 +
 ----
-Uploading: http://localhost:8081/nexus/content/repositories/snapshots/org/sonatype/nexus/examples/simple-project/1.0.0-SNAPSHOT/simple-project-1.0.0-20130311.231302-1.jar
-Uploaded: http://localhost:8081/nexus/content/repositories/snapshots/org/sonatype/nexus/examples/simple-project/1.0.0-SNAPSHOT/simple-project-1.0.0-20130311.231302-1.jar (3 KB at 38.2 KB/sec)
+Uploading: http://localhost:8081/nexus/content/repositories/snapshots/
+  org/sonatype/nexus/examples/simple-project/1.0.0-SNAPSHOT/
+  simple-project-1.0.0-20130311.231302-1.jar
+Uploaded: http://localhost:8081/nexus/content/repositories/snapshots/
+  org/sonatype/nexus/examples/simple-project/1.0.0-SNAPSHOT/
+  simple-project-1.0.0-20130311.231302-1.jar (3 KB at 38.2 KB/sec)
 ----
 +
 Gradle
 +
 ----
 Uploading:
-org/sonatype/nexus/examples/simple-project/1.0-SNAPSHOT/simple-project-1.0-20130306.173412-1.jar 
+org/sonatype/nexus/examples/simple-project/1.0-SNAPSHOT/
+  simple-project-1.0-20130306.173412-1.jar 
 to repository remote at
 http://localhost:8081/nexus/content/repositories/snapshots
 ----
@@ -535,7 +551,9 @@ or Ivy
 +
 ----
 [ivy:publish] :: publishing :: org.sonatype.nexus.examples#simple-project
-[ivy:publish] 	published simple-project to http://localhost:8081/nexus/content/repositories/snapshots/org/sonatype/nexus/examples/simple-project/1.0-SNAPSHOT/simple-project-1.0-SNAPSHOT.jar
+[ivy:publish] 	published simple-project to http://localhost:8081
+  /nexus/content/repositories/snapshots/org/sonatype/nexus/examples/
+  simple-project/1.0-SNAPSHOT/simple-project-1.0-SNAPSHOT.jar
 ----
 
 . To verify that the simple-project component was deployed to Nexus,
@@ -566,7 +584,7 @@ To build the second project with Gradle, simply use
 +
 ----
 $ cd gradle/another-project
-$ gradle build
+$ ./gradlew build
 ----
 +
 Perform the same action with Ant using
@@ -915,13 +933,13 @@ with -SNAPSHOT. This means that it is in development.
 removing the -SNAPSHOT in a text editor or run the command
 +
 ----
-$ build -f simple-project/pom.xml versions:set -DnewVersion=1.0.0
+$ ./build -f simple-project/pom.xml versions:set -DnewVersion=1.0.0
 ----
 
 . Publish the release to the Nexus Staging suite with
 +
 ----
-$ build -f simple-project/pom.xml clean deploy
+$ ./build -f simple-project/pom.xml clean deploy
 ----
 
 . To view the staging repository, click on 'Staging Repositories' in
@@ -1011,7 +1029,7 @@ more...]
 . Deploy the simple-project component and site to Nexus
 +
 ----
-$ build -f simple-project/pom.xml clean deploy site-deploy
+$ ./build -f simple-project/pom.xml clean deploy site-deploy
 ----
 
 . Browse the generate site on Nexus at http://localhost:8081/nexus/content/sites/site/
@@ -1086,7 +1104,7 @@ place your user tokens in the settings.xml file.
   </servers>
 ----
 
-.  Read more about potential configuration and usage in Manage Maven Settings Templates ->
+. Read more about potential configuration and usage in Manage Maven Settings Templates ->
   http://www.sonatype.com/books/nexus-book/reference/settings-sect-install.html[Read more...]
 
 . Downloading the settings template requires Nexus running via https
