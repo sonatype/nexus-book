@@ -729,11 +729,24 @@ keepStagingRepositoryOnFailure:: setting this flag to true will cause
 the plugin to skip any clean up operations like dropping a staging
 repository for failed uploads, by default these clean up operations
 occur
+keepStagingRepositoryOnCloseRuleFailure:: with the default setting of
+false the Nexus Staging Maven Plugin will drop the created staging
+repository if any staging rule violation occurs. If this flag is set
+to true, it will not drop the staging repository. This allows you to
+inspect the deployed components in order to figure out why a rule
+failed causing the staging failure.
+skipNexusStagingDeployMojo:: set to false by default this flag will
+cause to skip any execution of the 'deploy' goal of the plugin when
+set to true similar to 'maven.deploy.skip'
 skipStaging:: set to false by default this flag will cause to skip any
 execution of the plugin when set to true
 skipRemoteStaging:: if this flag is set to true any step related to
 remote staging will be skipped and only local staging will be
 performed, the default setting is false
+skipLocalStaging:: by default set to 'true' causes the Nexus Staging
+Maven Plugin to use local staging, setting this parameter to 'false'
+turns off local staging, which emulates the immediate upload as
+performed by the Maven Deploy Plugin
 
 With `skipRemoteStaging` set to true, only the local staging
 happens. This local staging can then be picked up for the remote
@@ -752,6 +765,9 @@ automation of a staged release process can be achieved.
 deploy-staged:: perform full staging deployment workflow for a locally
 staged project e.g. with the artifacts in target/nexus-staging
 
+deploy-staged-repository:: perform an upload of a repository from the
+local filesystem to a staging repository.
+
 close:: close the staging repository for current context
 
 drop:: drop the staging repository for current context
@@ -765,6 +781,21 @@ relies on content of a local staging folder .
 
 Promoting additionally needs the build promotion profile name passed in
 via the `buildPromotionProfileId` configuration parameter.
+
+The 'deploy-staged-repository' goal can be used to stage a
+repository. Typically a local repository is created with an invocation
+of the deploy similar to 
+
+----
+mvn deploy -DaltDeploymentRepository=local::default::file://path
+----  
+
+To deploy this file system repository with the goal, you have to
+provide the path to this repository with the 'repositoryDirectory'
+parameter as well as 'nexusUrl', 'serverId' and
+'stagingProfileId' . Optionally you can configure the repository to
+stage into with 'stagingRepositoryId'. This aggregated command is then
+be run outside any specific Maven project.
 
 While the above goals need the context of a project with configuration
 for the Nexus Staging Plugin in the POM file, it is possible to
