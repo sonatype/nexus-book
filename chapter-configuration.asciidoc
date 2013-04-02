@@ -381,7 +381,15 @@ Remote Repository Access:: This section tells Nexus where to look for
 and how to interact with the remote Maven repository being proxied.
 
 Remote Storage Location;; This is the URL of the remote Maven
-repository.
+repository, that needs to be configured for a proxy repository. When
+selecting the URL to proxy it is beneficial to avoid proxying remote
+repository groups. Proxying repository groups prevents some
+performance optimization in terms of accessing and retrieving the
+content of the remote repository. If you require components from the
+group that are found in different hosted repositories on the remote
+repository server it is better to create multiple proxy repositories
+that proxy the different hosted repositories from the remote server on
+your Nexus server instead of simply proxying the group.
 
 Download Remote Indexes;; This field controls the downloading of the
 remote indexes. If enabled, Nexus will download
@@ -669,6 +677,84 @@ missing artifacts.
 [[confignx-sect-managing-routes]]
 === Managing Routing
 
+Routing can be considered the internal activities Nexus perform in
+order to determine, where to look for a specific component in a Maven
+repository. The routing information has an impact on the performance of
+component retrieval as well as determining the availability of components.
+
+A large portion of the performance gains achievable with correct and
+optimized routing information is configured by Nexus itself with
+Automatic Routing documented in <<automatic-routing>>. Fine grained
+control and further customizations in terms of access provision can be
+achieved with some manual routing configuration documented in <<manual-routing>>.
+
+[[automatic-routing]]
+==== Automatic Routing 
+
+Automatic Routing is handled by Nexus on a per repository
+basis. You can access the configuration and further details in the
+Routing tab after selecting a repository in the list accessible via
+Repositories item in the the Views/Repositories left hand menu.
+
+The Routing information consists of the top two levels of the
+directory structure of the repository and is stored in a prefixes.txt
+file. It allows Nexus to automatically route only component requests
+with the corresponding groupId values to a repository avoid
+unnecessary index or even remote repository access.
+
+Nexus generates the prefixes.txt file for a hosted repository and
+makes it available for remote downloads. Each deployment of a new
+component will trigger an update of the file for the hosted repository
+as well as the prefix files for any repoisitory groups that contain
+the hosted repository. You can access it in the Routing tab of a
+hosted repository as displayed in <<fig-automatic-routing-hosted>> by
+clicking on the 'Show prefix file' link on the right. In addition the
+Publishing section shows the 'Status' of the routing information, a
+'Message' with further details and the date and time of the last
+update in the 'Published On' field.
+
+[[fig-automatic-routing-hosted]]
+.Automatic Routing for a Hosted Repository
+image::figs/web/automatic-routing-hosted.png[scale=60]
+
+The Routing tab for a proxy repository displayed in
+<<fig-automatic-routing-proxy>> contains the Discovery section. It
+displays the 'Status' and a more detailed 'Message' about the prefix
+file access. The 'Last run' field displays the date and time of the
+last execution of the prefix file discovery. Such an execution can be
+triggered by pressing the 'Update now' button. Otherwise the 'Update
+Interval' allows you to trigger a new discovery every one, two, three,
+six, nine or twelve hours or as a daily or weekly execution. 
+
+[[fig-automatic-routing-proxy]]
+.Automatic Routing for a Proxy Repository
+image::figs/web/automatic-routing-proxy.png[scale=60]
+
+For a proxy repository the prefix file is either downloaded from
+the remote repository or a generation is attempted by scraping the
+remote repository. This generation is not attempted for remote Nexus
+repository groups, since they are too dynamic in nature and should not
+be proxied directly. Scraping of hosted or proy repositories as well
+as svn based repositories is supported.
+
+The generation of the prefix file in all the Nexus deployments
+proxying each other greatly improves performance for all Nexus
+instances. It lowers network traffic and load on the servers, since
+failing requests and serving the respective http error pages for a
+component that is not found is avoided for each component. Instead the
+regularly light weight download of the prefix file establishes a good
+high level knowledge of components available.
+
+Automatic Routing is configured by Nexus automatically brings
+significant performance benefits to all Nexus instances proxying each
+other in a network and on the wider internet. It does not need to be
+changed apart from tweaking the update interval. To exercise even
+finer control than provided by Automatic Routing use Routing as
+documented in <<manual-routing>>.
+
+[[manual-routing]]
+==== Manual Routing Configuration
+
 Nexus Routes are like filters you can apply to Nexus Groups in terms
 of security access and general component retrieval and can reduce the
 number of repositories within a group accessed in order to retrieve an
@@ -724,11 +810,13 @@ URL Pattern::
     Nexus tries to resolve artifacts that match this path, it will
     exclude the Releases and Snapshots repositories.
 
-Rule Type:: Rule Type can be either "inclusive" or "exclusive". An
+Rule Type:: Rule Type can be either "inclusive", "exclusive" or "blocking". An
 inclusive rule type defines the set of repositories which should be
 searched for artifacts when the URL pattern has been matched. An
 exclusive rule type defines repositories which should not be searched
-for a particular artifact.
+for a particular artifact. A blocking rule will completely remove
+accessibility to the components under the specific pattern in a
+specified repository group.
 
 Ordered Route Repositories:: This is an ordered list of repositories
 which Nexus will search to locate a particular artifact. Nexus
@@ -810,7 +898,7 @@ pattern(s) from the group. As such blocking routes are a simplified,
 coarse grained access control.
 
 TIP: Check out <<procure>> for fine grained control of artifact
-availability and use blocking routes with sparingly.
+availability and use blocking routes sparingly.
 
 
 To summarize, there are creative possibilities with routes that the
