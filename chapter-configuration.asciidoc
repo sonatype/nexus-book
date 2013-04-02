@@ -261,11 +261,73 @@ the Central repository in Maven 1 format.
 The Repositories window displayed in <<fig-repo-config>> allows you to
 create, update and delete different repositories with the Add, Delete
 and Trash button. Use the Refresh button to update the displayed list
-of repositories and repository groups.
+of repositories and repository groups. The Trash button allows you to
+empy the trash folder into which deleted components are copied, when
+any delete operations are performed from the Nexus user interface. 
+
+By default the list of repositories displays the repositories
+configured and managed by the administrator. The drop down on the
+right of the Trash button allows you to switch the list of
+repositories and view the repositories managed by Nexus. There are
+staging repositories as documented in <<staging>> or procurement
+repositories as documented in <<procure>>.
+
+
 
 [[fig-repo-config]]
 .Repository Configuration Screen for a Proxy Repository
 image::figs/web/repository-manager_repository-config.png[scale=50]
+
+The list of repositories visible in <<fig-repo-config>> allows you to
+access more details for each repository by selecting a specific row
+and displays some information for each repository in the following
+columns: 
+
+Repository:: the name of the repository with repository groups
+displayed in bold
+
+Type:: the type of the repository with values of proxy, hosted or
+virtual for repositories or group for a repository group
+
+Quality:: a button to trigger the creation or access the results of a
+repository health check as documented in <<rhc>>
+
+Format:: the format used for the storage in the repository with values
+such as maven2, nuget, site or others
+
+Policy:: the deployment policy that applies to this repository. Not
+all repository policies. The typical Maven format allows Snapshot and
+Release policies.
+
+Repository Status:: the status of the repository as well as further
+information about the status, for example information about SSL
+certification problems or the status of the remote repository even for
+a currently disabled proxy repository
+
+Repository Path:: the direct URL path that exposes the repository via
+http access and potentially allows access and directory browsing
+outside of the Nexus interface
+
+Clicking on a colum header allows you to sort the list in ascending or
+descending order based on the column data.
+
+If you perform a right clicking on a row you can trigger a number of
+actions on the current repository. These actions depend on the
+repository type and include:
+
+Expire Cache:: expire the cache of hosted or a proxy repository or a
+repository group
+
+Rebuild Metadata:: rebuid the metadata of a hosted Maven 2 repository
+
+Block Proxy / Allow Proxy:: toggle between allowing or blocking the
+remote repository configured in a proxy repository
+
+Put Out Of Service / Put in Service:: enable or disable the repository
+service making changing the availability of all components in it
+
+Repair Index / Update Index:: repair or update the index of a hosted
+or proxy repository or a repository group
 
 
 [[fig-repo-config-2]]
