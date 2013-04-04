@@ -243,7 +243,7 @@ http://localhost:8081/nexus/. Access via http only works with the
 secure configuration parameter set to false.
 
 username:: the username to use for authenticating to Nexus. Default
-value is the the Java System property $user.name
+value is the the Java System property +user.name+
 
 password:: password to use for authenticating to Nexus
 
@@ -283,29 +283,50 @@ As a Maven plugin the Nexus M2Settings Maven Plugin relies on Apache
 Maven execution and therefore on the fact that the Central Repository
 can be contacted for downloading the required plugins and
 dependencies. If this access is only available via a proxy server you
-can configure the proxy related parameters +proxyEnabled+,
+can configure the proxy related parameters +proxy+,
 +proxyProtocol+, +proxyHost+, +proxyPort+, +proxyUsername+ and
 +proxyPassword+.
 
 ==== Downloading Maven Settings
 
 You can download the Maven Settings from Nexus Professional with a
-simple invocation:
+simple invocation, and rely on the plugin to prompt you for the
+required parameters:
 ----
-$ mvn org.sonatype.plugins:nexus-m2-settings-maven-plugin:download
+$ mvn org.sonatype.plugins:nexus-m2settings-maven-plugin:download
+[INFO] Scanning for projects...
+[INFO]
+[INFO] -----------------------------------------
+[INFO] Building Maven Stub Project (No POM) 1
+[INFO] -----------------------------------------
+[INFO]
 [INFO] --- nexus-m2settings-maven-plugin:1.4.2:download (default-cli) @ standalone-pom ---
 Nexus URL: https://localhost:8081/nexus
 Username [manfred]: admin
 Password: ********
 [INFO] Connecting to: https://localhost:8081/nexus (as admin)
+[WARNING] Insecure protocol: https://localhost:8081/nexus/
 [INFO] Connected: Sonatype Nexus Professional 2.4.0-07
 Available Templates:
    0) default
-Select Template: 1
+   1) example
+Select Template: 0
 [INFO] Fetching content for templateId: default
-[INFO] Backing up: /Users/manfred/.m2/settings.xml 
-to: /Users/manfred/.m2/settings.xml-20130402225802
+[INFO] Backing up: /Users/manfred/.m2/settings.xml to: /Users/manfred/.m2/settings.xml-20130404120146
 [INFO] Saving content to: /Users/manfred/.m2/settings.xml
+[INFO] -----------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] -----------------------------------------
+[INFO] Total time: 29.169s
+[INFO] Finished at: Thu Apr 04 12:01:46 PDT 2013
+[INFO] Final Memory: 12M/153M
+[INFO] -----------------------------------------
+----
+
+If your Nexus is hosted internally and does not use https you can
+download a settings file with
+----
+$ mvn org.sonatype.plugins:nexus-m2settings-maven-plugin:download -Dsecure=false
 ----
 
 As displayed the plugin will query for all parameters and display a
@@ -321,10 +342,31 @@ $ mvn org.sonatype.plugins:nexus-m2settings-maven-plugin:download \
 -DtemplateId=default
 ----
 
+Enabling proxy access with +-Dproxy=true+ will trigger the plugin to
+query the necessary configuration:
 
-If there is a restriction that does not allow you to use
-Maven in order to download a settings file you can use a simple HTTP
-GET command to get an unmodified settings file for example like this
+----
+[INFO] Connecting to: https://localhost:8081/nexus (as admin)
+Proxy Protocol:
+   0) http
+   1) https
+Choose: 1
+Proxy Host: myproxy.example.com
+Proxy Port: 9000
+Proxy Authentication:
+   0) yes
+   1) no
+Choose: 0
+Proxy Username [manfred]: proxy
+Proxy Password: ******
+[INFO] Proxy enabled: proxy@https:myproxy.example.com:9000
+----
+
+In some scenarios you have to get an initial settings file installed
+on a computer that does not have internet access and can therefore not
+use the Maven plugin. For this first initial configuration that
+connect the computer to Nexus for following Maven invocations a simple HTTP
+GET command to retrieve an unmodified settings file can be used:
 
 ----
 curl -u admin:admin123 -X GET "http://localhost:8081/nexus/service/local/templates/settings/default/content" > ~/.m2/settings.xml
@@ -333,7 +375,8 @@ curl -u admin:admin123 -X GET "http://localhost:8081/nexus/service/local/templat
 Modify the commandline above by changing the username:password
 supplied after -u and adapting the url to Template URL visible in the
 Nexus user interface. This invocation will however not do the client
-side replacement of parameters.
+side replacement of parameters, so you will have to manually change
+any username or password configuration, if applicable.
 
 === Summary
 
