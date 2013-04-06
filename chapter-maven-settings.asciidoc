@@ -6,10 +6,13 @@
 
 When you move an organization to a repository manager such as Nexus,
 one of the constant challenges is keeping everyone's Maven Settings
-synchronized to ensure the Nexus server is used.  Nexus Professional
-allows you to define templates for Maven Settings stored on the server
-and provide them to users via the user interface or download. Find out
-more about the Maven settings file in <<config>>.
+synchronized to ensure the Nexus server is used and any further
+configuration in the settings file is consistent.  In additions
+different users or use cases require different settings files. You can
+find out more about the Maven settings file in <<config>>.  Nexus
+Professional allows you to define templates for Maven Settings stored
+on the server and provide them to users via the user interface or
+automated download.
 
 If a Nexus administrator makes a change which requires every developer
 to modify his or her +~/.m2/settings.xml+ file, this feature can be
@@ -23,17 +26,16 @@ Nexus Professional.
 [[settings-sect-install]]
 === Manage Maven Settings Templates
 
-To manage Maven Settings templates, click on Maven Settings in the
-Enterprise section of the Nexus menu on the left side of the Nexus
-UI. Clicking on Maven Settings will load the panel shown in
-<<fig-settings-maven-settings>>.
+To manage Maven Settings templates, click on +Maven Settings+ in the
++Enterprise+ section of the Nexus menu on the left side of the Nexus
+UI. This will load the panel shown in <<fig-settings-maven-settings>>.
 
 [[fig-settings-maven-settings]]
 .The Maven Settings Panel
 image::figs/web/maven-settings-template.png[scale=60]
 
-The Maven Settings panel allows you to add, delete, and edit a Maven
-Settings template. The default template has an id of "default" and can
+The Maven Settings panel allows you to add, delete, and edit Maven
+Settings templates. The default template has an id of "default" and can
 not be changed. It contains the recommended settings for a standard
 Nexus installation. To create a new Maven Settings template, click on
 the +Add...+ button and select +Settings Template+. Once the new
@@ -67,7 +69,6 @@ be referenced in the settings file using the the syntax +${property}+:
 ...
 ----
 
-
 To preview a Maven Settings template, click on the +Template URL+ in
 the list. Clicking on this URL loads a dialog window which contains
 the Maven Settings file generated from this template. This rendered
@@ -75,8 +76,9 @@ view of the Maven Settings template has all variable references
 replaced using the current context of the user. This is the result of
 running the property replacement on the Nexus server.
 
-The Nexus M2Settings Maven Plugin supports client side replacement of
-properties using a +$[property]+ syntax.
+The Nexus M2Settings Maven Plugin supports the more powerful and
+feature rich, client side replacement of properties using a
++$[property]+ syntax.
 
 Client side properties supported by the Nexus M2Settings Maven Plugin
 are
@@ -105,7 +107,7 @@ user token
 
 Client side interpolation allows you to fully populate a +<server>+
 section with the required properties either with the plain text
-username and password. 
+username and password,
 
 ----
 <server>
@@ -141,7 +143,7 @@ master-password encryption] with the master keyword in
 ----
 
 The usage of the encrypted enwhich will result in values using the
-encrypted value syntax based on the master keyword similar to e.g.
+encrypted value syntax based on the master keyword similar to
 
 ----
 <server>
@@ -197,7 +199,7 @@ file, with a template from Nexus Professional. The default template in
 Nexus Professional adds the +org.sonatype.plugins+ group to the
 pluginGroups, so you will not have to do this manually. It is
 essential that you make sure that any new, custom templates also
-include this plugin group definition. Otherwise, there is a chance
+includes this plugin group definition. Otherwise, there is a chance
 that a developer could update his or her Maven Settings and lose the
 ability to use the Nexus Maven plugin with the short identifier.
 
@@ -208,11 +210,11 @@ well, since it allows the short prefix of a plugin to be used for an
 invocation outside a Maven project using the plugin.
 
 The +download+ goal of the Nexus M2Settings Maven Plugin downloads a
-Maven Settings file from Nexus Professional and stores it on a local
-machine. This goal can be configured to update a user's
-+~/.m2/settings.xml+ file. If you are replacing a Maven Settings file,
-this goal can be configured to make a backup of an existing Maven
-Settings file.
+Maven Settings file from Nexus Professional and stores it locally. The
+default file name for the settings file is the Maven default for the
+current user of +~/.m2/settings.xml+ file. If you are replacing a
+Maven Settings file, this goal can be configured to make a backup of
+an existing Maven Settings file.
 
 NOTE: The download with the Nexus Maven Plugin is deprecated and has
 been replaced with the Nexus M2Settings Maven Plugin.
@@ -228,19 +230,13 @@ NOTE: For security reason the settings download requires a HTTPS
  connection to your Nexus instance. If you are running Nexus via plain
  HTTP you will have to set the +secure+ parameter to +false+.
 
-A list of all plugin configuration parameters can be accessed with
-
-----
-mvn nexus-m2settings:help -Ddetail=true -Dgoal=download
-----
-
 The required configuration parameters can either be supplied
 as invocation parameters or when prompted by the plugin and are:
 
 nexusUrl:: points to the Nexus server installation's base URL. If you
 have installed Nexus on your local machine, this would be
 http://localhost:8081/nexus/. Access via http only works with the
-secure configuration parameter set to false.
++secure+ configuration parameter set to +false+.
 
 username:: the username to use for authenticating to Nexus. Default
 value is the the Java System property +user.name+
@@ -253,8 +249,8 @@ the Nexus user interface
 Additional general configuration parameters are related to the
 security of the transfer and the output file:
 
-secure:: by default set to true this parameter forces a Nexus URL
-access with HTTPS, overriding this parameter setting it to false
+secure:: by default set to +true+, this parameter forces a Nexus URL
+access with HTTPS. Overriding this parameter and setting it to +false+
 allows you to download a settings file via HTTP. When using this
 override it is important to keep in mind that the username and
 password transfered via HTTP can be intercepted.
@@ -283,15 +279,15 @@ As a Maven plugin the Nexus M2Settings Maven Plugin relies on Apache
 Maven execution and therefore on the fact that the Central Repository
 can be contacted for downloading the required plugins and
 dependencies. If this access is only available via a proxy server you
-can configure the proxy related parameters +proxy+,
-+proxy.protocol+, +proxy.host+, +proxy.port+, +proxy.username+ and
-+proxy.password+.
+can configure the proxy related parameters +proxy+, +proxy.protocol+,
++proxy.host+, +proxy.port+, +proxy.username+ and +proxy.password+.
 
 ==== Downloading Maven Settings
 
 You can download the Maven Settings from Nexus Professional with a
 simple invocation, and rely on the plugin to prompt you for the
 required parameters:
+
 ----
 $ mvn org.sonatype.plugins:nexus-m2settings-maven-plugin:download
 [INFO] Scanning for projects...
@@ -323,7 +319,7 @@ Select Template: 0
 [INFO] -----------------------------------------
 ----
 
-If your Nexus is hosted internally and does not use https you can
+If your Nexus server is hosted internally and does not use https you can
 download a settings file with
 ----
 $ mvn org.sonatype.plugins:nexus-m2settings-maven-plugin:download -Dsecure=false
