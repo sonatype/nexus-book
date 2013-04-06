@@ -1,0 +1,95 @@
+  
+[[sonatype-clm]]
+== Sonatype CLM Integration
+
+=== Introduction
+
+As dicusssed in <<repoman>> Component Lifecycle Management (CLM) and
+Repository Management are closed related activities. The Sonatype CLM
+suite of tools provides a backend server for administrating your
+component usage policies and other features that integrated with other
+tools of the suite. Nexus is an important component that can take
+advantage of the CLM server. This chapter goes into the details of
+configuring and using the integration of the CLM server and Nexus. access
+
+
+=== Connecting Nexus to CLM Server
+
+The Sonatype CLM server is a separate server application that Nexus
+integrates with via API calls. To configure Nexus to be able to contact
+the CLM server, you need to click on the +CLM+ menu item in the left
+hand +Administration+ menu in Nexus, which will open the tab visible
+in <<fig-clm-config-tab>>.
+
+[[fig-clm-config-tab]]
+.CLM configuration tab in Nexus
+image::figs/web/clm-config-tab.png[scale=60]
+
+The CLM connection is established by providing the URL to the CLM
+server in the +CLM Server URL+ input field.
+
+Additional details can be configured in the +Properties+ input field
+using a +key=value+ definition per line. An example is 
+
+----
+mail.systemEmail=clm-nexus@example.com
+logging.level=INFO
+----
+
+These properties are passed to the CLM server. It is using the
+http://dropwizard.codahale.com/[Dropwizard] Java framework and
+therefore supports the
+http://dropwizard.codahale.com/manual/core/#configuration[Configuration]
+as visible in
+https://github.com/codahale/dropwizard/blob/master/dropwizard-example/example.yml[the
+Dropwizard example] as well as the config.yml shipped with the CLM
+server installation bundle. In most cases you will not need to
+configure any properties.
+
+Press +Save+ once you have entered the desired URL and properties, and
+Nexus will attempt to contact the CLM server and potentially display
+an error message if the CLM serer could not be contacted.
+
+=== Configuring the CLM Server
+
+With the connection between the CLM Server and Nexus established, you
+can configure any applications, application policies and constraints
+as documented in the book "Optimized Component Lifecycle Management
+with Sonatype CLM" available in
+http://www.sonatype.com/books/sonatype-clm-book/pdf/sonatype-clm-book.pdf[PDF]
+or http://www.sonatype.com/books/sonatype-clm-book/reference/[HTML
+format].
+
+=== Using CLM for Staging
+
+To use the rich configuration of policies and rules of the CLM Server
+for staging component releases in Nexus, you have to configure the
++Stage Release+ and +Release+ actions for each policy as desired.
+
+An example policy that would warn for a staging deployment and fail a
+release is visible in <<fig-clm-policy-staging>>
+
+[fig-clm-policy-staging]]
+.Staging and Release Configuration for a Policy in the CLM Server
+image::figs/web/clm-policy-staging.png[scale=60]
+
+This configuration can then be used for a staging profile or a build
+promotion profile by
+configuring the +CLM Application Id+ with the identifier for the
+application in the CLM server. <<fig-clm-staging-profile>> shows an
+example staging profile with a CLM application configured.
+
+[fig-clm-policy-staging]]
+.Staging Profile with a CLM Application Configured
+image::figs/web/clm-policy-staging.png[scale=60]
+
+
+
+
+
+
+////
+/* Local Variables: */
+/* ispell-personal-dictionary: "ispell.dict" */
+/* End:             */
+////
