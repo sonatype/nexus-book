@@ -3,14 +3,26 @@
 
 === Introduction
 
-As dicusssed in <<repoman>> Component Lifecycle Management (CLM) and
-Repository Management are closed related activities. The Sonatype CLM
-suite of tools provides a backend server for administrating your
-component usage policies and other features that integrated with other
-tools of the suite. Nexus is an important component that can take
-advantage of the CLM server. This chapter goes into the details of
-configuring and using the integration of the CLM server and Nexus. access
+As discussed in <<repoman>>, Component Lifecycle Management (CLM) and
+Repository Management are closely related activities. The Sonatype CLM
+suite of tools provides a server application for administrating your
+component usage policies and other features that integrate with other
+tools of the suite. It has access to extensive security vulnerability
+and license information data from the Sonatype CLM backend, that can
+be used as input for your policies. For example you could establish a
+policy is logged as violated if any components in your software has a
+known security vulnerability or uses a license that is incompatible
+with your business model.
 
+Find out more about the Sonatype CLM tools in the book "Optimized
+Component Lifecycle Management with Sonatype CLM" available in
+http://www.sonatype.com/books/sonatype-clm-book/pdf/sonatype-clm-book.pdf[PDF]
+or http://www.sonatype.com/books/sonatype-clm-book/reference/[HTML
+format].
+
+Nexus is an important component that can take advantage of the CLM
+server. This chapter goes into the details of configuring and using
+the integration of the CLM server and Nexus.
 
 === Connecting Nexus to CLM Server
 
@@ -47,19 +59,24 @@ configure any properties.
 
 Press +Save+ once you have entered the desired URL and properties, and
 Nexus will attempt to contact the CLM server and potentially display
-an error message if the CLM serer could not be contacted.
+an error message if the CLM server could not be contacted.
 
 === Configuring the CLM Server
 
 With the connection between the CLM Server and Nexus established, you
 can configure any applications, application policies and constraints
-as documented in the book "Optimized Component Lifecycle Management
-with Sonatype CLM" available in
-http://www.sonatype.com/books/sonatype-clm-book/pdf/sonatype-clm-book.pdf[PDF]
-or http://www.sonatype.com/books/sonatype-clm-book/reference/[HTML
-format].
+in the CLM server. Nexus will be accessing the CLM server using an
+application identifier, so you will have to configure one application
+for each different application use case in Nexus. 
+
+Find out more about configuring the CLM server in the book "Optimized
+Component Lifecycle Management with Sonatype CLM" referenced earlier.
 
 === Using CLM for Staging
+
+Before using CLM for Staging you should familiarize with the general
+setup and usage patterns of the Nexus Staging Suite documented in
+<<staging>>.
 
 To use the rich configuration of policies and rules of the CLM Server
 for staging component releases in Nexus, you have to configure the
@@ -82,24 +99,35 @@ with a CLM application configured.
 .Staging Profile with a CLM Application Configured
 image::figs/web/clm-staging-profile.png[scale=60]
 
-The +Stage Release+ configuration is used for closing the a staging
-repository. If it is set to Fail and a constraint is violated, the
-staging repository closing fails. The +Release+ configuration to fail,
-warn or do nothing is used for releasing the staging repository.
+The configuration of the +Stage Release+ action of a policy in the CLM
+server is used for closing the staging
+repository. If it is set to +Fail+ and a constraint is violated, the
+staging repository closing fails. A +Warn+ setting will validate the
+policy and produce a warning. +Do Nothing+ skips the validation.
 
-Once the staging profile is configured with the CLM Application Id any
-deployment potentially triggers a CLM rule evaluation, which will be
-visible as Activity for the staging repository. Any rule failures are
-provided with further information in the detail panel. <<>> displays a
-staging repository with CLM rule validations and a failure. The +View
-Full Report+ buttons links back to the Sonatype CLM server, which
-displays a detailed report.
+The +Release+ configuration to fail, warn or do nothing is used for
+releasing or promoting the staging repository.
+
+Once the staging profile is configured with the CLM application
+identifier any deployment potentially triggers a CLM rule evaluation,
+which will be visible as Activity for the staging repository. Any rule
+failures are provided with further information in the detail
+panel. <<fig-clm-staging-repository-failure>> displays a staging
+repository with CLM rule validations and a failure. The +View Full
+Report+ buttons links back to the Sonatype CLM server, which displays
+a detailed report.
 
 [[fig-clm-staging-repository-failure]]
 .Staging Repository Activity with a CLM Evaluation Failure and Details
 image::figs/web/clm-staging-repository-failure.png[scale=60]
 
-
+Using CLM for staging in Nexus combines the powerful controls for your
+release process from Nexus with the rich information and validation
+available in the CLM server. Using them together you can ensure that
+any release you produce are actively and automatically validated
+against up to date information in terms of security vulnerabilities
+and license characteristics of all the components you use and any
+whitelists or blacklists you maintain are enforced.
 
 
 ////
