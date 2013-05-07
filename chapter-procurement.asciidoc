@@ -236,20 +236,15 @@ the Nexus menu, and click on the +Add+ button selecting 'Hosted
 Repository' as shown in <<fig-procure-add-hosted>>.
 
 [[fig-procure-add-hosted]]
-.Adding a Hosted Repository
+.Adding the "Approved From Central" Hosted Repository
 image::figs/web/procure_add-hosted.png[scale=50]
 
-Selecting Hosted Repository will then load the Configuration form
-shown in <<fig-procure-add-secured>>. Create a repository with a
-Repository ID of "approved-from-central" and a name of "Approved From
-Central". Make the release policy "Release". Click the Save button to
-create the new Hosted Repository and view the new repository created
-displayed in <<fig-procure-add-secured>>.
+Selecting Hosted Repository will then load the Configuration
+form. Create a repository with a Repository ID of
+"approved-from-central" and a name of "Approved From Central". Make
+the release policy "Release". Click the Save button to create the new
+Hosted Repository.
 
-[[fig-procure-add-secured]]
-.Adding the "Approved From Central" Hosted Repository
-image::figs/web/procure_after-add-secured.png[scale=60]
-          
 [[procure-sect-config-procure-hosted]]
 ==== Configuring Procurement for Hosted Repository
 
@@ -267,7 +262,7 @@ shown in <<fig-procure-starting-procurement>>.
 
 [[fig-procure-starting-procurement]]
 .Adding a Procured Repository
-image::figs/web/procure_add-procured-repository.png[scale=40]
+image::figs/web/procure_add-procured-repository.png[scale=50]
 
 You will then be presented with the Start Procurement dialog as shown
 in <<fig-procure-start-procurement-dialog>>. Select the
@@ -276,7 +271,7 @@ repositories.
 
 [[fig-procure-start-procurement-dialog]] 
 .Configuring Procurement for a Hosted Repository
-image::figs/web/procure_configure-procurement-confirm.png[scale=60] 
+image::figs/web/procure_configure-procurement-confirm.png[scale=50] 
 
 Procurement is now configured and started, if you are using an
 instance of Nexus installed on localhost port 8081, you can configure
@@ -292,14 +287,14 @@ the repository type changed, once procurement was started. When
 procurement is activate for a hosted repository, the repository will
 not show up in the repositories list as a 'User Managed
 Repository'. Instead it will show up as a proxy repository in the list
-of 'Nexus Managed Repositories'. Use the drop down for +User Managed/Nexus Managed
-Repositories+ in the Repositories list. Click Refresh in the
-Repositories list, and look at the 'Approved From Central' repository in the list of
-Nexus Managed Repositories.  You will see that the repository type
-column contains "proxy" as shown in <<fig-procure-hosted-now-proxy>>.
-When procurement is started for a hosted repository it is effectively
-a proxy repository, and when it is stopped it will revert back to
-being a normal hosted repository.
+of 'Nexus Managed Repositories'. Use the drop down for +User
+Managed/Nexus Managed Repositories+ in the Repositories list. Click
+Refresh in the Repositories list, and look at the 'Approved From
+Central' repository in the list of Nexus Managed Repositories.  You
+will see that the repository type column contains "proxy" as shown in
+<<fig-procure-hosted-now-proxy>>.  When procurement is started for a
+hosted repository it is effectively a proxy repository, and when it is
+stopped it will revert back to being a normal hosted repository.
 
 [[fig-procure-hosted-now-proxy]]
 .Hosted Repository is a Nexus Managed Proxy Repository while Procurement is Active
@@ -318,19 +313,20 @@ panels and features which are available for a procured repository.
 
 A procurement rule is a rule to allow or deny the procurement of a
 group, artifact, or a collection of groups or artifacts. You load the
-Artifact Procurement interface by selecting Artifact Procurement under
-the Enterprise section of the Nexus menu.  Clicking on this link will
-load a list of procured repositories.  Clicking on the repository will
-load the entire repository in a tree as shown in
+Artifact Procurement interface by selecting Artifact Procurement in
+the Enterprise menu of the Nexus left hand navigation. Clicking on
+this link will load a list of procured repositories.  Clicking on the
+repository will display the proxied source repository and the current
+content of the procured repository in a tree as shown in
 <<fig-procure-repository-view>>.
 
 This section will illustrate the steps required for blocking access to
-an entire artifact and then selectively allowing access to a
-particular version of that same artifact. This is a common use-case in
+an specific component and then selectively allowing access to a
+particular version of that same component. This is a common use-case in
 organizations which want to standardize on specific versions of a
 particular dependency.
 
-NOTE: If you are attempting to procure artifacts from a remote
+NOTE: If you are attempting to procure components from a remote
 repository which does not have a repository index, you can still use
 the procurement suite. Without a remote repository index, you will
 need to configure procurement rules manually without the benefit of
@@ -344,81 +340,126 @@ The directory tree in <<fig-procure-repository-view>> is the index of
 the proxy repository from which artifacts are being procured.
 
 [[procure-sect-config-rule]]
-=== Configuring a Procurement Rule
+=== Configuring Procurement
 
 To configure a procurement rule, right click on a folder in the
-tree. <<fig-procure-deny-group-all>> displays the
-procurement interface after right clicking on the jython artifact
-folder. In this dialog, we are telling the procurement interface to
-deny everything in the jython group and its sub-groups. If you attempt
-to retrieve any version under the jython artifact after this rule is
-created, the Procurement Suite will prevent access to this
-artifact. For example, if you attempt to build a project that depends
-on jython:jython:2.1, it will not be made available via the Secured
-repository created in <<procure-sect-configure>>.
+tree. <<fig-procure-aether>> displays the procurement interface after
+right clicking on the +org/eclipse/aether+ component folder.
 
-[[fig-procure-deny-group-all]]
-.Denying Procurement for Everything Under a Group
-image::figs/web/procure_deny-all-jython.png[scale=60]
+[[fig-procure-aether]]
+.Applying a Rule to a Component Folder for +org/elipse/aether+
+image::figs/web/procure-aether.png[scale=60]
 
-After denying access to the entire jython artifact, right-click on the
-2.1 version folder under the jython artifact folder. Select "Exactly
-the artifact" as shown in <<fig-procure-allowing-artifact>> to allow
-for the procurement of only the 2.1 version. This has the effect of
-creating a specific rule which allows the procurement of a single
-version of the jython:jython artifact.
+In this dialog, we are deciding to configure a rule for everything
+within the group and its sub-groups, which will bring up the rule
+configuration dialog displayed in <<fig-procure-aether-add-rule>>.
+The dialog to add rules allows you to select the available rule,
+e.g. a Forced Approve/Deny Rule, and configure the rule
+properties. The displayed dialog approves all components Eclipse
+Aether components.
 
-[[fig-procure-allowing-artifact]]
-.Allowing Access to a Single Artifact in a Denied Group
-image::figs/web/procure_approve-artifact.png[scale=60]
+[[fig-procure-aether-add-rule]]
+.Approving +org.eclipse.aether+ Components 
+image::figs/web/procure-aether-add-rule.png[scale=60]
 
-After allowing this element, your procurement tree is going to contain
-red and green markers on the affected folders as shown in
-<<fig-procure-composite-effects>>. While the jython artifact folder
-has a red slash through it the 2.1 version folder has a green
-check. You have configured the Procurement Suite to deny access to all
-versions of the jython artifact except version 2.1.
+By right clicking on the top level folder of the repository as
+displayed in <<fig-procure-global-rules>> you can configure rules for
+the complete repository as well as access all configured rules via the
+'Applied Rules' option.
 
-[[fig-procure-composite-effects]]
-.Viewing the Effect of Composite Procurement Rules on the Tree
-image::figs/web/procure_only-one-jython.png[scale=60]
+[[fig-procure-global-rules]]
+.Accessing the Global Repository Configuration
+image::figs/web/procure-global-rules.png[scale=60]
 
-[[procure-sect-manage-rules]]
-=== Managing Procurement Rules
+This allows you to setup a global rule like blocking all components
+from the repository. Once you have configured this you can then
+selectively allow specific versions of a
+component. <<fig-procure-collections-version>> displays the options
+available for configuring rules for a specific component version of
+the Apache Commons Collections component.
 
-Once you've created a set of procurement rules you are going to want
-to know how to view the procurement rules which are applicable to a
-particular node. Procurement rules will frequently overlap; for
-example, in <<procure-sect-creating-rules>>, there are
-two rules: one rule applies to all of the versions (folder) below the
-jython artifact folder, and the other rule applies to a particular
-version directory. Since rules can overlap, Nexus provides a simple
-way to list and manage the rules which apply to a specific node in the
-directory tree. <<fig-procure-composite-effects>> shows
-the resolved procurement rules after clicking on the Jython 2.1
-version artifact from <<procure-sect-configure>>.
+[[fig-procure-collections-version]]
+.Procurement Configurations Options for a Specific Component Version
+image::figs/web/procure-collections-version.png[scale=60]
 
-[[fig-procure-effective]]
-.Effective Procurement Rules for a Particular Node
-image::figs/web/procure_effective-rules.png[scale=60]
+Once you approve a specific version the tree view will change the
+icons for the component displaying green checkmarks for approved
+components and red cross lines for denied components as visible in
+<<fig-procure-status-tree>>
+
+[[fig-procure-status-tree]]
+.Procurement Repository Tree View with Rule Visualization
+image::figs/web/procure-status-tree.png[scale=60]
+
+An example dialog of Applied Rules for the complete repository, as
+configured by '*:*:*', is visible in <<fig-procure-applied-rules>>.
+This repository currently denies access to all components, only
+approving components within 'org/apache/maven' and
+'org/eclipse/aether''.
 
 This dialog gives the procurement administrator a fine-grained view
-into the rules that apply to a particular node. From this dialog you
-can remove rules which apply to a specific node.
+into the rules that apply to the complete repository. A view of all
+Applied Rules for a specific repository folder can be access by
+right-clicking on the folder and selecting Applied Rules. The dialog
+allows you to remove specific rules or all rules as well.
+
+[[fig-procure-applied-rules]]
+.Applied Rules for the Complete Procurement Repository
+image::figs/web/procure-applied-rules.png[scale=60]
+
+The 'Refresh' button above the tree view of a repository tree view
+allows you to update the tree view and the visualization of all
+applied rules. The 'Add Freeform Rule' button allows you to bring up
+the dialog to manually configure a procurement rule displayed in
+<<fig-procure-freeform-rule>>. This is especially useful if the tree
+view is not complete due to a missing repository index or if you have
+detailed knowledge of the component you want to apply a rule to. 
+The format for entering the a specific component to be in the 'Enter
+GAV' input field is the short form for a Maven component coordinate
+using the groupId, artifactId and version separated by ':'. The '*'
+character can be used as a wildcard for a complete coordinate.
+
+[[fig-procure-freeform-rule]]
+.Adding a Freeform Rule
+image::figs/web/procure-freeform-rule.png[scale=60]
+
+Examples for a freeform rule coordinates are: 
+
+'*:*:*' matches any component in the complete repository
+
+'org.apache.ant:*:*':: matches any component with the groupId
+org.apache.ant located in org/apache/ant
+
+'org.apache.ant:*:*':: matches any component with the groupId
+org.apache.ant located in org/apache/ant
+
+'org.apache.ant.*:*:*':: matches any component with the groupId
+org.apache.ant located in org/apache/ant as well as any sub-groups
+e.g. +org.apache.ant.ant+
+
+These coordinates are displayed as part of a Maven built when
+retrieving a component fails as part of the error message with the
+addition of the packaging type. It is therefore possible to cut and
+paste the respective coordinates from the build output and insert
+them into a freeform rule. Once you have done that you can kick off
+the build again, potentially forcing downloads with the option +-U+
+and continue procurement configuration for further components.
+
 
 [[procure-sect-stopping]]
 === Stopping Procurement
 
-Some organizations may want to "lock down" the artifacts that a
+Some organizations may want to "lock down" the components that a
 release build can depend upon, and it is also a good idea to make sure
 that your build isn't going to be affected by changes to a repository
-not under you control. A procurement administrator might configure a
+not under you control. A procurement administrator can configure a
 procured repository, start procurement, and run an enterprise build
 against the repository to populate the procured, hosted repository
-with all of the necessary artifacts. After this process, the
+with all of the necessary components. After this process, the
 procurement administrator can stop procurement and continue to run the
 same release build against the hosted repository which now contains
-all of the procured artifacts.
+all of the procured components, while being a completely static
+repository.
 
 To stop procurement, go to the Artifact Procurement management
 interface by clicking on Artifact Procurement under the Enterprise
@@ -433,6 +474,12 @@ After choosing Stop Procurement, you will then see a dialog confirming
 your decision to stop procurement. Once procurement is stopped, the
 Secure repository will revert back to being a plain-old Hosted
 Repository.
+
+In order to add further components you create a procurement repository
+off the hosted repository as you did initially. If the repository
+contains components already, activating procurement will automatically
+generate rules that allows all components already within the
+repository.
 
 ////
 /* Local Variables: */
