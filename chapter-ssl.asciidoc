@@ -103,19 +103,24 @@ repository is selected. For a repository using a self signed
 certificate the repository status will initially be set to be in
 service, but the remote will be automatically blocked and set to be
 unavailable, since the certificate of the remote server is not
-trusted. The 'SSL' tab displays as visible in
-<<fig-ssl-secure-central>> the details of the certificate and allows
-you to add the certificate to the truststore or to remove it from it
-with the button on the top right hand corner named 'Add to trust
-store' and 'Remove from trust store' respectively. In addition the
-checkbox on the top left corner allows you to store the certificate in
-Nexus internal SSL trust store. Otherwise the certificate is installed
-into the trust store of the JVM running Nexus. Using the Nexus
-internal trust store will work fine even when migrating Nexus from one
-machine to another or when switching the Java runtime and JVM between
-restarts, and is therefore recommended. Remote repositories that use a
-CA signed certificate will be automatically trusted.
+trusted. Remote repositories that use a CA signed certificate will be
+automatically trusted.
 
+The 'SSL' tab displays as visible in <<fig-ssl-secure-central>> the
+details of the certificate and allows you to add the certificate to
+the truststore or to remove it from it with the button on the top
+right hand corner named 'Add to trust store' and 'Remove from trust
+store' respectively. 
+
+In addition the checkbox on the top left corner allows you to store
+the certificate in the Nexus internal SSL trust store. Otherwise the
+certificate is installed into the trust store of the JVM running
+Nexus. Using the Nexus internal trust store will work fine even when
+migrating Nexus from one machine to another or when switching the Java
+runtime and JVM between restarts for example during upgrades, and is
+therefore recommended. At runtime the JVM and Nexus trust stores are
+merged and both used so you can use a combination, if you organization
+e.g. maintains a default trust store for all JVM installations.
 
 [[fig-ssl-secure-central]]
 .SSL Tab for a Proxy Repository with Remote Server Using HTTPS
@@ -123,25 +128,15 @@ image::figs/web/ssl-secure-central.png[scale=50]
 
 When removing a certificate from the trust store, a Nexus restart is required.
 
+==== Manually Configuring Trust Stores
 
-TODO .. from here on things need to be cleared out still.. 
+The Nexus user interface should be sufficient to work with the trust
+stores and certificates. However in older version of Nexus as well as
+some use cases you need to manually configure the trust store. 
 
-If you need to configure Nexus to proxy a remote repository which
-requires a SSL Client Certificate, you'll need to import the
-certificate included with your Nexus license into the JVM used to run
-your Nexus instance. To make this process simpler, you can use our
-import-ssl tool. We've created a simple command-line utility which
-automates the process of loading the Server SSL Chain and the client
-certificate into a JVM.
-
-==== Downloading the SSL Import Tool
-
-The import-ssl tool can be downloaded from:
-http://central.sonatype.com/help/import-ssl.jar
-
-==== Importing a Client Certificate
-
-Importing a client certificate involves two steps: 
+Sonatype provides an import-ssl tool, which can be downloaded from:
+http://central.sonatype.com/help/import-ssl.jar. It allows you to
+import a client certificate in two steps: 
 
 * importing the server's SSL chain and 
 * importing the client SSL key/certificate pair.
@@ -204,7 +199,7 @@ it or if you override the truststore location, you will lose all of
 the trusted CA root certificates of the JRE and no SSL sites will be
 accessible.
 
-==== Import the Server SSL Chain
+===== Import the Server SSL Chain
 
 The first command imports the entire self-signed SSL certificate chain
 for central.sonatype.com into your JSSE keystore:
@@ -218,7 +213,7 @@ the server name you are attempting to connect to. This particular
 command will connect to https://central.sonatype.com, retrieve, and
 import the server's SSL certificate chain.
 
-==== Import the Client SSL Key/Certificate Pair
+===== Import the Client SSL Key/Certificate Pair
 
 The second command imports your client-side SSL certificate into the
 JSSE keystore, so Nexus can send it along to the server for
@@ -257,7 +252,7 @@ http://docs.oracle.com/javase/7/docs/technotes/tools/windows/keytool.html[Java
 7].
 
 
-==== Configuring Nexus Start-up
+===== Configuring Nexus Start-up
 
 Once both sets of SSL certificates are imported to your keystore
 and/or truststore, you can modify the 'wrapper.conf' file located
@@ -273,13 +268,12 @@ warpper.java.additional.12=-Djavax.net.ssl.trustStore=<truststore>
 warpper.java.additional.13=-Djavax.net.ssl.trustStorePassword=<truststore_password>
 ----
 
-
 Once you have configured the Nexus start-up option shown above, restart
 Nexus and attempt to proxy a remote repository which requires an SSL
 client certificate. Nexus will use the keystore location and keystore
 password to configure the SSL interaction to accept the server's SSL
-certificate and send the appropriate client SSL certificate.
-
+certificate and send the appropriate client SSL certificate using the
+manual configuration you have complete with the import-ssl tool.
 
 [[ssl-sect-ssl-direct]]
 === Configuring Nexus to Serve SSL
@@ -395,53 +389,45 @@ to accommodate both SSL and non-SSL connections.
 
 If you want to make it very easy for people to use your Nexus
 repository, you will want to configure the automatic redirect from the
-non-SSL port (default 80) to the SSL port (default 443). When this
-feature is configured, browsers and clients that attempt to interact
-with the non-SSL port will be seamlessly redirected to the SSL
-sisu-jetty8-1.4.2.jarport. If you do not turn on the automatic redirect to SSL, users who
-attempt to load the Nexus interface via the default port 80 will see a
-network error.
+non-SSL port (default 80) to the SSL port (default 443). 
 
-If you are proxying your Nexus instance with a web server like Apache
+With the recommended practice of using an external proxy server to for
+SSL, you would setup a redirect in the respective proxy server.
+With a web server like Apache
 httpd, you could configure mod_rewrite to automatically redirect
 browsers to the SSL port, or you can configure Jetty to perform this
-redirection. To do this in Jetty you use a custom rewrite rule for
-Jetty that is bundled with Nexus, inside the sisu-jetty8-1.4.2 library
-found in $NEXUS_HOME/lib
+redirection. 
+
+If you however configured Nexus to directly serve SSL as documented in
+<<ssl-sect-ssl-direct>>, the following instructions can be used to
+configure Nexus to redirect appropriately.
+
+When this feature is configured, browsers and clients that attempt to
+interact with the non-SSL port will be seamlessly redirected to the
+SSL port. If you do not turn on the automatic redirect to SSL, users
+who attempt to load the Nexus interface via the default port 80 will
+see a network error.
+
+To do this in Jetty
 
 To enable this feature, configure Jetty to serve SSL directly as
-demonstrated in <<ssl-sect-ssl-direct>>. After you
-have configured Jetty to serve SSL directly, open your jetty.xml and
-replace the existing handler/context-collection declaration with a
-stand-alone context-collection declaration, by replacing this section:
+demonstrated in <<ssl-sect-ssl-direct>>. After you have configured
+Jetty to serve SSL directly, you use a custom rewrite rule for Jetty
+that is bundled with Nexus. Open your jetty.xml and replace the
+existing handler/context-collection declaration with a stand-alone
+context-collection declaration, by replacing the 'handler' section
+starting with
 
 ----
 <Set name="handler">
-  <New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection">
-  <!-- The following configuration is REQUIRED, and MUST BE FIRST.
-       It makes the Plexus container available for use in the Nexus webapp. -->
-    <Call name="addLifeCycleListener">
-      <Arg>
-        <New  
-            class="org.sonatype.plexus.jetty.custom.InjectExistingPlexusListener" />
-      </Arg>
-    </Call>
-
-    <!-- The following configuration disables JSP taglib support, 
-         the validation of which slows down Jetty's start-up significantly. -->
-    <Call name="addLifeCycleListener">
-      <Arg>
-        <New class="org.sonatype.plexus.jetty.custom.DisableTagLibsListener" />
-      </Arg>
-    </Call>
-  </New>
-</Set>
+  <New id="Contexts" class="org.eclipse.jetty.handler.ContextHandlerCollection">
+...
 ----
 
 with this one:
 
 ----
-<New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection">
+<New id="Contexts" class="org.eclipse.jetty.handler.ContextHandlerCollection">
   <!-- The following configuration is REQUIRED, and MUST BE FIRST.
        It makes the Plexus container available for use in the Nexus webapp. -->
   <Call name="addLifeCycleListener">
@@ -466,9 +452,9 @@ section just above the line with stopAtShutdown in it:
 
 ----
 <Set name="handler">
-  <New id="Handlers" class="org.mortbay.jetty.handler.rewrite.RewriteHandler">
+  <New id="Handlers" class="org.eclipse.jetty.handler.rewrite.RewriteHandler">
     <Set name="rules">
-      <Array type="org.mortbay.jetty.handler.rewrite.Rule">
+      <Array type="org.eclipse.jetty.handler.rewrite.Rule">
         <Item>
           <New id="redirectedHttps"
              class="org.sonatype.plexus.jetty.custom.RedirectToHttpsRule">
@@ -478,16 +464,16 @@ section just above the line with stopAtShutdown in it:
       </Array>
     </Set>
     <Set name="handler">
-      <New id="Handlers" class="org.mortbay.jetty.handler.HandlerCollection">
+      <New id="Handlers" class="org.eclipse.jetty.handler.HandlerCollection">
         <Set name="handlers">
-          <Array type="org.mortbay.jetty.Handler">
+          <Array type="org.eclipse.jetty.Handler">
             <Item><Ref id="Contexts"/></Item>
             <Item>
               <New id="DefaultHandler" 
-                class="org.mortbay.jetty.handler.DefaultHandler"/></Item>
+                class="org.eclipse.jetty.handler.DefaultHandler"/></Item>
             <Item>
               <New id="RequestLog" 
-                class="org.mortbay.jetty.handler.RequestLogHandler"/></Item>
+                class="org.eclipse.jetty.handler.RequestLogHandler"/></Item>
           </Array>
         </Set>
       </New>
