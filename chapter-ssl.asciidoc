@@ -42,7 +42,7 @@ a self signed certficated registered in Nexus.
 
 [[fig-ssl-certificates-list]]
 .SSL Certificates Administration
-image::figs/web/ssl-certificates-list.png[scale=100]
+image::figs/web/ssl-certificates-list.png[scale=50]
 
 The actual list of SSL certifcates can be reloaded by clicking the
 'Refresh' button above the list. In addition certificates can be added
@@ -75,7 +75,7 @@ associated services.
 
 [[fig-ssl-add-server]]
 .Certificate Details Displayed After Successful Retrieval
-image::figs/web/ssl-add-server.png[scale=100]
+image::figs/web/ssl-add-server.png[scale=50]
 
 The dialog displays details about the certificate owner in the
 'Subject' section, the certificate issuer in the 'Issuer' section and
@@ -90,7 +90,7 @@ in the dialog is shown in <<fig-ssl-pem>>.
 
 [[fig-ssl-pem]]
 .Providing a Certificate in PEM Format
-image::figs/web/ssl-pem.png[scale=100]
+image::figs/web/ssl-pem.png[scale=50]
 
 Once a certificate for an LDAP server or SMTP server has been
 registered in Nexus, you can configure connection to these servers in
@@ -109,17 +109,22 @@ you to add the certificate to the truststore or to remove it from it
 with the button on the top right hand corner named 'Add to trust
 store' and 'Remove from trust store' respectively. In addition the
 checkbox on the top left corner allows you to store the certificate in
-the Nexus SSL trust store. Remote repositories that use a CA signed
-certificate will be automatically trusted.
+Nexus internal SSL trust store. Otherwise the certificate is installed
+into the trust store of the JVM running Nexus. Using the Nexus
+internal trust store will work fine even when migrating Nexus from one
+machine to another or when switching the Java runtime and JVM between
+restarts, and is therefore recommended. Remote repositories that use a
+CA signed certificate will be automatically trusted.
 
 
 [[fig-ssl-secure-central]]
 .SSL Tab for a Proxy Repository with Remote Server Using HTTPS
-image::figs/web/ssl-secure-central.png[scale=100]
+image::figs/web/ssl-secure-central.png[scale=50]
 
 When removing a certificate from the trust store, a Nexus restart is required.
 
 
+TODO .. from here on things need to be cleared out still.. 
 
 If you need to configure Nexus to proxy a remote repository which
 requires a SSL Client Certificate, you'll need to import the
@@ -255,22 +260,28 @@ http://docs.oracle.com/javase/7/docs/technotes/tools/windows/keytool.html[Java
 ==== Configuring Nexus Start-up
 
 Once both sets of SSL certificates are imported to your keystore
-and/or truststore, you can modify the 'nexus.properties' file located
-in '$NEXUS_HOME/conf/' to inject the JSSE system properties necessary
-to use these certificates, as seen below.
+and/or truststore, you can modify the 'wrapper.conf' file located
+in '$NEXUS_HOME/bin/jsw/conf/' to inject the JSSE system properties necessary
+to use these certificates, as seen below adapting the iterator number
+(10, 11.. ) to start at the last used value, which depends on the rest
+of your configuration.
 
 ----
-javax.net.ssl.keyStore=<keystore>
-javax.net.ssl.keyStorePassword=<keystore_password>
-javax.net.ssl.trustStore=<truststore>
-javax.net.ssl.trustStorePassword=<truststore_password>
+warpper.java.additional.10=-Djavax.net.ssl.keyStore=<keystore>
+warpper.java.additional.11=-Djavax.net.ssl.keyStorePassword=<keystore_password>
+warpper.java.additional.12=-Djavax.net.ssl.trustStore=<truststore>
+warpper.java.additional.13=-Djavax.net.ssl.trustStorePassword=<truststore_password>
 ----
+
 
 Once you have configured the Nexus start-up option shown above, restart
 Nexus and attempt to proxy a remote repository which requires an SSL
 client certificate. Nexus will use the keystore location and keystore
 password to configure the SSL interaction to accept the server's SSL
 certificate and send the appropriate client SSL certificate.
+
+
+////
 
 [[ssl-sect-ssl-direct]]
 === Configuring Nexus to Serve SSL
