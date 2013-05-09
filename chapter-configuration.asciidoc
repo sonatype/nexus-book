@@ -144,6 +144,11 @@ it will use the Base URL when it is generating emails.
 .Administration Application Server Settings
 image::figs/web/config-administration-application-server.png[scale=60]
 
+TIP:: This settings are especially important if Nexus is proxied by an
+external proxy server using a different protocol like https rather
+than plain http known to Nexus or a different hostname like
+repository.somecompany.com instead of an IP number only.
+
 [[config-default-http-proxy]]
 ==== Default HTTP Proxy Settings
 
@@ -171,18 +176,6 @@ typically secured via a HTTP proxy server.
 .Administration System Notification Settings
 image::figs/web/config-administration-system-notification.png[scale=60]
 
-==== New Version Availability
-
-Nexus can notify you of new versions of Nexus via the Nexus
-interface. To enable this feature, check the Enable checkbox in the
-New Version Notification section of the Nexus server settings as shown
-in <<fig-config-administration-new-version>>.
-
-[[fig-config-administration-new-version]]
-.Administration New Version Availability
-image::figs/web/config-administration-new-version.png[scale=60]
-
-
 ==== PGP Key Server Information
 
 Nexus Professional uses a PGP Key Server to retrieve PGP keys when
@@ -196,6 +189,18 @@ Server URLs, click and drag a URL in the Key Server URLs list.
 [[fig-config-administration-pgp-key-server]]
 .Administration PGP Key Server Information
 image::figs/web/config-administration-pgp-key-server.png[scale=60]
+
+==== New Version Availability
+
+Nexus can notify you of new versions of Nexus via the Nexus
+interface. To enable this feature, check the Enable checkbox in the
+New Version Notification section of the Nexus server settings as shown
+in <<fig-config-administration-new-version>>.
+
+[[fig-config-administration-new-version]]
+.Administration New Version Availability
+image::figs/web/config-administration-new-version.png[scale=60]
+
 
 
 [[confignx-sect-manage-repo]]
@@ -220,7 +225,9 @@ Nexus ships with the following configured proxy repositories:
     from Codehaus http://nexus.codehaus.org/snapshots/
 
     Central:: This is the central repository (for
-    releases).  http://repo1.maven.org/maven2/
+    releases).  For Nexus OSS the URL http://repo1.maven.org/maven2/
+    is used, while Nexus Professional has the SSL secured version
+    https://secure.central.sonatype.com/maven2/ preconfigured.
 
 ==== Hosted Repository
 
@@ -1495,8 +1502,8 @@ plugins can be installed.
 
 You can use the Nexus Plugin Console to list all installed Nexus
 plugins and browse REST services made available by the installed
-plugins. To open the Nexus Plugin Console, click on the Plugin Console
-link in the Administration section of the Nexus menu as shown in
+plugins. To open the Nexus Plugin Console, click on the 'Plugin Console'
+link in the 'Administration' menuas shown in
 <<fig-config-administration-menu>>.
 
 Once you open the Plugin Console, you will see a list of plugins
@@ -1510,8 +1517,9 @@ documentation.
 .Plugin Console
 image::figs/web/config-plugin-console.png[scale=50]
 
-An example for the plugin documentation is the Core API documentation
-linked off the Core Documentation plugin from
+An example for the plugin documentation is the main documentation for
+the core Nexus API 
+linked off the Nexus Restlet 1.x Plugin from
 <<fig-config-plugin-console>> and displayed in
 <<fig-config-plugin-core-api-site>>
 
