@@ -1070,6 +1070,41 @@ Rebuild NuGet Feed:: If you are using NuGet, pushing your artifacts
 into a NuGet hosted repository and are proxying that repository to
 other users, this task can be used to rebuild the feed.
 
+Remove Releases From Repository:: In many use cases of a repository
+manager it is necessary to keep release components for long periods of
+time or forever. This can be necessary for reproducibility reasons, in
+order to ensure users have access to old versions or even just for
+audit or legal reasons. However in other use cases there is no value
+in keeping old release components, for example when using a continuous
+delivery approach onto a single deployment platform with no roll back
+support. In other cases it could also be impractical due to the mere
+number and size of the release components.
++ 
+This scheduled task allows you to trigger the deletion of release
+components, supporting these use cases and taking care of meta data
+updates and removing the need to manually delete the components or use
+an external system to trigger the deletion.
++ 
+To configure the task you specifiy the repository in which release
+components are to be deleted as well as the number of component
+versions to keep for a specific groupId and artifactId coordinate. The
+task generates a list of all versions of a compoent for each groupId
+and artifactId coordinate combination and sorts it according to the
+version number. The ordering is derived by parsing the version string
+and supports http://semver.org[sematic versioning] with additional
+semantics for support of specific classifiers. Further details can be
+found in the documentation for the implementing class
+http://sonatype.github.io/sonatype-aether/apidocs/org/sonatype/aether/util/version/GenericVersionScheme.html[GenericVersionScheme].
++
+The Repository Target parameter can be used to narrow down the content
+of the repository that is analysed, to determine if any deletion should
+occur. Choosing +All (Maven2)+ is suitable to cause the full
+repository to be analysed. If you want to only target a specific
+groupId and artifactId combination or a number of them you can create
+a suitable repository target as documented in
+<<confignx-sect-managing-repo-targets>> and use it in the
+configuration of the scheduled task. 
+
 Repair Repositories Index:: In certain cases it might be required to
 remove the internal index as well as the published ones of a
 repository.  This task does that and then rebuilds the internal index
