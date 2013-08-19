@@ -648,6 +648,15 @@ would include the context path in your ProxyPass and ProxyPassReverse
   ProxyPassReverse /nexus/ http://localhost:8081/nexus/
 ----
 
+If you want to serve Nexus on a context path that is different than the one it
+has been configured for you will also need to add a ProxyPassReverseCookiePath.
+
+----
+  ProxyPass /nexus http://localhost:8081/
+  ProxyPassReverse /nexus http://localfhost:8081/
+  ProxyPassReverseCookiePath /nexus /
+----
+
 Apache configuration is going to vary based on your own application's
 requirements and the way you intend to expose Nexus to the outside
 world. If you need more details about Apache HTTPd and mod_proxy,
