@@ -272,34 +272,101 @@ Professional and you are comfortable granting any developer in the
 organization deployment permissions.
 
 [[crowd]]
-=== Nexus Atlassian Crowd Plugin
+=== Nexus Atlassian Crowd Support
 
 Atlassian's Crowd is a single sign-on and identity management product
 that many organizations use to consolidate user accounts and control
 which users and groups have access to which applications. Nexus
-Professional contains an optional security plugin that allows you to
+Professional contains an optional security realm that allows you to
 configure Nexus to authenticate against an Atlassian Crowd
 instance. For more information about Atlassian Crowd, go to
 http://www.atlassian.com/software/crowd/
 
 [[crowd-sect-installation]]
-==== Installing the Crowd Plugin
+==== Installing Nexus Crowd Support
 
-The Nexus Atlassian Crowd plugin is an otional plugin that comes as part of any
-Nexus Professional download. The directory containing the plugin code
-is called enterprise-crowd-plugin-X.Y.Z. Install the plugin following
-the instructions in <<install-additional-plugins>>.
+Starting with Nexus 2.7, Nexus Crowd support is already installed
+and ready to configure.
+
+In older Nexus versions, the Nexus Crowd support is implemented as
+an otional plugin that comes as part of any Nexus Professional download.
+The directory containing the plugin code is called either
+enterprise-crowd-plugin-X.Y.Z or nexus-crowd-plugin-X.Y.Z. Install the
+plugin following the instructions in <<install-additional-plugins>>.
+
+[[crowd-sect-nx]]
+==== Preparing Atlassian Crowd to Work with Nexus
+
+To connect Nexus to Atlassian's Crowd, you will need to configure
+Nexus as an application in Crowd. To do this, login to Crowd as a user
+with Administrative rights, and click on the Applications tab. Click on
+Add Application to display the form shown in <<fig-crowd-app>>, and
+create a new application with the following values in the Details tab
+of the Add Application form:
+
+* Application Type: Generic Application
+
+* Name: nexus
+
+* Description: Sonatype Nexus Professional
+
+Choose a password for this application. Nexus will use this password
+to authenticate with the Crowd server. Click on the Next button.
+
+[[fig-crowd-app]]
+.Creating a Nexus Crowd Application
+image::figs/web/crowd_new-app.png[scale=60]
+
+Clicking on Next will advance the form to the Connection tab shown in
+<<fig-crowd-app-connection>>. In this tab you need to supply the URL
+Nexus and the remote IP address for
+Nexus. <<fig-crowd-app-connection>>, shows the Connection form
+configured for a local instance of Nexus. If you were configuring
+Crowd and Nexus in a production environment, you would supply the URL
+that users would use to load Nexus in a web browser and you would
+supply the IP address that Nexus will be connecting from. Once you
+have completed the Connection form, click on Next to advance to the
+Directories form.
+
+[[fig-crowd-app-connection]]
+.Creating a Nexus Crowd Application Connection
+image::figs/web/crowd_new-app-connection.png[scale=60]
+
+Clicking on Next advances to the Directories form shown in
+<<fig-crowd-app-directories>>.  In this example, the Nexus application
+in Crowd is going to use the default "User Management"
+directory. Click on the Next button to advance to the "Authorisation"
+form.
+
+[[fig-crowd-app-directories]]
+.Creating a Nexus Crowd Application Directories
+image::figs/web/crowd_new-app-directories.png[scale=60]
+
+Clicking on the Next button advances to the "Authorisation" form shown
+in <<fig-crowd-app-authorization>>. If any of the
+directories selected in the previous form contain groups, each group
+is displayed on this form next to a checkbox. You can select "Allow
+all users" for a directory, or you can select specific groups which
+are allowed to authenticate to Crowd through Nexus. This option would
+be used if you wanted to limit Nexus access to specific subgroups
+within a larger Crowd directory. If your entire organization is stored
+in a single Crowd directory, you may want to limit Nexus access to a
+group that contains only Developers and Administrators.
+
+[[fig-crowd-app-authorization]]
+.Creating a Nexus Crowd Application Authorization
+image::figs/web/crowd_new-app-authorization.png[scale=60]
  
+
 [[crowd-sect-config]]
 ==== Configuring the Crowd Plugin
 
-Once the Atlassian Crowd plugin is installed, restart Nexus and login
-as a user with Administrative privileges. To configure the Crowd
+Login as a user with Administrative privileges. To configure the Crowd
 plugin, click on the Crowd Configuration in the Security section of
 the Nexus menu as shown in <<fig-crowd-menu-link>>.
 
 [[fig-crowd-menu-link]]
-.Crowd Menu Link in the Security Section of the Nexus Menu
+.Crowd Menu Link in the Security Section of the Nexus Sidebar Menu
 image::figs/web/crowd_menu-link.png[scale=60]
 
 Clicking on the Crowd Configuration link will load the form shown in
@@ -389,70 +456,7 @@ the Nexus server configuration.
 .Configuring the Crowd Authentication Realm
 image::figs/web/crowd_activate-realm.png[scale=60]
 
-[[crowd-sect-nx]]
-==== Configuring a Nexus Application in Crowd
 
-To connect Nexus to Atlassian's Crowd, you will need to configure
-Nexus as an application in Crowd. To do this, login to Crowd as a user
-with Administrative rights, and click on the Applications tab. Once
-you click on this tab, you should see two options under the
-Applications tab: Search Applications and Add Application. Click on
-Add Application to display the form shown in <<fig-crowd-app>>, and
-create a new application with the following values in the Details tab
-of the Add Application form:
-
-* Application Type: Generic Application
-
-* Name: nexus
-
-* Description: Sonatype Nexus Professional
-
-Choose a password for this application. Nexus will use this password
-to authenticate with the Crowd server. Click on the Next button.
-
-[[fig-crowd-app]]
-.Creating a Nexus Crowd Application
-image::figs/web/crowd_new-app.png[scale=60]
-
-Clicking on Next will advance the form to the Connection tab shown in
-<<fig-crowd-app-connection>>. In this tab you need to supply the URL
-Nexus and the remote IP address for
-Nexus. <<fig-crowd-app-connection>>, shows the Connection form
-configured for a local instance of Nexus. If you were configuring
-Crowd and Nexus in a production environment, you would supply the URL
-that users would use to load Nexus in a web browser and you would
-supply the IP address that Nexus will be connecting from. Once you
-have completed the Connection form, click on Next to advance to the
-Directories form.
-
-[[fig-crowd-app-connection]]
-.Creating a Nexus Crowd Application Connection
-image::figs/web/crowd_new-app-connection.png[scale=60]
-
-Clicking on Next advances to the Directories form shown in
-<<fig-crowd-app-directories>>.  In this example, the Nexus application
-in Crowd is going to use the default "User Management"
-directory. Click on the Next button to advance to the "Authorisation"
-form.
-
-[[fig-crowd-app-directories]]
-.Creating a Nexus Crowd Application Directories
-image::figs/web/crowd_new-app-directories.png[scale=60]
-
-Clicking on the Next button advances to the "Authorisation" form shown
-in <<fig-crowd-app-authorization>>. If any of the
-directories selected in the previous form contain groups, each group
-is displayed on this form next to a checkbox. You can select "Allow
-all users" for a directory, or you can select specific groups which
-are allowed to authenticate to Crowd through Nexus. This option would
-be used if you wanted to limit Nexus access to specific subgroups
-within a larger Crowd directory. If your entire organization is stored
-in a single Crowd directory, you may want to limit Nexus access to a
-group that contains only Developers and Administrators.
-
-[[fig-crowd-app-authorization]]
-.Creating a Nexus Crowd Application Authorization
-image::figs/web/crowd_new-app-authorization.png[scale=60]
 
 [[crowd-sect-mapping]]
 ==== Mapping Crowd Groups to Nexus Roles
