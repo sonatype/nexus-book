@@ -1,5 +1,5 @@
 [[crowd]]
-=== Atlassian Crowd Support
+== Atlassian Crowd Support
 
 http://www.atlassian.com/software/crowd/[Atlassian Crowd] is a single
 sign-on and identity management product that many organizations use to
@@ -19,7 +19,7 @@ Steps to use Nexus with Crowd:
 NOTE: Atlassian Crowd support is a Nexus Professional feature.
 
 [[crowd-sect-nexus-prepare]]
-==== Prepare Nexus for Atlassian Crowd
+=== Prepare Nexus for Atlassian Crowd
 
 Atlassian Crowd support is already installed and ready to configure starting
 with Nexus Professional 2.7.
@@ -33,10 +33,10 @@ plugin following the instructions in <<install-additional-plugins>>.
 WARNING: **Using LDAP and Crowd Realms together in Nexus may work, but is not supported.** If you already use Nexus LDAP support, we recommend adding your LDAP server as a Crowd directory accessible to the Crowd 'nexus' application, instead of using both LDAP and Crowd realms in Nexus.
 
 [[crowd-sect-crowd-prepare]]
-==== Prepare Atlassian Crowd
+=== Prepare Atlassian Crowd
 
 [[crowd-sect-crowd-compat]]
-===== Compatibilility
+==== Compatibility
 
 Always use the latest version of Crowd available at the time your version of
 Nexus was released. When upgrading to a newer Crowd server, carefully
@@ -50,9 +50,9 @@ We actively test Crowd support with the highest available version of
 Crowd at the time Nexus is released.
 
 [[crowd-sect-crowd-setup]]
-===== Configure a Nexus Application in the Atlassian Crowd Server
+==== Configure a Nexus Application in the Atlassian Crowd Server
 
-NOTE: The instructions here are a general guide to adding an application to Crowd. For current detaled instructions, visit the https://confluence.atlassian.com/display/CROWD/Adding+an+Application[official Crowd documentation].
+NOTE: The instructions here are a general guide to adding an application to Crowd. For current detailed instructions, visit the https://confluence.atlassian.com/display/CROWD/Adding+an+Application[official Crowd documentation].
 
 To connect Nexus to Atlassian's Crowd, you will need to configure Nexus
 as an application in Crowd. 
@@ -113,17 +113,17 @@ only Developers and Administrators.
 image::figs/web/crowd_new-app-authorization.png[scale=60]
 
 [[crowd-sect-config]]
-==== Configure Nexus Crowd Connection
+=== Configure Nexus Crowd Connection
 
 
 [[crowd-sect-ssl]]
-===== Configure Nexus to Trust Crowd’s Secure URL (Optional)
+==== Configure Nexus to Trust Crowd’s Secure URL (Optional)
 
 Although optional, we advise the connection from Nexus to your Crowd server
 to use the https protocol.
 
 If the Crowd Server certificate is not signed by a public certificate
-authority, you may have to explcitly trust the server certificate using <<ssl,Nexus SSL support>>. A common symptom of this is seeing "peer not authenticated"
+authority, you may have to explicitly trust the server certificate using <<ssl,Nexus SSL support>>. A common symptom of this is seeing "peer not authenticated"
 messages when trying to connect to the Crowd server. 
 
 Steps to explicitly trust the Crowd Server URL certificate in Nexus are:
@@ -135,9 +135,9 @@ Steps to explicitly trust the Crowd Server URL certificate in Nexus are:
 NOTE: The **SSL: Crowd** capability only available in Nexus 2.7+. Older versions must manually configure trust using an explicit truststore specified with JRE system properties.
 
 [[crowd-sect-ssl-capability]]
-===== Enable SSL: Crowd Capability
+==== Enable SSL: Crowd Capability
 
-. Login to Nexus as an Administator
+. Login to Nexus as an Administrator
 . In the sidebar menu, click **Administration** -> **Capabilities** to
 open the **Capabilities** panel.
 . Click the **Add** button in the panel toolbar. Select **SSL: Crowd**
@@ -149,20 +149,20 @@ and click the **Save** button.
 image::figs/web/crowd_capability-ssl.png[scale=60]
 
 [[crowd-sect-ssl-trust]]
-===== Add Crowd Server Certificate to Nexus Truststore
+==== Add Crowd Server Certificate to Nexus Truststore
 
 Using your https **Crowd Server URL** follow the 'Load from server'
-instructions in the <<ssl-sect-client-cert-mgt>> section to estabilish
+instructions in the <<ssl-sect-client-cert-mgt>> section to establish
 trust of the Crowd certificate.
 
 [[crowd-sect-ssl-config-url]]
-===== Configure Crowd Secure URL
+==== Configure Crowd Secure URL
 
 Enter the **https://** URL in the **Crowd Server URL** field of the **Crowd Configuration** panel. <<crowd-sect-config-crowd-server-url, More information on this field>>.
 
 
 [[crowd-sect-config-connection]]
-==== Configure Nexus Crowd Connection
+=== Configure Nexus Crowd Connection
 
 Login to Nexus as a user with Administrative privileges. Click **Crowd 
 Configuration** in the **Security** section of the Nexus menu as shown in 
@@ -198,7 +198,7 @@ Server default HTTP timeout.
 You can use the **Test Connection** button to validate if your connection to Crowd is working. Once you have a working connection, do not forget to **Save** your configuration. Use **Cancel** to abort saving any changes.
 
 [[crowd-sect-mapping]]
-==== Configure Nexus Crowd Security
+=== Configure Nexus Crowd Security
 
 There are two approaches available to manage what privileges a Crowd user has when they login to Nexus.
 
@@ -211,7 +211,7 @@ Mapping Crowd Groups to Nexus Roles is preferable because:
 * assigning users to Crowd groups can be centrally managed inside of Crowd by your security team after the initial Nexus setup
 
 [[crowd-sect-mapping-group]]
-===== Mapping a Crowd Group to Nexus Role
+==== Mapping a Crowd Group to Nexus Role
 
 When mapping a Crowd group to a Nexus Role, you are specifying the
 permissions ( via roles ) that users within the Crowd group will have
@@ -234,7 +234,7 @@ After choosing the **Crowd** realm, the **Role** drop-down should list all the C
 
 NOTE: If you have two or more groups in Crowd accessible to the 'nexus'
 application with the same name but in different directories, Nexus will
-only list the first one that Crowd finds. Therefore, Crowd administators
+only list the first one that Crowd finds. Therefore, Crowd administrators
 should avoid identically named groups in Crowd directories.
 
 Before saving the group-to-role mapping is allowed, **you 'must' add at
@@ -253,7 +253,7 @@ value of **Crowd**, as shown in <<fig-crowd-add-map-ext-role>>.
 image::figs/web/crowd_add-ext-role-map.png[scale=60]
 
 [[crowd-sect-mapping-user]]
-===== Mapping a Crowd User to Nexus Role
+==== Mapping a Crowd User to Nexus Role
 
 To illustrate this feature, consider the Crowd server user with an id
 of "brian". This groups are shown in
@@ -297,7 +297,7 @@ image::figs/web/crowd_add-ext-user-role-mapped.png[scale=60]
 
 
 [[crowd-sect-realm]]
-==== Activate Nexus Crowd Authentication Realm
+=== Activate Nexus Crowd Authentication Realm
 
 The final step to allow Crowd users to authenticate against Nexus is to
 activate the Crowd authorization realm.
