@@ -1024,26 +1024,28 @@ affected with the task setting Repository/Group. Alternatively you can
 provide a Repository Path to configure the content that should be
 expired.
 
-Yum: Generate Metadata:: The metadata for a yum repository is created
-and maintained by the http://createrepo.baseurl.org/[createrepo]
-tool. This scheduled task allows you to run it for a specific
-repository and optionally configure the output directory. 
+Mirror Eclipse Update Site (Nexus Professional only):: The P2 plugin
+allows you to mirror Eclipse update sites. This task can be used to
+force updates of repositories that went out of sync.
 
 Optimize Repository Index:: To speed up searches in Nexus, this task
 tells the internal search engine to optimize its index files. This has
 no affect on the indexes published by Nexus. Typically, this task does
 not have to run more than once a week.
 
-Rebuild P2 metadata and Rebuild P2 repository:: These tasks can be
-used to rebuild the metadata or the full repository with a P2
-format. You can specify a Repository/Group or a Repository Path to
-determine which content to affect.
-
 Publish Indexes:: Just as Maven downloads an index from a remote
 repository, Nexus can publish an index in the same format. This will
 make it easier for people using m2eclipse or Nexus to interact with
 your repositories.
-
+ 
+Purge Nexus Timeline:: Nexus maintains a lot of data that relates to
+the interaction between itself, proxied remote repositories, and
+clients on Nexus.  While this information can be important for
+purposes of auditing, it can also take up storage space. Using this
+scheduled task you can tell Nexus to periodically purge this
+information. The setting "Purge Items older than (days)" controls the
+age of the data to be deleted.
+ 
 Purge Orphaned API Keys:: This scheduled tasks will delete old, unused
 API keys generated and used by various plugins. For example it should
 be scheduled when using the User Token feature or NuGet
@@ -1052,15 +1054,7 @@ their token and should be scheduled to run regularly, specifically
 when internal security policies for password resets and you are using
 an external security provider like LDAP with this requirement for
 resets to access Nexus.
-
-Purge Nexus Timeline:: Nexus maintains a lot of data that relates to
-the interaction between itself, proxied remote repositories, and
-clients on Nexus.  While this information can be important for
-purposes of auditing, it can also take up storage space. Using this
-scheduled task you can tell Nexus to periodically purge this
-information. The setting "Purge Items older than (days)" controls the
-age of the data to be deleted.
-
+ 
 Rebuild Maven Metadata Files:: This task will rebuild the
 maven-metadata.xml files with the correct information and will also
 validate the checksums (.mh5/.sha1) for all files in the specified
@@ -1070,7 +1064,12 @@ corrupted repository.
 Rebuild NuGet Feed:: If you are using NuGet, pushing your artifacts
 into a NuGet hosted repository and are proxying that repository to
 other users, this task can be used to rebuild the feed.
-
+ 
+Rebuild P2 metadata and Rebuild P2 repository:: These tasks can be
+used to rebuild the metadata or the full repository with a P2
+format. You can specify a Repository/Group or a Repository Path to
+determine which content to affect.
+ 
 Remove Releases From Repository:: In many use cases of a repository
 manager it is necessary to keep release components for long periods of
 time or forever. This can be necessary for reproducibility reasons, in
@@ -1105,17 +1104,7 @@ groupId and artifactId combination or a number of them you can create
 a suitable repository target as documented in
 <<confignx-sect-managing-repo-targets>> and use it in the
 configuration of the scheduled task. 
-
-Repair Repositories Index:: In certain cases it might be required to
-remove the internal index as well as the published ones of a
-repository.  This task does that and then rebuilds the internal index
-by first trying to download remote indexes (if a proxy repository),
-then scanning the local storage and updating the internal index
-accordingly. Lastly, the index is published for the repository as
-well. There should be no need to schedule this task. But when
-upgrading Nexus, the upgrade instructions may sometimes include a
-manual step of executing this task.
-
+ 
 Remove Snapshots from Repository:: Often, you will want to remove
 snapshots from a snapshot repository to preserve storage space.  Note
 that configuring and running this job is not enough to reclaim disk
@@ -1151,9 +1140,19 @@ release component or the next snapshot version.
 Delete immediately - If you want to have artifacts deleted directly
 rather than moved to the trash, you can enable this setting.
 +
-When doing regular deployments to a snapshot repository via a CI server, this task
-should be configured to run regularly.
-
+When doing regular deployments to a snapshot repository via a CI
+server, this task should be configured to run regularly.
+ 
+Repair Repositories Index:: In certain cases it might be required to
+remove the internal index as well as the published ones of a
+repository.  This task does that and then rebuilds the internal index
+by first trying to download remote indexes (if a proxy repository),
+then scanning the local storage and updating the internal index
+accordingly. Lastly, the index is published for the repository as
+well. There should be no need to schedule this task. But when
+upgrading Nexus, the upgrade instructions may sometimes include a
+manual step of executing this task.
+ 
 Synchronize Shadow Repository:: This service synchronizes a shadow (or
 virtual) repository with its master repository. This task is only
 needed when external changes affected a source repository of a virtual
@@ -1167,10 +1166,12 @@ repository) and then scan the local storage to index the new files.
 Lastly, the index is published for the repository as well. Normally,
 there should be no need to schedule this task. One possible except
 would be if files are deployed directly to the local storage regularly.
+ 
+Yum: Generate Metadata:: The metadata for a yum repository is created
+and maintained by the http://createrepo.baseurl.org/[createrepo]
+tool. This scheduled task allows you to run it for a specific
+repository and optionally configure the output directory. 
 
-Mirror Eclipse Update Site (Nexus Professional only):: The P2 plugin
-allows you to mirror Eclipse update sites. This task can be used to
-force updates of repositories that went out of sync.
 
 Beyond these tasks any plugin can provide additional scheduled tasks,
 which will appear in the drop down once you have installed the plugin.
