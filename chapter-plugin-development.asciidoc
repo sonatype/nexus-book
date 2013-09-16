@@ -1,7 +1,7 @@
 [[plugdev]]
 == Developing Nexus Plugins
 
-Among the many benefits of using an technology with an open source
+Among the many benefits of using a technology with an open source
 core is the ability to customize behaviour and create extensions. To
 this end, Sonatype has spent a great deal of time designing an
 intuitive Plugin API that will allow you to take Nexus where you need
@@ -304,167 +304,45 @@ Interface: org.sonatype.nexus.proxy.repository.RequestProcessor
 This extension point can affect how a repository reacts to an item
 request.
 
-[[plugdev-sect-archetype]]
-=== Using the Nexus Plugin Archetype
+[[plugdev-sect-examples]]
+=== Creating and Building a Nexus Plugin Project
 
-To create a new Nexus Plugin, you can use the Nexus Plugin Archetype
-by with the Maven Archtetype Plugins generate goal with the filter set
-to "nexus-plugin-archetype" as displayed in
-<<fig-nexus-plugin-archetype>>. 
+In order to create a new Nexus plugin project, we suggest to replicate
+a plugin with a similar functionality from the
+https://github.com/sonatype/nexus-example-plugins[Nexus Plugin
+Examples] project or from
+https://github.com/sonatype/nexus-oss/tree/master/plugins[Nexus OSS]
+directly.
 
-Enter the number of the nexus-plugin-archetype at the first prompt and
-select the version corresponding to the version of Nexus you are
-using. Supply the desired values for the groupId, artifactId, version,
-and package name for the generated plugin next and confirm you values
-provided.
+NOTE: The Maven archetype nexus-archetype-quickstart is deprecated.
 
-[[fig-nexus-plugin-archetype]]
-.Creating a Sample Nexus Plugin using the Archetype
-----
-$ mvn archetype:generate -Dfilter=nexus-plugin-archetype
-[INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------
-[INFO] Building Maven Stub Project (No POM) 1
-[INFO] ------------------------------------------
-...
-[INFO] Generating project in Interactive mode
-[INFO] No archetype defined. Using maven-archetype-quickstart 
-(org.apache.maven.archetypes:maven-archetype-quickstart:1.0)
-Choose archetype:
-1: remote -> org.sonatype.nexus.archetypes:nexus-plugin-archetype (-)
-Choose a number or apply filter (format: [groupId:]artifactId, 
-case sensitive contains): : 1
-Choose org.sonatype.nexus.archetypes:nexus-plugin-archetype version: 
-1: 1.0
-2: 1.1
-3: 1.2
-4: 2.1-RC1
-5: 2.1
-6: 2.1.1
-7: 2.1.2
-8: 2.2-SNAPSHOT
-9: 2.2
-10: 2.2-01
-11: 2.2.1
-Choose a number: 11: 11
-Define value for property 'groupId': : org.sonatype.nexus.plugins
-Define value for property 'artifactId': : sample-plugin
-Define value for property 'version':  1.0-SNAPSHOT: : 
-Define value for property 'package':  org.sonatype.nexus.plugins: : 
-[INFO] Using property: nexusVersion = 2.2.1
-Confirm properties configuration:
-groupId: org.sonatype.nexus.plugins
-artifactId: sample-plugin
-version: 1.0-SNAPSHOT
-package: org.sonatype.nexus.plugins
-nexusVersion: 2.2.1
- Y: : 
-[INFO] --------------------------------------------------
-[INFO] Using following parameters for creating project from Archetype:
- nexus-plugin-archetype:2.2.1
-[INFO] --------------------------------------------------
-[INFO] Parameter: groupId, Value: org.sonatype.nexus.plugins
-[INFO] Parameter: artifactId, Value: sample-plugin
-[INFO] Parameter: version, Value: 1.0-SNAPSHOT
-[INFO] Parameter: package, Value: org.sonatype.nexus.plugins
-[INFO] Parameter: packageInPathFormat, Value: org/sonatype/nexus/plugins
-[INFO] Parameter: package, Value: org.sonatype.nexus.plugins
-[INFO] Parameter: version, Value: 1.0-SNAPSHOT
-[INFO] Parameter: nexusVersion, Value: 2.2.1
-[INFO] Parameter: groupId, Value: org.sonatype.nexus.plugins
-[INFO] Parameter: artifactId, Value: sample-plugin
-[INFO] project created from Archetype in dir: 
-                  /Users/manfred/Projects/sample-plugin
-[INFO] --------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] --------------------------------------------------
-[INFO] Total time: 45.655s
-[INFO] Finished at: Thu Nov 08 20:55:03 PST 2012
-[INFO] Final Memory: 15M/153M
-[INFO] --------------------------------------------------
-----
-
-Once the Archetype plugin has created the project, you will have a
-project with the layout shown in <<fig-plugdev-project-layout>> in a
-directory using the name of the artifactId value supplied.
-
-[[fig-plugdev-project-layout]]
-.Layout of a Nexus Plugin Project
-----
-pom.xml
-src
-    main
-        java
-            org
-                sonatype
-                    nexus
-                        plugins
-                            VirusScanner.java
-                            VirusScannerRepositoryCustomizer.java
-                            VirusScannerRequestProcessor.java
-                            XYVirusScanner.java
-                            events
-                                InfectedItemFoundEvent.java
-                            rest
-                                HelloWorldPlexusResource.java
-----
-
-The generated project contains the following classes:
-
-VirusScanner:: A VirusScanner interface
-described in <<plugdev-sect-complex>>.
-
-VirusScannerRepositoryCustomizer:: A class
-which customizes the repositories affected by the VirusScanner
-
-VirusScannerRequestProcessor:: A class which
-customizes the request handling process in Nexus
-
-XYVirusScanner:: An implementation of the
-VirusScanner Interface
-
-InfectedItemFoundEvent:: A simple event
-which is fired by the VirusScanner
-
-HelloWorldPlexusResource:: what is that.. TODO
-
-[[plugdev-sect-target-version]]
-=== Set the Target Nexus Version
-
-When creating a new Nexus Plugin project with the Nexus Plugin
-archetype, a default target Nexus version will be set. To change the
-target Nexus version of the new Nexus Plugin project, you will need
-to edit the project's POM.
-
-Open up the POM of your Nexus Plugin and find the section that defines
-properties. Here you can change the value of the nexus-version property
-to target a specific Nexus version.
+To control compatibility between your Nexus plugin and the Nexus
+server it will run against, you should inherit from a the Nexus
+plugins parent with the corresponding version
 
 ----
-<project>
-  ...
-  <properties>
-    <nexus.version>2.2.1</nexus.version>
-  </properties>
-  ...
-</project>
+ <parent>
+    <groupId>org.sonatype.nexus.plugins</groupId>
+    <artifactId>nexus-plugins</artifactId>
+    <version>2.6.3-01</version>
+  </parent>
 ----
 
-It is also possible to override the archetype's default value of this property
-during the creation of a new project. To do that, you would set the
-"nexusVersion" system property value on the command-line:
+In order to guarantee the availability of all required dependencies
+you will need to add a proxy release repository pointing to Sonatype public
+grid repository with the url 
 
 ----
-$ mvn archetype:generate \
--DarchetypeGroupId=org.sonatype.nexus.archetypes \
--DarchetypeArtifactId=nexus-plugin-archetype \
--DarchetypeVersion=2.2.1 \
--DnexusVersion=2.2
+https://repository.sonatype.org/content/groups/sonatype-public-grid/
 ----
 
-[[plugdev-sect-building]]
-=== Building a Nexus Plugin Project
+For Nexus Pro specific plugins, you might also need access to the
+private grid. We suggest to work with the support team in this
+situation.
+
+If you are using Nexus, and you have configured your build to work
+against a public group, you will want to make sure that you have added
+the repository to your public group. 
 
 To build your Nexus plugin project, just run 
 
@@ -477,216 +355,9 @@ your plugin's JAR will be available in the project's target/ folder.
 
 WARNING: Nexus plugin development requires you to use Apache Maven 3.
 
-The Nexus Plugin project, as created by the Nexus Plugin archetype,
-depends on a number of artifacts which may not be available from the
-Maven Central repository. If you experience missing artifacts during
-your Nexus plugin project build, you should make sure that the
-Sonatype Public Grid Repository is available as release repository. 
-
-----
-http://repository.sonatype.org/content/groups/sonatype-public-grid/
-----
-
-If you are using Nexus, and you have configured your build to work
-against a public group, you will want to make sure that you have added
-the repository to your public group. 
-
-[[plugdev-sect-complex]]
-=== Creating a Complex Plugin
-
-In this section, we will step through the skeletal, sample project
-that implements a virus scanner plugin for Nexus as created with the
-archetype. This plugin will consist of:
-
-* A managed "virus scanner" component
-
-* A RequestProcessor that sends all "incoming" artifacts for scanning
-
-* A repository customizer to inject a RequestProcessor to all proxy
-  repositories
-
-We start with creating a @Managed component contract for the
-VirusScanner. While this class could just as easily be a non-managed
-component, this example uses the @Managed and @Singleton annotations
-to demonstrate dependency injection.
-
-.VirusScanner Interface
-----
-package org.sonatype.book.nexus;
-
-import javax.inject.Singleton;
-
-import org.sonatype.nexus.proxy.item.StorageFileItem;
-import org.sonatype.plugin.Managed;
-
-@Managed
-@Singleton
-public interface VirusScanner
-{
-  boolean hasVirus( StorageFileItem file );
-}
-----
-
-Once we have the interface for VirusScanner, we need to define a named
-instance XYVirusScanner which implements the interface. The following
-example shows how the @Named annotation is used to assign a name of
-"XY" to this implementation.
-
-.XYVirusScanner Implementation
-----
-package org.sonatype.book.nexus;
-
-import javax.inject.Named;
-
-import org.sonatype.nexus.proxy.item.StorageFileItem;
-
-@Named( "XY" )
-public class XYVirusScanner implements VirusScanner {
-
-  public boolean hasVirus( StorageFileItem file ) {
-
-    // DO THE JOB HERE
-    System.out.println( "Kung Fu VirusScanner --- " +
-          "scanning for viruses on item: " + file.getPath() );
-
-    // simulating virus hit by having the filename 
-    // contain the "infected" string
-    return file.getName().contains( "infected" );
-  }
-
-}
-----
-
-The next class is a request processor which scans an artifact for viruses
-before it is cached locally. If a virus is found in an artifact, this
-plugin will refuse to cache the artifact and trigger an event which
-will signal that a virus was found in a file item. Note the use of
-@Named which assigns the name "virusScanner" to this component. Also
-note the two uses of @Inject. The first use of @Inject will fetch the
-default implementation of ApplicationEventMulticaster, and the second
-use of @Inject will fetch the "XY" virus scanner.
-
-.Virus Scanning Request Processor
-----
-package org.sonatype.book.nexus;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.sonatype.book.nexus.events.InfectedItemFoundEvent;
-import org.sonatype.nexus.proxy.ResourceStoreRequest;
-import org.sonatype.nexus.proxy.access.Action;
-import org.sonatype.nexus.proxy.item.AbstractStorageItem;
-import org.sonatype.nexus.proxy.item.StorageFileItem;
-import org.sonatype.nexus.proxy.repository.ProxyRepository;
-import org.sonatype.nexus.proxy.repository.Repository;
-import org.sonatype.nexus.proxy.repository.RequestProcessor;
-import org.sonatype.plexus.appevents.ApplicationEventMulticaster;
-
-@Named( "virusScanner" )
-public class VirusScannerRequestProcessor
-implements RequestProcessor {
-
-  @Inject
-  private ApplicationEventMulticaster applicationEventMulticaster;
-
-  @Inject
-  private @Named( "XY" )
-  VirusScanner virusScanner;
-
-  // @Inject
-  // private @Named("A") CommonDependency commonDependency;
-
-  public boolean process( Repository repository, 
-                     ResourceStoreRequest request, Action action )
-  {
-    // Check dependency
-    // System.out.println( "VirusScannerRequestProcessor " + 
-               "--- CommonDependency data: " + 
-               commonDependency.getData()
-    // );
-
-    // don't decide until have content
-    return true;
-  }
-
-  public boolean shouldProxy( ProxyRepository repository, 
-                  ResourceStoreRequest request )
-  {
-    // don't decide until have content
-    return true;
-  }
-
-  public boolean shouldCache( ProxyRepository repository, 
-                  AbstractStorageItem item )
-  {
-    if ( item instanceof StorageFileItem ) {
-      StorageFileItem file = (StorageFileItem) item;
-
-      // do a virus scan
-      boolean hasVirus = virusScanner.hasVirus( file );
-
-      if ( hasVirus ) {
-        applicationEventMulticaster
-            .notifyEventListeners( 
-                new InfectedItemFoundEvent( item
-                    .getRepositoryItemUid().getRepository(), 
-                       file ) );
-      }
-
-      return !hasVirus;
-    } else {
-      return true;
-    }
-  }
-}
-----
-
-The last component is the RepositoryCustomizer. It simply injects our
-virus scanner RequestProcessor into proxy repositories only. For his
-example local uploads are considered safe, so the only way to get an
-artifact into Nexus from the uncontrolled Internet is a proxy
-repository. Note how the request processor is injected into this
-repository customizer with @Inject and @Named.
-
-.The Virus Scanner Repository Customizer
-----
-package org.sonatype.book.nexus;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.sonatype.configuration.ConfigurationException;
-import org.sonatype.nexus.plugins.RepositoryCustomizer;
-import org.sonatype.nexus.proxy.repository.ProxyRepository;
-import org.sonatype.nexus.proxy.repository.Repository;
-import org.sonatype.nexus.proxy.repository.RequestProcessor;
-
-public class VirusScannerRepositoryCustomizer
-     implements RepositoryCustomizer {
-
-  @Inject
-  private @Named( "virusScanner" )
-  RequestProcessor virusScannerRequestProcessor;
-
-  public boolean isHandledRepository( Repository repository ) {
-    // handle proxy reposes only
-    return repository.getRepositoryKind()
-                  .isFacetAvailable( ProxyRepository.class );
-  }
-
-  public void configureRepository( Repository repository )
-    throws ConfigurationException {
-    repository.getRequestProcessors()
-          .put( "virusScanner", 
-                virusScannerRequestProcessor );
-  }
-
-}
-----
-
-[[plugdev-sect-descriptor]]
-=== Nexus Plugin Descriptor Maven Plugin
+Once you build completed you will find a '-bundle.zip' file in the
+target folder, that you can deploy to Nexus like any other plugin as
+documented in <<plugins>>.
 
 Nexus plugins have a custom packaging "nexus-plugin" which is
 introduced by the app-lifecycle-maven-plugin. A "nexus-plugin" packaged
@@ -701,54 +372,12 @@ src/main/static-resources). Static resources such as JavaScript files,
 images, and CSS should be located in this folder and will be packaged
 appropriately.
 
-[[plugdev-sect-plugin-descriptor]]
-=== The Nexus Plugin Descriptor
-
 Every Nexus plugin has a plugin descriptor which is generated during
 the build process for a plugin. This plugin descriptor is packaged
 with the plugin JAR and can be found in
 $basedir/target/classes/META-INF/nexus/plugin.xml
 
-.A Nexus Plugin Descriptor
-----
-<plugin>
-  <modelVersion>1.0.0</modelVersion>
-  <groupId>org.sonatype.sample</groupId>
-  <artifactId>sample-plugin</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>Nexus Plugin Archetype</name>
-  <applicationId>nexus</applicationId>
-  <applicationEdition>OSS</applicationEdition>
-  <applicationMinVersion>1.4.0</applicationMinVersion>
-</plugin>
-----
 
-If your Nexus plugin has any dependencies, they will be included in
-this plugin descriptor automatically. For example, if the Nexus plugin
-you were developing had a dependency on commons-beanutils version
-1.8.2, your plugin descriptor will include the following
-classpathDependency
-
-----
-<plugin>
-  <modelVersion>1.0.0</modelVersion>
-  <groupId>org.sonatype.book.nexus</groupId>
-  <artifactId>sample-plugin</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>Nexus Plugin Archetype</name>
-  <applicationId>nexus</applicationId>
-  <applicationEdition>OSS</applicationEdition>
-  <applicationMinVersion>1.4.0</applicationMinVersion>
-  <classpathDependencies>
-    <classpathDependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>1.8.2</version>
-      <type>jar</type>
-    </classpathDependency>
-  </classpathDependencies>
-</plugin>
-----
 
 [[plugdev-sect-custorepo]]
 === Defining Custom Repository Types
