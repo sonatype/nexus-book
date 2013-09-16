@@ -1,0 +1,317 @@
+[[crowd]]
+== Atlassian Crowd Support
+
+http://www.atlassian.com/software/crowd/[Atlassian Crowd] is a single
+sign-on and identity management product that many organizations use to
+consolidate user accounts and control which users and groups have access
+to which applications. Nexus Professional contains a security realm that
+allows you to configure Nexus to authenticate against an Atlassian Crowd
+instance.
+
+Steps to use Nexus with Crowd:
+
+. <<crowd-sect-nexus-prepare,Prepare Nexus>>
+. <<crowd-sect-crowd-prepare,Prepare Atlassian Crowd>>
+. <<crowd-sect-config,Configure the Nexus Crowd Connection>>
+. <<crowd-sect-mapping,Configure Nexus Crowd Security>>
+. <<crowd-sect-realm,Activate the Nexus Crowd Realm>>
+
+NOTE: Atlassian Crowd support is a Nexus Professional feature.
+
+[[crowd-sect-nexus-prepare]]
+=== Prepare Nexus for Atlassian Crowd
+
+Atlassian Crowd support is already installed and ready to configure starting
+with Nexus Professional 2.7.
+
+In older Nexus versions, Nexus Crowd support is implemented as an
+optional plugin that comes as part of any Nexus Professional download.
+The directory containing the plugin code is called either
+enterprise-crowd-plugin-X.Y.Z or nexus-crowd-plugin-X.Y.Z. Install the
+plugin following the instructions in <<install-additional-plugins>>.
+
+WARNING: *Using LDAP and Crowd Realms together in Nexus may work, but is not supported.* If you already use Nexus LDAP support, we recommend adding your LDAP server as a Crowd directory accessible to the Crowd 'nexus' application, instead of using both LDAP and Crowd realms in Nexus.
+
+[[crowd-sect-crowd-prepare]]
+=== Prepare Atlassian Crowd
+
+[[crowd-sect-crowd-compat]]
+==== Compatibility
+
+Always use the latest version of Crowd available at the time your version of
+Nexus was released. When upgrading to a newer Crowd server, carefully
+review the Crowd server release notes for REST API backwards
+compatibility issues.
+
+Crowd support in Nexus 2.7 and greater will only work in Crowd versions
+(2.1+) that support the Crowd REST API. Older versions use a deprecated SOAP based API and are less reliable and performant. 
+
+We actively test Crowd support with the highest available version of
+Crowd at the time Nexus is released.
+
+[[crowd-sect-crowd-setup]]
+==== Configure a Nexus Application in the Atlassian Crowd Server
+
+NOTE: The instructions here are a general guide to adding an application to Crowd. For current detailed instructions, visit the https://confluence.atlassian.com/display/CROWD/Adding+an+Application[official Crowd documentation].
+
+To connect Nexus to Atlassian's Crowd, you will need to configure Nexus
+as an application in Crowd. 
+
+. login to Crowd as a user with Administrative rights
+. click on the Applications tab.
+. click Add Application to display the form shown in <<fig-crowd-app>>, and create a new application with the following values in the Details tab of the Add
+Application form:
+
+* Application Type: Generic Application
+
+* Name: nexus
+
+* Description: Sonatype Nexus Professional
+
+. choose a password for this application. Nexus will use this password to
+authenticate with the Crowd server. Click on the Next button.
+
+[[fig-crowd-app]]
+.Creating a Nexus Crowd Application
+image::figs/web/crowd_new-app.png[scale=60]
+
+Clicking on Next will advance the form to the Connection tab shown in
+<<fig-crowd-app-connection>>. In this tab you need to supply the URL
+Nexus and the remote IP address for Nexus. <<fig-crowd-app-connection>>,
+shows the Connection form configured for a local instance of Nexus. If
+you were configuring Crowd and Nexus in a production environment, you
+would supply the URL that users would use to load Nexus in a web browser
+and you would supply the IP address that Nexus will be connecting from.
+Once you have completed the Connection form, click on Next to advance to
+the Directories form.
+
+[[fig-crowd-app-connection]]
+.Creating a Nexus Crowd Application Connection
+image::figs/web/crowd_new-app-connection.png[scale=60]
+
+Clicking on Next advances to the Directories form shown in
+<<fig-crowd-app-directories>>.  In this example, the Nexus application
+in Crowd is going to use the default "User Management" directory.
+
+[[fig-crowd-app-directories]]
+.Choosing Atlassian Crowd Application Directories
+image::figs/web/crowd_new-app-directories.png[scale=60]
+
+Clicking on the Next button advances to the "Authorisation" form shown
+in <<fig-crowd-app-authorization>>. If any of the directories selected
+in the previous form contain groups, each group is displayed on this
+form next to a checkbox. You can select "Allow all users" for a
+directory, or you can select specific groups which are allowed to
+authenticate to Crowd through Nexus. This option would be used if you
+wanted to limit Nexus access to specific subgroups within a larger Crowd
+directory. If your entire organization is stored in a single Crowd
+directory, you may want to limit Nexus access to a group that contains
+only Developers and Administrators.
+
+[[fig-crowd-app-authorization]]
+.Creating a Nexus Crowd Application Authorization
+image::figs/web/crowd_new-app-authorization.png[scale=60]
+
+[[crowd-sect-config]]
+=== Configure Nexus Crowd
+
+
+[[crowd-sect-ssl]]
+==== Configure Nexus to Trust Crowd’s Secure URL (Optional)
+
+Although optional, we advise the connection from Nexus to your Crowd server
+to use the https protocol.
+
+If the Crowd Server certificate is not signed by a public certificate
+authority, you may have to explicitly trust the server certificate using <<ssl,Nexus SSL support>>. A common symptom of this is seeing "peer not authenticated"
+messages when trying to connect to the Crowd server. 
+
+Steps to explicitly trust the Crowd Server URL certificate in Nexus are:
+
+. <<crowd-sect-ssl-capability,Enable SSL: Crowd Capability>>
+. <<crowd-sect-ssl-trust,Add Crowd Server Certificate to Nexus Truststore>>
+. <<crowd-sect-ssl-config-url,Configure Crowd Connection Secure URL>>
+
+NOTE: The *SSL: Crowd* capability only available in Nexus 2.7+. Older versions must manually configure trust using an explicit truststore specified with JRE system properties.
+
+[[crowd-sect-ssl-capability]]
+===== Enable SSL: Crowd Capability
+
+. Login to Nexus as an Administrator
+. In the sidebar menu, click *Administration* -> *Capabilities* to
+open the *Capabilities* panel.
+. Click the *Add* button in the panel toolbar. Select *SSL: Crowd*
+in the *Type* field, make sure the *Enabled* checkbox is checked,
+and click the *Save* button.
+
+[[fig-crowd-capability-ssl]]
+.SSL: Crowd Capability
+image::figs/web/crowd_capability-ssl.png[scale=60]
+
+[[crowd-sect-ssl-trust]]
+===== Add Crowd Server Certificate to Nexus Truststore
+
+Using your https *Crowd Server URL* follow the 'Load from server'
+instructions in the <<ssl-sect-client-cert-mgt>> section to establish
+trust of the Crowd certificate.
+
+[[crowd-sect-ssl-config-url]]
+===== Configure Crowd Connection Secure URL
+
+Enter the *https://* URL in the *Crowd Server URL* field of the *Crowd Configuration* panel. <<crowd-sect-config-crowd-server-url, More information on this field>>.
+
+
+
+[[crowd-sect-config-connection]]
+==== Configure Nexus Crowd Connection
+
+Login to Nexus as a user with Administrative privileges. Click *Crowd 
+Configuration* in the *Security* section of the Nexus menu as shown in 
+<<fig-crowd-menu-link>>. You should see the <<fig-crowd-config>>.
+
+[[fig-crowd-menu-link]]
+.Crowd Menu Link in the Security Section of the Nexus Sidebar Menu
+image::figs/web/crowd_menu-link.png[scale=60]
+
+[[fig-crowd-config]]
+.Crowd Configuration Panel
+image::figs/web/crowd_server-config.png[scale=60]
+
+This panel contains the following fields:
+
+Application Name:: This field contains the application name of a Crowd
+application. This value should match the value in the Name field of
+the form shown in <<fig-crowd-app>>.
+
+Application Password:: This field contains the application password of
+a Crowd application. This value should match the value in the Password
+field of the form shown in <<fig-crowd-app>>.
+
+[[crowd-sect-config-crowd-server-url]]
+Crowd Server URL:: This is the URL used to connect to the Crowd Server.
+Both 'http://' and 'https://' URLs are accepted. You may need to <<crowd-sect-ssl,trust the crowd server certificate>> if a 'https://' URL is used.
+
+HTTP Timeout:: The HTTP Timeout specifies the number of milliseconds
+Nexus will wait for a response from Crowd. A value of zero indicates
+that there is no timeout limit. Leave the field blank to use the Nexus
+Server default HTTP timeout.
+
+You can use the *Test Connection* button to validate if your connection
+to Crowd is working. Once you have a working connection, do not forget
+to *Save* your configuration. Use *Cancel* to abort saving any changes.
+
+[[crowd-sect-mapping]]
+=== Configure Nexus Crowd Security
+
+There are two approaches available to manage what privileges a Crowd user has when they login to Nexus.
+
+. <<crowd-sect-mapping-group,Mapping Crowd Groups to Nexus Roles>>
+. <<crowd-sect-mapping-user,Mapping Crowd Users to Nexus Roles>>
+
+Mapping Crowd Groups to Nexus Roles is preferable because:
+
+* less configuration is involved overall in Nexus 
+* assigning users to Crowd groups can be centrally managed inside of Crowd by your security team after the initial Nexus setup
+
+[[crowd-sect-mapping-group]]
+==== Mapping a Crowd Group to Nexus Role
+
+When mapping a Crowd group to a Nexus Role, you are specifying the
+permissions ( via roles ) that users within the Crowd group will have
+after they authenticate to Nexus.
+
+To map a Crowd Group to a Nexus Role, open the *Roles* panel by
+clicking on the *Roles* link under the *Security* section of the
+Nexus sidebar menu. Click on the *Add...* button and select *External
+Role Mapping* as shown in <<fig-crowd-add-ext-role-map>> and the <<fig-crowd-map-ext-role,Map External Role>> dialog.
+
+[[fig-crowd-add-ext-role-map]]
+.Adding an External Role Mapping
+image::figs/web/crowd_add-ext-role-mapping.png[scale=60]
+
+[[fig-crowd-map-ext-role]]
+.Mapping an External Crowd Group to a Nexus Role
+image::figs/web/crowd_map-ext-role.png[scale=60]
+
+After choosing the *Crowd* realm, the *Role* drop-down should list all the Crowd groups the 'nexus' crowd application has access to. Select the group to would like to map in the *Role* field and click *Create Mapping*.
+
+NOTE: If you have two or more groups in Crowd accessible to the 'nexus'
+application with the same name but in different directories, Nexus will
+only list the first one that Crowd finds. Therefore, Crowd administrators
+should avoid identically named groups in Crowd directories.
+
+Before saving the group-to-role mapping is allowed, *you 'must' add at
+least one Nexus role to the mapped group*. After you have added the Nexus
+roles using the *Add* button, click the *Save* button.
+
+[[fig-crowd-add-map-ext-role-unsaved]]
+.Unsaved External Crowd 'dev' Group to Nexus Developers Role
+image::figs/web/crowd_ext-role-mapping-unsaved.png[scale=60]
+
+Saved mappings will appear in the list of Nexus Roles with a mapping
+value of *Crowd*, as shown in <<fig-crowd-add-map-ext-role>>.
+
+[[fig-crowd-add-map-ext-role]]
+.Mapped External Crowd 'dev' Group to Nexus Developers Role
+image::figs/web/crowd_ext-role-mapped.png[scale=60]
+
+[[crowd-sect-mapping-user]]
+==== Mapping a Crowd User to Nexus Role
+
+To illustrate this feature, consider the Crowd server user with an id
+of "brian". This groups are shown in
+<<fig-crowd-view-user-groups-brian>>.
+
+[[fig-crowd-view-user-groups-brian]]
+.Crowd Groups for User "brian"
+image::figs/web/crowd_view-user-groups-brian.png[scale=60]
+
+To add an *External User Role Mapping*, open the *Users* panel in
+Nexus by clicking *Users* in the *Security* section of the Nexus
+sidebar menu.
+
+Click on the *Add...* button and select *External User Role Mapping*
+from the drop-down as shown in <<fig-crowd-add-ext-user-role-map>>.
+
+[[fig-crowd-add-ext-user-role-map]]
+.Adding an External User Role Mapping
+image::figs/web/crowd_add-ext-user-role-mapping.png[scale=60]
+
+Selecting *External User Role Mapping* will show a mapping panel where
+you can <<fig-crowd-find-external-user,locate a user by Crowd user id>>.
+
+[[fig-crowd-find-external-user]]
+.Locate a Crowd User by User ID
+image::figs/web/crowd_find-external-user.png[scale=60]
+
+Typing the Crowd user id, for example 'brian', in the *Enter a User
+ID* field and clicking the magnifying glass icon, will cause Nexus to
+search for a user ID 'brian' in all known realms, including Crowd.
+
+Once you locate the Crowd user, use *Add* button to add Nexus roles to
+the Crowd User. *You must map at least one Nexus role to the Crowd
+managed user* in order to *Save*. In the
+<<fig-crowd-assign-user-role,Mapped External Crowd User Example>> notice
+the 'brian' Crowd realm user has the 'dev' Crowd group ( bolded ) and
+the mapped Nexus role called *Nexus Administator Role* ( unbolded ).
+
+[[fig-crowd-assign-user-role]]
+.Mapped External Crowd User Example
+image::figs/web/crowd_ext-user-mapped.png[scale=60]
+
+
+[[crowd-sect-realm]]
+=== Activate Nexus Crowd Realm
+
+The final step to allow Crowd users to authenticate against Nexus is to
+activate the Crowd authorization realm.
+
+. Select *Administration* -> *Server* from the Nexus Sidebar menu 
+. Scroll down to the *Security Settings* section
+. Drag *Crowd Realm* from the list of *Available Realms* to the end
+of the *Selected Realms* list.
+. *Save* the server settings.
+
+[[fig-crowd-activate-realm]]
+.Activating the Crowd Realm
+image::figs/web/crowd_activate-realm.png[scale=60]
