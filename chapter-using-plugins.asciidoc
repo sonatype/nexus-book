@@ -61,43 +61,44 @@ folder in '$NEXUS_HOME/nexus/WEB-INF/plugin-repository/' and restart
 your Nexus instance.
 
 [[custom-metadata-plugin]]
-=== Custom Metadata Plugin
+=== Custom Metadata
 
-The custom metadata plugin is an optional plugin that comes as part of
-the Nexus Professional download. It allows you to view, edit and search for
-additional metadata about any artifact in your Nexus repositories.
+Support for custom metadata is part of the Nexus Professional
+download. You can view, edit and search for additional metadata
+associated to any artifact in your Nexus repositories.
 
-The directory containing the plugin code is called
-nexus-custom-metadata-plugin-X.Y.Z. Install the plugin following the
-instructions in <<install-additional-plugins>>.
+Prior to Nexus 2.7 is was an optional plugin that needed to be
+installed following the instructions in
+<<install-additional-plugins>>.  The directory containing the plugin
+code is called nexus-custom-metadata-plugin-X.Y.Z. Install the plugin
+
+Security privileges allow you to define read only as well as write acces
+for custom metadata as well as grant or disallow access.
 
 ==== Viewing Artifact Metadata
 
-The Custom Metadata Plugin gives you the ability to view artifact
-metadata. When browsing repository storage or a repository index,
-clicking on an artifact will load the Artifact Information panel.
-Selecting the Artifact Metadata tab will display the interface shown
-in <<fig-using-viewing-metadata>>.
+When viewing a specific artifact from browsing repository storage or a
+repository index or from a search, the 'Artifact Metadata' tab
+displays the interface shown in <<fig-using-viewing-metadata>>.
 
 [[fig-using-viewing-metadata]]
 .Viewing Artifact Metadata
 image::figs/web/meta_existing-meta-value.png[scale=60]
 
 Artifact metadata consists of a key, a value, and a namespace.
-Existing metadata from an artifact's POM is given a urn:maven
-namespace, and custom attributes are stored under the urn:nexus/user
+Existing metadata from an artifact's POM is given a +urn:maven+
+namespace, and custom attributes are stored under the +urn:nexus/user+
 namespace.
 
 ==== Editing Artifact Metadata
 
-The Custom Metadata Plugin gives you the ability to add custom
-attributes to artifact metadata. To add a custom attribute, click on
-an artifact in Nexus, and select the Artifact Metadata tab. On the
-Artifact Metadata tab, click on the Add... button and a new row will
-be inserted into the list of attributes. Supply a key and value and
-click the Save button to update an artifact's
-metadata. <<fig-using-editing-metadata>> shows the Artifact Metadata
-panel with two custom attributes: "approvedBy" and "approved".
+To add a custom attribute, click on an artifact in Nexus, and select
+the 'Artifact Metadata' tab. Click on
+the 'Add...' button there and a new row will be inserted into the list of
+attributes. Supply a 'Key' and 'Value' and click the 'Save' button to update
+the artifact's metadata. <<fig-using-editing-metadata>> shows the
+Artifact Metadata panel with two custom attributes: "approvedBy" and
+"approved".
 
 [[fig-using-editing-metadata]]
 .Editing Artifact Metadata
@@ -105,36 +106,35 @@ image::figs/web/meta_setting-meta-value.png[scale=60]
 
 ==== Searching Artifact Metadata
 
-The Custom Metadata Plugin provides you with the ability to configure
-custom artifact metadata and search for artifacts with specific
-metadata. To search for artifacts using metadata, click on the
-Advanced Search link directly below the search field in the Nexus
-application menu to open the Search panel. Once in the search panel,
-click on the Keyword Search and click on Metadata Search in the search
-type drop-down as shown in <<fig-using-search-metadata>>.
+To search for artifacts with specific metadata, click on the 'Advanced
+Search' link directly below the search field in the 'Artifact Search'
+sub-menu of the Nexus menu. This opens the 'Search' panel and allows
+you to select 'Metadata Search' in the search type drop-down as shown
+in <<fig-using-search-metadata>>.
 
 [[fig-using-search-metadata]]
 .Searching Artifact Metadata
 image::figs/web/meta_search-selection.png[scale=60]
 
-Once you select the Metadata Search you will see two search fields and
+Once you select the metadata search you will see two search fields and
 an operator drop-down. The two search fields are the key and value of
-the metadata you are searching for. The key corresponds to the key of
-the metadata you are searching for, and the value contains the value
-or value range you are searching for. The operator drop-down can be set
-to Equals, Matches, Bounded, or Not Equal.
+the metadata you are searching for. The operator drop-down can be set
+to 'Equals', 'Matches', 'Key Defined', or 'Not Equal'. 'Equals' and 'Not Equals'
+compare the value for a specific key. 'Matches' allows the usage of +\*+
+to allow any characters. E.g. looking for +tr\*+ would match +true+ but
+also match +tree+. The 'Key Defined' operator will ignore any value provided
+and return all artifacts with the supplied key.
 
 .Metadata Search Results for Custom Metadata
 image::figs/web/meta_search-function.png[scale=60]
 
-Once you locate a matching artifact in the Metadata Search interface,
+Once you locate a matching artifact in the results list,
 click on the artifact and then select the Artifact Metadata to examine
 an artifacts metadata as shown in <<fig-using-search-metadata-results>>.
 
 [[fig-using-search-metadata-results]]
 .Metadata Search Results for Custom Metadata
 image::figs/web/meta_search-result-0.png[scale=60]
-
 
 [[user-account]]
 === User Account Plugin
