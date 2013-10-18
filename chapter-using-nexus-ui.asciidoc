@@ -145,6 +145,47 @@ paste into a Maven pom.xml file.
 image::figs/web/using-maven-information.png[scale=80]
 
 
+[[custom-metadata-plugin]]
+==== View and Editing Artifact Metadata
+
+Support for custom metadata is part of the Nexus Professional
+download. You can view, edit and search for additional metadata
+associated to any artifact in your Nexus repositories.
+
+Prior to Nexus 2.7 is was an optional plugin that needed to be
+installed following the instructions in
+<<install-additional-plugins>>.  The directory containing the plugin
+code is called nexus-custom-metadata-plugin-X.Y.Z. Install the plugin
+
+Security privileges allow you to define read only as well as write acces
+for custom metadata as well as grant or disallow access.
+
+When viewing a specific artifact from browsing repository storage or a
+repository index or from a search, the 'Artifact Metadata' tab
+displays the interface shown in <<fig-using-viewing-metadata>>.
+
+[[fig-using-viewing-metadata]]
+.Viewing Artifact Metadata
+image::figs/web/meta_existing-meta-value.png[scale=60]
+
+Artifact metadata consists of a key, a value, and a namespace.
+Existing metadata from an artifact's POM is given a +urn:maven+
+namespace, and custom attributes are stored under the +urn:nexus/user+
+namespace.
+
+To add a custom attribute, click on an artifact in Nexus, and select
+the 'Artifact Metadata' tab. Click on
+the 'Add...' button there and a new row will be inserted into the list of
+attributes. Supply a 'Key' and 'Value' and click the 'Save' button to update
+the artifact's metadata. <<fig-using-editing-metadata>> shows the
+Artifact Metadata panel with two custom attributes: "approvedBy" and
+"approved".
+
+[[fig-using-editing-metadata]]
+.Editing Artifact Metadata
+image::figs/web/meta_setting-meta-value.png[scale=60]
+
+
 [[using-artifact-archive-browser]]
 ==== Using the Artifact Archive Browser
 
@@ -422,10 +463,48 @@ available on Linux, and use the created string in a Checksum
 search. This will return one result, which will provide you with the
 GAV coordinates to replace the jar file with a dependency declaration.
  
+Metadata Search:: Search for artifacts with specific metadata
+properties is documented in <<sect-metadata-search>>.
+
 TIP: The Checksum Search can be a huge timesaver when migrating a
 legacy build system, where the used libraries are checked into the
 version control system as binary artifacts with no version information
 available.
+
+[[sect-metadata-search]]
+==== Searching Artifact Metadata
+
+To search for artifacts with specific metadata, click on the 'Advanced
+Search' link directly below the search field in the 'Artifact Search'
+sub-menu of the Nexus menu. This opens the 'Search' panel and allows
+you to select 'Metadata Search' in the search type drop-down as shown
+in <<fig-using-search-metadata>>.
+
+[[fig-using-search-metadata]]
+.Searching Artifact Metadata
+image::figs/web/meta_search-selection.png[scale=60]
+
+Once you select the metadata search you will see two search fields and
+an operator drop-down. The two search fields are the key and value of
+the metadata you are searching for. The operator drop-down can be set
+to 'Equals', 'Matches', 'Key Defined', or 'Not Equal'. 'Equals' and 'Not Equals'
+compare the value for a specific key. 'Matches' allows the usage of +\*+
+to allow any characters. E.g. looking for +tr\*+ would match +true+ but
+also match +tree+. The 'Key Defined' operator will ignore any value provided
+and return all artifacts with the supplied key.
+
+.Metadata Search Results for Custom Metadata
+image::figs/web/meta_search-function.png[scale=60]
+
+Once you locate a matching artifact in the results list,
+click on the artifact and then select the Artifact Metadata to examine
+an artifacts metadata as shown in <<fig-using-search-metadata-results>>.
+
+[[fig-using-search-metadata-results]]
+.Metadata Search Results for Custom Metadata
+image::figs/web/meta_search-result-0.png[scale=60]
+
+
 
 ==== Nexus OpenSearch Integration
 
