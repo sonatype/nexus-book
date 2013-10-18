@@ -1557,29 +1557,77 @@ runtime=${bundleBasedir}/nexus/WEB-INF
 ----
 
 [[confignx-sect-log]]
-=== Nexus Logging Configuration
+=== Logging
 
-You can configure the level of logging from
-within the Nexus interface. To do this, click on Log Configuration under
-the Administration menu in the left-hand navigation menu. Clicking on this
-link will display the panel shown in <<fig-configuring-log-config>>.
+You can configure the level of logging for Nexus and all plugins as
+well as inspect the current log using the Nexus user interface. Access
+the 'Logging' panel by clicking on the 'Logging' menu item in the
+'Administration' sub-menu in the 'Nexus' menu. Clicking on this link
+will display the panel shown in <<fig-configuring-log-config>>.
 
 [[fig-configuring-log-config]]
-.The Log Configuration Panel
+.The Logging Panel with the Loggers Configuration
 image::figs/web/repository-manager_log-config.png[scale=60]
 
-From this panel you can configure the Root Logger Level. It controls
-how verbose the Nexus logging will be. If set to DEBUG, Nexus will be
-very verbose printing all log messages include debugging
-statements. If set to ERROR, Nexus will be far less verbose only
-printing out a log statement if Nexus encounters an error. INFO
-represents an intermediate amount of logging.
+The 'Loggers' tab in the panel allows you to configure the
+preconfigured loggers as well as add and remove loggers. You can
+modify the log level for a configured logger by clicking on the
+'Level' value e.g. +INFO+. It will change into a drop down of the
+valid levels including +OFF+, +DEFAULT+, +INFO+ and others.  
 
-Advanced logging configurations can be done by editing the
-logback-nexus.xml file found in sonatype-work/nexus/conf. Other
-logback* file found in the same directory do not need to be edited for
-most logging modifications.
+If you select a row in the list of loggers, you can delete the
+highlighted logger by pressing the 'Remove' button above the list. The
+'Add' button beside it can be used to create new loggers in a
+dialog. You will need to know the logger you want to
+configure. Depending on your needs you can inspect the source of Nexus
+OSS and the plugins as well as the source of your own plugins to
+determine the related loggers or contact Sonatype support for detailed
+help. In addition it is important to keep in mind that some loggers
+will change between Nexus and plugin versions used.
 
+The loggers configured in the user interface are persisted into
++sonatype-work/nexus/conf/logback-overrides.xml+ and override any
+logging levels configured in the main Nexus log file
++logback-nexus.xml+ as well as the other +logback-*+ files. If you
+need to edit logging level in those files, we suggest to edit the
+overrides file. This will give you access to edit the configuration in
+the user interface at a later stage and also ensure that the values
+you configure take precedence.
+
+The 'ROOT' logger level controls how verbose the Nexus logging is in
+general. If set to +DEBUG+, Nexus will be very verbose printing all log
+messages including debugging statements. If set to +ERROR+, Nexus will be
+far less verbose only printing out a log statement if Nexus encounters
+an error. +INFO+ represents an intermediate amount of logging. 
+
+TIP: When configuring logging, keep in mind that heavy logging can
+have a significant performance impact on an application and any
+changes in the user interface trigger the change to the logging
+immediately.
+
+In Nexus releases prior to 2.7 logging configuration needed to be done
+by editing the logback-nexus.xml file and other logback* files found in
+sonatype-work/nexus/conf. When upgrading we suggest to remove the
+files and manually recreate any customizations done prior to the
+update in the user interface.
+
+Once logging is configured as desired, you can inspect the impact of
+your configuration on the 'Log' tab. It allows you to copy the log
+from the server to your machine by pressing the 'Download' button. The
+'Mark' button allows you to add a custom text string into the log, so
+that you can create a reference point in the log file for analysis of
+the file. It will insert the text you entered surround by +*+
+symbols as visible in <<fig-configuring-log-view>>.
+
+[[fig-configuring-log-view]]
+.Viewing the Nexus Log with a Mark
+image::figs/web/repository-manager_log-view.png[scale=60]
+
+The 'Refresh' button on the left triggers an immediate update of
+the log. The refresh dropdown on the right can be used to trigger
+updates of the log in regular time intervals or manually. The size
+drop down beside it allows you to control the size of the log snippet
+displayed in the user interface.
 
 [[confignx-sect-plugins]]
 === Nexus Plugins and REST Interfaces
