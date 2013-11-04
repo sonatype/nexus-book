@@ -3,15 +3,15 @@
 
 Nexus Open Source and Nexus Professional are built using a plugin
 architecture, where each version includes a different set of
-plugins. Besides the default installed plugins you can install plugins
-available from the open source community, other vendors or created by
-yourself.
+plugins. You can install plugins available from the open source
+community, other vendors or created by yourself in addition to the
+default plugins.
 
-Nexus plugins can provide additional functionality for the backend
+Nexus plugins can provide further functionality for the backend
 like support for new repository formats, specific behaviour for
 components, new scheduled tasks, new staging rules and any other
 additional functionality as well as new user interface components and
-modifications. They can also group a number of these functionalities
+modifications. They can also group a number of these features
 together in one plugin.
  
 [[install-additional-plugins]]
@@ -33,10 +33,9 @@ found in the directory
 +$NEXUS_HOME/nexus/WEB-INF/optional-plugins+. To install any of these
 simply copy the folder containing the desired plugin into
 +$NEXUS_HOME/nexus/WEB-INF/plugin-repository+.  When updating Nexus
-you had to redo the install of any optional plugins using the newest
-version shipping with the download of the new Nexus version. Any
-configuration of the plugin will be preserved from one version to the
-other.
+redo the install of any optional plugins using the newest version
+shipping with the download of the new Nexus version. Any configuration
+of the plugin will be preserved from one version to the other.
 
 Plugins supplied by third parties or authored by yourself are
 installed by copying the folder with the plugin code into
@@ -54,10 +53,10 @@ respective folder in the plugin-repository and restarting Nexus.
 [[plugdev]]
 === Developing Nexus Plugins
 
-Developing your own Nexus plugins allow you to customize and further
-enhance Nexus beyond the features and capabilities offered by
-Nexus. This section aims to provide you with enough information to get
-started developing your own plugins.
+Developing Nexus plugins allow you to customize and further enhance
+Nexus beyond the features and capabilities offered. This section aims
+to provide you with enough information to get started developing your
+own plugins.
 
 The preferred way to write Nexus plugins is to use Java as the
 implementation language and Apache Maven as the build system. The
@@ -105,9 +104,10 @@ as displayed in <<fig-nexus-plugins-parent>>.
 WARNING: It is best to use the exact same version of the parent as the
 Nexus instance you want to run your plugin on. When developing a
 plugin you are using large parts of Nexus internals, which are subject
-to change from one version of Nexus to another.
+to change from one version of Nexus to another. This same logic
+applies to any dependencies as well.
 
-A Nexus plugin Maven project uses a custom build output file in the
+A Nexus plugin Maven project creates a custom build output file in the
 form of a zip file that contains all dependencies in addition to your
 class files and resources from your plugin and some meta data. You
 have to enable this by changing the packaging and adding the bundle
@@ -181,7 +181,7 @@ Nexus Professional and can be added with the dependency from
 </dependency>
 ----
 
-Nexus and the Nexus API use JSR-330 annotations like
+Nexus and Nexus plugins use JSR-330 annotations like
 +@javax.inject.Inject+ and the Google Guice dependency injection
 framework. Typical classes are +@Named+ and are often a
 +@Singleton+ . Other components are typically injected via
