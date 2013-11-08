@@ -1258,9 +1258,10 @@ folder in '$NEXUS_HOME/nexus/WEB-INF/plugin-repository/' and restart
 your Nexus instance.
 
 Alternatively you can create a replacement bundle of content, host it
-on a webserver of your choice and configure the 'Override URL' to
-point to the bundle. The bundle is is just a zip file with static HTML
-and related content. 
+on a webserver of your choice or upload a bundle to a Nexus repository
+and configure the 'Override URL' to point to the bundle. The bundle is
+is just a zip file with static HTML file named +index.html+ and
+related content.
 
 
 [[confignx-sect-managing-security]]
@@ -1278,8 +1279,8 @@ permissions that will make sense for most users. As your security
 requirements evolve, you'll likely need to customize security settings
 to create protected repositories for multiple departments, or
 development groups. Nexus provides a security model which can adapt to
-any scenario. The Security configuration is done via menu items in the
-left hand Security menu.
+any scenario. The security configuration is done via menu items in the
+'Security' sub-menu in the left-hand Nexus menu.
 
 Nexus' Role-based access control (RBAC) system is
 designed around the following four security concepts:
@@ -1312,6 +1313,8 @@ managing repositories.
 [[confignx-sect-managing-privs]]
 === Managing Privileges
 
+You can access the configuration of privileges via the 'Privileges'
+menu item in the 'Security' sub-menu in the left-hand Nexus menu.
 Nexus has three types of privileges: application privileges which
 cover actions a user can execute in Nexus, repository target
 privileges which govern the level of access a user has to a particular
@@ -1321,17 +1324,17 @@ privilege is related to a single REST operation and method like
 create, update, delete, read.
 
 .Managing Security Privileges
-image::figs/web/repository-manager_security-privileges.png[scale=60]
+image::figs/web/repository-manager_security-privileges.png[scale=50]
 
-To create a new privilege, click on the Add... button in the
-Privileges panel and choose Repository Target privilege. Creating a
+To create a new privilege, click on the 'Add...' button in the
+'Privileges' panel and choose 'Repository Target Privilege'. Creating a
 privilege will load the New Repository Target Privilege form shown in
 <<fig-configuring-new-privilege>>. This form takes a privilege name, a
 privilege description, the repository to target, and a repository
 target.
 
 [[fig-configuring-new-privilege]]
-.Managing Security Privileges
+.Creating a New Repository Target Privilege
 image::figs/web/repository-manager_security-privileges-2.png[scale=60]
 
 Once you create a new privilege, it will create four underlying
@@ -1346,13 +1349,13 @@ image::figs/web/repository-manager_security-privileges-3.png[scale=60]
 [[confignx-sect-managing-repo-targets]]
 === Managing Repository Targets
 
-A Repository Target is a set of regular expressions to match on the
+A 'Repository Target' is a set of regular expressions to match on the
 path of artifacts in a repository (in the same way as the routing
 rules work). Nexus is preconfigured with a number of repository
 targets and allows you to create additional ones. Access the
 management interface visible in <<fig-config-repo-target-mgt>> via
-the Repository Targets menu item in the left hand Views/Repositories
-menu.
+the 'Repository Targets' menu item in the left hand 'Views/Repositories'
+sub menu.
 
 
 [[fig-config-repo-target-mgt]]
@@ -1371,7 +1374,8 @@ The regular expressions can also be used to exclude artifacts as
 visible with the pattern `(?!.*-sources.*).*` in
 <<fig-config-repo-target-exclude>> where artifacts with the qualifier
 '-sources' are excluded. The syntax used for the expressions is the
-http://docs.oracle.com/javase/tutorial/essential/regex/[Java syntax], which is similar but not identical to the Perl syntax.
+http://docs.oracle.com/javase/tutorial/essential/regex/[Java syntax],
+which is similar but not identical to the Perl syntax.
 
 [[fig-config-repo-target-exclude]]
 .Excluding Source Artifacts from a Repository Targets
@@ -1394,53 +1398,61 @@ implicit capture in the Staging Suite as documented in <<staging>>.
 [[confignx-sect-manage-security]]
 === Managing Roles
 
-Nexus ships with four roles: Nexus Administrator Role,
-Nexus Anonymous Role, Nexus Developer Role, and Nexus Deployment Role.
-Click on the Roles link under Security in the Nexus menu to show the
-list of roles shown in <<fig-configuring-security-roles>>.
+Nexus ships with a large number of predefined including 'Nexus
+Administrator Role', 'Nexus Anonymous Role', 'Nexus Developer Role',
+and 'Nexus Deployment Role'.  Click on the 'Roles' menu item under
+'Security' in the 'Nexus' menu to show the list of roles shown in
+<<fig-configuring-security-roles>>.
 
 [[fig-configuring-security-roles]]
 .Viewing the List of Defined Roles
 image::figs/web/repository-manager_security-roles.png[scale=60]
 
-To create a new role, click on the Add... button and fill out the
-New Nexus Role form shown in <<fig-configuring-creating-new-role>>.
+To create a new role, click on the 'Add...' button, select 'Nexus
+Role' and fill out the New Nexus Role form shown in
+<<fig-configuring-creating-new-role>>.
 
-When creating a new role, you will need to supply a role identifier,
-a role name, a description, and a session timeout. Roles are comprised
-of other roles and individual privileges, to assign a role or
-privilege to a role, click on the role or privilege under Available
-Roles/Privileges and drag the role or privilege to the Selected
-Roles/Privileges list.
+
 
 [[fig-configuring-creating-new-role]]
-.Creating a New Role
-image::figs/web/repository-manager_security-roles-3.png[scale=60]
+.Creating a New Nexus Role
+image::figs/web/repository-manager_security-new-nexus-role.png[scale=60]
 
-The built-in roles Nexus Administrator Role, Nexus Anonymous Role,
-Nexus Deployment Role, and Nexus Developer Role are managed by Nexus
-and can not be edited or deleted. Selecting one of these built-in
-roles will load the form shown in <<fig-configuring-builtin-role>>.
+When creating a new role, you will need to supply a 'Role ID', a
+'Name' and a 'Description'. Roles are comprised of other roles and
+individual privileges. To assign a role or privilege to a role, click
+on 'Add' button under 'Role/Privilege Management' to access the 'Add
+Roles and Privileges' dialog displayed in
+<<fig-configuring-add-role-dialog>>. It allows you to filter the paged
+displayed of all the available roles and privileges with a filter text
+as well as narrowing the search to roles or privileges only. Using the
+filter and the paging you will be able to find the desired role or
+privilege quickly.
 
-[[fig-configuring-builtin-role]]
-.Viewing an Internal Role
-image::figs/web/repository-manager_security-roles-2.png[scale=60]
+[[fig-configuring-add-role-dialog]]
+.The Dialog to Add Roles and Privileges
+image::figs/web/repository-manager_security-add-roles-dialog.png[scale=60]
+
+The built-in roles are managed by Nexus and can not be edited or
+deleted. The role confirguration section below the list is visible,
+but disabled for these roles.
 
 A Nexus role is comprised of other Nexus roles and individual
 Nexus privileges. To view the component parts of a Nexus Role, select
-the role in the Roles panel and then choose the Role Tree tab as shown
+the role in the Roles list and then choose the 'Role Tree' tab as shown
 in <<fig-configuring-role-tree>>.
 
 [[fig-configuring-role-tree]]
-.Managing Security Roles
-image::figs/web/repository-manager_security-roles-4.png[scale=60]
+.Viewing a Role Tree
+image::figs/web/repository-manager_security-role-tree.png[scale=60]
 
-With the Repository Targets, you have fine grained control over
+TIP: With the Repository Targets, you have fine grained control over
 every action in the system. For example you could make a target that
 includes everything except sources (.*(?!-sources)\.*) and assign that
-to one group while giving yet another group access to everything. This
-means you can host your public and private artifacts in a single
-repository without giving up control of your private artifacts.
+to one role while giving yet another role access to everything. Using
+these different access roles you e.g. can host your public and private
+artifacts in a single repository without giving up control of your
+private artifacts.
 
 [[confignx-sect-managing-users]]
 === Managing Users
