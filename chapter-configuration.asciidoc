@@ -1569,6 +1569,9 @@ determine the related loggers or contact Sonatype support for detailed
 help. In addition it is important to keep in mind that some loggers
 will change between Nexus and plugin versions used.
 
+The 'Reset' button allows you to remove all your custom loggers and
+get back to the setup shipped with Nexus.
+
 The loggers configured in the user interface are persisted into
 +sonatype-work/nexus/conf/logback-overrides.xml+ and override any
 logging levels configured in the main Nexus log file
@@ -1612,7 +1615,7 @@ drop down beside it allows you to control the size of the log snippet
 displayed in the user interface.
 
 [[confignx-sect-plugins]]
-=== Nexus Plugins and REST Interfaces
+=== Nexus Plugins and the REST API
 
 As documented in <<install-additional-plugins>> Nexus is built as a
 collection of plugins supported by a core architecture and additional
@@ -1634,15 +1637,48 @@ documentation.
 .Plugin Console
 image::figs/web/config-plugin-console.png[scale=50]
 
-An example for the plugin documentation is the main documentation for
-the core Nexus API 
+All the functionality in the Nexus user interface is accessing the
+REST API's provided by the different plugins.  An example for the
+plugin documentation is the main documentation for the core Nexus API
 linked off the Nexus Restlet 1.x Plugin from
 <<fig-config-plugin-console>> and displayed in
 <<fig-config-plugin-core-api-site>>
 
 [[fig-config-plugin-core-api-site]]
-.Documentation Website for the Core API
+.Documentation Website for the Core REST API
 image::figs/web/config-plugin-core-api-site.png[scale=50]
+
+You can use the Nexus REST API to integrate Nexus in your external
+systems. 
+
+If you external integration uses Java you can use the Nexus client
+using the dependency from <<fig-client-core-dependency>> with the
+version corresponding to your Nexus server version.
+
+
+[[fig-client-core-dependency]]
+.Nexus Client Core Dependency for Maven Projects
+----
+<dependency>
+    <groupId>org.sonatype.nexus</groupId>
+    <artifactId>nexus-client-core</artifactId>
+    <version>2.7.0-01</version>
+</dependency>
+----
+
+Examples of using the client library can be found in the
+https://github.com/sonatype/nexus-maven-plugins[Nexus Maven Plugins]
+or the https://github.com/sonatype/nexus-ant-tasks[Nexus Ant Tasks].
+
+The REST API can be invoked from many other programming and scripting
+languages. A simple example of using the +curl+ command in a shell
+script is displayed in <<fig-curl-rest-api-call>>.
+
+[[fig-curl-rest-api-call]]
+.A +curl+ Invocation Loading the List of Users from Nexus
+----
+curl -X GET -u admin:admin123 http://localhost:8081/nexus/service/local/users
+----
 
 
 [[config-sect-usertoken]]
@@ -1782,8 +1818,7 @@ has to be replaced with the usage of user code and pass code separated
 by colon in the curl command line like this
 
 ----
-curl -v --user HdeHuL4x:Y7ZH6ixZFdOVwNpRhaOV+phBISmipsfwVxPRUH1gkV09
-http://localhost:9081/content/repositories/releases/
+curl -v --user HdeHuL4x:Y7ZH6ixZFdOVwNpRhaOV+phBISmipsfwVxPRUH1gkV09 http://localhost:9081/content/repositories/releases/
 ----
 
 User token values can be accessed as part of the Maven settings
