@@ -10,8 +10,8 @@ mkdir -p target/images
 mkdir -p target/figs
 
 # Build the Single HTML Page Version
-echo "Building single page html book" 
-asciidoc -o target/book-nexus.html book-nexus.asciidoc 
+#echo "Building single page html book" 
+#asciidoc -o target/book-nexus.html book-nexus.asciidoc 
 
 echo "Preparing output folders"
 rm -rf target/images
