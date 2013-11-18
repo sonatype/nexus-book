@@ -880,6 +880,8 @@ rc-release:: release a specified staging repository
 
 rc-promote:: promote a specified staging repository
 
+rc-list:: list all staging repositories
+
 When invoking these goals outside a project context you need to have
 the Nexus Staging Maven Plugin groupId specified as a pluginGroup in
 your settings.xml:
@@ -930,6 +932,22 @@ similar to this
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
+----
+
+An example  usage of the +rc-list+ goal with output is 
+----
+$mvn nexus-staging:rc-list -DnexusUrl=http://localhost:8081/nexus
+-DserverId=nexus
+...
+[INFO] --- nexus-staging-maven-plugin:1.5.1:rc-list (default-cli) @ standalone-pom ---
+[INFO] Connecting to Nexus...
+[INFO] Using server credentials with ID="nexus" from Maven settings.
+[INFO] Getting list of available staging repositories...
+[INFO]
+[INFO] ID                   State    Description
+[INFO] example_release_profile-1000 OPEN     Implicitly created (auto
+staging).
+...
 ----
 
 WARNING: The Nexus Maven Plugin in versions earlier than 2.1.0 had goals
