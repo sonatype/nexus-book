@@ -63,7 +63,7 @@ the Request Timeout and Request Retry Attempts settings.
 .Administration HTTP Request Settings
 image::figs/web/config-administration-http.png[scale=75]
 
-
+[[config-sect-security]]
 ==== Security Settings
 
 The security settings displayed in
@@ -74,6 +74,28 @@ list on the left and placing them higher or lower on the list.
 [[fig-config-administration-security]]
 .Administration Security Settings
 image::figs/web/config-administration-security.png[scale=60]
+
+Effectively this configuration determines what authentication realm is
+used to grant a user access and the order the realms are used.
+
+Xml Authenticating and Xml Authorizing Realm:: the Nexus internal
+storage 
+
+(Enterprise) LDAP Authentication Realm:: external storage in an LDAP
+system with details documented in <<ldap>>
+
+Crowd Realm:: external storage in Atlassian Crowd system with details
+documented in <<crowd>>
+
+Rut Auth Realm:: external authentication in any system with the user
+authorization passed to Nexus in a HTTP  header field
+with details documented in <<remote-user>>.
+
+The 'User Token Realm' is required for user token support documented
+in <<config-sect-usertoken>> and the 'NuGet API-Key Realm' is needed
+for NuGet support documented in <<nuget>>.
+
+
 
 In addition you can enable or disable anonymous access, and set the
 username and password for anonymous access. The anonymous username and
@@ -1862,6 +1884,38 @@ disallowed.
 
 The 'usertoken.' prefix is optional when the properties are loaded
 from the 'usertoken.properties' file.
+
+
+[[remote-user]]
+=== Authentication via Remote User HTTP Header
+
+Nexus allows integration with external security systems that can pass
+along authentication of a user via the +Remote_User+ HTTP header
+field - Remote User Transfer 'rut' authentication. Typically this is done
+via a server like http://httpd.apache.org/[Apache HTTPD] or
+http://nginx.org/[nginx] proxying Nexus. These servers can in turn
+defer to other authentication storage systems e.g. via the
+http://web.mit.edu/kerberos/[Kerberos] network authentication
+protocol.
+
+The HTTP header integration can be activated by adding and enabling
+the 'Rut Auth' capability as documented in
+<<confignx-sect-capabilities>> and setting the 'HTTP Header name' to the
+header populated by your security system. Typically this value is
++REMOTE_USER+, but any arbitrary value can be set.
+
+When an external system passes a value through the header,
+authentication will be granted and the value will be used as the user
+name for configured authorization scheme. E.g. on a default Nexus
+installation with the Xml authorization scheme enabled a value of
+'deployment' would grant the user the access rights in the user
+interface as the 'deployment' user.
+
+A very seamless integration can be set up for users if the external
+security system is exposed via LDAP and configured in Nexus as LDAP
+authorization realm combined with external role mappings and in
+parallel the sign on is integrated with the operating system sign on
+for the user.
 
 ////
 /* Local Variables: */
