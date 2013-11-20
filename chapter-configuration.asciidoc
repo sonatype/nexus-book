@@ -1887,22 +1887,34 @@ from the 'usertoken.properties' file.
 
 
 [[remote-user]]
-=== Authentication via Remote User HTTP Header
+=== Authentication via Remote User Token
 
 Nexus allows integration with external security systems that can pass
 along authentication of a user via the +Remote_User+ HTTP header
-field - Remote User Transfer 'Rut' authentication. Typically this is done
+field - Remote User Token 'Rut' authentication. There are either
+web-based container or server level authentication systems like
+http://shibboleth.net/[Shibboleth]. In many cases this achieved 
 via a server like http://httpd.apache.org/[Apache HTTPD] or
 http://nginx.org/[nginx] proxying Nexus. These servers can in turn
 defer to other authentication storage systems e.g. via the
 http://web.mit.edu/kerberos/[Kerberos] network authentication
-protocol.
+protocol. These systems and setups can be described as Central
+Authentication Systems CAS or Single Sign On SSO.
+
+From a users perspective they are required to login into the
+environment in a central login page, which then propagates the login
+status via HTTP headers. Nexus simply receives the fact that a
+specific user is logged in by receiving the username in a HTTP header
+field. 
 
 The HTTP header integration can be activated by adding and enabling
 the 'Rut Auth' capability as documented in
-<<confignx-sect-capabilities>> and setting the 'HTTP Header name' to the
-header populated by your security system. Typically this value is
-+REMOTE_USER+, but any arbitrary value can be set.
+<<confignx-sect-capabilities>> and setting the 'HTTP Header name' to
+the header populated by your security system. Typically this value is
++REMOTE_USER+, but any arbitrary value can be set. An enabled
+capability automatically causes the 'Rut Auth Realm' to be added to
+the 'Selected Realms' in the 'Security Settings' described in
+<<config-sect-security>>.
 
 When an external system passes a value through the header,
 authentication will be granted and the value will be used as the user
@@ -1911,7 +1923,7 @@ installation with the Xml authorization scheme enabled a value of
 'deployment' would grant the user the access rights in the user
 interface as the 'deployment' user.
 
-A very seamless integration can be set up for users if the external
+A seamless integration can be set up for users if the external
 security system is exposed via LDAP and configured in Nexus as LDAP
 authorization realm combined with external role mappings and in
 parallel the sign on is integrated with the operating system sign on
