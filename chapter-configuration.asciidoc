@@ -158,6 +158,12 @@ internet traffic.
 
 ==== System Notification Settings
 
+When you proxy remote repositories that are not available all the
+time, Nexus will automatically  block and unblock them during
+downtimes. The 'System Notification Settings' allows you define 'Email
+Adresses' and roles for Nexus users that should receive notifications
+messages for these blocking and unblocking events.
+
 [[fig-config-administration-system-notification]]
 .Administration System Notification Settings
 image::figs/web/config-administration-system-notification.png[scale=70]
@@ -203,33 +209,36 @@ Repositories, Hosted Repositories and Virtual Repositories.
 A proxy repository is a proxy of a remote repository.  By default,
 Nexus ships with the following configured proxy repositories:
 
-    Apache Snapshots:: This repository contains snapshot releases from
-    the Apache Software Foundation http://repository.apache.org/snapshots/
+Apache Snapshots:: This repository contains snapshot releases from the
+Apache Software Foundation.
 
-    Codehaus Snapshots:: This repository contains snapshot released
-    from Codehaus http://nexus.codehaus.org/snapshots/
+Codehaus Snapshots:: This repository contains snapshot released from
+Codehaus.
 
-    Central:: This is the central repository (for
-    releases).  For Nexus OSS the URL http://repo1.maven.org/maven2/
-    is used, while Nexus Professional has the SSL secured version
-    https://secure.central.sonatype.com/maven2/ preconfigured.
+Central:: This is the 'Central Repository' containing release
+artifacts. Formerly known as 'Maven Central', it is the default
+built-in repository for Apache Maven and directly supported in other
+build tools like Gradle, SBT or Ant/Ivy. For Nexus OSS the URL
+http://repo1.maven.org/maven2/ is used, while Nexus Professional has
+the SSL secured version https://secure.central.sonatype.com/maven2/
+preconfigured. Nexus OSS users and users of other repository managers
+can purchase usage of the secured version for a nominal fee.
 
 ==== Hosted Repository
 
 A hosted repository is a repository which is hosted by Nexus. Maven
 ships with the following configured hosted repositories:
 
-    3rd Party:: This hosted repository should be used for third-party
-    dependencies not available in the public Maven repositories.
-    Examples of these dependencies could be commercial, proprietary
-    libraries such as an Oracle JDBC driver that may be referenced by
-    your organization.
+3rd Party:: This hosted repository should be used for third-party
+dependencies not available in the public Maven repositories. Examples
+of these dependencies could be commercial, proprietary libraries such
+as an Oracle JDBC driver that may be referenced by your organization.
 
-    Releases:: This hosted repository is where your organization will
-    publish internal releases.
+Releases:: This hosted repository is where your organization will
+publish internal releases.
 
-    Snapshots:: This hosted repository is where your organization will
-    publish internal snapshots.
+Snapshots:: This hosted repository is where your organization will
+publish internal snapshots.
 
 ==== Virtual Repository
 
@@ -554,9 +563,9 @@ image::figs/web/secure-central-capability.png[scale=60]
 You can use the secure connection to the Central Repository on a
 version of Nexus that was either upgraded from Nexus Open Source or
 from an older version, where the Central location was
-"http://repo1.maven.org/maven2/". On Nexus 2.2 and newer you simply
-replace the Remote Storage Location for the "Central" proxy repository
-with "https://secure.central.sonatype.com/maven2/". The authentication
++http://repo1.maven.org/maven2/+. On Nexus 2.2 and newer you simply
+replace the Remote Storage Location for the 'Central' proxy repository
+with +https://secure.central.sonatype.com/maven2/+. The authentication
 token will automatically be requested and configured.
 
 The secure access can be used on older versions of Nexus as well,
@@ -1132,11 +1141,9 @@ deployments.
 Setting up scheduled tasks adapted to your usage of Nexus is an
 important first step when setting up a Nexus instance. Go through the
 list of task types and consider your usage patterns of Nexus. Also
-update your scheduled tasks
-when changing e.g. from not deploying SNAPSHOTS to running deployments
-of a CI server or when introducing usage of user tokens with a
-
-strict LDAP password change policy.
+update your scheduled tasks when changing your usage. E.g. if you
+start to regularly deploy SNAPSHOTS by introducing continuous
+integration server builds with deployment.
 
 [[confignx-sect-capabilities]]
 === Accessing and Configuring Capabilities
