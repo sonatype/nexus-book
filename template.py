@@ -14,6 +14,7 @@ for infile in glob.glob( os.path.join(path, '*.html') ):
 
   if title == "Repository Management with Nexus":
     title = "Table of Contents"
+    bookTitle = ""
 
   body = body[ body.index( "<body>") + 6 : body.rindex("</body>") ]
 
