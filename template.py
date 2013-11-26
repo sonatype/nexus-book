@@ -14,7 +14,6 @@ for infile in glob.glob( os.path.join(path, '*.html') ):
 
   if title == "Repository Management with Nexus":
     title = "Table of Contents"
-    removeTitle = True
 
   body = body[ body.index( "<body>") + 6 : body.rindex("</body>") ]
 
@@ -23,7 +22,6 @@ for infile in glob.glob( os.path.join(path, '*.html') ):
   if h1Title in body:
     titleInBody = body[body.index(h1Title) : body.rindex(h1Close) + len(h1Close)]
     print ("Found title in body: %s " % titleInBody)
-    #if bookTitle in titleInBody:
     body = body.replace(bookTitle, "", 1)
     body = body.replace(title, "", 1)
     print ("Found bookTitle and wiped")
