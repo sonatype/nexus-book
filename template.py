@@ -14,8 +14,18 @@ for infile in glob.glob( os.path.join(path, '*.html') ):
 
   if title == "Repository Management with Nexus":
     title = "Table of Contents"
-    bookTitle = ""
+    removeTitle = True
 
   body = body[ body.index( "<body>") + 6 : body.rindex("</body>") ]
+
+  h1Title = "<h1 class=\"title\">"
+  h1Close = "</h1>"
+  if h1Title in body:
+    titleInBody = body[body.index(h1Title) : body.rindex(h1Close) + len(h1Close)]
+    print ("Found title in body: %s " % titleInBody)
+    #if bookTitle in titleInBody:
+    body = body.replace(bookTitle, "", 1)
+    body = body.replace(title, "", 1)
+    print ("Found bookTitle and wiped")
 
   open(infile, "w").write( t.merge(locals()) );
