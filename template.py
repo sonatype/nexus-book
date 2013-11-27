@@ -4,7 +4,7 @@ import os
 
 t = airspeed.Template(open("site/book-template.html", "r").read())
 bookTitle = "Repository Management with Nexus"
-bookId = "nxbook"
+bookId = "ss-book-nxbook"
 
 replaceTitleWithToC = None
 
