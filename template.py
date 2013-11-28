@@ -5,13 +5,11 @@ import os
 t = airspeed.Template(open("site/book-template.html", "r").read())
 bookTitle = "Repository Management with Nexus"
 bookId = "ss-book-nxbook"
-replaceTitleWithToC = None
 path = 'target/site/reference'
 for infile in glob.glob( os.path.join(path, '*.html') ):
   print "Reading File: " + infile
   body = open(infile, "r").read()
   title = body[ body.index( "<title>" ) + 7 : body.rindex("</title>") ]
-
   body = body[ body.index( "<body>") + 6 : body.rindex("</body>") ]
 
   if "index.html" in infile:
