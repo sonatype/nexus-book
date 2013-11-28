@@ -17,6 +17,6 @@ for infile in glob.glob( os.path.join(path, '*.html') ):
   if "index.html" in infile:
     print ("Replacing bookTitle  - replacing with ToC" )
     title = "Table of Contents"
-    body = body.replace(bookTitle, title, 1)
+    body = body.replace(bookTitle, title)
 
   open(infile, "w").write( t.merge(locals()) );
