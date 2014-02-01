@@ -246,7 +246,7 @@ configures this target release repository for this staging profile.
 
 CLM Applicaiton Id:: Configures the application identifier defined in the
 Sonatype CLM server, allowing you to use the rules defined there for 
-staging within Nexus. More details can be found in <<sonatype-clm>>.
+staging within Nexus. More details can be found in <<staging-sect-clm>>.
 
 Content Type:: Nexus can create staging repositories for repositories
 of type Maven2. This value is automatically selected based on the chosen
@@ -1715,6 +1715,29 @@ The next time you attempt to close or promote a staging repository
 that was created with this profile, Nexus Professional will check that
 all of the rules in the associated rulesets are being adhered to.
 
+
+[[staging-sect-clm]]
+=== Policy Enforcement with Sonatype CLM
+
+As discussed in <<repoman>>, Component Lifecycle Management (CLM) and
+Repository Management are closely related activities. The Sonatype CLM
+suite of tools provides a server application for administrating your
+component usage policies and other features that integrate with other
+tools of the suite. It has access to extensive security vulnerability
+and license information data from the Sonatype CLM backend, that can
+be used as input for your policies. For example you could establish a
+policy that is logged as violated, if any component in your software
+has a known security vulnerability or uses a license that is
+incompatible with your business model.
+
+Nexus is an important component that can take advantage of the CLM
+server. The Sonatype CLM server can be integrated to validate policies
+as part of your usage of the staging suite of Nexus. 
+
+Detailed instructions on how to configure the CLM server as well as
+the integration in Nexus can be found in the Sonatype CLM 
+http://links.sonatype.com/products/clm/doc[documentation].
+
 [[bundles]]
 === Artifact Bundles
 
@@ -1911,6 +1934,8 @@ image::figs/web/bundles-staged-bundle.png[scale=40]
 Once the staging repository is closed you can promote it to a Build
 Promotion Profile or release it to the target repository of the
 staging profile as documented in <<staging-sect-managing-staging>>.
+
+
 
 ////
 /* Local Variables: */
