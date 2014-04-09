@@ -950,51 +950,45 @@ work directory, you would modify the value of the nexus-work property
 in this configuration file. Changing nexus-webapp-context-path allows
 you to configure the server context path Nexus will be available at.
 
-jetty.xml:: If this file is present in the +conf/+ directory, it will be
-used to configure Jetty.
+jetty.xml and jetty-*.xml:: Configuration files for the Eclipse Jetty
+servlet container running Nexus. Jetty users are used to providing a
+list of jetty XML config files which are merged to form the final
+configuration. As an advanced configuration option, Nexus supports
+this merging concept in it's launcher code as of Nexus 2.8.
++
+You can specify additional jetty XML
+configuration files to load to form the final configuration.  For the
+standard distribution bundle, these files can be specified using
+special properties located in +NEXUS_HOME/bin/jsw/conf/wrapper.conf+.
++
+----
+wrapper.app.parameter.1=./conf/jetty.xml
+wrapper.app.parameter.2=./conf/jetty-requestlog.xml 
+# add more indexed app parameters...  
+----
++
+Any of the files located at +NEXUS_HOME/conf/jetty-*.xml+ can be
+specified as part of the +wrapper.app.parameter.n+ property, where n
+is the next highest number not already used. The
+http://wrapper.tanukisoftware.com/doc/english/prop-app-parameter-n.html[Java
+Service Wrapper] 
+documentation contains more information about this
+property. This setup allows for a simple method to add configuration for
+https, JMX and others by adjusting a few properties.
 
-The +conf/examples/+ directory contains sample Jetty configuration files
-which can be used to customize the behaviour of the Jetty servlet
-container:
 
-jetty.xml:: contains a jetty.xml sample with no customizations. This
-sample file listens on the "application-port" defined in
-nexus.properties
+WARNING: Nexus version prior to 2.8 loaded all of the Jetty
+configuration from one jetty.xml file, typically found at
++NEXUS_HOME/conf/jetty.xml+ and required modifications to this file
+for configuration changes. Examples were available in
++NEXUS_HOME/conf/examples+. These files can not be used in Nexus 2.8+
+as they were intended to be standalone files that could not be merged
+into other files.
 
-jetty-ajp.xml:: Contains a jetty.xml sample which will configure Nexus
-to listen on an AJP port 8009. This configuration can be used if you
-are proxying your Nexus server with web server which understands the
-AJP protocol such as Apache httpd with the mod_proxy_ajp module.
 
-jetty-dual-ports-with-ssl.xml:: Contains a jetty.xml sample which
-configures Nexus to listen on both the "application-port" and
-"application-port-ssl" (as defined in nexus.properties). This
-sample configuration also contains the SSL redirect rule.
 
-jetty-faster-windows.xml:: Contains a jetty.xml sample which
-configures a response buffer size that will address performance issues
-on Windows 2003 Server, for more information about this fix see
-http://docs.codehaus.org/display/JETTY/Slow+Win2003[the Jetty Wiki]
 
-jetty-header-buffer.xml:: Contains a jetty.xml sample which increases
-the headerBufferSize to 8k from the default of 4k. Documentation about
-the header buffer size can be found on
-http://docs.codehaus.org/display/JETTY/Configuring+Connector[the Jetty
-Wiki]
 
-jetty-simple-https-proxy.xml:: Contains a jetty.xml sample which
-should be used if you are proxying a Nexus instance with a web server
-that is handling SSL. For example, if you were proxying Nexus with
-Apache httpd server using mod_ssl you would use this configuration to
-configure the Jetty RewriteHandler
-
-jetty-ssl.xml:: Contains a jetty.xml sample which will only serve SSL
-encrypted content from "application-port" (as defined in
-nexus.properties
-
-The conf/examples/proxy-https/ directory contains two files:
-apache2.conf and jetty.xml contains sample mod_proxy directives to
-configure Apache httpd to handle SSL.
 
 ////
 /* Local Variables: */
