@@ -397,112 +397,14 @@ for some information to get you started. Additionally, you may need to
 add extra port properties to the nexus.properties configuration file
 to accommodate both SSL and non-SSL connections.
 
-[[ssl-sect-redirecting]]
-=== Redirecting Non-SSL Connections to SSL
+==== Redirecting HTTP to HTTPS
 
-If you want to make it very easy for people to use your Nexus
-repository, you will want to configure the automatic redirect from the
-non-SSL port (default 80) to the SSL port (default 443). 
-
-With the recommended practice of using an external proxy server to for
-SSL, you would setup a redirect in the respective proxy server.
-With a web server like Apache
-httpd, you could configure mod_rewrite to automatically redirect
-browsers to the SSL port, or you can configure Jetty to perform this
-redirection. 
-
-If you however configured Nexus to directly serve SSL as documented in
-<<ssl-sect-ssl-direct>>, the following instructions can be used to
-configure Nexus to redirect appropriately.
-
-When this feature is configured, browsers and clients that attempt to
-interact with the non-SSL port will be seamlessly redirected to the
-SSL port. If you do not turn on the automatic redirect to SSL, users
-who attempt to load the Nexus interface via the default port 80 will
-see a network error.
-
-To do this in Jetty
-
-To enable this feature, configure Jetty to serve SSL directly as
-demonstrated in <<ssl-sect-ssl-direct>>. After you have configured
-Jetty to serve SSL directly, you use a custom rewrite rule for Jetty
-that is bundled with Nexus. Open your jetty.xml and replace the
-existing handler/context-collection declaration with a stand-alone
-context-collection declaration, by replacing the 'handler' section
-starting with
-
-----
-<Set name="handler">
-  <New id="Contexts" class="org.eclipse.jetty.handler.ContextHandlerCollection">
-...
-----
-
-with this one:
-
-----
-<New id="Contexts" class="org.eclipse.jetty.handler.ContextHandlerCollection">
-  <!-- The following configuration is REQUIRED, and MUST BE FIRST.
-       It makes the Plexus container available for use in the Nexus webapp. -->
-  <Call name="addLifeCycleListener">
-    <Arg>
-      <New 
-         class="org.sonatype.plexus.jetty.custom.InjectExistingPlexusListener" />
-    </Arg>
-  </Call>
-
-  <!-- The following configuration disables JSP taglib support, the 
-      validation of which slows down Jetty's start-up significantly. -->
-  <Call name="addLifeCycleListener">
-    <Arg>
-      <New class="org.sonatype.plexus.jetty.custom.DisableTagLibsListener" />
-    </Arg>
-  </Call>
-</New>
-----
-
-Now, configure the rewrite handler for Jetty by adding the following
-section just above the line with stopAtShutdown in it:
-
-----
-<Set name="handler">
-  <New id="Handlers" class="org.eclipse.jetty.handler.rewrite.RewriteHandler">
-    <Set name="rules">
-      <Array type="org.eclipse.jetty.handler.rewrite.Rule">
-        <Item>
-          <New id="redirectedHttps"
-             class="org.sonatype.plexus.jetty.custom.RedirectToHttpsRule">
-            <Set name="httpsPort">${application-port-ssl}</Set>
-          </New>
-        </Item>
-      </Array>
-    </Set>
-    <Set name="handler">
-      <New id="Handlers" class="org.eclipse.jetty.handler.HandlerCollection">
-        <Set name="handlers">
-          <Array type="org.eclipse.jetty.Handler">
-            <Item><Ref id="Contexts"/></Item>
-            <Item>
-              <New id="DefaultHandler" 
-                class="org.eclipse.jetty.handler.DefaultHandler"/></Item>
-            <Item>
-              <New id="RequestLog" 
-                class="org.eclipse.jetty.handler.RequestLogHandler"/></Item>
-          </Array>
-        </Set>
-      </New>
-    </Set>
-  </New>
-</Set>
-----
-
-Modify $NEXUS_HOME/conf/nexus.properties
-and add a new property, application-port-ssl. This will
-allow you to customize both the SSL and non-SSL ports
-independently:
-
-----
-application-port-ssl=8443
-----
+In order to ensure HTTPS is used for all connection an external proxy
+can be used. Alternatively Nexus 2.7 users can use
++conf/examples/jetty-http-redirect-to-https.xml+ and Nexus 2.8+ users
+can add usage of +conf/jetty-http-redirect-to-https.xml+ and
++conf/jetty-https.xml+ as additional app parameters in
++wrapper.conf+. 
 
 ////
 /* Local Variables: */
