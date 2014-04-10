@@ -2,31 +2,52 @@
 == Repository Health Check
 
 Repository Health Check is a feature of Nexus that integrates data
-from http://links.sonatype.com/products/insight/home[Sonatype
-CLM]. Sonatype CLM is a suite of separate products that consists of
-tools to monitor and manage license, quality and security data about
-artifacts used in your software development life cycle for your
-Component Lifecycle Management CLM efforts.
+from http://links.sonatype.com/products/insight/home[Sonatype CLM] and
+the related Hosted Data Services HDS run by Sonatype. Sonatype CLM is
+a suite of separate products that consists of tools to monitor and
+manage license, quality and security data about artifacts used in your
+software development life cycle for your Component Lifecycle
+Management CLM efforts.
 
 Repository Health Check provides access to a limited subset of the
-available data in Sonatype CLM via the Sonatype CLM Service right in
-your Nexus server. The Sonatype CLM Service is a supplement of the
-Central Repository and exposes data about the artifacts there,
-including license information, security vulnerability data and other
-statistics like relative usage data and age.
+available data in Sonatype CLM and HDS right in your Nexus server. HDS
+exposes data about the artifacts in the
+http://central.sonatype.org[Central Repository] and other public
+repositories, including license information, security vulnerability
+data and other statistics like relative usage popularity
+and age. Repository Health Check allows you to examine the available
+security and license data about components in a repository.
 
-=== Analyzing a Repository with Repository Health Check
+Repository health check analyzes all artifacts found in a proxy
+repository of any format. Maven 2 format repositories need to have a
+release policy configured. 
 
-To perform a Repository Health Check about the artifacts in your Nexus
-instance, you have to click the 'Analyze' button in the 'Quality' column
-of the list of 'Repositories' displayed in
-<<fig-rhc-repo-list-quality>>. In order to be able to do that you have
-to be logged in as an administrator. Once the data gathering analysis
-is completed the 'Quality' column will display the number of security
-and license issues found.
+=== Enabling Repository Health Check
+
+Repository health check for a repository can be enabled by selecting
+the repository in the list of repositories and setting the 'Enabled'
+configuration in the 'Health Check' tab to 'true' as displayed in
+<<fig-rhc-enabled>>. Administrator privileges are required to
+perform this configuration.
+
+[[fig-rhc-enabled]]
+.Enabling Repository Health Check
+image::figs/web/rhc-enabled.png[scale=70]
+
+Once enabled, a scheduled task, that performs the initial analysis,
+is created and started. This task uses the identifier of the
+repository and the prefix 'Health Check:' as a name and is configured
+to run hourly. The recurrance frequency can be changed in the
+scheduled task administration described in
+<<confignx-sect-managing-tasks>>. Disabling health check for a
+specific repository removes this scheduled tasks automatically.
+
+After a successful analysis the 'Health Check' column in the list of
+repositories will display security and license issue counts for the
+repository. An example is displayed in <<fig-rhc-repo-list-quality>>. 
 
 [[fig-rhc-repo-list-quality]]
-.The Repositories List with Different Quality Status Indicators and Result Counts
+.The Repositories List with Helth Check Result Counts
 image::figs/web/rhc-repo-list.png[scale=70]
 
 Hovering your mouse pointer over that value will display the
@@ -34,11 +55,10 @@ Hovering your mouse pointer over that value will display the
 window is displayed in <<fig-rhc-summary-pop-up>>.
 
 [[fig-rhc-summary-pop-up]]
-.A Result Summary Window for a Repository Health Check
-image::figs/web/rhc-summary-report.png[scale=50]
+.A Result Summary for a Repository Health Check
+image::figs/web/rhc-summary-report.png[scale=70]
 
-At the bottom of the pop up window you find a button to disable the
-analysis for this repository as well as the button 'View Detailed
+At the bottom of the pop up window you find the button 'View Detailed
 Report' to access the detailed report. It will show up in another tab
 in the main area of the Nexus user interface.
 
@@ -52,11 +72,13 @@ security and license information at the top displayed in
 .Summary of the Detailed Repository Health Check Panel
 image::figs/web/rhc-detail-summary.png[scale=50]
 
-Below this overview a drop down for 'Security' and 'License' information
+Below this overview a drop down for security and license information
 allows you to toggle between two lists displaying further
-details. Both lists have a filter for each column at the bottom of the
-list that allows you to narrow down the number of rows in the table
-and therefore find specific entries easily.
+details. Seclect to 'View By: Vulnerabilities' to inspect the security
+issues and 'View By: Artifacts' to review the license information.Both
+lists have a filter for each column at the bottom of the list that
+allows you to narrow down the number of rows in the table and
+therefore find specific entries easily.
 
 The security list as visible in <<fig-rhc-detail-security-list>>
 contains columns for 'Threat Level', 'Problem Code' and the GAV parameters
@@ -69,7 +91,7 @@ and further information and reference links.
 
 [[fig-rhc-detail-security-list]]
 .The Security Data in the Detailed Repository Health Check Report
-image::figs/web/rhc-detail-security-list.png[scale=40]
+image::figs/web/rhc-detail-security-list.png[scale=45]
 
 The 'Threat Level' is rated in values used by the vulnerability
 databases and ranges from 0 for a low threat to 10 for the highest
@@ -87,6 +109,10 @@ license files. The next columns for the GAV parameters allow you to
 identify the artifact. The last column 'Security Issues' displays an
 indicator for potentially existing security issue for the same
 artifact.
+
+[[fig-rhc-detail-license-list]]
+.The License Data in the Detailed Repository Health Check Report
+image::figs/web/rhc-detail-license-list.png[scale=45]
 
 Licences such as GPL-2.0 or GPL-3.0 are classified as the highest
 'License Threat' and labelled as 'Copyleft' and use red as signalling color. 
@@ -117,11 +143,6 @@ assess in its impact and might be legally invalid depending on the
 combination of licenses observed.  Detailed implications to your
 business and software are best discussed with your lawyers.
 
-
-[[fig-rhc-detail-license-list]]
-.The License Data in the Detailed Repository Health Check Report
-image::figs/web/rhc-detail-license-list.png[scale=35]
-
 Nexus will report all artifacts in the local storage of the respective
 repository in the detail panel. This means that at some stage
 a build running against your Nexus instance required these artifacts
@@ -136,7 +157,7 @@ Sonatype CLM itself helps with these tasks by enabling monitoring
 of builds and products, analyzing release artifacts and creating bill
 of material and other reports. 
 
-=== Using Repository Health Check Results For Component Lifecycle Management
+=== Manual Component Lifecycle Management Investigations with Nexus
 
 ==== Example: Analyzing a Spring Beans Vulnerability
 
