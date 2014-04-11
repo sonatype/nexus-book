@@ -1114,40 +1114,65 @@ event data in Nexus. It collects non-sensitive information about how
 you are using Nexus. It is useful to you from a compatibility
 perspective, since it gathers answers to questions such as what
 features are most important, where are users having difficulty and
-what integrations/APIs are actively in use. This data is available to
-you and allows you to understand your usage of Nexus better. 
+what integrations/APIs are actively in use. 
 
-You can enable it in the Analytics administration available via
-'Analytics' menu item in the 'Administration' menu in the left side
-'Nexus' navigation. Select the checkbox beside 'Enable analytics event
-collection' and press the 'Save' button.
 
-You can choose to provide this data to Sonatype by selecting the
-checkbox beside 'Enable automatic analytics event submission'. It
-enables Sonatype to tailor the ongoing development of the product.
+The collected information is limited to the use of the Nexus user
+interface and the Nexus REST API - i.e. the primary interaction
+points between your environment and Nexus. Only the user interface
+navigation flows and REST endpoints being called are recorded. None of
+the request specific data (e.g. credentials or otherwise sensitive
+information) is ever captured.
+
+You can enable the event logging in the 'Settings' section of the
+'Analytics' tab available via 'Analytics' menu item in the
+'Administration' menu in the left side 'Nexus' navigation. Select the
+checkbox beside 'Enable analytics event collection' and press the
+'Save' button.
+
+You can choose to provide this data automatically to Sonatype by
+selecting the checkbox beside 'Enable automatic analytics event
+submission'. It enables Sonatype to tailor the ongoing development of
+the product. Alternatively you can submit the data manually or just
+use the gathered data for your own analysis only.
 
 Once enabled all events logged can be inspected in the 'Events' tab in
 the 'Analytics' section displayed in <<fig-analytics-events>>.
 
-Event Collection
+[[fig-analytics-events]]
+.List of Events in the Analytics Tab
+image::figs/web/analytics-events.png[scale=100]
 
-The collected information is limited to the use of the Nexus user interface and the Nexus REST API -- i.e. the primary interaction points between your environment and Nexus. Only the user interface navigation flows and REST endpoints being called are recorded. None of the request specific data (e.g. credentials or otherwise sensitive information) is ever captured.
+The list of events shows the 'Type' and the 'Timestamp' of the event
+as well as the 'User' that triggered it and any 'Attributes'. Each row
+has a '+' symbol in the first column that allows you to expand the row
+vertically. Each attribute will be expanded into a separate line
+allowing you to inspect all the information that is potentially
+submitted to Sonatype. The 'User' value is replaced by a salted hash
+so that no username information is transmitted. The 'Anonymzation
+Salt' can be configured in the 'Analytics: Collection'
+capability. This administration area can additionally be used to
+change the random identifier for the Nexus instance.
 
-Event collection and submission are controlled separately. When collection is enabled, a summary of the data collected is shown on the "Events" tab.
+TIP: More information about capabilities can be found in <<capabilities>>.
 
-Event Submission
+If you desire to further inspect the data, that is potentially
+submitted, you can select to download the file containing the JSON
+files in a zip archive by clicking the 'Export' button above the events list
+and downloading the file. The 'Submit' button can be used to manually
+submit the events to Sonatype.
 
-Analytics event data can be submitted either automatically or manually.
+If you have selected to automatically submit the analytics data, a
+scheduled task was created named 'Automatically submit analytics
+events'. This task is preconfigured to run at 1am every day. If
+desired the recurrence can be changed in the scheduled tasks
+administration area documented in <<scheduled-tasks>>.
 
-"Export" generates a ZIP file that can be inspected prior to any information being sent to the Nexus analytics service. 
-"Submit" generates a ZIP file and then immediately uploads it to the Nexus analytics service.
-
-Enable analytics event collection
-Enable automatic analytics event submission
-
-Influence Nexus Product Development Using Analytics
-As part of the process to help us make Nexus better, Administrators can optionally choose to send anonymous REST API usage data to Sonatype. This data will help us decide what features are most important to you and will influence product development for Nexus 3.0 and beyond. The data can be inspected and even exported for your own use as well.
-To enable analytics on your instance go to "Administration/Analytics" in the Nexus UI.
+IMPORTANT: Sonatype values your input greatly and hopes you will
+activate the analytics feature and the automatic submission to allows
+us to ensure ongoing development is well aligned with your needs. In
+addition we appreciate any further direct contact and feedback in
+person and look forward to hear from you.
 
 ////
 /* Local Variables: */
