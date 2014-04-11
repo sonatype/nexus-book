@@ -1703,6 +1703,39 @@ configuration of a user. An example of an additional panel is the 'User
 Token' panel, added by the User Token feature of Nexus Professional as
 documented in <<config-sect-usertoken>>.
 
+[[request-access-logging]]
+=== Request Access Logging in Nexus  
+
+Logging all access request to Nexus allows you to gain a good
+understanding of the Nexus usage in your organization and the source
+of these requests. E.g. you will be able to tell if the main load is
+due to a CI server cluster or rather developers based on the IP
+numbers of the requests as well as see the
+spread of requests and load across different times. You also see what
+URL's and therefore API calls and features are used in Nexus
+
+Requests access logging is enabled by default in Nexus 2.8 or higher and uses a
+performant and flexible LogBack implementation with built-in log
+rotation already configured for 90 days of log file retention. The log
+is written to the file +sonatype-work/nexus/logs/request.log+.
+
+The configuration is located in +NEXUS_HOME/conf/logback-access.xml+
+and can be changed to suit your requirments. If you change the file, a
+restart of Nexus is required for these changes to take effect.
+
+If you do not want to run access logging, you can disable it by
+commenting out the line 
+
+----
+wrapper.app.parameter.2=conf/jetty-requestlog.xml 
+----
+
+in +bin/jsw/conf/wrapper.conf+.
+
+Older versions of Nexus require different customization of the Jetty
+configuration files. Instructions for these customizations can be
+found on the https://support.sonatype.com/entries/21902551[support
+site].
 
 [[config-sect-usertoken]]
 === Security Setup with User Tokens
