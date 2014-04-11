@@ -870,7 +870,7 @@ backup the contents of a repository, you should backup the contents of
 the storage directory.
 
 support/:: The support zip archive documented in
-<<using-sect-support-tools>> is created and stored in this folder.  
+<<support-tools>> is created and stored in this folder.  
 
 template-store/:: Contains the Maven settings template files
 documented in detail in <<settings>>.
@@ -991,10 +991,163 @@ for configuration changes. Examples were available in
 as they were intended to be standalone files that could not be merged
 into other files.
 
+[[monitoring]]
+=== Monitoring Nexus 
+
+Now that you Nexus instance is up and running, you need to ensure that
+it stays that way. Typically this is done on a number of levels and
+each organization and system administration team has their own
+preferences and tool. 
+
+In general you can monitor
+
+* hardware values like CPU, memory or diskspace utilization and many more
+* operating system level value processes running 
+* Java Virtual Machine specific values
+* application specific value
+
+For the hardware and operating specific values a myriad of tools
+exist. Many of these tools can work be configured to work with
+application specific logs and other events. The following section
+discusses some of the available information in Nexus.
+
+A host of information from the operating system, the Java Virtual
+Machine as well as Nexus itself is available via the <<support-tools>>.
+
+[[general-logging]]
+==== General Logging 
+
+Nexus logs event in +sonatype-work/nexus/logs/request.log+ and has a
+dedicated user interface to configure and inspect the log described in
+detail in <<logging>>.
 
 
+[[request-access-logging]]
+==== Request Access Logging in Nexus  
 
+Logging all access request to Nexus allows you to gain a good
+understanding of the Nexus usage in your organization and the source
+of these requests. E.g. you will be able to tell if the main load is
+due to a CI server cluster or rather developers based on the IP
+numbers of the requests as well as see the
+spread of requests and load across different times. You also see what
+URL's and therefore API calls and features are used in Nexus
 
+Requests access logging is enabled by default in Nexus 2.8 or higher and uses a
+performant and flexible LogBack implementation with built-in log
+rotation already configured for 90 days of log file retention. The log
+is written to the file +sonatype-work/nexus/logs/request.log+.
+
+The configuration is located in +NEXUS_HOME/conf/logback-access.xml+
+and can be changed to suit your requirments. If you change the file, a
+restart of Nexus is required for these changes to take effect.
+
+If you do not want to run access logging, you can disable it by
+commenting out the line 
+
+----
+wrapper.app.parameter.2=conf/jetty-requestlog.xml 
+----
+
+in +bin/jsw/conf/wrapper.conf+.
+
+Older versions of Nexus require different customization of the Jetty
+configuration files. Instructions for these customizations can be
+found on the https://support.sonatype.com/entries/21902551[support
+site].
+
+[[jmx]]
+==== Using Java Management Extension JMX
+
+JMX is a common tool for managing and monitoring Java applications
+with client software like the free http://visualvm.java.net/[VisualVM]
+and many others available.
+
+Nexus can be configured to support JMX by adding
+
+----
+wrapper.app.parameter.3=./conf/jetty-jmx.xml
+----
+
+to the list of +wrapper.app+ parameters in
++NEXUS_HOME/bin/jsw/conf/wrapper.conf+ and set the parameters
++jmx-host+ and +jmx-port+ in +NEXUS_HOME/conf/nexus.properties+.
+
+----
+jmx-host=localhost
+jmx-port=1099
+----
+
++jmx-host+ is host name, commonly the IP address, to remotely access
+Nexus using JMX from another host and +jmx-port+ is the network port
+used for the connection. It is important to ensure that the port is
+not blocked by any network setup, when connecting remotely. The value
+of 1099 is the default port used for JMX, but any other available port
+can be used as well.
+
+WARNING: Nexus versions older than 2.8 require different procedures
+depending on the specific version.
+
+Once Nexus is restarted with JMX enabled you can inspect the running
+JVM in detail. <<monitoring-jmx-visualvm-overview>> and
+<<monitoring-jmx-visualvm-charts>> show some example screenshots of
+VisualVM connected to a Nexus instance running on localhost.
+
+[[monitoring-jmx-visualvm-overview]]
+.Overview of Nexus Monitored via JMX in VisualVM
+image::figs/web/monitoring-jmx-visualvm-overview.png[scale=100]
+
+[[monitoring-jmx-visualvm-charts]]
+.CPU, Memory and Other Visualizations of Nexus Monitored via JMX in VisualVM
+image::figs/web/monitoring-jmx-visualvm-charts.png[scale=100]
+
+Depending on the tool used to connect a number of monitoring, analysis
+and troubleshooting actions can be performed. Please refer to the
+documentation about your specific tool for more information.
+
+[[analytics]]
+==== Analytics
+
+The analytics integration of Nexus allows you to gather a good
+understanding of your Nexus usage since it enables the collection of
+event data in Nexus. It collects non-sensitive information about how
+you are using Nexus. It is useful to you from a compatibility
+perspective, since it gathers answers to questions such as what
+features are most important, where are users having difficulty and
+what integrations/APIs are actively in use. This data is available to
+you and allows you to understand your usage of Nexus better. 
+
+You can enable it in the Analytics administration available via
+'Analytics' menu item in the 'Administration' menu in the left side
+'Nexus' navigation. Select the checkbox beside 'Enable analytics event
+collection' and press the 'Save' button.
+
+You can choose to provide this data to Sonatype by selecting the
+checkbox beside 'Enable automatic analytics event submission'. It
+enables Sonatype to tailor the ongoing development of the product.
+
+Once enabled all events logged can be inspected in the 'Events' tab in
+the 'Analytics' section displayed in <<fig-analytics-events>>.
+
+Event Collection
+
+The collected information is limited to the use of the Nexus user interface and the Nexus REST API -- i.e. the primary interaction points between your environment and Nexus. Only the user interface navigation flows and REST endpoints being called are recorded. None of the request specific data (e.g. credentials or otherwise sensitive information) is ever captured.
+
+Event collection and submission are controlled separately. When collection is enabled, a summary of the data collected is shown on the "Events" tab.
+
+Event Submission
+
+Analytics event data can be submitted either automatically or manually.
+
+"Export" generates a ZIP file that can be inspected prior to any information being sent to the Nexus analytics service. 
+"Submit" generates a ZIP file and then immediately uploads it to the Nexus analytics service.
+
+Enable analytics event collection
+Enable automatic analytics event submission
+
+Influence Nexus Product Development Using Analytics
+As part of the process to help us make Nexus better, Administrators can optionally choose to send anonymous REST API usage data to Sonatype. This data will help us decide what features are most important to you and will influence product development for Nexus 3.0 and beyond. The data can be inspected and even exported for your own use as well.
+To enable analytics on your instance go to "Administration/Analytics" in the Nexus UI.
 
 ////
 /* Local Variables: */
