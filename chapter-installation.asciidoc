@@ -994,32 +994,37 @@ into other files.
 [[monitoring]]
 === Monitoring Nexus 
 
-Now that you Nexus instance is up and running, you need to ensure that
-it stays that way. Typically this is done on a number of levels and
-each organization and system administration team has their own
-preferences and tool. 
+Now that your Nexus instance is up and running, you need to ensure
+that it stays that way. Typically this is done on a number of levels
+and each organization and system administration team has their own
+preferences and tools.
 
-In general you can monitor
+In general you can monitor:
 
 * hardware values like CPU, memory or diskspace utilization and many more
-* operating system level value processes running 
+* operating system level values like processes running
 * Java Virtual Machine specific values
 * application specific value
 
-For the hardware and operating specific values a myriad of tools
-exist. Many of these tools can work be configured to work with
-application specific logs and other events. The following section
-discusses some of the available information in Nexus.
+For the hardware and operating system values a large number of
+dedicated tools exist. Many of these tools can be configured to work
+with application specific logs and other events. The following section
+discusses some of the available information in Nexus. It can
+potentially be integrated into the usage of the more generic tools for
+monitoring and log capturing and analysis.
 
 A host of information from the operating system, the Java Virtual
-Machine as well as Nexus itself is available via the <<support-tools>>.
+Machine as well as Nexus itself is available via the
+<<support-tools>>, which allow you to inspect the value directly in
+the Nexus user interface.
 
 [[general-logging]]
 ==== General Logging 
 
-Nexus logs event in +sonatype-work/nexus/logs/request.log+ and has a
-dedicated user interface to configure and inspect the log described in
-detail in <<logging>>.
+Nexus logs events in the +sonatype-work/nexus/logs/nexus.log+ file. In
+addition a dedicated user interface to configure and inspect the log
+is available. Further information about this interface can be found in
+<<logging>>.
 
 
 [[request-access-logging]]
@@ -1027,19 +1032,22 @@ detail in <<logging>>.
 
 Logging all access request to Nexus allows you to gain a good
 understanding of the Nexus usage in your organization and the source
-of these requests. E.g. you will be able to tell if the main load is
-due to a CI server cluster or rather developers based on the IP
-numbers of the requests as well as see the
-spread of requests and load across different times. You also see what
-URL's and therefore API calls and features are used in Nexus
+of these requests. 
 
-Requests access logging is enabled by default in Nexus 2.8 or higher and uses a
-performant and flexible LogBack implementation with built-in log
-rotation already configured for 90 days of log file retention. The log
-is written to the file +sonatype-work/nexus/logs/request.log+.
+E.g. you will be able to tell if the main load is due to a CI server
+cluster or rather developers based on the IP numbers of the requests
+as well as see the spread of requests and load across different
+times. You also see what URL's and therefore API calls and features
+are used in Nexus
+
+Requests access logging is enabled by default in Nexus 2.8 or higher
+and uses a performant and flexible LogBack implementation with
+built-in log rotation already configured for 90 days of log file
+retention. The log is written to the file
++sonatype-work/nexus/logs/request.log+.
 
 The configuration is located in +NEXUS_HOME/conf/logback-access.xml+
-and can be changed to suit your requirments. If you change the file, a
+and can be changed to suit your requirements. If you change the file, a
 restart of Nexus is required for these changes to take effect.
 
 If you do not want to run access logging, you can disable it by
@@ -1051,7 +1059,7 @@ wrapper.app.parameter.2=conf/jetty-requestlog.xml
 
 in +bin/jsw/conf/wrapper.conf+.
 
-Older versions of Nexus require different customization of the Jetty
+WARNING: Older versions of Nexus require different customization of the Jetty
 configuration files. Instructions for these customizations can be
 found on the https://support.sonatype.com/entries/21902551[support
 site].
@@ -1061,7 +1069,8 @@ site].
 
 JMX is a common tool for managing and monitoring Java applications
 with client software like the free http://visualvm.java.net/[VisualVM]
-and many others available.
+and many others available. It can be performed locally on the server
+as well as remotely.
 
 Nexus can be configured to support JMX by adding
 
@@ -1078,12 +1087,12 @@ jmx-host=localhost
 jmx-port=1099
 ----
 
-+jmx-host+ is host name, commonly the IP address, to remotely access
-Nexus using JMX from another host and +jmx-port+ is the network port
-used for the connection. It is important to ensure that the port is
-not blocked by any network setup, when connecting remotely. The value
-of 1099 is the default port used for JMX, but any other available port
-can be used as well.
++jmx-host+ is the host name, commonly the IP address, to remotely
+access Nexus using JMX from another host and +jmx-port+ is the network
+port used for the connection. It is important to ensure that the port
+is not blocked by any network setup, when connecting remotely. The
+value of 1099 is the default port used for JMX, but any other
+available port can be used as well.
 
 WARNING: Nexus versions older than 2.8 require different procedures
 depending on the specific version.
@@ -1109,13 +1118,12 @@ documentation about your specific tool for more information.
 ==== Analytics
 
 The analytics integration of Nexus allows you to gather a good
-understanding of your Nexus usage since it enables the collection of
+understanding of your Nexus usage, since it enables the collection of
 event data in Nexus. It collects non-sensitive information about how
 you are using Nexus. It is useful to you from a compatibility
 perspective, since it gathers answers to questions such as what
 features are most important, where are users having difficulty and
 what integrations/APIs are actively in use. 
-
 
 The collected information is limited to the use of the Nexus user
 interface and the Nexus REST API - i.e. the primary interaction
@@ -1149,7 +1157,7 @@ has a '+' symbol in the first column that allows you to expand the row
 vertically. Each attribute will be expanded into a separate line
 allowing you to inspect all the information that is potentially
 submitted to Sonatype. The 'User' value is replaced by a salted hash
-so that no username information is transmitted. The 'Anonymzation
+so that no username information is transmitted. The 'Anonymization
 Salt' can be configured in the 'Analytics: Collection'
 capability. This administration area can additionally be used to
 change the random identifier for the Nexus instance.
@@ -1162,14 +1170,14 @@ files in a zip archive by clicking the 'Export' button above the events list
 and downloading the file. The 'Submit' button can be used to manually
 submit the events to Sonatype.
 
-If you have selected to automatically submit the analytics data, a
-scheduled task was created named 'Automatically submit analytics
-events'. This task is preconfigured to run at 1am every day. If
-desired the recurrence can be changed in the scheduled tasks
-administration area documented in <<scheduled-tasks>>.
+When you select to automatically submit the analytics data, a
+scheduled task, named 'Automatically submit analytics events', is
+automatically created. This task is preconfigured to run at 1am
+every day. If desired the recurrence can be changed in the scheduled
+tasks administration area documented in <<scheduled-tasks>>.
 
 IMPORTANT: Sonatype values your input greatly and hopes you will
-activate the analytics feature and the automatic submission to allows
+activate the analytics feature and the automatic submission to allow
 us to ensure ongoing development is well aligned with your needs. In
 addition we appreciate any further direct contact and feedback in
 person and look forward to hear from you.
