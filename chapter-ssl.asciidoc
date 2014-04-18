@@ -315,23 +315,24 @@ TIP: Keep in mind that you will have to redo some of these
 configurations each time you upgrade Nexus, since they are
 modifications to the embedded Jetty instance located in '$NEXUS_HOME'.
 
-To configure Nexus to serve SSL directly to clients, you'll need to
-perform the following steps.
+To configure Nexus to serve SSL directly to clients, you need to
+perform the following steps: 
 
-NOTE: All examples given here can be found in the Nexus distribution
-under +$(NEXUS_HOME)/conf/examples+. Before you customize your
-Nexus configuration to serve SSL, keep in mind the following:
+* add the file +jetty-https.xml+ to the Jetty startup configuration in
++wrapper.conf+ as detailed in <<jetty-xml>>. 
 
-* Any custom Jetty configuration must be contained in the
-+$(NEXUS_HOME)/conf/jetty.xml+ file, or else in the location
-referenced by the jetty.xml property in 
-+$(NEXUS_HOME)/bin/jsw/conf/wrapper.conf+ (in case you've customized
-this location).
+* set the port to be used by defining +application-port-ssl+ in
+  +nexus.properties+
 
-* While the instructions below will work with Nexus Open Source, these
-instructions assume the filesystem of Nexus Professional. If you are
-missing Jetty JAR files, you should obtain them from the Jetty project
-page: http://www.eclipse.org/jetty/
+* configure the Java keystore and update the configuration in
+  +jetty-https.xml+. The default configuration points to the keystore
+  within Nexus, which is managed by the SSL feature documented in
+  <<ssl-sect-client-cert-mgt>>. Alternatively you can point to an
+  external keystore.
+
+If desired you can configure automatic redirection from HTTP to HTTPS
+with the by adding usage of +jetty-http-redirect-to-https.xml+ as
+additional app parameters in +wrapper.conf+.
 
 ==== Configure the Java Keystore
 
@@ -367,44 +368,6 @@ generate the obfuscated hash-codes for three passwords:
 
 * The Key Store Password
 
-In the next section, the key store and trust store are the same
-file, with the same password.
-
-==== Configure Nexus/Jetty to Use the New Keystore
-
-A jetty.xml with the modifications of the jetty.xml required can be found
-in $NEXUS_HOME/conf/examples/jetty-ssl.xml, inside your Nexus
-distribution.
-
-Insert the OBF output from earlier command in the 'addConnector'
-section in the setters for 'password', 'keyPassword' and
-'trustPassword'.
-
-==== Modify the application-port for SSL connections
-
-The '${application-port}' property, referenced in the configuration,
-has a default configuration that many people would more naturally
-associate with non-SSL connections. You may wish to modify this port
-to something like 8443, or even 443 (if you have root access from
-which to start Nexus). To change this property, modify the
-'+++$(basedir)/conf/nexus.properties+++'
-
-NOTE: You may wish to enable both types of connections, with
-appropriate rewrite rules between them. Such a configuration is beyond
-the scope of this section; if you're interested, please refer to the
-http://www.eclipse.org/jetty/documentation/[Jetty Documentation Hub]
-for some information to get you started. Additionally, you may need to
-add extra port properties to the nexus.properties configuration file
-to accommodate both SSL and non-SSL connections.
-
-==== Redirecting HTTP to HTTPS
-
-In order to ensure HTTPS is used for all connection an external proxy
-can be used. Alternatively Nexus 2.7 users can use
-+conf/examples/jetty-http-redirect-to-https.xml+ and Nexus 2.8+ users
-can add usage of +conf/jetty-http-redirect-to-https.xml+ and
-+conf/jetty-https.xml+ as additional app parameters in
-+wrapper.conf+. 
 
 ////
 /* Local Variables: */
