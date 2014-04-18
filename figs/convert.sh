@@ -12,7 +12,7 @@ do
 #            \( +clone -background black -shadow 80x1+1+1 \) \
 #            -compose DstOver -composite -compose Over \
 #            $DEST_IMAGE
-      convert $IMAGE -border 5 $DEST_IMAGE
+      convert -border 3 -bordercolor '#696969' $IMAGE $DEST_IMAGE
       echo "Converted $IMAGE creating $DEST_IMAGE"
  fi
 done
