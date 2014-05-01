@@ -654,6 +654,16 @@ has been configured for you will also need to add a ProxyPassReverseCookiePath.
   ProxyPassReverseCookiePath / /nexus
 ----
 
+When your reverse proxy is configured to serve https but it proxies with plain 
+http to your Nexus instance, an additional header is required. This will ensure
+Nexus renders absolute URLs using the correct protocol. When setting this header,
+make sure that in <<fig-config-administration-application-server>> Force Base URL
+is not checked.
+
+----
+  RequestHeader set X-Forwarded-Proto "https"
+----
+
 Apache configuration is going to vary based on your own application's
 requirements and the way you intend to expose Nexus to the outside
 world. If you need more details about Apache HTTPd and mod_proxy,
