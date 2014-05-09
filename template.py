@@ -1,11 +1,18 @@
 import airspeed
 import glob
 import os
+import argparse
 
-t = airspeed.Template(open("site/book-template.html", "r").read())
+parser = argparse.ArgumentParser(description='Script to wrap produces html into template for site deploymenta')
+parser.add_argument('-p','--path',help='Path in which to do the replacement', required=True)
+args = parser.parse_args()
+path = args.path
+
 bookTitle = "Repository Management with Nexus"
 bookId = "ss-book-nxbook"
-path = 'target/site/reference'
+
+
+t = airspeed.Template(open("site/book-template.html", "r").read())
 for infile in glob.glob( os.path.join(path, '*.html') ):
   print "Reading File: " + infile
   body = open(infile, "r").read()
