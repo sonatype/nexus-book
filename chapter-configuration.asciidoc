@@ -618,9 +618,10 @@ Group Repositories selection list.
 
 The order of repositories or other groups in a group can be used to
 influence the effective metadata that will be retrieved by Maven from
-a Nexus Repository Group. We recommend placing release repositories
-higher in the list than snapshot repositories so that LATEST and
-RELEASE versions are merged appropriately.
+a Nexus Repository Group. We recommend placing hosted repositories
+higher in the list than proxy repositories within the list. For proxy
+repositories nexus needs to periodically check the remote for updates, 
+which will incur more overhead than a hosted repository lookup.
 
 We also recommend placing repositories with a higher probability of
 matching the majority of artifacts higher in this list. If most of
@@ -778,15 +779,9 @@ accessibility to the components under the specific pattern in a
 specified repository group.
 
 Ordered Route Repositories:: This is an ordered list of repositories
-which Nexus will search to locate a particular artifact. Nexus
-searches top to bottom; if it's looking for an artifact, it will
-return the first match. When Nexus is looking for metadata, all
-repositories in a group are checked and the results are merged. The
-merging is applied giving preference to the earlier repositories. This
-is relevant when a project is looking for a LATEST or a RELEASE
-version. Within a Nexus Group, you should define the release
-repositories before the snapshot repositories, otherwise LATEST may
-incorrectly resolve to a snapshot version.
+which Nexus will search to locate a particular artifact. Note that the 
+order here doesn't matter, the order searched is set by the order of the
+repositories in the group repository's configuration.
 
 In this figure you can see the two dummy routes that Nexus has
 configured as default routes. The first route is an inclusive route,
