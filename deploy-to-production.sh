@@ -18,6 +18,7 @@ function rsyncToProduction {
     target=$2
     options=$3
     echo "Uploading $1 to $2" 
+    ssh deployer@marketing01.int.sonatype.com mkdir -p /var/www/domains/sonatype.com/www/shared/books/nexus-book/$2
     rsync -e ssh $options -av target/$source/ deployer@marketing01.int.sonatype.com:/var/www/domains/sonatype.com/www/shared/books/nexus-book/$target
 }
 
@@ -26,14 +27,11 @@ if [ $publish_master == "true" ]; then
     rsyncToStage site/pdf/ pdf --delete
 fi
 
-# making directory for specific version
-ssh deployer@marketing01.int.sonatype.com mkdir -p /var/www/domains/sonatype.com/www/shared/books/nexus-book/$nexus_version
-
-rsyncToStage site/$nexus_version/reference/ $nexus_version/reference --delete
-rsyncToStage site/$nexus_version/pdf/ $nexus_version/pdf --delete
+rsyncToProduction site/$nexus_version/reference/ $nexus_version/reference --delete
+rsyncToProduction site/$nexus_version/pdf/ $nexus_version/pdf --delete
 
 # Important to use separate rsync run WITHOUT --delete since its an archive! and we do NOT want old archives to be deleted
-#rsyncToStage archive/ archive
+#rsyncToProduction archive/ archive
 
 
 
