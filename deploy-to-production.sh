@@ -26,6 +26,9 @@ if [ $publish_master == "true" ]; then
     rsyncToStage site/pdf/ pdf --delete
 fi
 
+# making directory for specific version
+ssh deployer@marketing01.int.sonatype.com mkdir -p /var/www/domains/sonatype.com/www/shared/books/nexus-book/$nexus_version
+
 rsyncToStage site/$nexus_version/reference/ $nexus_version/reference --delete
 rsyncToStage site/$nexus_version/pdf/ $nexus_version/pdf --delete
 
