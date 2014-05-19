@@ -17,7 +17,8 @@ function rsyncToStage {
     source=$1
     target=$2
     options=$3
-    echo "Uploading $1 to $2" 
+    echo "Uploading $1 to $2"
+    ssh deployer@marketing02.int.sonatype.com mkdir -pv /var/www/domains/sonatype.com/www/shared/books/nexus-book/$target
     rsync -e ssh $options -av target/$source/ deployer@marketing02.int.sonatype.com:/var/www/domains/sonatype.com/www/shared/books/nexus-book/$target
 }
 
