@@ -23,8 +23,8 @@ function rsyncToProduction {
 }
 
 if [ $publish_master == "true" ]; then
-    rsyncToStage site/reference/ reference --delete
-    rsyncToStage site/pdf/ pdf --delete
+    rsyncToProduction site/reference/ reference --delete
+    rsyncToProduction site/pdf/ pdf --delete
 fi
 
 rsyncToProduction site/$nexus_version/reference/ $nexus_version/reference --delete
