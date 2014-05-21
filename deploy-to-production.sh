@@ -15,11 +15,12 @@ echo "nexus_version set to $nexus_version"
 
 function rsyncToProduction {
     source=$1
-    target=$2
+    target=/var/www/domains/sonatype.com/www/shared/books/nexus-book/$2
     options=$3
-    echo "Uploading $1 to $2" 
-    ssh deployer@marketing01.int.sonatype.com mkdir -pv /var/www/domains/sonatype.com/www/shared/books/nexus-book/$target
-    rsync -e ssh $options -av target/$source/ deployer@marketing01.int.sonatype.com:/var/www/domains/sonatype.com/www/shared/books/nexus-book/$target
+    connection=deployer@marketing01.int.sonatype.com
+    echo "Uploading $1 to $2 on $connection"
+    ssh $connection mkdir -pv $target
+    rsync -e ssh $options -av target/$source/ $connection:$target
 }
 
 if [ $publish_master == "true" ]; then
