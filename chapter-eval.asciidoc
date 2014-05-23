@@ -280,9 +280,6 @@ The Nexus trial distribution contains the following customizations:
 * A Staging profile has been configured to demonstrate release
   management.
 
-* Procurement has been preconfigured so you can quickly define rules
-  for the OSS components.
-
 * Nexus proxies NuGet Gallery so that you can quickly evaluate support
   for .NET development.
 
@@ -796,69 +793,6 @@ OSS License compliance and security assessments are not something you
  your everyday development cycle. With Nexus Professional’s Repository
  Health Check, it is.
 ****
-
-[[eval-procurement]]
-=== Component Procurement
-
-Consider the default behavior of a proxy repository. Any developer
-can reference any component stored in a remote repository and cause
-Nexus to retrieve it from the remote repository. Any developer,
-anywhere in your organization, can add any dependency to your
-software. This is possible regardless of the license or security
-issues of that component or any of its dependencies, that are
-automatically added as well as - so called transitive dependencies..
-
-If you want control over the components used in a proxy repository,
-the Nexus Procurement feature was designed to give organizations a
-mechanism to limit the components that are served from Nexus to your
-users. This valuable governance tool can give you the certainty you
-need to deliver reliable software.
-
-*In this example, you will...*
-
-* Configure access rules for components that can be referenced in
-  this Procured version
-
-*Let's get started*
-
-. Your evaluation instance of Nexus has been preconfigured with the
-  following steps
-
-.. A hosted repository named 'Procured Central' has been created
-
-.. Artifact Procurement was enabled with the 'Central' proxy
-   repository as the source for the procuring into the newly created
-   'Procured Central' repository
-
-. Click on 'Artifact Procurement' in the 'Enterprise' menu in the left
-hand navigation of the Nexus user interface
-
-. Select 'Procured Central' from the list 
-
-. Define rules for procurement by right clicking on the desired
-sections of the repository structure  including disallowing some
-components  ->
-http://www.sonatype.com/books/nexus-book/reference/procure-sect-config-rule.html[Read
-more...]
-
-. Modify your settings.xml to use the 'Repository Path' of the
-procured repository in the url section of the mirror element
-
-. Try building a Maven project that references one of the disallowed
-components, after deleting the local Maven repository.
-
-. Observe how the procurement rule prevents the build from succeeding,
-because retrieval of a component is blocked by procurement.
-
-.Conclusion
-**** 
-Procurement is a useful tool, if you are operating in an environment
- that needs to qualify every single component before it can be used in
- development or for QA or release builds. Using Procurement you can
- create explicit white and blacklists of acceptable components and
- prevent the inclusion of other components.
-****
-
 == Process Improvements
 
 === Grouping Repositories
@@ -893,9 +827,8 @@ point.
 
 Besides using the default public group, you can create additional
 groups that expose other contexts. An example would be to create a
-group for all approved components including release, snapshots and
-approved components provisioned via procurement as detailed in
-<<eval-procurement>>.
+group for all staged releases allowing a limited number of users
+access to your release artifacts as part of the release process.
 
 
 .Conclusion
