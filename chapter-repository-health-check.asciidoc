@@ -26,15 +26,24 @@ release policy configured.
 
 ==== Configuration Per Repository
 
-Repository health check for a repository can be enabled by selecting
-the repository in the list of repositories and setting the 'Enabled'
-configuration in the 'Health Check' tab to 'true' as displayed in
-<<fig-rhc-enabled>>. Administrator privileges are required to
-perform this configuration.
+Repository health check can be setup for any repository, as long as it is...
+
+* The Repository 'Type' is 'Proxy'
+* The Repository 'Policy' is 'Release'
+
+For a single repository can be enabled in one of two ways. The quickest way is to simply click the  'Analyze' button'. Alternatively, you can 
+select the repository in the list of repositories and then set the
+'Enabled' configuration in the 'Health Check' tab to 'true' as displayed in
+<<fig-rhc-enabled>>. Administrator privileges are required to perform this
+configuration.
 
 [[fig-rhc-enabled]]
 .Enabling Repository Health Check
-image::figs/web/rhc-enabled.png[scale=50]
+image::figs/web/rhc-enable-analyze.png[scale=50]
+
+NOTE: After enabling Repository Health Check for the first time you will be
+presented with an acceptance of the Terms of Server, as well as an option to
+analyze all compatible repositories, or just the currently selected one.
 
 Once enabled, a scheduled task, that performs the initial analysis,
 is created and started. This task uses the identifier of the
@@ -78,7 +87,10 @@ disable it with the 'Enabled' checkbox and set up health check for all proxy
 repositories by enabling 'Configure for all proxy repositories'. With
 this configuration health check will be enabled for all existing proxy
 repositories. Any newly created proxy repository will automatically
-have health check enabled as well. 
+have health check enabled as well.
+
+NOTE: If disabling this global analysis, be sure to refresh nexus prior to
+adding additional repositories.
 
 === Accessing the Detailed Repository Health Check Report
 
