@@ -19,10 +19,10 @@ third-party libraries will need to be funnelled through an oversight
 process that relies on an architect or an administrator to promote
 components to a certified release repository.
 
-Another, more common experience is an organization which needs to
-proxy something like the Central Repository, but wants to limit
+Another more common experience is an organization that needs to
+proxy like the Central Repository or any other public repository, but wants to limit
 access to specific versions of components or prevent dependencies on
-everything contained under a specific group. Some organizations are
+all components contained under a specific group. Some organizations are
 more amenable to trusting the contents of a remote, proxied repository
 like the Central Repository, but they also need the ability to block certain
 dependencies.  Maybe you work on a team that needs to limit access to
@@ -34,8 +34,8 @@ fine-grained control of the artifacts that can appear in a repository.
 [[procure-sect-stages]] 
 === The Stages of Procurement
 
-A procured repository is a hosted Repository which procures components
-from a Proxy Repository, while procurement is enabled. For example,
+A procured repository is a hosted Repository that procures components
+from a Proxy Repository while procurement is enabled. For example,
 one could create a hosted repository named "Approved From Central" and then
 configure this hosted repository to procure components from the
 "Central" repository. Once the hosted repository has been created and
@@ -46,13 +46,13 @@ hosted repository will fetch artifacts from the proxy repository
 specified in the procurement settings. If you stop procurement for a
 hosted repository, no additional components will be retrieved from the
 proxy repository specified in the procurement settings. Without
-procurement active it is a plain, static hosted repository.
+procurement active it is a hosted repository and therefore completely static.
 
 The ability to enable or disable procurement for a hosted repository
 comes in very handy when you want to "certify" a hosted repository as
 containing all of the components (no more and no less) required for a
-production build. You can start procurement, run a build which
-triggers artifact procurement, and then stop procurement knowing that
+production build. You can start procurement, run a build that
+triggers artifact procurement, and then stop procurement, knowing that
 the procured repository now contains all of the components required
 for building a specific project. Stopping procurement assures you that
 the contents of the repository will not change if the third-party,
@@ -86,7 +86,7 @@ proxied Nexus repository. When a QA or Release engineer needs to build
 a release or staging artifact, the Release or QA build would be
 configured to execute against a procured repository or repository
 group with only approved and procured repositories. A procured
-repository is one which only serves the components which have been
+repository is one that only serves the components that have been
 explicitly approved using the Procurement Suite.
 
 .Procurement to a Certified Release Repository
@@ -106,13 +106,13 @@ components that are involved in a production release.
 [[procure-sect-dev]]
 ==== Procured Development Repository
 
-There are some development environments, which require even more
+There are some development environments that require even more
 control over which components can be used and referenced by
 developers. In these situations, it might make sense to only allow
 developers to work with a procured repository. In this mode, a
 developer must ask a Nexus administrator for permission to add a
 dependency on a particular third-party artifact. A procurement manager
-would then have to approve the component, or group of components so
+would then have to approve the component or group of components so
 that they would be made available to the developers. This is the
 "ask-first" model for organizations that want to control which
 components make it into the development cycle.
@@ -130,26 +130,28 @@ what components can be referenced by a large development team.
 ==== Providing Access with a Repository Group
 
 In a typical usage a software build relies on approved components that
-have successfully passed procurement and as well as additional
-components that have been authored internally in the organization and
+have successfully passed procurement and additional components that have 
+been authored internally in the organization and
 are available on Nexus as well. 
 
 In order to use a combination of such components together with the
 procured component, you should set up a a repository group that
-contains all repositories with pre-approved components as well as the
-procurement repository. E.g. the release and snapshot repositories
+contains all repositories with preapproved components as well as the
+procurement repository. For example, the release and snapshot repositories
 could be added to the group, based on the assumption that any
 internally authored components deployed there are automatically
-approved. In addition you could add the third-party repository, if all
+approved. In addition, you could add the third-party repository, if all
 uploads to it are done with prior approval of the specific components.
 
 Once this repository group is set up, you can reference it from any
-tool just like the public group e.g., in a separate settings.xml used by
+tool just like the public group, e.g., in a separate settings.xml used by
 builds that can only have access to the approved components.
 
-TIP: Ensure to run clean builds without any components in the local
-repository of the build to ensure that only approved components are
-used in the build.
+TIP: When running builds you need to make sure that you run to run clean builds.
+No components from other builds, accessing non-procured repositories, should be 
+in the local repository of the build. This ensures that only approved components are
+used in the build. The easiest way to achieve this is to clear the local repository 
+before a build or to run the build against a project specific local repository.
 
 [[procure-sect-configure]]
 === Setting up a Procured Repository
@@ -163,20 +165,21 @@ a hosted repository named 'Approved From Central' which will be procured
 from the 'Central' proxy repository. Setting up a procured
 repository consists of the following steps:
 
-* Enabling Remote Index Downloads for a Proxy Repository
+* Enable the remote index downloads for the proxy repository, that 
+will act as the source of the procured components.
 
-* Creating a Hosted Repository to be Procured
+* Create a hosted repository, which will be the target of the procurement.
 
-* Configuring Procurement for the Hosted Repository
+* Configure procurement for the hosted repository.
 
-* Configuring Procurement Rules
+* Configure the procurement rules.
 
 Before configuring a procured repository, you need to make sure that
 you have enabled Remote Index downloading for the proxied repository
 that will serve as the source for your procured repository.
 
 NOTE: If you are attempting to procure components from a remote
-repository which does not have a repository index, you can still use
+repository that does not have a repository index, you can still use
 the procurement suite. Without a remote repository index, you will
 need to configure procurement rules manually without the benefit of
 the already populated repository tree shown in <<procure-sect-config-rule>>.
@@ -203,11 +206,11 @@ switch this option to 'True' as shown in
 .Enabling Remote Index Downloads for a Proxy Repository
 image::figs/web/procure_central-download-remote-index.png[scale=60]
 
-Click on the Save button in the dialog shown in
+Click on the 'Save' button in the dialog shown in
 <<fig-procure-enabling-remote>>. Right-click on the repository row in
-the Repositories list and select "Update Index". Nexus will then
+the Repositories list and select 'Update Index'. Nexus will then
 download the remote repository index and recreate the index for any
-Repository Groups that contain this proxied repository.
+repository groups that contain this proxied repository.
 
 Nexus may take a few minutes to download the remote index for a large
 repository. Depending on your connection to the Internet, this process
@@ -215,11 +218,11 @@ can take anywhere from under a minute to a few minutes. The size of
 the remote index for the Central Repository currently exceeds 50MB and
 is growing in parallel to the size of the repository itself.
 
-To check on the status of the remote index download, click on System
-Feeds under Views in the Nexus menu. Click on the last feed to see a
-list of "System Changes in Nexus". If you see a log entry like the one
-highlighted in <<fig-procure-system-feed>>, Nexus has successfully
-downloaded the Remote Index from Maven Central.
+To check on the status of the remote index download, click on 'System
+Feeds' under 'Views/Repositories' in the 'Nexus' menu. Click on the last 
+feed to see a list of 'System Changes in Nexus'. If you see a log entry 
+like the one highlighted in <<fig-procure-system-feed>>, Nexus has successfully
+completd the download of the remote index from the Central Repository.
 
 [[fig-procure-system-feed]]
 .Verification that the Remote Index has been Downloaded
@@ -233,32 +236,32 @@ between a proxy repository and a hosted repository. The hosted
 repository will be the static container for the components, while the
 proxy repository acts as the component source. To create a hosted
 repository, select 'Repositories' from the 'Views/Repositories' section of
-the Nexus menu, and click on the +Add+ button selecting 'Hosted
+the 'Nexus' menu, and click on the 'Add' button selecting 'Hosted
 Repository' as shown in <<fig-procure-add-hosted>>.
 
 [[fig-procure-add-hosted]]
 .Adding the "Approved From Central" Hosted Repository
 image::figs/web/procure_add-hosted.png[scale=50]
 
-Selecting Hosted Repository will then load the Configuration
-form. Create a repository with a Repository ID of
-"approved-from-central" and a name of "Approved From Central". Make
-the release policy "Release". Click the Save button to create the new
-Hosted Repository.
+Selecting 'Hosted Repository' will then load the configuration
+form. Create a repository with a 'Repository ID' of
++approved-from-central+ and a name of +Approved From Central+. Make
+the release policy +Release+. Click the 'Save' button to create the new
+hosted repository.
 
 [[procure-sect-config-procure-hosted]]
 ==== Configuring Procurement for Hosted Repository
 
 At this point, the list of Repositories will have a new Hosted
-repository named "Approved From Central". The next step is to start procurement for
+repository named +Approved From Central=. The next step is to start procurement for
 the new repository. When you do this, you are establishing a
 relationship between the new hosted repository and another repository
-as source of compnents. Typically this source is a proxy repository.
+as source of components. Typically, this source is a proxy repository.
 In this case, we're configuring procurement for the repository
 and we're telling the Procurement Suite to procure artifacts from the
 'Central' proxy repository. To configure this relationship and to
-start procurement, click on Artifact Procurement under the Enterprise
-menu. In the Procurement panel, click on +Add Procured Repository+ as
+start procurement, click on 'Artifact Procurement' under the 'Enterprise'
+menu. In the 'Procurement' panel, click on 'Add Procured Repository' as
 shown in <<fig-procure-starting-procurement>>.
 
 [[fig-procure-starting-procurement]]
@@ -274,18 +277,18 @@ repositories.
 .Configuring Procurement for a Hosted Repository
 image::figs/web/procure_configure-procurement-confirm.png[scale=50] 
 
-Procurement is now configured and started, if you are using an
+Procurement is now configured and started. If you are using an
 instance of Nexus installed on localhost port 8081, you can configure
 your clients to reference the new repository at
-http://localhost:8081/nexus/content/repositories/approved-from-central
++http://localhost:8081/nexus/content/repositories/approved-from-central+.
 
 By default, all artifacts are denied and without further customization
 of the procurement rules no components will be available in the new
 repository.
 
 One interesting thing to note about the procured repository is that
-the repository type changed, once procurement was started. When
-procurement is activate for a hosted repository, the repository will
+the repository type changed once procurement was started. When
+procurement is activated for a hosted repository, the repository will
 not show up in the repositories list as a 'User Managed
 Repository'. Instead it will show up as a proxy repository in the list
 of 'Nexus Managed Repositories'. Use the drop-down for 'User
@@ -294,7 +297,7 @@ Refresh in the Repositories list, and look at the 'Approved From
 Central' repository in the list of Nexus Managed Repositories.  You
 will see that the repository type column contains +proxy+ as shown in
 <<fig-procure-hosted-now-proxy>>.  When procurement is started for a
-hosted repository it is effectively a proxy repository, and when it is
+hosted repository, it is effectively a proxy repository, and when it is
 stopped it will revert back to being a normal hosted repository.
 
 [[fig-procure-hosted-now-proxy]]
@@ -307,10 +310,10 @@ image::figs/web/procure_started-now-proxy.png[scale=50]
 
 Once you've defined the relationship between a hosted repository and a
 proxy repository and you have started procurement, you can start
-defining the rules which will control which components are allowed in a
+defining the rules that will control which components are allowed in a
 procured repository and which components are denied. You can also start
 and stop procurement. This section details some of the administration
-panels and features which are available for a procured repository.
+panels and features that are available for a procured repository.
 
 A procurement rule is a rule to allow or deny the procurement of a
 group, artifact, or a collection of groups or artifacts. You load the
@@ -322,13 +325,13 @@ content of the procured repository in a tree as shown in
 <<fig-procure-repository-view>>.
 
 This section will illustrate the steps required for blocking access to
-an specific component and then selectively allowing access to a
-particular version of that same component. This is a common use-case in
-organizations which want to standardize on specific versions of a
+a specific component and then selectively allowing access to a
+particular version of that same component. This is a common use case in
+organizations that want to standardize specific versions of a
 particular dependency.
 
 NOTE: If you are attempting to procure components from a remote
-repository which does not have a repository index, you can still use
+repository that does not have a repository index, you can still use
 the procurement suite. Without a remote repository index, you will
 need to configure procurement rules manually without the benefit of
 the already populated repository tree shown in this section.
@@ -352,7 +355,7 @@ right-clicking on the +org/eclipse/aether+ component folder.
 image::figs/web/procure-aether.png[scale=60]
 
 In this dialog, we are deciding to configure a rule for everything
-within the group and its sub-groups, which will bring up the rule
+within the group and its sub groups that display the rule
 configuration dialog displayed in <<fig-procure-aether-add-rule>>.
 The dialog to add rules allows you to select the available rule,
 e.g., a Forced Approve/Deny Rule, and configure the rule
@@ -363,8 +366,8 @@ Aether components.
 .Approving +org.eclipse.aether+ Components 
 image::figs/web/procure-aether-add-rule.png[scale=60]
 
-By right-clicking on the top level folder of the repository as
-displayed in <<fig-procure-global-rules>> you can configure rules for
+By right-clicking on the top level folder of the repository, as
+displayed in <<fig-procure-global-rules>>, you can configure rules for
 the complete repository as well as access all configured rules via the
 'Applied Rules' option.
 
@@ -372,7 +375,7 @@ the complete repository as well as access all configured rules via the
 .Accessing the Global Repository Configuration
 image::figs/web/procure-global-rules.png[scale=60]
 
-This allows you to setup a global rule like blocking all components
+This allows you to set up a global rule, like blocking all components
 from the repository. Once you have configured this you can then
 selectively allow specific versions of a
 component. <<fig-procure-collections-version>> displays the options
@@ -383,7 +386,7 @@ the Apache Commons Collections component.
 .Procurement Configurations Options for a Specific Component Version
 image::figs/web/procure-collections-version.png[scale=60]
 
-Once you approve a specific version the tree view will change the
+Once you approve a specific version, the tree view will change the
 icons for the component displaying green checkmarks for approved
 components and red cross lines for denied components as visible in
 <<fig-procure-status-tree>>. The icons are updated for signature
@@ -410,13 +413,13 @@ allows you to remove specific rules or all rules as well.
 image::figs/web/procure-applied-rules.png[scale=60]
 
 The 'Refresh' button above the tree view of a repository tree view
-allows you to update the tree view and the visualization of all
-applied rules. The 'Add Freeform Rule' button allows you to bring up
+allows you to update the tree view and to see all of the
+applied rules. The 'Add Freeform Rule' button allows you to display
 the dialog to manually configure a procurement rule displayed in
 <<fig-procure-freeform-rule>>. This is especially useful if the tree
 view is not complete due to a missing repository index or if you have
-detailed knowledge of the component you want to apply a rule to. 
-The format for entering the a specific component to be in the 'Enter
+detailed knowledge of the component to which you want to apply a rule. 
+The format for entering a specific component in the 'Enter
 GAV' input field is the short form for a Maven component coordinate
 using the groupId, artifactId and version separated by ':'. The '*'
 character can be used as a wildcard for a complete coordinate.
@@ -425,23 +428,21 @@ character can be used as a wildcard for a complete coordinate.
 .Adding a Freeform Rule
 image::figs/web/procure-freeform-rule.png[scale=60]
 
-Examples for a freeform rule coordinates are: 
+Examples for freeform rule coordinates are: 
 
-'*:*:*' matches any component in the complete repository
 
-'org.apache.ant:*:*':: matches any component with the groupId
-org.apache.ant located in org/apache/ant
+`*:*:*`::  matches any component in the complete repository
 
-'org.apache.ant:*:*':: matches any component with the groupId
-org.apache.ant located in org/apache/ant
+`org.apache.ant:*:*`:: matches any component with the groupId
++org.apache.ant+ located in +org/apache/ant+
 
-'org.apache.ant.*:*:*':: matches any component with the groupId
-org.apache.ant located in org/apache/ant as well as any sub-groups
+`org.apache.ant.*:*:*`:: matches any component with the groupId +org.apache.ant+
+ located in +org/apache/ant+ as well as any sub-groups
 e.g., +org.apache.ant.ant+
 
-These coordinates are displayed as part of a Maven built when
-retrieving a component fails as part of the error message with the
-addition of the packaging type. It is therefore possible to cut and
+These coordinates are displayed in the Maven build output log when
+retrieving a component fails. You can see them as part of the error message 
+with the addition of the packaging type. It is therefore possible to cut and
 paste the respective coordinates from the build output and insert
 them into a freeform rule. Once you have done that you can kick off
 the build again, potentially forcing downloads with the option +-U+
@@ -451,36 +452,36 @@ and continue procurement configuration for further components.
 [[procure-sect-stopping]]
 === Stopping Procurement
 
-Some organizations may want to "lock down" the components that a
-release build can depend upon, and it is also a good idea to make sure
+Some organizations may want to lock down the components that a
+release build can depend upon. It is also a good idea to make sure
 that your build isn't going to be affected by changes to a repository
 not under you control. A procurement administrator can configure a
 procured repository, start procurement, and run an enterprise build
 against the repository to populate the procured, hosted repository
 with all of the necessary components. After this process, the
 procurement administrator can stop procurement and continue to run the
-same release build against the hosted repository which now contains
-all of the procured components, while being a completely static
+same release build against the hosted repository that now contains
+all of the procured components while being a completely static
 repository.
 
-To stop procurement, go to the Artifact Procurement management
-interface by clicking on Artifact Procurement under the Enterprise
-section of the Nexus menu. right-click on the repository and choose
-Stop Procurement as shown in <<fig-procure-stopping>>.
+To stop procurement, go to the procurement management
+interface by clicking on 'Artifact Procurement' under the 'Enterprise'
+section of the 'Nexus' menu. Right-click on the repository and choose
+'Stop Procurement' as shown in <<fig-procure-stopping>>.
 
 [[fig-procure-stopping]]
 .Stopping Procurement for a Procured Repository
 image::figs/web/procure_stop-procurement.png[scale=60]
 
-After choosing Stop Procurement, you will then see a dialog confirming
+After choosing 'Stop Procurement', you will then see a dialog confirming
 your decision to stop procurement. Once procurement is stopped, the
-Secure repository will revert back to being a plain-old Hosted
-Repository.
+procured  repository will revert back to being a hosted
+repository.
 
-In order to add further components you create a procurement repository
+In order to add further components, you create a procurement repository
 off the hosted repository as you did initially. If the repository
 contains components already, activating procurement will automatically
-generate rules that allows all components already within the
+generate rules that allow all components already within the
 repository.
 
 ////
