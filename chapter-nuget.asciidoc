@@ -1,9 +1,9 @@
 [[nuget]]
-== .NET Package Repositories
+== .NET Package Repositories with NuGet
 
 === Introduction
 
-With the recent creation of the http://nuget.org/[NuGet] project a
+With the creation of the http://nuget.org/[NuGet] project a
 package management solution for .NET developers has become
 available. Similar to Maven dependency management for Java developers,
 NuGet makes it easy to add, remove and update libraries and tools in
@@ -18,12 +18,12 @@ and tools is available and the need for repository management arises.
 
 Nexus supports the NuGet repository format for hosted and proxy
 repositories. Nexus also supports aggregation of NuGet repositories
-and conversion of other repositories containing ".nupkg" artifacts
+and conversion of other repositories containing +.nupkg+ components
 to the NuGet format. This allows you to improve collaboration and
-control while speeding up .NET development facilitating open source
-libraries and sharing of internal artifacts across teams. When you
+control, while speeding up .NET development, facilitating open source
+libraries and sharing of internal component across teams. When you
 standardize on a single repository for all your development and use it
-for internal artifacts as well you will get all the benefits of Nexus
+for internal components as well you will get all the benefits of Nexus
 when working in the .NET architecture.
 
 To share a library or tool with NuGet you create a NuGet package and
@@ -38,58 +38,70 @@ solution. NuGet copies everything and makes any required changes to
 your project setup and configuration files. Removing a package will
 clean up any changes as required.
 
+IMPORTANT: With the release of Nexus 2.9, NuGet support is available
+in Nexus Professional and Nexus Open Source.
+
 [[nuget-nuget_proxy_repositories]]
 === NuGet Proxy Repositories
 
-To proxy an external NuGet repository you simply create a new Proxy
-Repository as documented in <<confignx-sect-manage-repo>>. The
-Provider has to be set to NuGet. The Remote Storage Location has to be
-set to the source URL of the repository you want to proxy.
+The NuGet Gallery is the central repository used by all package authors
+and consumers. To reduce duplicate downloads and improve download
+speeds for your developers and CI severs, you should proxy the NuGet
+Gallery with Nexus. If you use other external repositories, you should
+also proxy these. 
 
-A complete configuration for proxying nuget.org is visible in
-<<fig-nuget-proxy-org>>.
-
-[[fig-nuget-proxy-org]]
-.NuGet Proxy Repository Configuration for nuget.org
-image::figs/web/nuget-proxy-org.png[scale=60]
-
-The source URL for the main NuGet.org repository is
+To proxy an external NuGet repository you simply create a new 'Proxy
+Repository' as documented in <<confignx-sect-manage-repo>>. The
+'Provider' has to be set to +NuGet+. The 'Remote Storage Location' has
+to be set to the URL of the remote repository you want to proxy. The
+URL for the main NuGet Gallery repository is 
 
 ----
 https://www.nuget.org/api/v2/
 ----
 
+A complete configuration for proxying the NuGet Gallery is visible in
+<<fig-nuget-proxy-org>>.
+
+[[fig-nuget-proxy-org]]
+.NuGet Proxy Repository Configuration for the NuGet Gallery
+image::figs/web/nuget-proxy-org.png[scale=50]
+
 The repository configuration for a NuGet proxy repository has an
-additional tab titled NuGet as visible in
-<<fig-nuget-gallery-package-source>>, which displays the Nexus URL at
-which the repository is available as a NuGet repository.
+additional tab titled 'NuGet' as visible in
+<<fig-nuget-gallery-package-source>>. It displays the 'Package Source'
+URL that is URL where the repository is available as a NuGet repository.
 
 [[fig-nuget-gallery-package-source]]
 .NuGet Gallery with Package Source URL
-image::figs/web/nuget-gallery-package-source.png[scale=60]
+image::figs/web/nuget-gallery-package-source.png[scale=50]
 
+By default searches in NuGet repositories in Nexus will be passed
+through to the remote repositories and the search results are merged
+with internal search results and included in an internally managed
+index. This merging has to make some assumptions to generate component
+counts.
 
-When creating a NuGet proxy repository a Scheduled Task is
-automatically created to download the index data about the content of
-the remote NuGet repository. This task is available in the Scheduled
-Tasks administration section and by default created for a daily
-schedule. To modify the task access it via the Administration panel in
-the left-hand navigation area and the Scheduled Tasks menu item. The
-task will be using the name of the proxy repository with (NuGet Feed)
-appended. A user interface as displayed in
-<<fig-nuget-scheduled-task>> will allow you to adjust the task as
-desired.
+The accuracy of searches for components available in a remote
+repository can benefit from an index download. In most use cases this
+will not be necessary. If you need a completely accurate view of
+available components and counts, you can create a scheduled tasks to
+download the remote index. Create a new task with the task type
+'Download NuGet Feed' in the 'Scheduled Tasks' administration section.
 
-[[fig-nuget-scheduled-task]]
-.NuGet Proxy Repository Scheduled Task
-image::figs/web/nuget-scheduled-task.png[scale=60]
-
-The default task incrementally downloads information about the latest
+By default the task incrementally downloads information about the latest
 version of published packages. If you want details about all versions
-you can select the Fetch All Versions checkbox, save the updated
-configuration and manually trigger the Scheduled Task.
+you can select the 'Fetch all versions?' checkbox. 
+ 
+The NuGet Gallery is, at this stage, over 1GB large and downloading
+the feed will therefore take a little while. In addition the index
+will be rather large and having the complete index in your Nexus NuGet
+database, negatively impacts search performance. 
 
-Deleting the proxy repository will remove the scheduled task.
+WARNING: Prior to Nexus 2.9 the scheduled task to download the feed
+was created automatically, since it was required then. This is no
+longer necessay and most users should remove the task and carefully
+consider the implications of running the task.
 
 [[nuget-nuget_hosted_repositories]]
 === NuGet Hosted Repositories
@@ -98,37 +110,38 @@ A hosted repository for NuGet can be used to upload your own
 packages as well as third party packages. It is good practice to
 create two separate hosted repositories for these purposes.
 
-To create a NuGet hosted repository simply create a new Hosted
-Repository and set the Provider to NuGet. A sample configuration for an
+To create a NuGet hosted repository simply create a new 'Hosted
+Repository' and set the 'Provider' to +NuGet+. A sample configuration for an
 internal releases NuGet hosted repository is displayed in
 <<fig-nuget-hosted-releases-configuration>>.
 
 [[fig-nuget-hosted-releases-configuration]]
 .Example Configuration for a NuGet Hosted Repository for Release Packages
-image::figs/web/nuget-hosted-releases-configuration.png[scale=60]
+image::figs/web/nuget-hosted-releases-configuration.png[scale=50]
 
-Besides the NuGet tab the configuration for the repository has
-a NuPkg Upload tab as displayed in <<fig-nuget-hosted-nupkg-upload>>,
+Besides the 'NuGet' tab the configuration for the repository has
+a 'NuPkg Upload' tab as displayed in <<fig-nuget-hosted-nupkg-upload>>,
 that allows you to manually upload one or multiple packages.
 
 [[fig-nuget-hosted-nupkg-upload]]
 .The NuPkg Upload Panel for a Hosted NuGet Repository
-image::figs/web/nuget-hosted-nupkg-upload.png[scale=60]
+image::figs/web/nuget-hosted-nupkg-upload.png[scale=40]
 
 The NuGet feed is immediately updated as packages are deployed or
 deleted from the host repository. If for some reason you ever need to
 rebuild the feed for a hosted NuGet repository you can manually
-schedule a Rebuild NuGet Feed task.
+schedule a 'Rebuild NuGet Feed'  task.
 
 === NuGet Virtual Repositories
 
-If you have deployed NuGet packages to a Maven repository in the past
-you can expose them to Visual Studio by creating a Virtual repository
-and setting the Format to NuGet Shadow Repository. The setup displayed
-in <<fig-nuget-virtual-releases>> shows a virtual repository set up to
-expose the content of the regular Maven Releases repository in the
-form of a NuGet repository, so that NuGet can access any NuGet
-packages deployed to the releases repository.
+If you have deployed NuGet packages to a Maven repository in the past,
+you can expose them to Visual Studio by creating a virtual repository
+as documented in <<confignx-sect-manage-repo>> and setting the
+'Format' to 'NuGet Shadow Repository'. The setup displayed in
+<<fig-nuget-virtual-releases>> shows a virtual repository configured
+to expose the content of the regular Maven 'Releases' repository as a
+a NuGet repository, so that NuGet can access any NuGet packages
+deployed to the releases repository.
 
 [[fig-nuget-virtual-releases]]
 .A Virtual NuGet Repository for the Releases Repository
@@ -137,47 +150,52 @@ image::figs/web/nuget-virtual-releases.png[scale=60]
 The NuGet feed is immediately updated as packages are deployed or
 deleted from the shadowed repository. If for some reason you ever need
 to rebuild the feed for a virtual NuGet repository, you can manually
-schedule a Synchronize Shadow Repository task.
+schedule a 'Synchronize Shadow Repository' task.
 
 [[nuget-nuget_group_repositories]]
 === NuGet Group Repositories
 
-A repository group allows you to expose the aggregated content of
-multiple proxy and hosted repositories with one URL to your
-tools. This is possible for NuGet repositories by creating a new
-Repository Group with the Format set to NuGet.
+A repository group is the recommended way to expose all your NuGet
+repositories from Nexus to your users, without needing any further
+client side configuration. A repository group allows you to expose the
+aggregated content of multiple proxy and hosted repositories with one
+URL to your tools. This is possible for NuGet repositories by creating
+a new 'Repository Group' with the 'Format' set to +NuGet+.
 
 A typical useful example would be to group the proxy repository that
-proxies nuget.org, an internal releases NuGet hosted repository and a
-third party Nuget hosted repository. The configuration for such a
-setup is displayed in <<fig-nuget-group>>.
+proxies the NuGet Gallery, an NuGet hosted repository with internal
+software packages and another Nuget hosted repository with third party
+packages.. The configuration for such a setup is displayed in
+<<fig-nuget-group>>.
 
 [[fig-nuget-group]]
 .A Public Nuget Group Combining a Proxy and Two Hosted Repositories
-image::figs/web/nuget-group.png[scale=60]
+image::figs/web/nuget-group.png[scale=50]
 
-Using the Repository Path of the repository group as your NuGet
+Using the 'Repository Path' of the repository group as your NuGet
 repository URL in your client tool will give you access to the
-packages in all three repositories with one URL.
+packages in all three repositories with one URL. Any new packages
+added as well as any new repositories added to the group will
+automatically be available.
 
 [[nuget-accessing_packages_in_repositories_and_groups]]
 === Accessing Packages in Repositories and Groups
 
 Once you have set up you hosted and proxy repositories for NuGet
-packages and potentially created a group you can access them with the
-nuget tool on the command line. Copy the Package Source url from the
-NuGet tab of the repository/group configuration you want to access and
-add it to nuget on the command line with e.g.:
+packages, and potentially created a repository group, you can access
+them with the +nuget+ tool on the command line. Copy the 'Package Source'
+url from the 'NuGet' tab of the repository/group configuration you want
+to access and add it to nuget on the command line with e.g.:
 
 ----
 nuget sources add -name NuGetNexus -source http://localhost:8081/nexus/service/local/nuget/nuget-public
 ----
 
-Replace localhost with the public hostname or url of your Nexus server
-and nuget-public with the name of the repository you want to
+Replace +localhost+ with the public hostname or URL of your Nexus server
+and +nuget-public+ with the name of the repository you want to
 proxy. Ideally this will be your NuGet group.
 
-After this source was added you can list the available packages with 
+After this source was added, you can list the available packages with 
 ----
 nuget list
 ----
@@ -185,7 +203,7 @@ nuget list
 [[nuget-deploying_packages_to_nuget_hosted_repositories]]
 === Deploying Packages to NuGet Hosted Repositories
 
-In order to authenticate a client against a NuGet repository NuGet uses
+In order to authenticate a client against a NuGet repository, NuGet uses
 an API key for deployment requests. These keys are generated separately
 on-request from a user account on the NuGet gallery and can be
 re-generated at any time. At regeneration all previous keys generated
@@ -193,51 +211,52 @@ for that user are invalid.
 
 ==== Creating a NuGet API-Key
 
-For usage with Nexus, API keys are only needed when packages are going
-to be deployed. Therefore API key generation is by default not exposed
-in the user interface to normal users. Only users with the Deployer
-role have access to the API keys.
+For usage with Nexus, NuGet API keys are only needed when packages are
+going to be deployed. Therefore API key generation is by default not
+exposed in the user interface to normal users. Only users with the
+'Deployer' role have access to the API keys.
 
 Other users that should be able to access and create an API key have
-to be given the Nexus API-Key Access role in the Users Security
-administration user interface.
+to be given the 'Nexus API-Key Access' role in the 'Users' security
+administration.
 
-In addition the NuGet API-Key Realm has to be activated. To do this,
-simply add the realm to the selected realms in the Security Settings
-section of the Server Administration.
+In addition the 'NuGet API-Key Realm' has to be activated. To do this,
+simply add the realm to the selected realms in the 'Security Settings'
+section of the 'Server' configuration available in the
+'Administration' sub menu of the left hand navigation 'Nexus' panel.
 
 Once this is set up you can view, as well as reset, the current
-Personal API Key in the NuGet tab of any NuGet proxy or hosted
+'Personal API Key' in the 'NuGet' tab of any NuGet proxy or hosted
 repository as visible in <<fig-nuget-api-key>>
 
 [[fig-nuget-api-key]] 
 .Viewing and Resetting the NuGet API Key in the NuGet Configuration Tab
-image::figs/web/nuget-api-key.png[scale=60]
+image::figs/web/nuget-api-key.png[scale=50]
 
 ==== Creating a Package for Deployment
 
-Creating a package for deployment can be done with the pack command of
-the nuget command line tool or within Visual Studio. Detailed
+Creating a package for deployment can be done with the +pack+ command of
+the +nuget+ command line tool or within Visual Studio. Detailed
 documentation can be found on the http://docs.nuget.org/[NuGet
 website].
 
 ==== Deployment with the NuPkg Upload User Interface
 
-Manual upload of one or multiple packages is done on the NuPkg Upload
+Manual upload of one or multiple packages is done on the 'NuPkg Upload'
 tab of the repository displayed in
-<<fig-nuget-hosted-nupkg-upload>>. Press the Browse button to access
-the package you want to upload on the file system and press Add
-Package. Repeat this process for all the packages you want upload and
-press Upload Package(s) to complete the upload.
+<<fig-nuget-hosted-nupkg-upload>>. Press the 'Browse' button to access
+the package you want to upload on the file system and press 'Add
+Package'. Repeat this process for all  packages you want upload and
+press 'Upload Package(s)' to complete the upload.
 
 ==== Command line based Deployment to a Nexus NuGet Hosted Repository
 
-The nuget command line tool allows you to deploy packages to a
-repository with the push command. The command requires you to use the
-API Key and the Package Source path. Both of them are available in the
-NuGet tab of the hosted NuGet repository you want to deploy to. Using
-the delete command of nuget allows you to remove packages in a similar
-fashion.
+Alternatively to manual uploads the +nuget+ command line tool allows
+you to deploy packages to a repository with the +push+ command. The
+command requires you to use the 'API Key' and the 'Package Source'
+path. Both of them are available in the NuGet tab of the hosted NuGet
+repository you want to deploy to. Using the +delete+ command of nuget
+allows you to remove packages in a similar fashion.
 
 
 Further information about the command line tool is available in the
@@ -248,9 +267,9 @@ help].
 === Integration of Nexus NuGet Repositories in Visual Studio
 
 In order to access a Nexus NuGet repository or preferable all Nexus
-NuGet repositories exposed in a group you provide the Repository Path
-in the Visual Studio configuration for the Package Sources of the
-Package Manager as displayed in
+NuGet repositories exposed in a group, you provide the 'Repository Path'
+in the Visual Studio configuration for the 'Package Sources' of the
+'Package Manager' as displayed in
 <<fig-nuget-visualstudio-packageoptions>>.
 
 [[fig-nuget-visualstudio-packageoptions]]
@@ -258,9 +277,8 @@ Package Manager as displayed in
 image::figs/web/nuget-visualstudio-packageoptions.png[scale=60]
 
 With this configuration in place all packages available in your Nexus
-NuGet repository will be available in the Package Manager in Visual
-Studio ready for install.
-
+NuGet repository will be available in the 'Package Manager' in Visual
+Studio.
 
 ////
 /* Local Variables: */
