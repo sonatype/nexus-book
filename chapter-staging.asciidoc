@@ -783,6 +783,12 @@ configuration can be provided with the following parameters:
 
 altStagingDirectory:: defaulting to target/nexus-staging you can
 set the property to set a different folder for the local staging 
+autoReleaseAfterClose:: if you set this flag to 'true', the staging
+repository will be closed and, following a
+successful validation of all staging rules including potential
+Sonatype CLM based validation, released. By default this property is
+set to 'false'. Changing it to true can be a useful setup for
+continuous integration server based releases.
 description:: allows you to provide a description for the staging
 repository action like close or drop carried out as part of the plugin
 execution. The description will then be used in any notification just
@@ -811,12 +817,6 @@ skipLocalStaging:: by default set to 'true' causes the Nexus Staging
 Maven Plugin to use local staging, setting this parameter to 'false'
 turns off local staging, which emulates the immediate upload as
 performed by the Maven Deploy Plugin
-autoReleaseAfterClose:: if you set this flag to 'true', the staging
-repository will be closed and, following a
-successful validation of all staging rules including potential
-Sonatype CLM based validation, released. By default this property is
-set to 'false'. Changing it to true can be a useful setup for
-continuous integration server based releases.
 stagingProgressTimeoutMinutes:: defaulting to 5 minutes, this
 configuration allows you to set the timeout for staging
 operations. Changes are most often required for complex staging operations
@@ -969,11 +969,21 @@ The Nexus Staging Ant Tasks provide equivalent features to the Nexus
 Staging Maven Plugin for Apache Ant users covering all use cases for
 interacting with the Nexus Staging Suite.
 
+Historically Ant builds typically have components that are required
+for the build, statically managed in the version control system or
+even outside the project workspace altogether. More modern Ant builds
+use Apache Ivy or Eclipse Aether for resolving dependencies
+dynamically as well as deployment build outputs to a repository
+manager. Examples projects setups using Ivy as well as Aether can be
+found in the 
+https://github.com/sonatype/nexus-book-examples[Nexus book examples project]. 
+This project includes examples forintegration with the Nexus staging Ant tasks.
+
 To use the Ant tasks in your Ant build file you need to download the
 complete jar with the included dependencies. You can find it at
 the Central Repository. Simply search for 'nexus-staging-ant-tasks'
 and download the jar file with the `uber` classifier
-e.g., `nexus-staging-ant-tasks-1.0-uber.jar`.
+e.g., `nexus-staging-ant-tasks-1.6-1-uber.jar`.
 
 After downloading, put the jar file somewhere in your
 project or in your system so you can add it to the classpath in your
@@ -989,7 +999,7 @@ file is placed in a  +tasks+ folder within the project.
 </taskdef>
 ----
 
-To enable the tasks in your build file using a shortcut for the 
+To enable the tasks in your build file using a shortcut for the
 namespace, e.g., +staging+, you have to add it to the +project+ node:
 
 ----
@@ -1049,7 +1059,6 @@ closes the staging repository.
 
 ----
 <target name="deploy" description="Deploy: Local and Remote Staging">
-
   <staging:stageLocally>
     <staging:nexusStagingInfo 
         refid="target-nexus" />
@@ -1061,12 +1070,21 @@ closes the staging repository.
     <staging:nexusStagingInfo 
         refid="target-nexus" />
   </staging:stageRemotely>
-
 </target>
 ----
 
+The folder +target/local-repo+ has to contain the components in a
+directory structure resembling the Maven repository format using the
++groupId+, +artifactId+ and +version+ coordinates of the component
+mapped to directory names. It will be merged into the target release
+repository, when the staging repository is released. An example on how
+to create such a structure in Ant can be found in the staging
+example for Apache Ivy and Eclipse Aether in the
+https://github.com/sonatype/nexus-book-examples/[Nexus book examples
+project].
+
 Similarily you can create a target that releases the staged artifacts
-by adding the releaseStagingRepository task to the end of the target:
+by adding the +releaseStagingRepository+ task to the end of the target:
 
 ----
 <staging:releaseStagingRepository>
@@ -1127,7 +1145,7 @@ based on a repository target definition.
 
 To deploy a staged release, a developer needs to deploy to the
 staging URL. To configure a project to deploy to the Staging URL, add
-the a distributionManagement element to your project's POM. 
+the a +distributionManagement+ element to your project's POM. 
 
 [[ex-staging-dist-management]]
 .Listing the Staging URL in distributionManagement
@@ -1206,6 +1224,17 @@ staging repository has to be done with the Nexus user interface or the
 Nexus Staging Maven Plugin.  Once this repository has been closed, it
 will be made available in the Target Group you selected when you
 configured the Staging Profile.
+
+
+[[staging-sect-deployment-maven-deploy-plugin]]
+==== Deployment and Staging with Gradle
+
+The Gradle build system can be used to deploy components to Nexus with
+the Gradle Maven plugin. The Nexus Staging Ant Tasks can be used in
+Gradle allowing full inegration of the staging suite features in a
+Gradle build. 
+
+An example project showcasing this integration is available in the https://github.com/sonatype/nexus-book-examples[Nexus book examples project]. 
 
 
 [[staging-sect-deployment-manual]]
