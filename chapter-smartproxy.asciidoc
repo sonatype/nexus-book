@@ -37,9 +37,15 @@ servers.
 
 The 'Smart Proxy' feature replaces this constant polling approach with a
 'Publish/Subscribe'-based messaging approach between Nexus instances
-sharing a mutual trust. The result is a significantly improved
-performance due to nearly immediate availability of upstream artifact
-information directly in the downstream Nexus instances.
+sharing a mutual trust. Once a component is published to a repository
+a message is sent to all subscribing in the smart proxy message queue
+that details the availability of new component. The subscribers
+are therefore immediately aware of any new deployment and can provide
+these components without having to poll the publishing server.
+
+The result is a significantly improved performance due to nearly
+immediate availability of upstream component information directly in
+the downstream Nexus instances.
 
 [[smartproxy-enabling_smart_proxy_publishing]]
 === Enabling Smart Proxy Publishing
@@ -72,7 +78,7 @@ clients enabling, e.g., usage of a publicly available fully qualified
 hostname, including the domain or also just the usage of an externally
 reachable IP number.
 
-IMPORTANT: It is important to enable the configured connection ports on any
+IMPORTANT: It is important to configure the ports in Nexus and any
 firewall between the servers to allow the direct socket connection
 between the servers and to avoid using random ports.
 
@@ -84,7 +90,7 @@ instance. It is automatically populated with the certificate associated
 with the public/private key pair that is generated when the server is
 first run.
 
-TIP: The key is stored in sonatype-work/nexus/conf/keystore/private.ks
+TIP: The key is stored in +sonatype-work/nexus/conf/keystore/private.ks+
 and identifies this server. If you copy the sonatype work folder from
 one server to another as part of a migration or a move from testing to
 staging or production you will need to ensure that keys are not
@@ -116,14 +122,14 @@ image::figs/web/smart-proxy-add-certificate.png[scale=70]
 
 All of the key generation and certificates related to the trust
 management is handled by Nexus, itself and no external configuration
-or usage of external keys is necessary or possible.
+or usage of external keys is necessary.
 
 [[smartproxy-repository_specific_smart_proxy_configuration]]
 === Repository Specific Smart Proxy Configuration
 
 Once Smart Proxy has been configured and enabled as described above,
 you have to configure which repositories contents should be
-synchronized between the servers. This is done in the 'Repositories'
+proxied more efficiently between the servers. This is done in the 'Repositories'
 administration interface in a separate configuration tab titled 'Smart
 Proxy', which allows you to configure repository-specific details as
 compared to server wide details described above.
@@ -140,26 +146,16 @@ for a specific repository as displayed in
 image::figs/web/smart-proxy-repo-list-hosted.png[scale=65]
 
 On the Nexus instance subscribing to the publishing server you have to
-create a new proxy repository to hold the synchronized artifacts. The
+create a new proxy repository to expose the proxied components. The
 smart proxy configuration for this repository displayed in
 <<fig-smart-proxy-repo-list-proxy>> allows you to activate the
-'Receive Updates' checkbox in the 'Subscribe' configuration section. You can
-enable prefetching the components by selecting 'Immediately' in the
-'Download Updated Artifacts' drop-down. The default behavior is to
-only download components 'Upon Request'.
-
+'Receive Updates' checkbox in the 'Subscribe' configuration section.
+With a working trust established between the publishing and
+subscribing Nexus servers the Smart Proxy configuration of the proxy
+repository on the subscribing Nexus will display connection status. 
 [[fig-smart-proxy-repo-list-proxy]]
 .Smart Proxy Settings for a Proxy Repository
 image::figs/web/smart-proxy-repo-list-proxy.png[scale=65]
-
-With a working trust established between the publishing and
-subscribing Nexus servers the Smart Proxy configuration of the proxy
-repository on the subscribing Nexus will display connection status as
-displayed in <<fig-smart-proxy-subscribe-connected>>.
-
-[[fig-smart-proxy-subscribe-connected]]
-.Subscription with Smart Proxy Connected
-image::figs/web/smart-proxy-subscribe-connected.png[scale=80]
 
 [[smartproxy-smart_proxy_security_and_messages]]
 === Smart Proxy Security and Messages
@@ -173,9 +169,9 @@ messages.
  
 The following events are broadcasted via Smart Proxy.
 
-- a new artifact has been deployed
-- an artifact has been deleted
-- an artifact has been changed
+- a new component has been deployed
+- a component has been deleted
+- a component has been changed
 - repository cache or a part of it has been cleared
 - Smart Proxy publishing has been disabled
 
@@ -234,10 +230,51 @@ repository you have to
 . add the new proxy repositories to the public group on Nexus 2, 3 and
   4
 
-
 With this setup, any snapshot deployment from the New York team on
 Nexus 1 is immediately available to the development team in London,
 Bangalore, and San Jose.
+
+
+[[smartproxy-advanced]]
+=== Advanced Configuration
+
+Typically smart proxy is configured in the dedicated user interfaces
+provided and described earlier in this chapter. More fine grained and
+advanced configuration is exposed in the capabilities administration
+of Nexus documented in <<capabilities>>.
+
+Specficically the following capabilities for the core smart proxy
+features are automatically created and maintained.
+
+Smart Proxy: Identity:: Provides the unique identity for the Nexus
+server.
+
+Smart Proxy: Messaging:: Provides the core messaging facilities for
+smart proxy.
+
+Smart Proxy: Trust:: Configures a trust relationsship with a remote
+node.
+
+Smart Proxy: Secure Connector:: Secures the connection using identity
+and trust.
+
+In addition you can find one smart proxy capabilities for all
+repositories configured to be publish or subscribe updates with smart
+proxy.
+
+Smart Proxy: Publish:: Configures publishing updates to a specific
+repository via smart proxy.
+
+Smart Proxy: Subscribe:: Configures subscribing to updates for a
+specific proxy repository. This capability exposes the additional
+setting 'Delete' in the 'Settings' tab. If deletion is enabled, any
+component deletions in the publishing repository is also carried out
+in the subscribing repositories. The 'Preemptive Fetch' flag allows
+you to enable a download of components to the susbscribing proxy
+repository prior to any component requests received by it. The default
+behaviour with preemptive fetch disabled only publishes the fact that
+new components are available from the publishing repository.
+
 
 ////
 /* Local Variables: */
