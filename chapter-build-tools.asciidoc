@@ -1,47 +1,134 @@
 [[config-other-build]]
 == Using Nexus with Other Build Tools
 
-
 [[using-other-build-intro]]
 === Introduction
 
-many build tools understand mavne repo format
+Historically Nexus started as a repository manager supporting the
+Maven repository format. While it supports many othre repository
+formats now, the Maven repository format is still the most common and
+well supported format for build and provisioning tools running on the
+JVM and beyond. 
 
-[[using-other-ant]]
-=== Apache Ant
+This chapter shows example configurations for using Nexus with a
+number of these tools. The setups take advantage of Nexus merging many
+repositories and exposing them via a repository group as described in
+<<config>> and adapt them to the configuration used by specific tools.
 
-no dep managmenet
-
-can use aether ant tasks or maven ant tasks and then same t
-
-[[using-other-ant-ivy]]
+[[ant-ivy]]
 === Apache Ant and Apache Ivy
 
-see blog posts... add stuff here
+Apache Ivy is a dependency manager often used in Apache Ant builds. It
+supports the Maven repository format and can be configured to download
+dependencies that can be declared in the +ivy.xml+ file. This
+configuration can be contained in the +ivysettings.xml+. A minimal
+example for resolving dependencies from a Nexus server running on
++localhost+ is shown in <<ivysettings-minimal>>.
 
-[[using-other-gradle]]
+[[ivysettings-minimal]]
+----
+<ivysettings>
+  <settings defaultResolver="nexus"/>
+  <property name="nexus-public" 
+                      value="http://localhost:8081/nexus/content/groups/public"    
+  <resolvers>
+      <ibiblio name="nexus" m2compatible="true" root="${nexus-public}"/>
+    </resolvers>
+</ivysettings>
+----
+
+These minimal settings allow the +ivy:retrieve+ task to download the declared
+dependencies.
+
+To deploy build outputs to a Nexus repository with the
++ivy:publish+ task, user credentials and the URL of the target
+repository have to be added to +ivysettings.xml+ and the makepom and
+publish tasks have to be configured and invoked. 
+
+Full example projects can be found in the +ant-ivy+ folder of the
+https://github.com/sonatype/nexus-book-examples[Nexus book examples
+project]. A full build of the +simple-project+, including downloading
+the declared dependencies and uploading the build output to Nexus can
+be invoked with
+
+----
+cd ant-ivy/simple-project
+ant deploy
+----
+
+
+[[ant-aether]]
+=== Apache Ant and Eclipse Aether
+
+Eclipse Aether is the dependency management component used in Apache
+Maven 3+. The project provides Ant tasks that can be configured to download
+dependencies that can be declared in +pom.xml+ file or in the Ant
+build fiel directly. 
+
+This configuration can be contained in your Ant +build.xml+ or a
+separate file that is imported. A minimal
+example for resolving dependencies from a Nexus server running on
++localhost+ is shown in <<aether-minimal>>.
+
+[[aether-minimal]]
+----
+<project xmlns:aether="antlib:org.eclipse.aether.ant" ....>
+  <taskdef uri="antlib:org.eclipse.aether.ant" resource="org/eclipse/aether/ant/antlib.xml">
+    <classpath>
+      <fileset dir="${aether.basedir}" includes="aether-ant-tasks-*.jar" />
+    </classpath>
+  </taskdef>
+  <aether:mirror id="mirror" url="http://localhost:8081/nexus/content/groups/public/" mirrorOf="*"/>
+...
+</project>
+----
+
+
+These minimal settings allow the +aether:resolve+ task to download the declared
+dependencies.
+
+To deploy build outputs to a Nexus repository with the +aether:deploy+
+task, user authenticaion and details about the target repositories have
+to be added .
+
+Full example projects can be found in the +ant-aether+ folder of the
+https://github.com/sonatype/nexus-book-examples[Nexus book examples
+project]. A full build of the +simple-project+, including downloading
+the declared dependencies and uploading the build output to Nexus can
+be invoked with
+
+----
+cd ant-aether/simple-project
+ant deploy
+----
+
+
+[[gradle]]
 === Gradle
 
 about gradle and how to config it
 
-[[using-other-gant]]
+////
+
+[[gant]]
 === Gant
 
 is just groovy wrapper for ant.. ant and ant ivy applies
 
-[[using-other-grails]]
+[[grails]]
 === Grails
 
 add the grails and grails plugins repos.. 
 config grails build to look at nexus
+////
 
 
-[[using-other-sbt]]
+[[sbt]]
 === SBT
 
 scala...
 
-[[using-other-leiningen]]
+[[leiningen]]
 === Leiningen
 
 clojure
