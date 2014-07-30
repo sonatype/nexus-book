@@ -56,6 +56,9 @@ cd ant-ivy/simple-project
 ant deploy
 ----
 
+Further details about using these example projects can be found in
+<<eval>>.
+
 
 [[ant-aether]]
 === Apache Ant and Eclipse Aether
@@ -88,7 +91,7 @@ These minimal settings allow the +aether:resolve+ task to download the declared
 dependencies.
 
 To deploy build outputs to a Nexus repository with the +aether:deploy+
-task, user authenticaion and details about the target repositories have
+task, user authentication and details about the target repositories have
 to be added .
 
 Full example projects can be found in the +ant-aether+ folder of the
@@ -102,11 +105,73 @@ cd ant-aether/simple-project
 ant deploy
 ----
 
+Further details about using these example projects can be found in <<eval>>.
+
 
 [[gradle]]
 === Gradle
 
-about gradle and how to config it
+Gradle has a built in dependency management component that supports
+the Maven repository format. In order to configure a Gradle project to
+resolve +dependencies+ declared in +build.gradle+ file, a +maven+
+repository as shown in <<gradle-minimal>> has to be declared
+
+
+[[gradle-minimal]]
+----
+repositories {
+    maven {
+        url "http://localhost:8081/nexus/content/groups/public"
+    }
+}
+----
+
+These minimal settings allow Gradle to download the declared dependencies.
+
+To deploy build outputs to a Nexus repository with the +uploadArchives+
+task, user authentication can be declared in e.g.,
++gradle.properties+:
+
+----
+nexusUrl=http://localhost:8081/nexus
+nexusUsername=admin
+nexusPassword=admin123
+----
+
+and then used in the uploadArchives task with a mavenDeployer
+configuration from the Maven plugin:
+
+----
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "${nexusUrl}/content/repositories/releases") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+            snapshotRepository(url: "${nexusUrl}/content/repositories/snapshots") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+        }
+    }
+}
+----
+
+
+
+
+Full example projects can be found in the +gradle+ folder of the
+https://github.com/sonatype/nexus-book-examples[Nexus book examples
+project]. A full build of the +simple-project+, including downloading
+the declared dependencies and uploading the build output to Nexus can
+be invoked with
+
+----
+cd gradle/simple-project
+gradle upload
+----
+
+Further details about using these example projects can be found in <<eval>>.
+
 
 ////
 
