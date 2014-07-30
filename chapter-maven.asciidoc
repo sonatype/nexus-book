@@ -1,8 +1,24 @@
 [[config]]
-== Configuring Maven to Use Nexus
+== Configuring Maven and other Build Tools to Use Nexus
 
 [[config-sect-intro]]
 === Introduction
+
+Historically Nexus started as a repository manager supporting the
+Maven repository format. While it supports many other repository
+formats now, the Maven repository format is still the most common and
+well supported format for build and provisioning tools running on the
+JVM and beyond. 
+
+This chapter shows example configurations for using Nexus with a Maven
+and number of other tools. The setups take advantage of Nexus merging
+many repositories and exposing them via a repository group. Setting
+this up is documented in the chapter in addition to the configuration
+used by specific tools.
+
+
+[[maven-sect-single-group]]
+=== Configuring Maven to Use a Single Nexus Group
 
 To use Nexus, you will configure Maven to check Nexus instead of the
 public repositories. To do this, you'll need to edit your mirror
@@ -12,9 +28,6 @@ installation instead of retrieving artifacts directly from the Maven
 Central repository. After we override the central repository and
 demonstrate that Nexus is working, we'll circle back to provide a more
 sensible set of settings that will cover both releases and snapshots.
-
-[[maven-sect-single-group]]
-=== Configuring Maven to Use a Single Nexus Group
 
 If you are adopting Nexus for internal development you should
 configure a single Nexus group that contains both releases and
@@ -201,6 +214,263 @@ development team. In addition the performance of the artifact
 resolving across multiple repositories will be handled by Nexus and
 therefore be much faster than client side resolution done by Maven
 each time.
+
+
+[[ant-ivy]]
+=== Apache Ant and Apache Ivy
+
+http://ant.apache.org/ivy/[Apache Ivy] is a dependency manager often
+used in Apache Ant builds. It supports the Maven repository format and
+can be configured to download dependencies that can be declared in the
++ivy.xml+ file. This configuration can be contained in the
++ivysettings.xml+. A minimal example for resolving dependencies from a
+Nexus server running on +localhost+ is shown in
+<<ivysettings-minimal>>.
+
+[[ivysettings-minimal]]
+----
+<ivysettings>
+  <settings defaultResolver="nexus"/>
+  <property name="nexus-public" 
+                      value="http://localhost:8081/nexus/content/groups/public"    
+  <resolvers>
+      <ibiblio name="nexus" m2compatible="true" root="${nexus-public}"/>
+    </resolvers>
+</ivysettings>
+----
+
+These minimal settings allow the +ivy:retrieve+ task to download the declared
+dependencies.
+
+To deploy build outputs to a Nexus repository with the
++ivy:publish+ task, user credentials and the URL of the target
+repository have to be added to +ivysettings.xml+ and the makepom and
+publish tasks have to be configured and invoked. 
+
+Full example projects can be found in the +ant-ivy+ folder of the
+https://github.com/sonatype/nexus-book-examples[Nexus book examples
+project]. A full build of the +simple-project+, including downloading
+the declared dependencies and uploading the build output to Nexus can
+be invoked with
+
+----
+cd ant-ivy/simple-project
+ant deploy
+----
+
+Further details about using these example projects can be found in
+<<eval>>.
+
+
+[[ant-aether]]
+=== Apache Ant and Eclipse Aether
+
+http://www.eclipse.org/aether/[Eclipse Aether] is the dependency
+management component used in Apache Maven 3+. The project provides Ant
+tasks that can be configured to download dependencies that can be
+declared in +pom.xml+ file or in the Ant build fiel directly.
+
+This configuration can be contained in your Ant +build.xml+ or a
+separate file that is imported. A minimal
+example for resolving dependencies from a Nexus server running on
++localhost+ is shown in <<aether-minimal>>.
+
+[[aether-minimal]]
+----
+<project xmlns:aether="antlib:org.eclipse.aether.ant" ....>
+  <taskdef uri="antlib:org.eclipse.aether.ant" resource="org/eclipse/aether/ant/antlib.xml">
+    <classpath>
+      <fileset dir="${aether.basedir}" includes="aether-ant-tasks-*.jar" />
+    </classpath>
+  </taskdef>
+  <aether:mirror id="mirror" url="http://localhost:8081/nexus/content/groups/public/" mirrorOf="*"/>
+...
+</project>
+----
+
+
+These minimal settings allow the +aether:resolve+ task to download the declared
+dependencies.
+
+To deploy build outputs to a Nexus repository with the +aether:deploy+
+task, user authentication and details about the target repositories have
+to be added .
+
+Full example projects can be found in the +ant-aether+ folder of the
+https://github.com/sonatype/nexus-book-examples[Nexus book examples
+project]. A full build of the +simple-project+, including downloading
+the declared dependencies and uploading the build output to Nexus can
+be invoked with
+
+----
+cd ant-aether/simple-project
+ant deploy
+----
+
+Further details about using these example projects can be found in <<eval>>.
+
+
+[[gradle]]
+=== Gradle
+
+http://www.gradle.org/[Gradle] has a built in dependency management component that supports
+the Maven repository format. In order to configure a Gradle project to
+resolve +dependencies+ declared in +build.gradle+ file, a +maven+
+repository as shown in <<gradle-minimal>> has to be declared
+
+
+[[gradle-minimal]]
+----
+repositories {
+    maven {
+        url "http://localhost:8081/nexus/content/groups/public"
+    }
+}
+----
+
+These minimal settings allow Gradle to download the declared dependencies.
+
+To deploy build outputs to a Nexus repository with the +uploadArchives+
+task, user authentication can be declared in e.g.,
++gradle.properties+:
+
+----
+nexusUrl=http://localhost:8081/nexus
+nexusUsername=admin
+nexusPassword=admin123
+----
+
+and then used in the uploadArchives task with a mavenDeployer
+configuration from the Maven plugin:
+
+----
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "${nexusUrl}/content/repositories/releases") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+            snapshotRepository(url: "${nexusUrl}/content/repositories/snapshots") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+        }
+    }
+}
+----
+
+
+
+
+Full example projects can be found in the +gradle+ folder of the
+https://github.com/sonatype/nexus-book-examples[Nexus book examples
+project]. A full build of the +simple-project+, including downloading
+the declared dependencies and uploading the build output to Nexus can
+be invoked with
+
+----
+cd gradle/simple-project
+gradle upload
+----
+
+Further details about using these example projects can be found in <<eval>>.
+
+
+////
+
+[[gant]]
+=== Gant
+
+is just groovy wrapper for ant.. ant and ant ivy applies
+
+[[grails]]
+=== Grails
+
+add the grails and grails plugins repos.. 
+config grails build to look at nexus
+////
+
+
+[[sbt]]
+=== SBT
+
+http://www.scala-sbt.org/[sbt] has a built in dependency management
+component and defaults to the Maven repository format. In order to
+configure a sbt project to resolve dependencies declared in
++build.sbt+ file, a +resolver+  as shown in
+<<sbt-minimal>> has to be declared
+
+
+[[sbt-minimal]]
+----
+resolvers += "Nexus" at "http://localhost:8081/nexus/content/groups/public"
+----
+
+These minimal settings allow sbt to download the declared dependencies.
+
+To deploy build outputs to a Nexus repository with the +publish+
+task, user credentials can be declared in the +build.sbt+ file:
+
+----
+credentials += Credentials("Sonatype Nexus Repository Manager",
+"nexus.scala-tools.org", "admin", "admin123")
+----
+
+and then used in the +publishTo+ configuration:
+
+----
+publishTo <<= version { v: String =>
+  val nexus = "http://localhost:8081/nexus/" 
+  if (v.trim.endsWith("SNAPSHOT"))
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases" at nexus + "content/repositories/releases")
+----
+
+Further documentation can be found in the
+http://www.scala-sbt.org/release/docs/Publishing.html[sbt
+documentation on publishing].
+
+
+[[leiningen]]
+=== Leiningen
+
+http://leiningen.org/[Leiningen] has a built in dependency management
+component and defaults to the Maven repository format. In order to
+configure a sbt project to resolve dependencies declared in
++build.sbt+ file, a +resolver+  as shown in
+<<sbt-minimal>> has to be declared
+
+
+[[sbt-minimal]]
+----
+resolvers += "Nexus" at "http://localhost:8081/nexus/content/groups/public"
+----
+
+These minimal settings allow sbt to download the declared dependencies.
+
+To deploy build outputs to a Nexus repository with the +publish+
+task, user credentials can be declared in the +build.sbt+ file:
+
+----
+credentials += Credentials("Sonatype Nexus Repository Manager",
+"nexus.scala-tools.org", "admin", "admin123")
+----
+
+and then used in the +publishTo+ configuration:
+
+----
+publishTo <<= version { v: String =>
+  val nexus = "http://localhost:8081/nexus/" 
+  if (v.trim.endsWith("SNAPSHOT"))
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases" at nexus + "content/repositories/releases")
+----
+
+Further documentation can be found in the
+http://www.scala-sbt.org/release/docs/Publishing.html[sbt
+documentation on publishing].
+
 
 ////
 /* Local Variables: */
