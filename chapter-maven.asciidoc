@@ -18,22 +18,15 @@ used by specific tools.
 
 
 [[maven-sect-single-group]]
-=== Configuring Maven to Use a Single Nexus Group
+=== Apache Maven
 
-To use Nexus, you will configure Maven to check Nexus instead of the
-public repositories. To do this, you'll need to edit your mirror
-settings in your +~/.m2/settings.xml+ file.  First, we're
-going to demonstrate how to configure Maven to consult your Nexus
-installation instead of retrieving artifacts directly from the Maven
-Central repository. After we override the central repository and
-demonstrate that Nexus is working, we'll circle back to provide a more
-sensible set of settings that will cover both releases and snapshots.
+To use Nexus with http://maven.apache.org/[Apache Maven], we configure
+Maven to check Nexus instead of the default, built-in connection to the
+Central Repository.
 
-If you are adopting Nexus for internal development you should
-configure a single Nexus group that contains both releases and
-snapshots. To do this, add snapshot repositories to your public group,
-and add the following mirror configuration to your Maven settings in
-+~/.m2/settings.xml+.
+To do this, you add a +mirror+ configuration and override the default
+configuration for the +central+ repository in your +~/.m2/settings.xml+
+as shown in <<ex-maven-nexus-simple>>.
 
 [[ex-maven-nexus-simple]]
 .Configuring Maven to Use a Single Nexus Group
@@ -77,8 +70,8 @@ and add the following mirror configuration to your Maven settings in
 </settings>
 ----
 
-In <<ex-maven-nexus-simple>>, we have defined a single profile:
-nexus. It configures a +repository+ and a +pluginRepository+ with the
+In <<ex-maven-nexus-simple>>, we have defined a single profile called 
++nexus+. It configures a +repository+ and a +pluginRepository+ with the
 id +central+ that overrides the same repositories in the
 super pom. The super pom is internal to every Apache Maven install and
 establishes default values. These overrides are important since they
@@ -100,23 +93,31 @@ redirecting repositories that are defined for integration testing. The
 integration test runs for Apache Maven itself require this setting.
 
 More documentation about mirror settings can be found in the
-http://maven.apache.org/guides/mini/guide-mirror-settings.html[mini guide on the Maven web site].
+http://maven.apache.org/guides/mini/guide-mirror-settings.html[mini
+guide on the Maven web site].
 
 As a last configuration the +nexus+ profile is listed as an active
 profile in the +activeProfiles+ element.
 
 [[config-sect-custom]]  
-=== Adding Custom Repositories for Missing Dependencies
+=== Adding Repositories for Missing Dependencies
 
-If you've configured your Maven settings.xml to list the Nexus public
-group as a mirror for all repositories, you might encounter projects
-that are unable to retrieve artifacts from your local Nexus
-installation. This usually happens because you are trying to build a
-project that has defined a custom set of repositories and
-snapshot repositories in a pom.xml. When you encounter a project that
-contains a custom repository element in a pom.xml, add this repository
-to Nexus as a new proxy repository and then add the new proxy
-repository to the public group.
+If you've configured your Maven +settings.xml+ or other build tool
+configuration to use the Nexus +public+ repository group as a mirror
+for all repositories, you might encounter projects that are unable to
+retrieve artifacts from your local Nexus installation.
+
+This usually happens because you are trying to build a project that
+has defined a custom set of repositories and snapshot repositories or
+relies on the content of other publically available repositories in
+its configuration. When you encounter such a project all you have to
+do is 
+
+* add this repository to Nexus as a new proxy repository 
+* and then add the new proxy repository to the public group.
+
+The advantage of this approach is that no configuration change on the
+build tool side is necessary at all.
 
 [[config-sect-new-repo]]
 === Adding a New Repository
@@ -154,7 +155,10 @@ repository you want to proxy.
 image::figs/web/repository-manager_add-repository.png[scale=50]
 
 Once you've filled out this screen, click on the 'Save'
-button. Nexus will then be configured to proxy the repository.
+button. Nexus will then be configured to proxy the repository. If the
+remote repository contains snapshots as well as release components,
+you will need to repeat the process creating a second proxy repository
+and setting the policy to 'Snapshots'.
 
 ++++
 <?dbhtml-include href="promo_nuget.html"?>
@@ -163,7 +167,7 @@ button. Nexus will then be configured to proxy the repository.
 [[config-sect-repo-group]]  
 === Adding a Repository to a Group
 
-Next you will need to add the new repository to the 'Public
+Next you will need to add the new repositories to the 'Public
 Repositories' Nexus repository group. To do this, click on the
 'Repositories' link in the left-hand Nexus menu in the
 'Views/Repositories' section. Nexus lists Groups and Repositories in
