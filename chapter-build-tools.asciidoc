@@ -18,12 +18,13 @@ repositories and exposing them via a repository group as described in
 [[ant-ivy]]
 === Apache Ant and Apache Ivy
 
-Apache Ivy is a dependency manager often used in Apache Ant builds. It
-supports the Maven repository format and can be configured to download
-dependencies that can be declared in the +ivy.xml+ file. This
-configuration can be contained in the +ivysettings.xml+. A minimal
-example for resolving dependencies from a Nexus server running on
-+localhost+ is shown in <<ivysettings-minimal>>.
+http://ant.apache.org/ivy/[Apache Ivy] is a dependency manager often
+used in Apache Ant builds. It supports the Maven repository format and
+can be configured to download dependencies that can be declared in the
++ivy.xml+ file. This configuration can be contained in the
++ivysettings.xml+. A minimal example for resolving dependencies from a
+Nexus server running on +localhost+ is shown in
+<<ivysettings-minimal>>.
 
 [[ivysettings-minimal]]
 ----
@@ -63,10 +64,10 @@ Further details about using these example projects can be found in
 [[ant-aether]]
 === Apache Ant and Eclipse Aether
 
-Eclipse Aether is the dependency management component used in Apache
-Maven 3+. The project provides Ant tasks that can be configured to download
-dependencies that can be declared in +pom.xml+ file or in the Ant
-build fiel directly. 
+http://www.eclipse.org/aether/[Eclipse Aether] is the dependency
+management component used in Apache Maven 3+. The project provides Ant
+tasks that can be configured to download dependencies that can be
+declared in +pom.xml+ file or in the Ant build fiel directly.
 
 This configuration can be contained in your Ant +build.xml+ or a
 separate file that is imported. A minimal
@@ -111,7 +112,7 @@ Further details about using these example projects can be found in <<eval>>.
 [[gradle]]
 === Gradle
 
-Gradle has a built in dependency management component that supports
+http://www.gradle.org/[Gradle] has a built in dependency management component that supports
 the Maven repository format. In order to configure a Gradle project to
 resolve +dependencies+ declared in +build.gradle+ file, a +maven+
 repository as shown in <<gradle-minimal>> has to be declared
@@ -191,12 +192,85 @@ config grails build to look at nexus
 [[sbt]]
 === SBT
 
-scala...
+http://www.scala-sbt.org/[sbt] has a built in dependency management
+component and defaults to the Maven repository format. In order to
+configure a sbt project to resolve dependencies declared in
++build.sbt+ file, a +resolver+  as shown in
+<<sbt-minimal>> has to be declared
+
+
+[[sbt-minimal]]
+----
+resolvers += "Nexus" at "http://localhost:8081/nexus/content/groups/public"
+----
+
+These minimal settings allow sbt to download the declared dependencies.
+
+To deploy build outputs to a Nexus repository with the +publish+
+task, user credentials can be declared in the +build.sbt+ file:
+
+----
+credentials += Credentials("Sonatype Nexus Repository Manager",
+"nexus.scala-tools.org", "admin", "admin123")
+----
+
+and then used in the +publishTo+ configuration:
+
+----
+publishTo <<= version { v: String =>
+  val nexus = "http://localhost:8081/nexus/" 
+  if (v.trim.endsWith("SNAPSHOT"))
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases" at nexus + "content/repositories/releases")
+----
+
+Further documentation can be found in the
+http://www.scala-sbt.org/release/docs/Publishing.html[sbt
+documentation on publishing].
+
 
 [[leiningen]]
 === Leiningen
 
-clojure
+http://leiningen.org/[Leiningen] has a built in dependency management
+component and defaults to the Maven repository format. In order to
+configure a sbt project to resolve dependencies declared in
++build.sbt+ file, a +resolver+  as shown in
+<<sbt-minimal>> has to be declared
+
+
+[[sbt-minimal]]
+----
+resolvers += "Nexus" at "http://localhost:8081/nexus/content/groups/public"
+----
+
+These minimal settings allow sbt to download the declared dependencies.
+
+To deploy build outputs to a Nexus repository with the +publish+
+task, user credentials can be declared in the +build.sbt+ file:
+
+----
+credentials += Credentials("Sonatype Nexus Repository Manager",
+"nexus.scala-tools.org", "admin", "admin123")
+----
+
+and then used in the +publishTo+ configuration:
+
+----
+publishTo <<= version { v: String =>
+  val nexus = "http://localhost:8081/nexus/" 
+  if (v.trim.endsWith("SNAPSHOT"))
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases" at nexus + "content/repositories/releases")
+----
+
+Further documentation can be found in the
+http://www.scala-sbt.org/release/docs/Publishing.html[sbt
+documentation on publishing].
+
+
 
 ////
 /* Local Variables: */
