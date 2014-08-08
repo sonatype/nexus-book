@@ -15,6 +15,9 @@ a2x -k -fpdf -dbook --xsl-file=docbook-xsl/fo.xsl --dblatex-opts=" --param=doc.l
 
 #mv target/tmp.pdf target/book-nexus.pdf
 
+echo "Building epub version of book"
+a2x -fepub -D target book-nexus.asciidoc
+
 echo "done"
 
 echo "Building multi page html version of book"
