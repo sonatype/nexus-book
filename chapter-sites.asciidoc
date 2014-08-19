@@ -4,9 +4,9 @@
 [[sites-sect-intro]]
 === Introduction
 
-Nexus provides a repository provider for hosting static websites - the
-"Site" format. Hosted repositories with this format can be used to
-hold a Maven-generated web site. This chapter details the process of
+Nexus includes a repository provider for hosting static websites - the
+'Site' format. Hosted repositories with this format can be used to
+hold a Maven-generated website. This chapter details the process of
 configuring a site repository and configuring a simple Maven
 project to publish a Maven-generated project site to an instance of
 Nexus.
@@ -15,9 +15,9 @@ Nexus.
 === Creating a New Maven Project
 
 In this chapter, you will be creating a simple Maven project with a
-simple web site that will be published to a Nexus Site repository. To
+simple website that will be published to a Nexus 'Site' repository. To
 create a new Maven project, use the archetype plugin's
-archetype:generate goal on the command line, and supply the following
++archetype:generate+ goal on the command line, and supply the following
 identifiers:
 
 * groupId: org.sonatype.books.nexus
@@ -57,16 +57,11 @@ Y: :
 [INFO] Parameter: basedir, Value: /private/tmp
 [INFO] Parameter: version, Value: 1.0-SNAPSHOT
 [INFO] OldArchetype created in dir: /private/tmp/sample-site
-[INFO] ------------------------------------------------------------------------
+[INFO] -------------------------------------------------------------
 [INFO] BUILD SUCCESSFUL
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 23 seconds
-[INFO] Finished at: Sat Oct 03 07:09:49 CDT 2009
-[INFO] Final Memory: 13M/80M
-[INFO] ------------------------------------------------------------------------
 ----
 
-After running the archetype:generate command you
+After running the +archetype:generate+ command, you
 will have a new project in a sample-site/
 subdirectory.
 
@@ -80,7 +75,7 @@ the appropriate credentials for Nexus.
 
 Add the following section to sample-site/pom.xml before the
 dependencies element.  This section will tell Maven where to publish
-the Maven-generated project web site:
+the Maven-generated project website:
 
 [[ex-sites-dist-man]]
 .Distribution Management for Site Deployment to Nexus
@@ -93,14 +88,10 @@ the Maven-generated project web site:
 </distributionManagement>
 ----
 
-NOTE: In <<ex-sites-dist-man>>, there is a Nexus installation running
-on localhost port 8081. In your environment you will need to customize
-this URL to point to your own Nexus instance.
-
-The url in the distribution management is not parameterized, which
+The URL in the distribution management is not parameterized, which
 means that any redeployment overwrites old content and potentially
 leaves old stale files behind. To have a new deployment directory for
-each version you can change the url to a parameterized setup.
+each version, change the URL to a parameterized setup.
 
 
 [[ex-sites-dist-parameterized]]
@@ -112,9 +103,9 @@ dav:http://localhost:8081/nexus/content/sites/site/${project.groupId}/${project.
 ----
 
 If you combine this approach with a redirector or a static page that
-links to the different copies of your site you can e.g., maintain
+links to the different copies of your site, you can e.g., maintain
 separate sites hosting your javadoc and other documentation for
-different release of your software.
+different releases of your software.
 
 The dav protocol used by for deployment to Nexus requires that you add
 the implementing library as a build extension to your Maven project:
@@ -132,17 +123,17 @@ the implementing library as a build extension to your Maven project:
     </extensions>
 ----
 
-In addition to the distributionManagement element and the build
-extension, you will want to add the following build element that will
-configure Maven to use version 3.2 of the Maven Site plugin.
+In addition to the +distributionManagement+ element and the +build+
++extension+,  add the following build element that will
+configure Maven to use version 3.4 of the Maven Site plugin.
 
-.Configuring Version 3.2 of the Maven Site Plugin
+.Configuring Version 3.4 of the Maven Site Plugin
 ----
 <build>
   <plugins>
     <plugin>
       <artifactId>maven-site-plugin</artifactId>
-      <version>3.3</version>
+      <version>3.4</version>
     </plugin>
   </plugins>
 </build>
@@ -171,7 +162,7 @@ to the servers element.
 </settings>
 ----
 
-NOTE: <<ex-sites-deploy-credentials>>, uses the default
+NOTE: <<ex-sites-deploy-credentials>> uses the default
 deployment user and the default deployment user password. You will need
 to configure the username and password to match the values expected by
 your Nexus installation.
@@ -179,21 +170,21 @@ your Nexus installation.
 === Creating a Site Repository
 
 To create a site repository, log in as a user with Administrative
-privileges, and click on "Repositories" under Views/Repositories in
+privileges, and click on 'Repositories' under 'Views/Repositories' in
 the Nexus menu. Under the Repositories tab, click on the
-Add... drop-down and choose "Hosted Repository" as shown in
+'Add...' drop-down and choose 'Hosted Repository' as shown in
 <<fig-sites-add-hosted>>.
 
 [[fig-sites-add-hosted]]
 .Adding a Hosted Repository
 image::figs/web/sites-add-hosted.png[scale=60]
 
-In the New Hosted Repository form, click on the Provider
-drop-down and chose the Site provider as shown in
+In the 'New Hosted Repository' form, click on the 'Provider'
+drop-down and chose the 'Site' provider as shown in
 <<fig-sites-new-site-repo>>. Although you can use any arbitrary name
 and identifier for your own Nexus repository, for the chapter's
-example, use a Repository ID of "site" and a Repository Name of "Maven
-Site".
+example, use a Repository ID of +site+ and a Repository Name of +Maven
+Site+.
 
 [[fig-sites-new-site-repo]]
 .Creating a New Maven Site Repository
@@ -201,7 +192,7 @@ image::figs/web/sites-new-repo.png[scale=60]
 
 After creating a new Site repository, it should appear in the list of
 Nexus repositories as shown in <<fig-sites-newly-created>>. Note that
-the Repository Path shown in <<fig-sites-newly-created>>, is the same
+the Repository Path shown in <<fig-sites-newly-created>> is the same
 as the repository path referenced in <<ex-sites-dist-man>>.
 
 [[fig-sites-newly-created]]
@@ -216,23 +207,23 @@ well as Nexus Professional.
 
 In the Maven Settings shown in <<ex-sites-deploy-credentials>>, you
 configured your Maven instance to use the default deployment user and
-password. To successfully deploy a site to Nexus, you will need to
+password. To successfully deploy a site to Nexus, 
 make sure that the deployment user has the appropriate role and
 permissions. To add the site deployment role to the deployment user,
-click on Users under the Security section of the Nexus menu, and click
-on the Add button the Role Management section. This will trigger the
-display of the Add Role dialog that will allow you to apply a filter
-value of Site to locate the applicable roles as shown in <<fig-sites-add-role>>.
+click on 'Users' under the 'Security' section of the 'Nexus' menu, and click
+on the 'Add' button in the 'Role Management' section. This will trigger the
+display of the 'Add Roles' dialog that will allow you to apply a filter
+value of +site+ to locate the applicable roles as shown in <<fig-sites-add-role>>.
 
 [[fig-sites-add-role]]
 .Adding the Site Deployment Role to the Deployment User
 image::figs/web/sites-deploy-role.png[scale=60]
 
 Check the box beside the "Repo: All Site Repositories (Full Control)"
-role in the list and press OK in the dialog. After the dialog closed,
-you should see the new role in the Role Management section. Click on
-the Save button to update the roles for the deployment user. The
-deployment user now has the ability to publish sites to a Maven Site
+role in the list and press OK in the dialog. After the dialog closes,
+you should see the new role in the 'Role Management' section. Click on
+the 'Save' button to update the roles for the deployment user. The
+deployment user now has the ability to publish sites to a Maven site
 repository.
 
 === Publishing a Maven Site to Nexus
@@ -287,9 +278,9 @@ http://localhost:8081/nexus/content/sites/site/ - Session: Disconnected
 ----
 
 Once the site has been published, you can load the site in a browser
-by going to http://localhost:8081/nexus/content/sites/site/
+by going to http://localhost:8081/nexus/content/sites/site/[http://localhost:8081/nexus/content/sites/site/].
 
-.Sample Site Maven Project Web Site
+.Sample Site Maven Project Website
 image::figs/web/sites-sample-site.png[scale=60]
 
 
