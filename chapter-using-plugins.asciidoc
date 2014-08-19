@@ -4,12 +4,12 @@
 Nexus Open Source and Nexus Professional are built using a plugin
 architecture, where each version includes a different set of
 plugins. You can install plugins available from the open source
-community, other vendors or created by yourself in addition to the
+community, other vendors, or created by yourself in addition to the
 default plugins.
 
 Nexus plugins can provide further functionality for the backend
-like support for new repository formats, specific behavior for
-components, new scheduled tasks, new staging rules and any other
+such as support for new repository formats, specific behavior for
+components, new scheduled tasks, new staging rules, and any other
 additional functionality as well as new user interface components and
 modifications. They can also group a number of these features
 together in one plugin.
@@ -23,40 +23,39 @@ configuration and can be found in
 enabled by default.
 
 Some plugins expose a capability as documented in
-<<capabilities>> and can therefore be enabled, disabled
+<<capabilities>> and can be enabled, disabled,
 and otherwise configured in the capability administration. The
 branding plugin or the outreach plugin are examples of plugins
 exposing capabilities.
 
-NOTE: Prior to Nexus 2.7 optional plugins supplied by Sonatype can be
+NOTE: Prior to Nexus 2.7 optional plugins, supplied by Sonatype, can be
 found in the directory
-+$NEXUS_HOME/nexus/WEB-INF/optional-plugins+. To install any of these
++$NEXUS_HOME/nexus/WEB-INF/optional-plugins+. To install any of these,
 simply copy the folder containing the desired plugin into
-+$NEXUS_HOME/nexus/WEB-INF/plugin-repository+.  When updating Nexus
++$NEXUS_HOME/nexus/WEB-INF/plugin-repository+.  When updating Nexus,
 redo the install of any optional plugins using the newest version
 shipping with the download of the new Nexus version. Any configuration
 of the plugin will be preserved from one version to the other.
 
-Plugins supplied by third parties or authored by yourself are
+Plugins supplied by third parties or ones that you authored are
 installed by copying the folder with the plugin code into
 +sonatype-work/nexus/plugin-repository+ or extracting the plugin
 bundle zip file in that folder.
 
-After a restart of Nexus the new plugins will be active and ready
+After a restart of Nexus, the new plugins will be active and ready
 to use. Upgrades are done by shutting down Nexus, copying the newer
-plugin into the folder, removing the older one and restarting Nexus.
+plugin into the folder, removing the older one, and restarting Nexus.
 
-Capability based plugins can be disabled in the capability
-administration. Otherwise plugins can be removed by deleting the
-respective folder in the plugin-repository and restarting Nexus.
+Capability-based plugins can be disabled in the capability
+administration. Otherwise, plugins can be removed by deleting the
+respective folder in the +plugin-repository+ and restarting Nexus.
 
 [[plugdev]]
 === Developing Nexus Plugins
 
 Developing Nexus plugins allow you to customize and further enhance
-Nexus beyond the features and capabilities offered. This section aims
-to provide you with enough information to get started developing your
-own plugins.
+Nexus beyond the features and capabilities offered. This section provides 
+you with the information to begin developing your own plugins.
 
 The preferred way to write Nexus plugins is to use Java as the
 implementation language and Apache Maven as the build system. The
@@ -70,21 +69,21 @@ The easiest way to create a new Nexus plugin project is to replicate a
 plugin with a similar functionality from these projects. The existing
 plugins and codebase should be used as examples for your own
 functionality. Inspect the source code of plugins with similar
-functionality and read the JavaDoc documentation for the involved
+functionality, and read the JavaDoc documentation for the involved
 classes.
 
 NOTE: The Maven archetype nexus-archetype-quickstart is deprecated.
 
 To gain access to all the components needed for your Nexus plugin
-development you have to proxy the Sonatype grid repository with the
-URL
+development, you have to proxy the Sonatype grid repository with the
+URL below:
 
 ----
 https://repository.sonatype.org/content/groups/sonatype-public-grid/
 ----
 
 For some Nexus Professional specific plugins, you might need access to
-the private grid. We suggest to work with the support team in this
+the private grid. We suggest that you work with the support team in this
 situation.
 
 Set up your project to include inheriting from the parent of all the
@@ -101,17 +100,17 @@ as displayed in <<fig-nexus-plugins-parent>>.
  </parent>
 ---- 
 
-WARNING: It is best to use the exact same version of the parent as the
-Nexus instance you want to run your plugin on. When developing a
+WARNING: It is best to use the identical version of the parent as the
+Nexus instance no which you want to run your plugin. When developing a
 plugin you are using large parts of Nexus internals, which are subject
 to change from one version of Nexus to another. This same logic
 applies to any dependencies as well.
 
 A Nexus plugin Maven project creates a custom build output file in the
-form of a zip file that contains all dependencies in addition to your
-class files and resources from your plugin and some meta data. You
-have to enable this by changing the packaging and adding the bundle
-plugin listed in <<fig-nexus-plugins-packaging>>.
+form of a zip file that contains all dependencies, in addition to your
+class files and resources from your plugin and some metadata. Enable 
+this by changing the packaging and adding the bundle plugin listed 
+in <<fig-nexus-plugins-packaging>>.
 
 
 [[fig-nexus-plugins-packaging]]
@@ -185,7 +184,7 @@ Nexus and Nexus plugins use JSR-330 annotations like
 +@javax.inject.Inject+ and the Google Guice dependency injection
 framework. Typical classes are +@Named+ and are often a
 +@Singleton+ . Other components are typically injected via
-constructor injection as displayed in the example from the virusscan
+constructor injection as displayed in the example from the +virusscan+
 example plugin in <<fig-constructor-injection>>.  
 
 [[fig-constructor-injection]]
@@ -201,7 +200,7 @@ example plugin in <<fig-constructor-injection>>.
 ----
 
 Your Maven project setup should follow the typical standard directory
-layout conventions. In addition static resources such as JavaScript
+layout conventions. In addition, static resources such as JavaScript
 files, images, and CSS should be placed in
 +src/main/resources/static+.
 
