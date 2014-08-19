@@ -7,10 +7,10 @@ repository to Nexus, you can do so by copying the files from a
 standard Maven 2 repository file layout to Nexus. 
 
 
-Depending on your repository managers you will have to use different
+Depending on your repository managers, you will have to use different
 approaches to get access to a repository in Maven 2 format on disk.
 
-Nexus stores it's artifacts in standard maven 2 layout, and they are
+Nexus stores its artifacts in standard Maven 2 layout, and they are
 served directly from disk, and can therefore be easily integrated into
 an existing Nexus instance as a new hosted repository.
 
@@ -27,9 +27,9 @@ existing http://archiva.apache.org/[Archiva] installation to a new Nexus install
 [[archiva-sect-migrepo]]
 ==== Migrating Archiva Repositories
 
-Archiva uses the filesystem to store hosted repositories and
-proxied repositories, because of this migrating from Archiva to Nexus
-couldn't be simpler. The following sections outline the process for
+Archiva uses the file system to store hosted repositories and
+proxied repositories, making migration from Archiva to Nexus
+very simple. The following sections outline the process for
 migrating existing Archiva repositories to a new Nexus instance.
 
 [[archiva-sect-migrating-managed]]
@@ -37,31 +37,31 @@ migrating existing Archiva repositories to a new Nexus instance.
 
 Archiva Managed Repositories are the equivalent of Nexus
 Hosted repositories. To migrate a Managed Repository from Archiva to
-Nexus, all you need to do is:
+Nexus, do the following:
 
-* Create a New Hosted Repository in Nexus
+* Create a New Hosted Repository in Nexus.
 
 * Copy the Contents of the Archiva Managed Repository to the Storage
-Directory of the newly-created Nexus Hosted Repository
+Directory of the newly-created Nexus Hosted Repository.
 
-* Rebuild the Index for the New Nexus Hosted Repository
+* Rebuild the Index for the New Nexus Hosted Repository.
 
 The following example will walk through the process of migrating the
-Archiva repository named "internal" to a new Nexus Hosted repository
+Archiva repository named +internal+, to a new Nexus Hosted repository
 named "internal". To view your managed repositories in Archiva, login
-to Archiva as an administrative user and click on the "Repositories"
-link in the left-hand navigation menu. Clicking on "Repositories" will
+to Archiva as an administrative user and click on the 'Repositories'
+link in the left-hand navigation menu. Clicking on 'Repositories' will
 list all of your Archiva Managed repositories as shown in <<fig-archiva-managed>>.
 
 [[fig-archiva-managed]]
 .Archiva Managed Repositories
 image::figs/web/archiva-managed-repositories.png[scale=60]
 
-To migrate this Managed repository to a Nexus Hosted repository, you
-will need to find the directory in which Archiva stores all of the
-repository artifacts. to do this, click on the Edit link listed next
+To migrate this Managed repository to a Nexus Hosted repository, 
+find the directory in which Archiva stores all of the
+repository artifacts. To do this, click on the 'Edit' link listed next
 to the name of the repository you want to migrate as shown in <<fig-archiva-managed>>.
-Click on Edit should load the form shown in <<fig-archiva-managed-edit>>.
+Clicking on 'Edit' should load the form shown in <<fig-archiva-managed-edit>>.
 
 [[fig-archiva-managed-edit]]
 .Editing an Archiva Managed Repository
@@ -69,7 +69,7 @@ image::figs/web/archiva-managed-repo-edit.png[scale=60]
 
 Take note of the file path for Directory. The file path shown in <<fig-archiva-managed-edit>> is
 ./data/repositories/internal. If Archiva is installed in
-/usr/local/archiva-1.2.1, this would correspond to the
+/usr/local/archiva-1.2.1, it should correspond to the
 directory
 /usr/local/archiva-1.2.1/data/repositories/internal.  You
 will use this path later in this section to copy the contents of your
@@ -90,10 +90,10 @@ migrating a Release repository select a Snapshot Policy of Release.
 image::figs/web/archiva-new-nexus-hosted.png[scale=60]
 
 Now, you'll need to copy the Archiva repository to the Nexus
-repository. You can do this, by copying the contents of the Archiva
+repository. You can do this by copying the contents of the Archiva
 repository directory to the Nexus repository storage directory. If we
-assume that Archiva is install in /usr/local/archiva-1.2.1, Nexus is
-install in /usr/local/nexus-1.3.6, and the Sonatype Work directory is
+assume that Archiva is installed in /usr/local/archiva-1.2.1, Nexus is
+installed in /usr/local/nexus, and the Sonatype Work directory is
 /usr/local/sonatype-work. You can copy the contents of the Archiva
 managed repository to the new Nexus hosted repository by executing the
 following command:
@@ -103,7 +103,7 @@ $ cp -r /usr/local/archiva-1.2.1/data/repositories/internal/* \
 /usr/local/sonatype-work/nexus/storage/internal/
 ----
 
-If you are migrating to a Nexus instance which is on a different
+If you are migrating to a Nexus instance on a different
 server, you can simply create an archive of the
 /usr/local/archiva-1.2.1/data/repositories/internal directory, copy it
 to the new server, and then decompress your repository archive in the
@@ -115,7 +115,7 @@ been proxying a remote repository, you might want to remove artifacts
 that have been proxied from a remote repository. For example, if your
 organization uses a groupId of org.company for internal project, you
 can make sure to only copy the artifacts under the corresponding
-org/company/
+org/company/.
 
 Once the contents of the repository have been copied to the Nexus
 Hosted repository, you must rebuild the repository index as shown in
@@ -139,7 +139,7 @@ from remote repositories in Archiva Managed Repositories.  While Nexus
 also provides Proxy repositories, there is one major difference
 between Nexus and Archiva. Where Nexus maintains a separate local
 storage directory for each proxy repository, Archiva combines cached
-remote artifacts into a single filesystem with the contents of a
+remote artifacts into a single file system with the contents of a
 managed repository. In other words, there is no good way to transfer
 an existing local cache of artifacts between Archiva and Nexus without
 manually manipulating the contents of Archiva's Managed Repository
@@ -153,8 +153,8 @@ location for you new Proxy repository, and then rebuild the metadata
 of your new Nexus Proxy repository.
 
 First step is to take a look at the Remote Repositories in your
-Archiva installation: log in as an administrative user and then click
-on "Repositories" under the Administration menu in the left-hand
+Archiva installation. Log in as an administrative user and then click
+on 'Repositories' under the 'Administration' menu in the left-hand
 Archiva navigation menu. Once you've clicked this link and loaded the
 list of repositories, scroll to the bottom of the page to see the list
 of remote repositories as shown in <<fig-archiva-browsing-remote>>.
@@ -170,20 +170,19 @@ you do this, requests for artifacts from the managed repository will
 also query the remote repository. If an artifact is found in the
 remote repository, it will be retrieved and stored in the managed
 repository's storage directory. To see a list of proxy connectors and
-the managed repositories they are associated with, click on "Proxy
-Connectors" in the left-hand Archiva menu, you will see a list similar
+the managed repositories with which they are associated, click on 'Proxy
+Connectors' in the left-hand Archiva menu and you will see a list similar
 to that shown in <<fig-archiva-proxy-connectors>>.
 
 [[fig-archiva-proxy-connectors]]
 .Archiva Proxy Connectors
 image::figs/web/archiva-proxy-connectors.png[scale=60]
 
-Click on the Edit Icon (or Pencil) next to second Proxy Connector
-listed in <<fig-archiva-proxy-connectors>>, this will
-then load the settings form for this proxy connector shown in
-<<fig-archiva-proxy-connector-settings>>. You should use the
-settings for this proxy connect to configure your new Nexus Proxy
-repository.
+Click on the edit icon (or pencil) next to second Proxy Connector
+listed in <<fig-archiva-proxy-connectors>>, to load the settings 
+form for this proxy connector shown in <<fig-archiva-proxy-connector-settings>>. 
+You should use the settings for this proxy connect to configure 
+your new Nexus Proxy repository.
 
 [[fig-archiva-proxy-connector-settings]]
 .Archiva Proxy Connector Settings
@@ -241,17 +240,17 @@ from Artifactory to Nexus.
 
 Typically migrating from Artifactory revolves around migrating hosted
 repositories only, since any proxy repositories configured in
-Artifactory can just be set up with the same configuration in Nexus
+Artifactory can just be set up with the same configuration in Nexus,
 and all data will be retrieved from the upstream repositories again.
 
 Hosted repositories on the other hand have to be migrated. The best
 practice for migration is to use the import/export feature of
 Artifactory and migrate one hosted repository after another. Please
-consult the Artifactory documentation for step by step instructions on
+consult the Artifactory documentation for step-by-step instructions on
 how to export a repository.
 
-After the export you have to create a hosted repository in Nexus
-e.g., with the name "old-releases" as documented in
+After the export, you have to create a hosted repository in Nexus
+e.g., with the name +old-releases+ as documented in
 <<config-sect-new-repo>>. This will create a folder in
 sonatype-work/nexus/storage/old-releases.
 
@@ -259,19 +258,19 @@ Now you are ready to take the exported repository and copy it into the
 newly created storage folder. 
 
 Going back to the Nexus user interface, navigate to the repository
-administration and select the Browse Storage panel. Right-click on the root
-folder of the repository and select Rebuild Metadata first and as a
-second step select Update Index. Once these tasks are completed, the
+administration and select the 'Browse Storage' panel. Right-click on the root
+folder of the repository and select 'Rebuild Metadata' first. and as a
+second step select 'Update Index'. Once these tasks are completed, the
 migrated repository is ready to be used.
 
-After these task are completed you will probably want to add the
+After these task are completed, you will probably want to add the
 migrated repository to the Public Repositories group or any other
 group in which you want the migrated repository content to be
 available. 
 
 If you want to ensure that the repository does not get any further
-content added you can set the Deployment Policy to Read Only in the
-Access Settings of the repository Configuration panel.
+content added, you can set the 'Deployment Policy' to 'Read Only' in the
+'Access Settings' of the repository 'Configuration' panel.
 
 ////
 /* Local Variables: */
