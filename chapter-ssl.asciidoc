@@ -4,21 +4,21 @@
 [[ssl-sect-introduction]]
 === Introduction
 
-Using Secure Socket Layer SSL to secure protocols like http, ldap and
-smtp is a critical step of securing your Nexus setup. Since Nexus is
-serving content as well as connecting to external sources there are
+Using Secure Socket Layer SSL to secure protocols like HTTP, LDAP and
+SMTP is a critical step of securing your Nexus setup. Since Nexus is
+serving content as well as connecting to external sources, there are
 two aspects of SSL configuration related to Nexus:
 
 * Configuring SSL certificate usage when connecting to external
   systems including
 
-** Proxying a remote repository available via https
+** Proxying a remote repository available via HTTPS
 
 ** Connecting to a SSL secured SMTP server 
 
-** Connecting to an LDAP server via ldaps
+** Connecting to an LDAP server via LDAPS
 
-* Exposing the Nexus user interface and content via https
+* Exposing the Nexus user interface and content via HTTPS
 
 Securing all connections to external systems with SSL as well as
 exposing Nexus via SSL are both recommended best practices for
@@ -28,6 +28,10 @@ Especially when you set up a repository manager for a team of
 developers spread out over a variety of locations both internal and
 external to a corporate network, you will likely want to secure your
 repository using SSL.
+
+We generally recommend to secure your repository using SSL, especially when 
+creating a repository for a  team of developers in different geographical 
+locations both internal and external to a corporate network.
 
 [[ssl-sect-client-cert]]
 === SSL Client Certificates
@@ -40,8 +44,8 @@ interface. The administration interface for SSL certificates as
 visible in <<fig-ssl-certificates-list>> and can be accessed by
 selecting 'SSL Certificates' in the left-hand 'Administration'
 menu. The list of certificates displayed shows the certificate for the
-SSL secured Central Repository preconfigured in Nexus Professional and
-a self signed certificate registered in Nexus.
+SSL-secured Central Repository preconfigured in Nexus Professional and
+a self-signed certificate registered in Nexus.
 
 NOTE: The SSL Certificate Management is a Nexus Professional feature.
 
@@ -50,32 +54,32 @@ NOTE: The SSL Certificate Management is a Nexus Professional feature.
 image::figs/web/ssl-certificates-list.png[scale=50]
 
 The actual list of SSL certificates can be reloaded by clicking the
-'Refresh' button above the list. In addition certificates can be added
-fand deleted with the 'Add' and 'Delete' buttons.
+'Refresh' button above the list. In addition, certificates can be added
+and deleted with the 'Add' and 'Delete' buttons.
 
 Pressing the add button provides a choice to load a certificate from a
 server with the 'Load from server' option or to insert a certificate
 in PEM format with the 'Paste PEM'.
 
 The dialog to load a certificate from a server allows you to provide a
-hostname, a hostname:port string or a full URL. When providing a
-hostname a connection via http:// using the default SSL port 443 will
-be attempted. Using a full URL on the other hands gives the most
+host name, a +hostname:port+ string or a full URL. When providing a
+host name a connection via http:// using the default SSL port 443 will
+be attempted. Using a full URL on the other hand gives the most
 control.
 
-As an example you could retrieve the certificate for the secured Central
-Repository using the url
+As an example, you could retrieve the certificate for the secured Central
+Repository using the URL
 ----
-https://secure.central.sonatype.com
+https://repo1.maven.org
 ----
 
-Besides retrieving certificates for servers running https you can
-retrieve and therefore register the certificate for email and
+Besides retrieving certificates for servers running HTTPS, you can
+retrieve and register the certificate for email and
 directory servers. An LDAP directory server certificate can be loaded
-with a URL using the ldaps protocol and the desired hostname and port
+with a URL using the LDAPS protocol and the desired host name and port
 similar to +ldaps://localhost:10636+. A SMTP server can be queried
 with a similar pattern using +smtps://localhost:465+. After successful
-retrieval the details of the certificate as displayed in a
+retrieval, the details of the certificate as displayed in a
 dialog. <<fig-ssl-add-server>> shows the result from querying a
 certificate from +smtps://smtp.gmail.com:465+. Pressing the 'Add
 Certificate' button will save the certificate within Nexus and allow
@@ -88,7 +92,7 @@ image::figs/web/ssl-add-server.png[scale=50]
 The dialog displays details about the certificate owner in the
 'Subject' section, the certificate issuer in the 'Issuer' section and
 the certificate itself in the 'Certificate' section. The same data is
-displayed below the list of certificates when you select a specific
+displayed below the list of certificates,f when you select a specific
 certificate in the list.
 
 The alternate method of registering a certificate with Nexus uses the
@@ -107,30 +111,31 @@ the LDAP and Server/SMTP Settings administration user interfaces.
 ==== Proxying SSL Secured Repositories
 
 When setting up a proxy repository with a remote storage location
-secured with https the repository administration will display an 'SSL'
-configuration tab under the list of repositories, if the proxy
-repository is selected. For a repository using a self signed
-certificate the repository status will initially be set to be in
+secured with HTTPS the repository administration will display an 'SSL'
+configuration tab under the list of repositories if the proxy
+repository is selected. For a repository using a self-signed
+certificate, the repository status will initially be set to be in
 service, but the remote will be automatically blocked and set to be
 unavailable, since the certificate of the remote server is not
-trusted. Remote repositories that use a CA signed certificate will be
-automatically trusted.
+trusted. Remote repositories that use a certificate authority(CA)-signed 
+certificate will be automatically trusted.
 
 The 'SSL' tab displays as visible in <<fig-ssl-secure-central>> the
 details of the certificate and allows you to add the certificate to
-the truststore or to remove it from it with the button on the top
+the trust store or to remove it from it with the button on the top
 right-hand corner named 'Add to trust store' and 'Remove from trust
 store' respectively. 
 
-In addition the checkbox on the top left corner allows you to store
+In addition, the checkbox on the top left corner allows you to store
 the certificate in the Nexus internal SSL trust store. Otherwise the
-certificate is installed into the trust store of the JVM running
-Nexus. Using the Nexus internal trust store will work fine even when
-migrating Nexus from one machine to another or when switching the Java
-runtime and JVM between restarts for example during upgrades, and is
-therefore recommended. At runtime the JVM and Nexus trust stores are
-merged and both used so you can use a combination, if you organization
-e.g., maintains a default trust store for all JVM installations.
+certificate is installed into the trust store of the Java Virtual 
+Machine (JVM) running Nexus. Using the Nexus internal trust store is 
+recommended. It will work fine, even when migrating Nexus from one 
+machine to another or when switching the Java runtime and JVM between 
+restarts for example during upgrades. At runtime the JVM and Nexus 
+trust stores are merged and both used so you can use a combination, 
+if your organization e.g., maintains a default trust store for all 
+JVM installations.
 
 [[fig-ssl-secure-central]]
 .SSL Tab for a Proxy Repository with Remote Server Using HTTPS
@@ -141,10 +146,10 @@ When removing a certificate from the trust store, a Nexus restart is required.
 ==== Manually Configuring Trust Stores
 
 The Nexus user interface should be sufficient to work with the trust
-stores and certificates. However in older version of Nexus as well as
-some use cases you need to manually configure the trust store. 
+stores and certificates. In older versions of Nexus as well as
+some use cases, you need to manually configure the trust store. 
 
-Sonatype provides an import-ssl tool, which can be downloaded from 
+Sonatype provides an import-ssl tool that can be downloaded from 
 http://download.sonatype.com/nexus/import-ssl.jar[http://download.sonatype.com/nexus/import-ssl.jar]. 
 It allows you to import a client certificate in two steps: 
 
@@ -154,34 +159,31 @@ It allows you to import a client certificate in two steps:
 The Java Virtual Machine running Nexus uses the
 http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html[Java
 Secure Socket Extension (JSSE)] to enable secure Internet
-communication. It uses two certificate stores - the truststore and the
-keystore.
+communication. It uses two certificate stores - +truststore+ and +keystore+.
 
 A truststore contains certificates from servers run by other parties
-that you expect to communicate with, or from Certificate Authorities
+with who you expect to communicate, or from Certificate Authorities
 that you trust to identify other parties. This truststore ships with a
-number of CA's out of the box - trusted root certificates.
+number of CA's out-of-the-box, trusted root certificates.
 
-A keystore contains private keys, and the certificates with their
-corresponding public keys.
+A keystore contains private keys and the certificates with their 
+corresponding public keys. Typically,  they are stored in separate 
+files stored in the default location of +$\{JRE_HOME\}/lib/security/cacerts+.
 
-Typically they are stored in separate files stored in the default location of
-${JRE_HOME}/lib/security/cacerts.
+Some notes about the location of the keystore and default
+keystore passwords:
 
-Some notes about the location of the key-store and default
-key-store passwords:
-
-* If you are using the default JSSE key-store locations on either a
+* If you are using the default JSSE keystore locations on either a
 Linux or OS X platform, you must run the commands below as the
-root user. You can do this either by changing to the root user (su -),
-or by using the sudo command: sudo [command].
+root user. You can do this either by changing to the root user (+su -+)
+or by using the sudo command: +sudo [command]+.
 
-* The default password used by Java for the built-in key-stores is
+* The default password used by Java for the built-in keystores is
 'changeit'. If your key-store uses a different password, you'll need to
 specify that password as the last parameter on the command lines
 above.
 
-* If you want to specify your own key-store/truststore file, provide that in
+* If you want to specify your own keystore/truststore file, provide that in
 place of <keystore_dir> in the examples below.
 
 * If you're using a password other than 'changeit' for your keystore,
@@ -192,7 +194,7 @@ commands below.
 import-ssl utility will create it on-demand.
 
 Before you begin the process of importing a Server SSL Chain and a
-client certificate you will need three things:
+client certificate you will need the following:
 
 * Network access to the SSL server you are connecting to,
 
@@ -201,7 +203,7 @@ client certificate you will need three things:
 * and a certificate password.
 
 For server certificates you should either import directly into
-${JRE_HOME}/lib/security/cacerts, or make a copy of the file and
++$\{JRE_HOME\}/lib/security/cacerts+, or make a copy of the file and
 import into that. 
 
 WARNING: If you replace the existing truststore rather than adding to
@@ -215,12 +217,12 @@ The first command imports the entire self-signed SSL certificate chain
 for central.sonatype.com into your JSSE keystore:
 
 ----
-$ java -jar import-ssl.jar server central.sonatype.com <keystore>
+$ java -jar import-ssl.jar server repo1.maven.org <keystore>
 ----
 
-You would substitute the server name used in the previous listing with
-the server name you are attempting to connect to. This particular
-command will connect to https://central.sonatype.com, retrieve, and
+Substitute the server name used in the previous listing with
+the server name to which you are attempting to connect. This particular
+command will connect to +https://repo1.maven.org+, retrieve, and
 import the server's SSL certificate chain.
 
 ===== Import the Client SSL Key/Certificate Pair
@@ -235,9 +237,8 @@ $ java -jar import-ssl.jar client <your-certificate.p12> \
 ----
 
 When the client command completes, you should see a line containing
-the keystore path, like the one that follows. This path is important;
-you will use it in your Nexus configuration below, so make a note of
-it!
+the keystore path. Please note this, as you will use it in your 
+next configuration step. 
 
 ----
 ...
@@ -245,8 +246,8 @@ Writing keystore: /System/Library/Frameworks/JavaVM.framework/\
 Versions/1.6.0/Home/lib/security/jssecacerts
 ----
 
-If you want to make a new keystore to import your keys into, you will
-have to use the keytool that ships with your Java installation to
+If you want to make a new keystore into which to import your keys, 
+use the keytool that ships with your Java installation to
 create an empty keystore:
 
 ----
@@ -283,27 +284,27 @@ Nexus and attempt to proxy a remote repository which requires an SSL
 client certificate. Nexus will use the keystore location and keystore
 password to configure the SSL interaction to accept the server's SSL
 certificate and send the appropriate client SSL certificate using the
-manual configuration you have complete with the import-ssl tool.
+manual configuration you have completed with the import-ssl tool.
 
 [[ssl-sect-ssl-direct]]
 === Configuring Nexus to Serve via SSL
 
-Providing access to the Nexus user interface and content via https
+Providing access to the Nexus user interface and content via HTTPS
 only is a recommended best practice for any deployment.
 
 The recommended approach to implementation is to proxy Nexus behind a
 server that is configured to serve content via SSL and leave Nexus
 configured for http. The advantage of this approach is that Nexus can
 easily be upgraded and there is no need to work with the JVM
-truststore. In addition you can use the expertise of your system
+truststore. In addition, you can use the expertise of your system
 administrators and the preferred server for achieving the proxying,
 which in most cases will already be in place for other systems.
 
 Common choices are servers like Apache httpd, nginx, Eclipse Jetty or
 even dedicated hardware appliances. All of them can easily be
-configured to serve SSL content and there is a large amount of
+configured to serve SSL content, and there is a large amount of
 reference material available for configuring these servers to serve
-secure content. For example Apache httpd would be configured to use
+secure content. For example, Apache httpd would be configured to use
 mod_ssl.
 
 Alternatively the Jetty instance that is part of the default Nexus
@@ -322,7 +323,7 @@ As a first step you have to add the file +jetty-https.xml+ to the
 Jetty startup configuration in +wrapper.conf+ as detailed in
 <<jetty-xml, the installation chapter>>.
 
-Next, the  http port you want to use for the https connection has to be
+Next, the HTTP port you want to use for the HTTPS connection has to be
   defined by setting the +application-port-ssl+ property in
   +nexus.properties+ e.g., 
 
@@ -349,14 +350,14 @@ for your keystore file and update the paths for the +keystore+ and
 
 Once this is all in place you can start up Nexus and access the user
 interface at e.g., +https://localhost:8443/nexus+. If you have just
-created a self-signed certificate modern web browsers will warn you
+created a self-signed certificate, modern web browsers will warn you
 about the certificate and you will have to acknowledge the fact that
-the certificate is self-signed. To avoid this behavior you have to
+the certificate is self-signed. To avoid this behavior, you have to
 get a certificate signed by a signing authority or reconfigure the web
 browser.
 
-Nexus is now available via https. If desired you can configure
-automatic redirection from HTTP to HTTPS with the by adding usage of
+Nexus is now available via HTTPS. If desired you can configure
+automatic redirection from HTTP to HTTPS by adding usage of
 +jetty-http-redirect-to-https.xml+ as additional app parameters in
 +wrapper.conf+ as well as update the +Base URL+ in your Nexus server
 configuration.
