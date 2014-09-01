@@ -26,10 +26,12 @@ function rsyncToStage {
 if [ $publish_master == "true" ]; then
     rsyncToStage site/reference/ reference --delete
     rsyncToStage site/pdf/ pdf --delete
+    rsyncToStage site/other/ other --delete
 fi
 
 rsyncToStage site/$nexus_version/reference/ $nexus_version/reference --delete
 rsyncToStage site/$nexus_version/pdf/ $nexus_version/pdf --delete
+rsyncToStage site/$nexus_version/other/ $nexus_version/other --delete
 
 # Important to use separate rsync run WITHOUT --delete since its an archive! and we do NOT want old archives to be deleted
 #rsyncToStage archive/ archive

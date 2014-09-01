@@ -26,10 +26,12 @@ function rsyncToProduction {
 if [ $publish_master == "true" ]; then
     rsyncToProduction site/reference/ reference --delete
     rsyncToProduction site/pdf/ pdf --delete
+    rsyncToProduction site/other/ other --delete
 fi
 
 rsyncToProduction site/$nexus_version/reference/ $nexus_version/reference --delete
 rsyncToProduction site/$nexus_version/pdf/ $nexus_version/pdf --delete
+rsyncToProduction site/$nexus_version/other/ $nexus_version/other --delete
 
 # Important to use separate rsync run WITHOUT --delete since its an archive! and we do NOT want old archives to be deleted
 #rsyncToProduction archive/ archive
