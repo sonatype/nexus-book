@@ -37,7 +37,7 @@
     ################################################### -->
     <!-- Generate the TOCs for named components only -->
     <xsl:param name="generate.toc">
-        book toc,figure,example
+        book toc
         chapter toc
         part toc
         preface toc
