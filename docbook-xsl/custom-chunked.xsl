@@ -77,17 +77,17 @@
     <xsl:template match="authorgroup" mode="titlepage.mode">
         <div class="toc_intro">
           <p>
-            If you are developing software without a repository
+            If you are developing software without a component
             manager you are likely missing a number of opportunities
-            to reduce some pretty obvious ineffeciencies.  If everyone
-            on your team has to hit Central to download artifacts you
-            are missing out on some simple gains in speed and
+            to reduce some pretty obvious inefficiencies.  If everyone
+            on your team has to hit the Central Repository to download 
+            components, you are missing out on some simple gains in speed and
             efficiency. If you don't have a local place to deploy
-            artifacts you are forced to share binary artifacts using
+            components you are forced to share binary components using
             half-measures and compromises such as storing binaries in
             source control.  Stop developing in the Dark Ages, read
-            this book, and start using a repository manager.  Trust
-            us, once you start using Nexus, you'll wonder how you ever
+            this book, and start using a component manager.  Trust
+            us, once you start using Sonatype Nexus, you'll wonder how you ever
             functioned without it.
           </p>
         </div>
