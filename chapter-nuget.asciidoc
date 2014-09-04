@@ -16,6 +16,9 @@ provide a repository and features to upload your open source NuGet
 packages. With the NuGet Gallery a repository of open source libraries
 and tools is available and the need for repository management arises.
 
+IMPORTANT: With the release of Nexus 2.9, NuGet support is available
+in Nexus Professional and Nexus Open Source.
+
 Nexus supports the NuGet repository format for hosted and proxy
 repositories. Nexus also supports aggregation of NuGet repositories
 and conversion of other repositories containing +.nupkg+ components
@@ -38,8 +41,10 @@ solution. NuGet copies everything and makes any required changes to
 your project setup and configuration files. Removing a package will
 clean up any changes as required.
 
-IMPORTANT: With the release of Nexus 2.9, NuGet support is available
-in Nexus Professional and Nexus Open Source.
+TIP: Using NuGet repositories benefits from a larger memory
+size available to Nexus. This memory allocation can be configured in
++wrapper.conf+ as documented in <<install-sect-running>>.
+
 
 [[nuget-nuget_proxy_repositories]]
 === NuGet Proxy Repositories
@@ -129,7 +134,8 @@ image::figs/web/nuget-hosted-nupkg-upload.png[scale=40]
 
 The NuGet feed is immediately updated as packages are deployed or
 deleted from the host repository. To rebuild the feed for a hosted 
-NuGet repository you can manually schedule a 'Rebuild NuGet Feed'  task.
+NuGet repository you can manually schedule a 'Rebuild NuGet Feed'
+task.
 
 === NuGet Virtual Repositories
 
@@ -196,6 +202,15 @@ proxy. Ideally, this will be your NuGet group.
 
 After this source was added, you can list the available packages with 
 the command +nuget list+.
+
+Access to the packages is not restricted by default. If access
+restrictions are desired, you can
+<<confignx-sect-managing-security,configure Nexus security>> directly
+or via <<ldap,LDAP/Active Directory external role mappings>> combined with
+<<confignx-sect-managing-repo-targets,repository targets>> for fine
+grained control. Authentication from NuGet is then handled via NuGet
+API keys as documented in <<nuget-deploying_packages_to_nuget_hosted_repositories>>.
+
 
 [[nuget-deploying_packages_to_nuget_hosted_repositories]]
 === Deploying Packages to NuGet Hosted Repositories
