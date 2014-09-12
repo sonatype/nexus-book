@@ -46,7 +46,7 @@ cp -r site/css target/site/$nexus_version/reference
 cp -r site/js target/site/$nexus_version/reference
 cp -r site/assets target/site/$nexus_version/reference
 cp -r site/images target/site/$nexus_version/reference
-cp site/search.html target/site/reference
+cp site/search.html target/site/$nexus_version/reference
 cp target/book-nexus.pdf target/site/$nexus_version/pdf/nxbook-pdf.pdf
 cp target/sonatype-nexus-eval-guide.pdf target/site/$nexus_version/pdf/sonatype-nexus-eval-guide.pdf
 
