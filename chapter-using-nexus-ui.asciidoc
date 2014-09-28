@@ -718,59 +718,62 @@ If you would like more information about these features, check out our
 link:http://books.sonatype.com/sonatype-clm-book/html/repository-manager-user-guide/index.html[Sonatype
 CLM Repository Manager Guide].
 
+////
 
 
 [[using-sect-uploading]]
-=== Uploading Artifacts 
+=== Uploading Maven Artifacts 
 
 When your build makes use of proprietary or custom dependencies that
 are not available from public repositories, you will often need to
 find a way to make them available to developers in a custom Maven
 repository. Nexus ships with a preconfigured third-party repository
 that was designed to hold third-party dependencies that are used in
-your builds. To upload artifacts to a repository, select a hosted
-repository in the 'Repositories' panel and then click on the 'Artifact
-Upload' tab. Clicking on the 'Artifact Upload' tab will display the
-tab shown in <<fig-using-artifact-upload>>.
+your builds. 
+
+If you are signed in to Nexus as a user with sufficient privileges,
+the 'Upload' section of the 'Browse' main menu will be visible and
+contain the 'Maven' menu item. Press on this item and the feature view
+panel will display the 'Maven' feature as shown in
+<<fig-using-artifact-upload>>.
 
 [[fig-using-artifact-upload]]
-.Artifact Upload Tab
+.Maven Artifact Upload Feature
 image::figs/web/using_artifact-upload.png[scale=50]
 
-To upload an artifact, click on 'Select Artifact(s) to Upload...', and
-select one or more artifacts from the filesystem to upload. Once you
-have selected an artifact, you can modify the classifier and the
-extension before clicking on the 'Add Artifact' button. Once you have
-clicked on the 'Add Artifact' button, you can then configure the source
-of the 'Group', 'Artifact', 'Version' (GAV) parameters. 
+To upload a component, select the target repository from the
+'Repository' drop down list and press the 'Add an artifact' button and
+select the artifact you want to upload from the filesystem in the dialog.
 
-If the artifact you are uploading is a jar file that was created by
-Maven it will already have POM information embedded in it. If you are
-uploading a jar from a vendor you will likely need to set the group
-identifier, artifact identifier, and version manually. To do this,
-select 'GAV Parameters' from the 'GAV Definition' drop-down at the top of
-this form. This will expose a set of form fields
-which will let you set the 'Group', 'Artifact', 'Version', and 'Packaging' of
-the artifacts being uploaded. Packaging can be selected from the list
-or provided by typing the value into the input box.
+Once you have selected an artifact, you can modify the 'Classifier' and the
+'Extension', if they have not been prefilled automatically. 
 
-If you would prefer to set the group, artifact, and version from a POM
-file associated with the uploaded artifact, select 'From POM' in the 'GAV
-Definition' drop-down.  This will
-expose a button labeled 'Select POM to Upload'. Once a POM file has
-been selected for upload, the name of the POM file will be displayed
-in the form field below this button.
+If the artifact you want to upload is a POM file, you can press the
+'Upload' button to complete the upload. 
+
+If you do not have a POM file and are uploading e.g., a JAR file you
+have to ensure to specify the 'Group', 'Artifact' , 'Version' and
+'Packaging' values to be able to proceed and then press the 'Upload'
+button. Packaging values can be selected from the drop down list or
+provided by typing the value into the input box.
+
+In both cases you can upload multiple artifacts for the same
+coordinates e.g., the POM and the JAR file, with the 'Add another
+artifact' button. This allows you to upload a POM and a JAR file
+combined with the sources and javadoc JAR files in one operation.
+
+[[fig-using-artifact-upload-details]]
+.Maven Artifact Upload Feature
+image::figs/web/using_artifact-upload-details.png[scale=50]
+
+If you added a POM file as an additional artifact the coordinates from
+the POM file will be used the and input filed will be removed. 
 
 TIP: Uploading a POM file allows you to add further details like
 dependencies to the file, which improves the quality of the upload by
 enabling transitive dependency management.
 
-The 'Artifact Upload' panel supports multiple artifacts with the same
-group, artifact, and version identifiers. For example, if you need to
-upload multiple artifacts with different classifiers, you may do so by
-clicking on 'Select Artifact(s) for Upload' and 'Add Artifact' multiple
-times. A common use case for this upload is to upload the pom and jar
-file as well as the javadoc and sources jar files file for an artifact.
+////
 
 [[using-sect-feeds]]
 === Browsing System Feeds
@@ -899,54 +902,46 @@ as the overall file size. Pressing the 'Create' button with gather all
 files and create the archive in +sonatype-work/nexus/support+ and open
 a dialog to download the file to your workstation. 
 
+////
 
 [[using-sect-user-profile]]
 === Working with Your User Profile
 
-As a logged-in user, you can click on your user name in the top
-right-hand corner of the Nexus user interface to expose a drop-down
-with an option to 'Logout' as well as to access your user 'Profile'
-displayed in <<fig-using-user-dropdown>>.
+As a logged-in user, you can click on your user name on the 
+right-hand side of the main toolbar to switch the main menu to contain
+the 'User' menu. Pressing on the 'Account' menu item displays the
+'Account' feature in the main feature panel as displayed in <<fig-account-feature-panel>>.
 
-[[fig-using-user-dropdown]]
-.Drop Down on User Name with Profile and Logut Options
-image::figs/web/using-user-dropdown.png[scale=60]
+[[fig-account-feature-panel]]
+.Editing User Details in the Account Feature Panel 
+image::figs/web/account-feature-panel.png[scale=50]
 
-Once you have selected to display your profile, you will get access to
-the 'Summary' section of the 'Profile' tab as displayed in
-<<fig-using-profile-summary>>.
-
-[[fig-using-profile-summary]]
-.Summary Section of the Profile Tab
-image::figs/web/using-profile-summary.png[scale=50]
-
-The 'Summary' section allows you to edit your 'First Name', 'Last Name', and
+The 'Account' feature allows you to edit your 'First Name', 'Last Name', and
 'Email' directly in the form. 
 
 ==== Changing Your Password
 
 In addition to changing your name and email, the user profile allows
-you to change your password by clicking on the Change Password
-text. The dialog displayed in <<fig-using-profile-change-password>>
-will be displayed and allow you to supply your current password, and
-choose a new password. When you click on Change Password, your Nexus
-password will be changed.
+you to change your password by clicking on the 'Change Password'
+button. You will be prompted to authenticate with your current
+password and subsequently supply your new password in pop up dialogs.
 
-[[fig-using-profile-change-password]]
-.Changing Your Nexus Password
-image::figs/web/repository-manager_change-password.png[scale=60]
-
-The password change feature only works with the Nexus built-in XML
-Realm security realm. If you are using a different security realm like
+TIP: The password change feature only works with the Nexus built-in 
+security realm. If you are using a different security realm like
 LDAP or Crowd, this option will not be visible.
 
-==== Additional User Profile Tabs
+//// 
+tbd
+==== Additional User Feature Panels
 
-The Profile tab can be used by other plugins and features to
+The 'User' menu can be used by other plugins and features to
 change or access user specific data and functionality. One such use
-case is the User Token access documented in .
+case is the User Token access.
+
+.
 tbd link to user token section
 ////
+
 
 ////
 /* Local Variables: */
