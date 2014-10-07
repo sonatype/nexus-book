@@ -175,7 +175,7 @@ of +username:password+.  You can create this encoded string with the
 command line call +openssl+ e.g.: for the default +admin+ user of Nexus:
 
 ----
-echo 'admin:admin123' | openssl base64
+echo -n 'admin:admin123' | openssl base64
 ----
 
 Other tools for the encoding are +uuencode+ or, for Windows users,
@@ -187,8 +187,14 @@ init.author.name = Jane Doe
 init.author.email = jane@example.com
 init.author.url = http://blog.example.com
 email=jane@example.com
-_auth=YWRtaW46YWRtaW4xMjMK
+_auth=YWRtaW46YWRtaW4xMjM=
 ----
+
+TIP: Whatever tool you use to generate the encoded username and
+password string, try to encode the string +admin:admin123+, which
+should result in +YWRtaW46YWRtaW4xMjM=+. Another example for a valid
+setup is +jane:testpassword123+ resulting in
++amFuZTp0ZXN0cGFzc3dvcmQxMjM=+.
 
 With this configuration you can run +npm publish+ for your
 package. Mor information about package creation can be found on the
