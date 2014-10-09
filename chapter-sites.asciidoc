@@ -82,7 +82,7 @@ the Maven-generated project website:
 ----
 <distributionManagement>
   <site>
-    <id>nexus-site</id>
+    <id>nexus</id>
     <url>dav:http://localhost:8081/nexus/content/sites/site/</url>
   </site>
 </distributionManagement>
@@ -91,15 +91,14 @@ the Maven-generated project website:
 The URL in the distribution management is not parameterized, which
 means that any redeployment overwrites old content and potentially
 leaves old stale files behind. To have a new deployment directory for
-each version, change the URL to a parameterized setup.
+each version, change the URL to a parameterized setup or a hardcoded
+specific URL for your project.
 
 
 [[ex-sites-dist-parameterized]]
 .Parameterized Distribution Management for Site Deployment
 ----
-<url>
-dav:http://localhost:8081/nexus/content/sites/site/${project.groupId}/${project.artifactId}/${project.version}
-</url>
+<url>dav:http://localhost:8081/nexus/content/sites/site/${project.groupId}/${project.artifactId}/${project.version}</url>
 ----
 
 If you combine this approach with a redirector or a static page that
@@ -108,32 +107,23 @@ separate sites hosting your javadoc and other documentation for
 different releases of your software.
 
 The dav protocol used by for deployment to Nexus requires that you add
-the implementing library as a build extension to your Maven project:
+the implementing library as a dependency to the Maven site plugin
+configuration.
 
-[[ex-sites-dav]]
-.Build Extension for DAV Support
-----
- <build>
-   <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-webdav-jackrabbit</artifactId>
-        <version>2.6</version>
-      </extension>
-    </extensions>
-----
-
-In addition to the +distributionManagement+ element and the +build+
-+extension+,  add the following build element that will
-configure Maven to use version 3.4 of the Maven Site plugin.
-
-.Configuring Version 3.4 of the Maven Site Plugin
+.Configuring Version 3.4 of the Maven Site Plugin with DAV support
 ----
 <build>
   <plugins>
     <plugin>
       <artifactId>maven-site-plugin</artifactId>
       <version>3.4</version>
+      <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-webdav-jackrabbit</artifactId>
+            <version>2.6</version>
+          </dependency>
+        </dependencies>
     </plugin>
   </plugins>
 </build>
@@ -154,7 +144,7 @@ to the servers element.
 <settings>
   <servers>
     <server>
-      <id>nexus-site</id>
+      <id>nexus</id>
       <username>deployment</username>
       <password>deployment123</password>
     </server>
