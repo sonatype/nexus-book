@@ -1,0 +1,212 @@
+[[yum]]
+== RPM Packages and YUM Repositories
+
+=== Introduction
+
+http://www.rpm.org/[RPM] packages and the RPM package manager solution http://yum.baseurl.org/[yum] are used as the default application package manager on Linux based operating systsems such as http://www.redhat.com/[Red Hat], http://www.centos.org/[CentOS], http://fedoraproject.org/[Fedora], http://www.oracle.com/us/technologies/linux/overview/index.html[Oracle Linux], * https://www.suse.com/[SUSE], http://www.opensuse.org/[openSUSE], https://www.scientificlinux.org/[Scientific Linux] and others.
+
+The yum repository support of Nexus allows you to expose RPM packages hosted in a Maven repository in the yum repository format. It generates the yum metadata, so that systems with yum support can use Nexus as a software repository.
+
+This enables a build and deployment pipeline via Maven repositories to Linux computers. E.g., a  Java Enterprise Archive (EAR) or Web Archive (War) or some other application is deployed to a Maven repository, via a CI server build using Maven or other build systems. The appliation can be retrieved via yum for installation and updates on testing and production hardware. 
+
+=== Installation and Requirements
+
+Yum support is bundled with all Nexus editions and further installation steps are required. It relies on the commands +createrepo+ and +mergerepo+ to be installed and available on the path. Documentation about these commands can be found on the http://createrepo.baseurl.org/[[createrepo website]. Typically this is the case on RPM-based Linux distributions and as such they are suitable to run Nexus with yum support.
+
+If your RPM-based system does not have this command you can install it by running +yum install createrepo+ as root.
+
+=== Configuration
+
+Yum related configuration is done with 'Capabilites' documented in <<capabilities>>. The capability 'Yum: Configuration' is automatically added and allows you to enable or disable yum support as well as set the maximum number of parallel threads used for creating yum repository metadata. Ensure that it is configured and enabled before you proceed.
+
+==== Configure Hosted Yum Repositories
+
+To expose a Maven repository like 'Releases' via yum, press the 'New' button and select 'Yum: Generate Metadata' from the 'Type' drop down in the dialog displayed in <<fig-yum-hosted>>.
+
+[[fig-yum-hosted]]
+.Yum Configuration for the Hosted 'Releases' Repository
+image::figs/web/yum-hosted.png[scale=50]
+
+The 'Repository' drop down allows you to select the Maven repository. With this configuration any RPM package added to the hosted Maven repository becomes available via yum. The same URL of the repository used for Maven based access and displayed in the repository administration area, can now be used as the URL for a yum repository in the yum configuration.
+
+The metadata is availablel in the +repodata+ context e.g. at +.../nexus/content/repositories/releases/repodata+. 
+
+TBD add alias and other stuff: As you see we also configured some optional aliases to provide separate versioned repository for different stages (see Staging RPMs in Nexus OSS). After saving the settings each uploaded RPM to the 3rd party repository (see Getting Started) causes Nexus to rebuild the yum metadata immediately.
+
+==== Configure Repository Group for yum
+
+To expose a repository group with yum, simply add a new capability with the type 'Yum: Merge Metadata' and  select the repository group in the 'Group' drop down. <<fig-yum-group>> shows the 'Settings' tab for the 'Public Repositories' configured for yum. 
+
+[[fig-yum-group]]
+.Yum Configuration for the Hosted 'Releases' Repository
+image::figs/web/yum-group.png[scale=50]
+
+This configuration causes Nexus to merge the yum metadata of all repositories in the repository group. The URL of the repository group, can now be used as the URL for a yum repository in the yum configuration.
+
+==== Versioned Repository URLs and Aliases 
+
+TBD
+
+Have versioned views on repositories:
+http://your.nexus/nexus/service/local/yum/repos/releases/1.2.3/
+gives you a Yum repository with all packages in version 1.2.3 in repository releases.
+You can define aliases for specific versions eg. production=1.2 and testing=2.0 and access them via the alias:
+http://your.nexus/nexus/service/local/yum/repos/releases/testing/
+and
+http://your.nexus/nexus/service/local/yum/repos/releases/production/
+to get constant repository URLs for your servers. A new release is then applied to the server via setting the alias to a new version.
+Create Yum createrepo tasks manually via web interface.
+Use Yum group repositories as target of staging repositories (Nexus Pro)
+
+==== Scheduled Tasks
+
+The yum support in Nexus includes a <<scheduled-tasks, scheduled task>> called 'Yum: Generate Metadata' that can be run to generate yum metadata with +createrepo+ for a specific repository.
+
+The 'Optional Output Directory' parameter can be used to get the metadata created in a different folder from the default repository root. The
+ 
+
+=== Example Project
+
+The http://mojo.codehaus.org/rpm-maven-plugin/[RPM Maven Plugin] allows you to create an RPM package of a Java application and attach it as a secondary built artifact with the +attached-rpm+ goal. An example plugin configuration for a +war+ project can be found <<yum-rpm-pom>>.
+
+If your project includes a +distributionManagement+ for the +releases+ repository, a build with +mvn clean deploy+, causes the +war+ as well as the +rpm+ file to be uploaded to Nexus. With yum configured for the release repository in Nexus, the RPM package can be consumed by any server configured to access the repository with yum.
+
+[[yum-rpm-pom]]
+Maven pom.xml snippet for configuring and attaching an RPM
+----
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>rpm-maven-plugin</artifactId>
+      <version>2.1</version>
+      <executions>
+        <execution>
+          <id>build-rpm</id>
+          <goals>
+            <goal>attached-rpm</goal>
+           </goals>
+         </execution>
+       </executions>
+       <configuration>
+         <group>Applications/Internet</group>
+         <copyright>EPL</copyright>
+         <requires>
+           <require>tomcat8</require>
+         </requires>
+         <mappings>
+           <mapping>
+             <directory>/var/lib/tomcat8/webapps/${project.build.finalName}</directory>
+             <sources>
+               <source>
+                 <location>${project.build.directory}/${project.build.finalName}</location>
+               </source>
+             </sources>
+f           </mapping>
+         </mappings>
+        </configuration>
+      </plugin>
+...
+----
+
+Now that Nexus hosts a RPM package with your Java web application in a yum repository, you can configure yum on the target server to retrieve it for installation. You have to configure yum to include the Nexus repository as a package source. Depending on your specific Linux distribution, file paths and tools for this configuration will differ. A typical example would be to create a new file e.g. +nexus.repo+ in +/etc/yum.repos.d+. A sample configuration for the +public+ group can be found in <<nexus.repo>>.
+
+[[nexus.repo]]
+.Example yum source repository configuration
+----
+[nexus-public]
+name=Nexus Releases Repository
+baseurl=http://yournexusserverhost/nexus/content/groups/public
+enabled=1
+protect=0
+gpgcheck=0
+metadata_expire=30s
+autorefresh=1
+type=rpm-md 
+----
+
+Once the configuration is added you can install or updates any RPM packages from Nexus as usual with
++yum install <packagename>+ or +yum update <packagename>+.  This includes any required dependencies like a servlet container or a Java runtime as declared in the RPM Maven Plugin configuration and therefore the RPM/yum metadata.
+
+=== Staging with RPMs
+
+The <<staging, Nexus Staging Suite>> can be used with yum repositories allowing you to optimize the release process for your RPM packages.
+
+The capability 'Yum: Staging Generate Metadata' allows you to configure yum for a 'Staging profile'. Any staging repository created from a deployment via the staging profile is then automatically configured as a yum repository. 
+
+The capability 'Yum: Staging Merge Metadata' can be used to configure yum metadata creation for a build promotion profile and the attached repository groups.
+
+
+
+Staging RPMs in Nexus OSS
+
+The open source verion of Nexus doesn't contain such a nice Staging Suite, but you can stage your RPMs (without the jar, war, etc. files) anyway.
+
+Image you have 3 stages for your RPMs:
+
+development
+test & verification
+production
+and already a RPM package in version 1.0 in your repository called releases.
+
+Create aliases
+
+First of all you create version aliases for each stage. These aliases allow you to have a canonical repository url for each stage. You can use curl for the initial creation:
+
+curl -d "1.0" --header "Content-Type: text/plain" http://your.nexus.domain/nexus/service/local/yum/alias/releases/development/
+curl -d "1.0" --header "Content-Type: text/plain" http://your.nexus.domain/nexus/service/local/yum/alias/releases/verification/
+curl -d "1.0" --header "Content-Type: text/plain" http://your.nexus.domain/nexus/service/local/yum/alias/releases/production/   
+Prepare servers
+
+Now, you are able to add these alias repositories to your server. On your development machine create a file named /etc/yum.repos.d/nexus-dev.repo and the following content:
+
+[nexus-dev]
+name=Nexus Dev Repository
+baseurl=http://your.nexus.domain/nexus/service/local/yum/repos/releases/development/
+enabled=1
+protect=0
+gpgcheck=0
+metadata_expire=30s
+autorefresh=1
+type=rpm-md
+On your verification machine create a file named /etc/yum.repos.d/nexus-verification.repo and the following content:
+
+[nexus-verification]
+name=Nexus Verification Repository
+baseurl=http://your.nexus.domain/nexus/service/local/yum/repos/releases/verification/
+enabled=1
+protect=0
+gpgcheck=0
+metadata_expire=30s
+autorefresh=1
+type=rpm-md
+On your production machine create a file named /etc/yum.repos.d/nexus-production.repo and the following content:
+
+[nexus-production]
+name=Nexus Production Repository
+baseurl=http://your.nexus.domain/nexus/service/local/yum/repos/releases/production/
+enabled=1
+protect=0
+gpgcheck=0
+metadata_expire=30s
+autorefresh=1
+type=rpm-md
+Promote RPM through Stages
+
+Now, it's time to deploy version 2.0 of your software RPM to the releases repository. To install this RPM on your development machine, update your version alias first:
+
+curl -d "2.0" --header "Content-Type: text/plain" http://your.nexus.domain/nexus/service/local/yum/alias/releases/development/
+Afterwards, login to your machine and update your software RPM via
+
+sudo yum update
+After your integration or whatever tests verified the development machine, you can promote the RPM to verification stage:
+
+curl -d "2.0" --header "Content-Type: text/plain" http://your.nexus.domain/nexus/service/local/yum/alias/releases/verification/
+Run again sudo yum update on the verification machine and test your software RPM in that environment. Finally, if everything is green, you can stage this RPM to production.
+
+curl -d "2.0" --header "Content-Type: text/plain" http://your.nexus.domain/nexus/service/local/yum/alias/releases/production/
+and run sudo yum update on your production machine.
+
+Summary
+
+Version aliases let you create versionized views on your Maven RPM repositories, which is useful your RPM staging, but don't let you stage your whole bunch of artifacts like RPMs, JARs, WARs, Docs, etc. together. For this you need Nexus Professional.
