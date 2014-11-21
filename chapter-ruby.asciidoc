@@ -1,0 +1,168 @@
+[[npm]]
+== RubyGems
+
+=== Introduction
+
+For most developers using the Ruby programming language, RubyGems serves as
+their package management solution. Like other package managers, this allows for
+ease of use when distributing programs or libraries.
+
+Supporting the Rubygems platform, is link:https://Rubygems.org[rubygems.org], a
+popular and leading gem hosting service. There, a variety of open source Ruby
+projects (gems) can be downloaded.
+
+As with other Nexus repositories, the Nexus Rubygems integration allows a user
+to connect to rubygems.org, download a package(gem) once, and then distribute
+among the necessary teams. Using Nexus as a proxy, this avoids the overhead of
+teams and individual developers having to repeatedly download the same component
+over and over.
+
+The following features are included in the Nexus Rubygem functionality:
+
+* Supports "hosted" repository for hosting Rubygems
+* Supports "proxy" repository for proxying remote Rubygems repository
+* Supports "group" repository for grouping Rubygems repositories
+
+NOTE: None of these require Ruby (or any extra tooling) to be present on the OS
+that runs Nexus. Ruby specific things are handled by jRuby bundled with Nexus.
+
+[[ruby-proxying-registries]]
+=== Proxying Rubygem Registries
+
+To reduce duplicate downloads and improve download speeds for your developers
+and CI severs, you should proxy this registry as well as any other registries
+you require.
+
+To proxy an external Rubygem registry, simply create a new 'Proxy
+Repository' as documented in <<confignx-sect-manage-repo>>. The 'Provider' has
+to be set to +Rubygem+. The 'Remote Storage Location' has to be set to the URL
+of the remote repository you want to proxy. The official URL for Rubygems.org is
+
+----
+https://rubgems.org
+----
+
+A complete configuration for proxying the Rubygems.org is visible in
+<<fig-ruby-proxy>>.
+
+[[fig-ruby-proxy]]
+.Proxy Repository Configuration for the Rubygems.org
+image::figs/web/ruby-proxy.png[scale=50]
+
+[[ruby-private-registries]]
+=== Private Rubygems Registries
+
+A private Rubygems registry can be used to upload your own packages as well
+as third-party packages. You can create a private Rubygems registry by
+setting up a hosted repository with the Rubygems format in Nexus.It is good
+practice to create two separate hosted repositories for these
+purposes.
+
+To create a hosted repository with the Rubygems format, simply create a new 'Hosted
+Repository' and set the 'Provider' to +rubygems+ as documented in
+<<confignx-sect-manage-repo>>. A sample configuration for an internal Rubygems hosted repository is displayed in <<fig-npm-hosted>>.
+
+[[fig-ruby-hosted]]
+.Example Configuration for a Private Rubygems Registry
+image::figs/web/ruby-hosted.png[scale=50]
+
+The Rubygems registry information is immediately updated as packages are
+deployed or deleted from the repository.
+
+[[ruby-grouping-registries]]
+=== Grouping Rubygem Registries
+
+A repository group is the recommended way to expose all your Rubygem
+registered repositories (in Nexus) to your users, without needing any
+further client side configuration. A repository group allows you to
+expose the aggregated content of multiple proxy and hosted
+repositories with one URL to Rubygems and other tools. This is possible for
+Rubygem repositories by creating a new 'Repository Group' with the
+'Format' set to +rubygems+.
+
+A typical, useful example would be to group the proxy repository that:
+proxies the Rubygems registry, a Rubygems hosted repository with internal
+software packages, and another Rubygems hosted repository with third-party
+packages. The configuration for such a setup is displayed in
+<<fig-ruby-group>>.
+
+[[fig-ruby-group]]
+.A Rubygems Group Combining the Rubygems.org Registry and Two Private Registries
+image::figs/web/ruby-group.png[scale=50]
+
+Using the 'Repository Path' of the repository group as your Rubygems
+repository URL in your client tool will give you access to the
+packages in all three repositories with one URL. Any new packages
+added as well as any new repositories added to the group will
+automatically be available.
+
+[[ruby-configuring]]
+=== Nexus Gem             and CLI Interaction
+
+The Nexus Ruby Support offers the nexus gem (currently is part of the Nexus OSS build), that is meant to simplify the deployment to Nexus rubygems hosted repositories. After installed, you can invoke it using gem nexus GEM CLI command. Some helpful informations:
+
+* Nexus configuration (deploy URL, the URL of the rubygems-hosted repository and
+  password) will be asked on first time and stored in file ~/.gem/nexus. You can
+  later edit and or inspect the file, adjust the URLs etc
+* To get help of it type $ gem help nexus 
+* This gem is mainly for gem publishing (and hence sharing).
+
+[[npm-deploying-packages]]
+=== Deploying npm Packages
+
+Using a private registry in Nexus as a npm formatted hosted repository
+allows you to create your own packages and share with them via
+Nexus. This allows you to e.g. share packages between different
+departments or team or even with external partner organizations. 
+
+Deploying packages requires the addition of a +publishConfig+ to your
++package.json+ that points to the private registry you want to
+publish to using the 'Repository Path' URL from the repository list:
+
+----
+  "publishConfig" : {
+    "registry" : "http://localhost:8081/nexus/content/repositories/npm-internal/"
+  },
+----
+
+The deployment requires the user running the deployment to be
+authenticated. It can be configured by adding an +_auth+ value to
++npmrc+. The value has to be generated by base64-encoding the string
+of +username:password+.  You can create this encoded string with the
+command line call +openssl+ e.g.: for the default +admin+ user of Nexus:
+
+----
+echo -n 'admin:admin123' | openssl base64
+----
+
+Other tools for the encoding are +uuencode+ or, for Windows users,
++certutil+. The value as well as author information can then be added
+to the +npmrc+ file: 
+
+----
+init.author.name = Jane Doe
+init.author.email = jane@example.com
+init.author.url = http://blog.example.com
+email=jane@example.com
+_auth=YWRtaW46YWRtaW4xMjM=
+----
+
+TIP: Whatever tool you use to generate the encoded username and
+password string, try to encode the string +admin:admin123+, which
+should result in +YWRtaW46YWRtaW4xMjM=+. Another example for a valid
+setup is +jane:testpassword123+ resulting in
++amFuZTp0ZXN0cGFzc3dvcmQxMjM=+.
+
+With this configuration you can run +npm publish+ for your
+package. Mor information about package creation can be found on the
+https://www.npmjs.org/doc/cli/npm-publish.html[npm website].
+
+Once a package is published to the private registry in Nexus, any
+other developers or build servers, that access Nexus via the
+repository group have instant access to the packages.
+
+////
+/* Local Variables: */
+/* ispell-personal-dictionary: "ispell.dict" */
+/* End:             */
+////
