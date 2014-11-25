@@ -1,5 +1,5 @@
 [[rubygems]]
-== RubyGems
+== Rubygems
 
 === Introduction
 
@@ -18,21 +18,27 @@ Enter link:https://Rubygems.org[rubygems.org], a popular and leading gem hosting
 service supporting the Ruby and Rubygems. Here, a variety of open source Ruby
 projects (gems) can be both uploaded and downloaded.
 
-So, all the ingredients to make Ruby successful exists. However, we teams begin to download projects on a regular basis, this can become a crunch on resources, not to mention a pain to manage.
+With these ingredients, Ruby has become a successful platform for developers .
+This means lots of teams are downloading and exchanging lots of components on a
+regular basis. Obviously, this can (and does) become a crunch on resources, not
+to mention a pain to manage.
 
-Luckily, just as with other Nexus repositories, the Nexus integrates with
-Rubygems allowing a user to connect to host downloads procured from
-rubygems.org. This means a package only needs to be downloaded once, and can
-then be distributed among the necessary teams.
+Luckily, just as with other Nexus repositories, Nexus integrates with Rubygems.
+That means a user can connect to host downloads procured from rubygems.org,
+create proxies, and host their own component. When necessary a package only
+needs to be downloaded (or uploaded) once, and can then be distributed among the
+necessary teams.
 
 Using Nexus as a proxy, this avoids the overhead of teams and individual
-developers having to repeatedly download the same component over and over.
+developers having to repeatedly download or share components in a haphazard and
+disorganized manner.
 
-NOTE: Rubygems support is a feature of Nexus 2.11 and higher, and is available in Nexus Professional and Nexus Open Source.
+NOTE: Rubygems support is a feature of Nexus 2.11 and higher, and is available
+in Nexus Professional and Nexus Open Source.
 
 === What's Included?
 
-The following features are included in the Nexus Rubygem functionality:
+The following features are included as part of the Nexus Rubygem functionality:
 
 * Supports "hosted" repository for hosting Rubygems
 * Supports "proxy" repository for proxying remote Rubygems repository
@@ -67,11 +73,10 @@ image::figs/web/ruby-proxy.png[scale=50]
 [[ruby-private-registries]]
 === Private Rubygems Registries
 
-A private Rubygems registry can be used to upload your own packages as well
-as third-party packages. You can create a private Rubygems registry by
-setting up a hosted repository with the Rubygems format in Nexus. It is good
-practice to create two separate hosted repositories for these
-purposes.
+A private Rubygems registry can be used to upload your own packages as well as
+third-party packages. You can create a private Rubygems registry by setting up a
+hosted repository with the Rubygems format in Nexus. It is good practice to
+create two separate hosted repositories for these purposes.
 
 To create a hosted repository with the Rubygems format, simply create a new
 'Hosted Repository' and set the 'Provider' to +rubygems+ as documented in
@@ -108,20 +113,6 @@ Using the 'Repository Path' of the repository group as your Rubygems repository
 URL in your client tool will give you access to the packages in all three
 repositories with one URL. Any new packages added as well as any new
 repositories added to the group will automatically be available.
-
-[[ruby-configuring]]
-=== Nexus Gem and CLI Interaction
-
-Nexus Ruby Support offers the nexus gem (currently is part of the Nexus OSS
-build), that is meant to simplify the deployment to Nexus rubygems hosted
-repositories. After installed, you can invoke it using gem nexus GEM CLI
-command. Some helpful informations:
-
-* Nexus configuration (deploy URL, the URL of the rubygems-hosted repository and
-  password) will be asked on first time and stored in file ~/.gem/nexus. You can
-  later edit and or inspect the file, adjust the URLs etc
-* To get help of it type $ gem help nexus 
-* This gem is mainly for gem publishing (and hence sharing).
 
 [[ruby-deploying-packages]]
 === Deploying Gems
@@ -163,7 +154,7 @@ $
 ----
 
 [[ruby-auth]]
-==== With Authentication
+==== With Authentication (Nexus Gem)
 
 If you do have authentication configured, you will need the Nexus Gem,
 and set up a new Ruby Gems source. First, use this syntax to install the Nexus
@@ -194,6 +185,26 @@ add a mirror with:
 for bundler before 1.5.0 use 'nbundle' instead of 'bundle' to use the mirror
 
 ====
+
+Note: When using the Nexus gem for the first time, it will prompt you to setup
+configuration (deploy URL, the URL of the rubygems-hosted repository and
+password). This is stored in file ~/.gem/nexus, which can be edited at any time.
+
+While use of the gem is pretty simple...
+
+----
+
+gem nexus
+
+----
+
+Help is provided via:
+
+----
+
+$ gem help nexus 
+
+----
 
 From here you will need to Add a source with 'Basic Auth' to the RubyGems list
 of sources. Here's an example:
