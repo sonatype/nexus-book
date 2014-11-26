@@ -9,48 +9,60 @@ package manager on Linux based operating systsems such as
 http://www.redhat.com/[Red Hat], http://www.centos.org/[CentOS],
 http://fedoraproject.org/[Fedora],
 http://www.oracle.com/us/technologies/linux/overview/index.html[Oracle
-Linux], * https://www.suse.com/[SUSE],
+Linux], https://www.suse.com/[SUSE],
 http://www.opensuse.org/[openSUSE],
 https://www.scientificlinux.org/[Scientific Linux] and others.
 
 The yum repository support of Nexus allows you to expose RPM packages
 hosted in a Maven repository in the yum repository format. It
 generates the yum metadata, so that systems with yum support can use
-Nexus as a software repository.
+Nexus as a software package repository.
 
-This enables a build and deployment pipeline via Maven repositories to
-Linux computers. E.g., a Java Enterprise Archive (EAR) or Web Archive
-(War) or some other application is deployed to a Maven repository, via
-a CI server build using Maven or other build systems. The application
-can be retrieved via yum for installation and updates on testing and
-production hardware.
+This enables a build and deployment pipeline for Java or other
+JVM-based applications via Maven repositories to Linux
+computers. E.g., a Java Enterprise Archive (EAR) or Web Archive (WAR)
+or some other application is deployed to a Maven repository. The
+deployment is performed by a CI server build using Maven or other build
+systems or as manually run deployment. Once Nexus hosts the
+application RPM package, it can be retrieved via yum for installation and
+updates on testing and production systems. The metadata of the RPM
+package can additionally trigger installation of other required packages
+including e.g. a Java runtime or a application server.
 
 === Installation and Requirements
 
 Yum support is bundled with all Nexus editions and no further
 installation steps are required. It relies on the commands
 +createrepo+ and +mergerepo+ to be installed on the operating system
-running the Nexus server and available on the path. Documentation
+running the Nexus server and to be available on the path. Documentation
 about these commands can be found on the
-http://createrepo.baseurl.org/[[createrepo website]. Typically
+http://createrepo.baseurl.org/[createrepo website]. Typically
 +createrepo+ is installed on RPM-based Linux distributions and as such
-they are suitable to run Nexus with yum support.
+they are suitable to run Nexus with yum support. If desired the path
+to the commands can be configured in the Nexus user interface.
 
 If your RPM-based system does not have this command you can install it
-by running +yum install createrepo+ as root.
+by running 
+----
+yum install createrepo
+----
+with a sufficiently privileged user.
 
 === Configuration
 
 Yum related configuration is done with the 'Capabilites' management of
-Nexus as documented in <<capabilities>>. The capability 'Yum:
-Configuration' allows you to enable or disable yum support. It can
-only be enabled successfully, if the 'createrepo' and the 'mergerepo'
-can be found by Nexus. By default Nexus will look for these commands
-on the path. The configuration settings 'Path of "createrepo"' and
-'Path of "mergerepo"' allow you to configure a specific path. The
-parameter 'Max number of parallel thread' defaults to ten and defines
-how many threads can be used to manage the yum repositories with the
-'createrepo' and the 'mergerepo' commands.
+Nexus as documented in <<capabilities>>. 
+
+The capability 'Yum: Configuration' allows you to enable or disable
+yum support. It can only be enabled successfully, if the 'createrepo'
+and the 'mergerepo' commands can be found by Nexus. By default Nexus
+will look for them on the path. The configuration settings
+'Path of "createrepo"' and 'Path of "mergerepo"' allow you to
+alternatively configure a specific absolute path.
+
+The parameter 'Max number of parallel threads' defaults to ten and
+defines how many threads can be used to manage the yum repositories
+with the 'createrepo' and the 'mergerepo' commands.
 
 You need to ensure that this capability is enabled, before proceeding
 with your repository specific configuration. The 'Status' tab of the
@@ -60,8 +72,9 @@ capability displays the detected versions for +createrepo+ and
 ==== Configure Hosted Yum Repositories
 
 To expose a Maven repository like 'Releases' via yum, press the 'New'
-button and select 'Yum: Generate Metadata' from the 'Type' drop down
-in the dialog displayed in <<fig-yum-hosted>>.
+button in the capabilities configuration tab and select 'Yum: Generate
+Metadata' from the 'Type' drop down in the dialog displayed in
+<<fig-yum-hosted>>.
 
 [[fig-yum-hosted]]
 .Yum Configuration for the Hosted 'Releases' Repository
@@ -70,72 +83,40 @@ image::figs/web/yum-hosted.png[scale=50]
 The 'Repository' drop down allows you to select the hosted Maven
 repository. Release as well as snapshot policy repositories can be
 configured. Once configured, any RPM package added to the hosted Maven
-repository becomes available via yum. The same URL of the repository
+repository is available via yum. The same URL of the repository
 used for Maven based access e.g.,
 +http://localhost:8081/nexus/content/repositories/releases+ and
 displayed in the repository administration area list, can be used as
 the URL for a yum repository in the yum configuration
 
-The 'Status' tab of the capability displays an example yum
-configuration for accessing the repository.
-
-The metadata is available in the +repodata+ context e.g., at
-+.../nexus/content/repositories/releases/repodata+, in the following
-files. Apart from the +repomd.xml+ file, the files are prepended with a
-unique hash values as part of the name to avoid caching issues:
-
-+repomd.xml+:: This XML file contains information about the other
-metadata files.
-+hash-primary.xml.gz+:: This zipped XML file describes the primary
-metadar of each RPM archive in the repository.
-+hash-filelists.xml.gz+:: This zipped XML file describes all the files
-contained within each RPM archive.
-+hash-other.xml.gz+:: This zipped XML file contains further,
-miscellaneous information regarding each RPM archive.  repomd.xml -
-
-TBD add alias and other stuff: As you see we also configured some
-optional aliases to provide separate versioned repository for
-different stages (see Staging RPMs in Nexus OSS). After saving the
-settings each uploaded RPM to the 3rd party repository (see Getting
-Started) causes Nexus to rebuild the yum metadata immediately.
-
-The configuration options 'Process deletes' and 'Delete process delay'
-can be used to enable updates to the yum metadata, following delete
-operations of rpm packages in the Maven repository.
-
-The 'Yum groups definition file' configuration TBD
-
 The Nexus yum integration supports versioned views on a
 repository. The URL
-+http://your.nexus/nexus/service/local/yum/repos/releases/1.2.3/+
-exposes a yum repository with all packages in version 1.2.3 in the
++http://localhost:8081/nexus/service/local/yum/repos/releases/1.2.3/+
+exposes a yum repository with all packages with version +1.2.3+ in the
 +releases+ repository. A custom repodata folder is available at the
 context.
 
-The 'Alias' field can be used to define alternative access paths to
+The 'Aliases' field can be used to define alternative access paths to
 specific versions. For example, you can configure alias values of
 
 ----
 production=1.2,testing=2.0
 ----
 
-These values would in turn expose the version 1.2 under a URL like
-+http://your.nexus/nexus/service/local/yum/repos/releases/production/+
+These values would in turn expose the version +1.2+ under a URL like
++http://localhost:8081/nexus/service/local/yum/repos/releases/production/+
 and the version 2.0 at
-+http://your.nexus/nexus/service/local/yum/repos/releases/testing/+. Using
++http://localhost:8081/nexus/service/local/yum/repos/releases/testing/+. Using
 these URLs in the yum configuration on the target servers as a static
 URL enables upgrades to new versions by simply changing the alias
-e.g. to production=1.3 and running a yum update command.
+e.g. to production=1.3 and running a yum update command on the target server.
 
-////
-TBD ... commented since that doesnt work for me.. 
 Besides maintaining the aliases in the capability administration, it is
 possible to create or update an alias in the command line:
 
 ----
-curl -d "1.0" --header "Content-Type: text/plain" http://your.nexus.domain/nexus/service/local/yum/alias/releases/development/
+curl -d "1.0" --header "Content-Type: text/plain" http://localhost:8081/nexus/service/local/yum/alias/releases/development/
 ----
-////
 
 Usage of the alias-based URL is done via the normal yum configuration
 e.g. with a file +/etc/yum.repos.d/nexus-production.repo+ and the following content:
@@ -143,7 +124,7 @@ e.g. with a file +/etc/yum.repos.d/nexus-production.repo+ and the following cont
 ----
 [nexus-production]
 name=Nexus Production Repository
-baseurl=http://your.nexus.domain/nexus/service/local/yum/repos/releases/production/
+baseurl=http://localhost:8081/nexus/service/local/yum/repos/releases/production/
 enabled=1
 protect=0
 gpgcheck=0
@@ -154,23 +135,36 @@ Promote RPM through Stages
 ----
 By deploying new versions and switching alias associations to the
 versions, a controlled roll out of new versions of RPM archives to
+target servers can be achieved.
 
-==== Configure Repository Group for yum
+The configuration options 'Process deletes' and 'Delete process delay'
+can be used to enable updates to the yum metadata, following delete
+operations of rpm packages in the Maven repository.
 
-To expose a repository group to yum, simply add a new capability
-with the type 'Yum: Merge Metadata' and select the repository group in
-the 'Group' drop down. <<fig-yum-group>> shows the 'Settings' tab for
-the 'Public Repositories' configured for yum.
+The 'Yum groups definition file' configuration allows you to configure
+a path to a package groups configuration file. This file is typically
+named comps.xml and can be used to define a group of RPM packages. . The
+groups can then be managed with commands such as +yum grouplist+, +yum
+groupinstall+ and +yum groupremove+.
 
-[[fig-yum-group]]
-.Yum Configuration for the Hosted 'Releases' Repository
-image::figs/web/yum-group.png[scale=50]
+Once the capability is saved, the 'Status' tab displays an example yum
+configuration for accessing the repository. Each RPM deployed to the
+repository causes Nexus to update the yum metadata immediately.
 
-This configuration causes Nexus to merge the yum metadata of all
-repositories in the repository group. The URL of the repository group,
-can now be used as the URL for a yum repository in the yum
-configuration, since the same metadata files are being maintained and
-exposed via the +repodata+ context like in a hosted repository.
+The metadata used by yum is available in the +repodata+ context e.g., at
++.../nexus/content/repositories/releases/repodata+, in the following
+files. Apart from the +repomd.xml+ file, the files are prepended with
+a unique hash value as part of the name to avoid caching issues:
+
++repomd.xml+:: This XML file contains information about the other
+metadata files.
++hash-primary.xml.gz+:: This zipped XML file describes the primary
+metadar of each RPM archive in the repository.
++hash-filelists.xml.gz+:: This zipped XML file describes all the files
+contained within each RPM archive.
++hash-other.xml.gz+:: This zipped XML file contains further,
+miscellaneous information regarding each RPM archive.  repomd.xml -
+
 
 ==== Proxying Repositories
 
@@ -184,6 +178,25 @@ rewritten and corrected for the current Nexus server.
 This allows the proxy repositories to be part of a repository group
 and expose the correct yum metadata via the merged metadata creation
 on the group. 
+
+==== Configure Repository Group for yum
+
+To expose a Maven repository group to yum, simply add a new capability
+with the type 'Yum: Merge Metadata' and select the repository group in
+the 'Group' drop down. <<fig-yum-group>> shows the 'Settings' tab for
+the 'Public Repositories' configured for yum.
+
+[[fig-yum-group]]
+.Yum Configuration for the Hosted 'Releases' Repository
+image::figs/web/yum-group.png[scale=50]
+
+This configuration causes Nexus to merge the yum metadata of all
+repositories in the repository group. Metadata generation has to be
+configured for the individual repositories desired to be exposed as
+part of the group. The URL of the repository group, can now be used as
+the URL for a yum repository in the yum configuration, since the same
+metadata files are being maintained and exposed via the +repodata+
+context like in a hosted repository.
 
 ==== Scheduled Tasks
 
@@ -209,24 +222,24 @@ option is off by default and causes Nexus to take the existing
 metadata cache as a basis for the update.
  
 
-=== Example Project
+=== Example Usages
 
 The Nexus artifact upload to a hosted repository allows you to publish
 any RPM file to a Maven repository and subsequently expose it
-via the yum integration. This is a basic use case. The more advanced
+via the yum integration. This is a basic use case, that can be used
+to e.g., exposed third-party supplied RPM archives. The more advanced
 setup involves a Maven project that creates the RPM as detailed in
 this section.
 
 The http://mojo.codehaus.org/rpm-maven-plugin/[RPM Maven Plugin]
 can be used to create an RPM package of a Java application and attach
 it as a secondary built artifact with the +attached-rpm+ goal. An
-example plugin configuration for a +war+ project can be found
-<<yum-rpm-pom>>.
+example plugin configuration for a +war+ project can be found in <<yum-rpm-pom>>.
 
 If your project includes a +distributionManagement+ for the +releases+
 repository, a build with +mvn clean deploy+, causes the +war+ as well
 as the +rpm+ file to be uploaded to Nexus. With yum configured for the
-release repository in Nexus, the RPM package can be consumed by any
++releases+ repository in Nexus, the RPM package can be consumed by any
 server configured to access the repository with yum.
 
 [[yum-rpm-pom]]
@@ -303,11 +316,19 @@ with yum repositories allowing you to optimize the release process for
 your RPM packages.
 
 The capability 'Yum: Staging Generate Metadata' allows you to
-configure yum for a 'Staging profile'. Any staging repository created
+configure yum for a 'Staging Profile'. Any staging repository created
 from a deployment via the staging profile is then automatically
-configured as a yum repository.
+configured as a yum repository. The 'Aliases' configuration allows for
+the same mechanism as the capability 'Yum: Generate Metadata'
+documented earlier.
 
 The capability 'Yum: Staging Merge Metadata' can be used to configure
 yum metadata creation for a build promotion profile and the attached
 repository groups.
+
+If a staging repository or build promotion repository is configured
+for yum metadata generation and exposed via a repository group that is
+configured for yum metadata merging, the metadata from staging will be
+merged appropriately.
+
 
