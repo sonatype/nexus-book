@@ -1,140 +1,160 @@
 [[rubygems]]
-== RubyGems Repositories
+== Ruby, RubyGems and Gem Repositories
 
 === Introduction
 
 For developers using the https://www.ruby-lang.org[Ruby] programming
-language, RubyGems serves as their package management solution. In
-fact, since version 1.9 of Ruby, it has been included as part of the
-default Ruby library. And, just like all package managers, this allows
-for ease of use when distributing programs or libraries.
+language, the +gem+ tools serves as their package management
+solution. In fact, since version 1.9 of Ruby, it has been included as
+part of the default Ruby library. Packages are called 'gems' and, just
+like all package managers, this allows for ease of use when
+distributing programs or libraries.
 
-Of course, package management really only goes as far as improving distribution.
-A great feat certainly, but to really find success, a development community
-needs to exists. At the heart of every development community, especially those
-like Ruby, where open source projects are one of the most critical elements, the
-community needs a place to host and share their projects.
+Of course, package management really only goes as far as improving
+distribution.  A great feat certainly, but to really find success, a
+development community needs to exists. At the heart of every
+development community, especially those like Ruby, where open source
+projects are one of the most critical elements, the community needs a
+place to host and share their projects.
 
-Enter link:https://rubygems.org[rubygems.org] - a popular and leading gem hosting
-service supporting the Ruby community. Here, a variety of open source Ruby
-projects can be both uploaded and downloaded as gems.
+Enter link:https://rubygems.org[RubyGems hosted at rubygems.org] - the
+most popular and leading gem hosting service supporting the Ruby
+community. Here, a large variety of open source Ruby projects can be
+supply both uploaded and downloaded packages as gems.
 
-With these ingredients, Ruby has become a successful platform for developers.
-This means lots of teams are downloading and exchanging lots of components on a
-regular basis. Obviously, this can (and does) become a crunch on resources, not
-to mention a pain to manage.
+Ruby has been a successful platform for developers for a long
+time now. The popularity of Ruby and therefore the usage of gems and
+Gem repositories means that lots of teams are downloading and
+exchanging lots of components on a regular basis. Obviously, this can
+(and does) become a crunch on resources, not to mention a pain to
+manage.
 
-Luckily Nexus supports RubyGems repositories. A user can connect to
-Nexus to downloads gems from rubygems.org, create proxies to other
-repositories, and host their own component. Any gems downloaded via
-Nexus needs to be downloaded from the remote repository, like
-rubygems.org, only once and is then available internally via
-Nexus. Gems pushed to Nexus internally automatically become available
-to everyone else in your organization.  Using Nexus as a proxy avoids
-the overhead of teams and individual developers having to repeatedly
-download or share components in a haphazard and disorganized manner.
+Luckily Nexus supports Gem repositories. A user can connect to Nexus
+to downloads gems from RubyGems.org, create proxies to other
+repositories, and host their own or third-party gems. Any gem
+downloaded via Nexus needs to be downloaded from the remote
+repository, like RubyGems.org, only once and is then available
+internally via Nexus. Gems pushed to Nexus internally automatically
+become available to everyone else in your organization.  Using Nexus
+as a proxy avoids the overhead of teams and individual developers
+having to repeatedly download components or share components in a
+haphazard and disorganized manner.
 
-NOTE: Rubygems support is a feature of Nexus 2.11 and higher, and is available
-in Nexus Professional and Nexus Open Source.
+IMPORTANT: Gem repository support is a feature of Nexus 2.11 and
+higher, and is available in Nexus Professional and Nexus Open Source.
 
-=== What's Included?
+The following features are included as part of the Nexus Gem
+repository support:
 
-The following features are included as part of the Nexus RubyGems support:
+* Proxy repository for connecting to remote Gem repositories and
+  caching gems on Nexus to avoid duplicate downloads and wasted
+  bandwidth and time
+* Hosted repository for hosting gems package and providing them to
+  your users
+* Repository groups for merging multiple hosted and proxy Gem
+  repositories and easily exposing them as one URL to all users
 
-* Hosted repository for hosting RubyGems
-* Proxy repository for connecting to remote RubyGems repository and
-  caching gems on Nexus to avoid duplicate downloads
-* Repository groups for merging multiple hosted proxy RubyGems
-  repositories and easily exposing them as one URL users
-
-NOTE: None of this functionality requires Ruby (or any extra tooling)
+TIP: None of this functionality requires Ruby (or any extra tooling)
 to be installed on the operating system running Nexus. Ruby specific
-details are implemented using http://jruby.org/[JRuby] bundled with Nexus.
+details are implemented using http://jruby.org/[JRuby] bundled with
+Nexus.
 
 [[ruby-proxying-registries]]
-=== Proxying RubyGems Repositories
+=== Proxying Gem Repositories
 
 To reduce duplicate downloads and improve download speeds for your
-developers and CI servers, you should proxy the RubyGems.org
-repository and any other repositories you require.
+developers, continuous integration servers and other systems using
++gem+, you should proxy the RubyGems.org repository and any other
+repositories you require.
 
-To proxy an external RubyGems repository, simply create a new 'Proxy
-Repository' as documented in <<confignx-sect-manage-repo>>. The 'Provider' has
-to be set to +rubygems+. The 'Remote Storage Location' has to be set to the URL
-of the remote repository you want to proxy. The official URL for Rubygems.org is
+To proxy an external Gem repository, like RubyGems.org, simply create
+a new 'Proxy Repository' as documented in
+<<confignx-sect-manage-repo>>. The 'Provider' has to be set to
++Rubygems+. The 'Remote Storage Location' has to be set to the URL of
+the remote repository you want to proxy. The official URL for
+Rubygems.org is
 
 ----
 https://rubygems.org
 ----
 
-A complete configuration for proxying the Rubygems.org is visible in
-<<fig-ruby-proxy>>.
+This main configuration for proxying RubyGems.org is visible in
+<<fig-rubygems-proxy>>. Further configuration details are available in
+<<confignx-sect-manage-repo>>.
 
-[[fig-ruby-proxy]]
+[[fig-rubygems-proxy]]
 .Proxy Repository Configuration for the Rubygems.org
-image::figs/web/ruby-proxy.png[scale=50]
+image::figs/web/rubygems-proxy.png[scale=50]
 
 If you are using Nexus Professional and are proxying a repository via
-HTTPS, you can get the certificate added to the Nexus truststore by
-in the SSL tab of the repository configuration.
+HTTPS, you can get the certificate added to the Nexus truststore by in
+the SSL tab of the repository configuration.
 
 [[ruby-private-registries]]
-=== Private Hosted RubyGems Repositories
+=== Private Hosted Gem Repositories
 
-A private RubyGems repository on Nexus can be used as target to push
-your own gems as well as third-party gems and subsequently provide
-them to your users. It is good practice to create two separate hosted
-repositories internal and third-party gems. This is achieved by
-creating hosted repositories.
+A private Gem repository on Nexus can be used as target to push your
+own gems as well as third-party gems and subsequently provide them to
+your users. It is good practice to create two separate hosted Gem
+repositories for internal and third-party gems. This is achieved by
+creating two hosted repositories.
 
-To create a hosted repository with the RubyGems format, simply create a new
-'Hosted Repository' and set the 'Provider' to +rubygems+ as documented in
-<<confignx-sect-manage-repo>>. A sample configuration for an internal RubyGems
-hosted repository is displayed in <<fig-ruby-hosted>>.
+To create a hosted Gem repository, simply create a new 'Hosted
+Repository' and set the 'Provider' to +Rubygems+ as documented in
+<<confignx-sect-manage-repo>>. A sample configuration for an internal
+hosted Gem repository is displayed in <<fig-rubygems-hosted>>.
 
-[[fig-ruby-hosted]]
-.Example Configuration for a Private RubyGems Repository
-image::figs/web/ruby-hosted.png[scale=50]
+[[fig-rubygems-hosted]]
+.Example Configuration for a Private Gem Repository
+image::figs/web/rubygems-hosted.png[scale=50]
 
-The RubyGems repository information is immediately updated as packages are
+The Gem repository information is immediately updated as gems are
 pushed to the repository or deleted from it.
 
 [[ruby-grouping-registries]]
-=== Grouping RubyGems Repositories
+=== Grouping Gem Repositories
 
-A repository group is the recommended way to expose all your RubyGems
-repositories from Nexus to your users, without needing any further client side
-configuration. A repository group allows you to expose the aggregated content of
-multiple proxy and hosted repositories with one URL to gems and other tools.
-This is possible for RubyGems repositories by creating a new 'Repository Group'
-with the 'Format' set to +rubygems+.
+A repository group is the recommended way to expose all your Gem
+repositories from Nexus to your users, without needing any further
+client side configuration after initial setup. A repository group
+allows you to expose the aggregated content of multiple proxy and
+hosted Gem repositories with one URL to +gem+ and other tools.  This
+is possible for Gem repositories by creating a new 'Repository Group'
+with the 'Format' set to +Rubygems+ as documented in
+<<confignx-sect-managing-groups>>.
 
-A typical, useful example would be to group the proxy repository that proxies
-the RubyGems.org repository, a RubyGems hosted repository with internal software
-gems, and another RubyGems hosted repository with third-party gems. The
-configuration for such a setup is displayed in <<fig-ruby-group>>.
+A typical, useful example would be to group the proxy repository that
+proxies the RubyGems.org repository, a hosted Gem repository with
+internal software gems, and another hosted Gem repository with
+third-party gems. The configuration for such a setup is displayed in
+<<fig-rubygems-group>>.
 
-[[fig-ruby-group]]
-.A RubyGems Repository Group Combining the RubyGems.org Repository and Two Private Repositories
+[[fig-rubygems-group]]
+.A Gem Repository Group Combining the RubyGems.org Proxy Repository and Two Private Gem Repositories
 image::figs/web/ruby-group.png[scale=50]
 
-Using the 'Repository Path' of the repository group as your RubyGems repository
-URL in your client tool gives you access to the packages in all three
-repositories with one URL. Any new packages added as well as any new
-repositories added to the group will automatically be available.
+Using the 'Repository Path' of the repository group as your Gem
+repository URL in your client tool gives you access to the packages in
+all three repositories with one URL.
 
-=== Using RubyGems Repositories
+Any new gem added to the remote proxy Gem repositories or the hosted
+Gem repositories becomes immediately available to all users of the Gem
+repository group. Adding a new proxy Gem repository to the group makes
+all gems immediately available to the users as well.
 
-Once you have configured Nexus with the RubyGems repository group, you
-can add it to your configuration for the +gem+ commandline tool.
 
-You can add the URL of Nexus gems repostiory or repository group using
-the 'Repository Path' from the repository list with a command like
+=== Using Gem Repositories
+
+Once you have configured Nexus with the Gem repository group, you can
+add it to your configuration for the +gem+ commandline tool.
+
+You can add the URL of a Nexus gems repostiory or better the Gem
+repository group using the 'Repository Path' from the repository list
+with a command like
 
 ----
 gem sources --add http://localhost:8081/nexus/content/groups/gems-all/
 ----
-
 
 In order to take full advantage of Nexus and the proxying of gems, you
 should remove any other sources. By default +https://rubygems.org/+ is
@@ -145,7 +165,7 @@ $ gem sources --remove https://rubygems.org/
 https://rubygems.org/ removed from sources
 ----
 
-Subsequently you should removed the local cache with
+Subsequently you should clear the local cache with
 
 ----
 $ gem sources -c
@@ -161,144 +181,123 @@ $ gem sources
 http://localhost:8081/nexus/content/groups/gems-all/
 ----
 
-
-With this configuration completed any installation of new gems with
+With this setup completed any installation of new gems with
 +gem install GEMNAME+ e.g., +gem install rake+ will download from
 Nexus.
+
+By default read access to Nexus is available to anonymous access and
+no further configuration is necessary. If you Nexus server requires
+authentication, you have to add the 'Basic Auth' authentication details to the
+sources configuration:
+
+----
+$ gem sources --add
+http://myuser:mypassword@localhost:8081/nexus/content/repositories/gems-all/
+----
+
+If you are using the popular http://bundler.io/[Bundler] tool for tracking and installing
+gems, need to install it with +gem+:
+
+----
+$ gem install bundle
+Fetching: bundler-1.7.7.gem (100%)
+Successfully installed bundler-1.7.7
+Fetching: bundle-0.0.1.gem (100%)
+Successfully installed bundle-0.0.1
+Parsing documentation for bundle-0.0.1
+Installing ri documentation for bundle-0.0.1
+Parsing documentation for bundler-1.7.7
+Installing ri documentation for bundler-1.7.7
+Done installing documentation for bundle, bundler after 4 seconds
+2 gems installed
+----
+
+To use Nexus with Bundler, you need to configure the Gem repository group as a mirror:
+
+----
+$ bundle config mirror.http://rubygems.org
+http://localhost:8081/nexus/content/repositories/gems-all
+----
+
+You can confirm the configuration succeeded by checking the configuration:
+
+----
+$ bundle config
+Settings are listed in order of priority. 
+The top value will be used.
+mirror.http://rubygems.org
+Set for the current user (/Users/manfred/.bundle/config): 
+"http://localhost:8081/nexus/content/repositories/gems-all"
+----
+
+With this configuration completed, you can create a Gemfile and run
++bundle install+ as usual and any downloads of gem files will be using
+the Nexus Gem repository group configured as a mirror.
 
 
 [[ruby-deploying-packages]]
 === Pushing Gems
 
-By this point you have set up the various RubyGems repositories in
-Nexus (proxy, hosted, and group), and are successful using them for
-install new gems on your systems. A next step can be to push gems
-to hosted repositories to provide them to other users. All this
-can be achieved on the command line, and there are few options available, including:
+At this point you have set up the various Gem repositories in Nexus
+(proxy, hosted, and group), and are successfully using them for
+installing new gems on your systems. A next step can be to push gems
+to hosted Gem repositories to provide them to other users. All this can be
+achieved on the command line with the features of the +nexus+ gem.
 
-* Pushing without Authentication
-* Pushing with Nexus gem (assists when authentication is configured for a
-  repository).
-* Pushing with Bundler
+The +nexus+ gem is available at RubyGems.org and provides features to
+interact with Nexus including pushing gems to a hosted Gem repository
+including the necessary authentication.
 
-NOTE: At this time RubyGems does not support auth of any kind.
-
-[[ruby-no-auth]]
-==== Without Authentication
-
-If you aren't currently requiring authentication to deploy gems to your
-repositories in Nexus, you can simply change the sources for Rubygems:
-
-----
-$ gem sources -c
-
-*** Removed specs cache ***
-
-$ gem sources -r https://rubygems.org/
-
-https://rubygems.org/ removed from sources
-
-$ gem sources -a
-http://localhost:8081/nexus/content/repositories/rubygems-group/
-
-http://localhost:8081/nexus/content/repositories/rubygems-group/ added to
-sources
-
-$
-----
-
-[[ruby-auth]]
-==== With Authentication (Nexus Gem)
-
-If you do have authentication configured, you will need the Nexus Gem,
-and set up a new Ruby Gems source. First, use this syntax to install the Nexus
-gem:
+You can install the nexus gem with
 
 ----
 $ gem install nexus
-----
-
-NOTE: This assumes you have installed the latest version of Ruby, which includes
-the Rubygem package manager.
-
-After successful installation, you will get a confirmation with some
-documentation and a success message like
-
-----
 Fetching: nexus-1.2.1.gem (100%)
+...
 Successfully installed nexus-1.2.1
 Parsing documentation for nexus-1.2.1
 Installing ri documentation for nexus-1.2.1
 Done installing
 ----
 
-When using the Nexus gem for the first time, it will prompt you to setup
-configuration (deploy URL, the URL of the rubygems-hosted repository and
-password). This is stored in file ~/.gem/nexus, which can be edited at any time.
-
-While use of the gem is pretty simple...
+After successful installation, you will get a confirmation with some
+documentation and a success message and you can push your gem to a
+desired repository. The initial invocation will request the URL for
+the GEM repository and the Nexus credentials needed for
+deployment. Subsequent pushes will used the cached information.
 
 ----
-$ gem nexus
+$gem nexus example-1.0.0.gem
+Enter the URL of the rubygems repository on a Nexus server
+URL:   http://localhost:8081/nexus/content/repositories/gems-internal
+The Nexus URL has been stored in ~/.gem/nexus
+Enter your Nexus credentials
+Username:   admin
+Password:
+Your Nexus credentials has been stored in /Users/manfred/.gem/nexus
+Uploading gem to Nexus...
+Created
 ----
 
-Help is provided via:
+By default pushing an identical version to the repository, as known as
+redeployment, is not allowed in a hosted Gem repository. If desired
+this configuration can be changed, although we suggest to change the
+version for each new deployment instead.
+
+The +nexus+ gem provides a number of addition features and
+parameters. You can access all the documentation with
 
 ----
 $ gem help nexus 
 ----
 
-From here you will need to Add a source with 'Basic Auth' to the RubyGems list
-of sources. Here's an example:
+E.g. you can access a list of all configured repositories with
 
 ----
-$ gem sources -a
-http://myuser:mypassword@localhost:8081/nexus/content/repositories/rubygems-group/
+$gem nexus --all-repos
 
-http://localhost:8081/nexus/content/repositories/rubygems-group/ added to
-sources
-----
-
-Now, when you run the build command for Rubygems, you will have the necessary
-authorization.
-
-[[ruby-bundler]]
-==== With Bundler (and authentication)
-
-If you are using the popular Bundler environment for tracking and installing
-gems, you will need to make a few changes there as well. In our example below
-we've create a group repository in Nexus. Additionally, that repository has a
-two other repositories (a hosted and proxy) included with it.
-
-Here's how your Bundler configuration should change:
-
-----
-$ bundle config mirror.http://rubygems.org
-http://localhost:8081/nexus/content/repositories/rubygems-group
-
-$ bundle config mirror.https://rubygems.org
-http://localhost:8081/nexus/content/repositories/rubygems-group
-----
-
-When you make these changes, you can verify them by using the following command.
-
-----
-$ bundle config
-----
-
-The following will be printed on your screen.
-
-----
-Settings are listed in order of priority. The top value will be used.
-
-mirror.http://rubygems.org
-Set for the current user (/Users/cstamas/.bundle/config):
-"http://localhost:8081/nexus/content/repositories/rubygems-group"
-
-mirror.https://rubygems.org
-Set for the current user (/Users/cstamas/.bundle/config):
-"http://localhost:8081/nexus/content/repositories/rubygems-group"
-
+DEFAULT:
+http://localhost:8081/nexus/content/repositories/gems-internal
 ----
 
 ////
