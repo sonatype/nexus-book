@@ -325,11 +325,11 @@ Jetty startup configuration in +wrapper.conf+ as detailed in
 
 Next, the HTTP port you want to use for the HTTPS connection has to be
   defined by setting the +application-port-ssl+ property in
-  +nexus.properties+ e.g., 
-
+  +nexus.properties+. 
 ----
 application-port-ssl=8443
 ----
+
 
 Now you are ready to create a keystore file. Instructions are
 available on the
@@ -361,6 +361,17 @@ automatic redirection from HTTP to HTTPS by adding usage of
 +jetty-http-redirect-to-https.xml+ as additional app parameters in
 +wrapper.conf+ as well as update the +Base URL+ in your Nexus server
 configuration.
+
+
+If you are setting up this redirection and therefore aim to expose
+your Nexus server only via HTTPS you should also configure Nexus to
+mark session cookies as secure, so that they are only sent to HTTPS
+browser access. This prevents any session hijacking. You can configure
+this in +nexus.properties+ with
+
+----
+shiro.secureSessionCookies=true
+----
 
 ////
 /* Local Variables: */
