@@ -1,6 +1,7 @@
 [[yum]]
 == RPM Packages and YUM Repositories
 
+[[yum-introduction]]
 === Introduction
 
 http://www.rpm.org/[RPM] packages and the RPM package manager solution
@@ -29,6 +30,7 @@ updates on testing and production systems. The metadata of the RPM
 package can additionally trigger installation of other required packages
 including e.g. a Java runtime or an application server.
 
+[[yum-installation]]
 === Installation and Requirements
 
 Yum support is bundled with all Nexus editions and no further
@@ -48,6 +50,7 @@ yum install createrepo
 ----
 with a sufficiently privileged user.
 
+[[yum-configuration]]
 === Configuration
 
 Yum related configuration is done with the 'Capabilites' management of
@@ -204,12 +207,14 @@ The yum support in Nexus includes a <<scheduled-tasks, scheduled
 task>> called 'Yum: Generate Metadata' that can be run to generate yum
 metadata with +createrepo+ for a specific repository.
 
-The 'Optional Output Directory' parameter can be used to get the
-metadata created in a different folder from the default repository
-root. Typically this task does not need to be run, however it can be
+Typically this task does not need to be run, however it can be
 useful when RPM files already exist in a repository or are deployed in
 some external mode that requires a manually triggered update of the
 metadata.
+
+The 'Optional Output Directory' parameter can be used to get the
+metadata created in a different folder from the default +repo-data+ in
+repository root .
 
 The parameter 'Single RPM per directory' is activated by default and
 causes the task to take only one RPM file per directory in the Maven
@@ -222,6 +227,7 @@ option is off by default and causes Nexus to take the existing
 metadata cache as a basis for the update.
  
 
+[[yum-example-usage]]
 === Example Usages
 
 The Nexus artifact upload to a hosted repository allows you to publish
@@ -231,10 +237,11 @@ to e.g., exposed third-party supplied RPM archives. The more advanced
 setup involves a Maven project that creates the RPM as detailed in
 this section.
 
-The http://mojo.codehaus.org/rpm-maven-plugin/[RPM Maven Plugin]
-can be used to create an RPM package of a Java application and attach
-it as a secondary built artifact with the +attached-rpm+ goal. An
-example plugin configuration for a +war+ project can be found in <<yum-rpm-pom>>.
+The http://mojo.codehaus.org/rpm-maven-plugin/[RPM Maven Plugin] can
+be used to create an RPM package of a Java application and attach it
+as a secondary built artifact with the +attached-rpm+ goal. An example
+plugin configuration for a +war+ project can be found in
+<<yum-rpm-pom>>.
 
 If your project includes a +distributionManagement+ for the +releases+
 repository, a build with +mvn clean deploy+, causes the +war+ as well
@@ -309,6 +316,7 @@ update <packagename>+.  This includes any required dependencies like a
 servlet container or a Java runtime as declared in the RPM Maven
 Plugin configuration and therefore the RPM/yum metadata.
 
+[[yum-staging]]
 === Staging with RPMs
 
 The <<staging, Nexus Staging Suite>> of Nexus Professional can be used
