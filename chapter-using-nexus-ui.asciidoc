@@ -157,9 +157,10 @@ image::figs/web/using-maven-information.png[scale=60]
 [[custom-metadata-plugin]]
 === View and Editing Artifact Metadata
 
-Support for custom metadata is part of Nexus Professional. You can
-view, edit, and search for additional metadata associated to any
-artifact in your Nexus repositories.
+Support for custom metadata for components in Maven 2 repositories is
+part of Nexus Professional. You can view, edit, and search for
+additional metadata associated to any artifact in your Nexus
+repositories.
 
 The features for custom metadata usage need to be activated by adding
 and enabling the 'Custom Metadata' capability as described in
@@ -196,6 +197,61 @@ panel with two custom attributes: "approvedBy" and "approved".
 [[fig-using-editing-metadata]]
 .Editing Artifact Metadata
 image::figs/web/meta_setting-meta-value.png[scale=60]
+
+You can upload custom metadata data into Nexus using an xml file. The
+file will be processed as artifact metadata if it meets the following
+criteria:
+
+* file extension is +.n3+ or +.xml+
+* the artifact classifier is +metadata+
+
+Here are example contents of a metadata file which adds additional
+custom metadata to an artifact with GAV of "test:project:1.0" and
+packaging of "jar":
+
+----
+<urn:maven/artifact#test:project:1.0::jar>
+<urn:mycustomspace#repositoryId> "releases" ;
+<urn:mycustomspace#mavenVersion> "2.2.1" ;
+<urn:mycustomspace#releaseManager> "myusername" ;
+<urn:mycustomspace#codeCoverage> ".99" .
+----
+
+A file with the above metadata content and a name of +metadata.n3+ can
+e.g., be attached as an additional project output artifact with the
+build helper maven plugin.
+
+----
+<plugin>
+  <groupId>org.codehaus.mojo</groupId>
+  <artifactId>build-helper-maven-plugin</artifactId>
+  <version>1.7</version>
+  <executions>
+    <execution>
+      <id>attach-artifacts</id>
+      <phase>package</phase>
+      <goals>
+        <goal>attach-artifact</goal>
+      </goals>
+      <configuration>
+        <artifacts>
+          <artifact>
+            <file>metadata.n3</file>
+            <type>n3</type>
+            <classifier>metadata</classifier>
+          </artifact>
+        </artifacts>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+----
+
+The metadata in the file is consumed by the Nexus custom metadata
+plugin and becomes available in the user interface for inspection and
+search. By default this metadata available for read operations
+only. If the repository deployment policy allows redeploys, the custom
+metadata can be changed.
 
 
 [[archive-browser]]
