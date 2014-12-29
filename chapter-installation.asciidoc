@@ -664,8 +664,8 @@ would include the context path in your ProxyPass and ProxyPassReverse
   ProxyPassReverse /nexus/ http://localhost:8081/nexus/
 ----
 
-If you want to serve Nexus on a context path or port that is different than the one it
-has been configured for you will also need to add a +ProxyPassReverseCookiePath+.
+For the user interface to work via the proxy reliably you also need to
+configure a +ProxyPassReverseCookiePath+.
 
 ----
   ProxyPass /nexus http://localhost:8081/
@@ -673,11 +673,12 @@ has been configured for you will also need to add a +ProxyPassReverseCookiePath+
   ProxyPassReverseCookiePath / /nexus
 ----
 
-When your reverse proxy is configured to serve https, but it proxies with plain 
-http to your Nexus instance, an additional header is required. This will ensure
-Nexus renders absolute URLs using the correct protocol. When setting this header,
-make sure that in <<fig-config-administration-application-server>> 'Force Base URL'
-is not checked.
+When your reverse proxy is configured to serve https, but it proxies
+with plain http to your Nexus instance, an additional header is
+required. This will ensure Nexus renders absolute URLs using the
+correct protocol. When setting this header, make sure that in
+<<fig-config-administration-application-server>> 'Force Base URL' is
+not checked.
 
 ----
   RequestHeader set X-Forwarded-Proto "https"
