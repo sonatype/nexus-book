@@ -619,10 +619,10 @@ like mod_rewrite.
 Some brief instructions for establishing such a setup with Apache
 httpd follow as an example. We assume that you've already installed
 Apache 2, and that you are using a virtual host for
-www.somecompany.com.
+repo.somecompany.com.
 
 Let's assume that you wanted to host Nexus behind Apache httpd at the
-URL http://www.somecompany.com. To do this, you'll need to change the
+URL +http://repo.somecompany.com+. To do this, you'll need to change the
 context path that Nexus is served from.
 
 . Edit nexus.properties in +$NEXUS_HOME/conf+. You'll see an
@@ -632,13 +632,14 @@ context path that Nexus is served from.
 . Restart Nexus and Verify that it is available on
   +http://localhost:8081/+
 
-. Clear the Base URL in Nexus as shown in
+. Set the Base URL in Nexus as shown in
   <<fig-config-administration-application-server>> under 'Application
-  Server Settings'.
+  Server Settings' to the URL that will be the externally available 
+  URL of Nexus e.g. +http://repo.somecompany.com+ 
 
 At this point, edit the httpd configuration file for the
-www.somecompany.com virtual host. Include the following to expose
-Nexus via mod_proxy at http://www.somecompany.com/.
+repo.somecompany.com virtual host. Include the following to expose
+Nexus via mod_proxy at http://repo.somecompany.com/.
 
 ----
 ProxyRequests Off 
@@ -663,8 +664,8 @@ would include the context path in your ProxyPass and ProxyPassReverse
   ProxyPassReverse /nexus/ http://localhost:8081/nexus/
 ----
 
-If you want to serve Nexus on a context path that is different than the one it
-has been configured for you will also need to add a ProxyPassReverseCookiePath.
+If you want to serve Nexus on a context path or port that is different than the one it
+has been configured for you will also need to add a +ProxyPassReverseCookiePath+.
 
 ----
   ProxyPass /nexus http://localhost:8081/
@@ -685,7 +686,41 @@ is not checked.
 Apache configuration is going to vary, based on your own application's
 requirements and the way you intend to expose Nexus to the outside
 world. If you need more details about Apache httpd and mod_proxy,
-please see http://httpd.apache.org
+please see the documentation at
+http://httpd.apache.org[http://httpd.apache.org] and specifically
+http://httpd.apache.org/docs/current/mod/mod_proxy.html[http://httpd.apache.org/docs/current/mod/mod_proxy.html].
+
+
+A similar setup can be configured with
+http://nginx.org/en/[nginx]. The following configuration is a
+simplified example for an nginx server running port +80+. This server
+proxies Neuxs running on the same server (127.0.0.1 = localhost) at
+the default port +8081+ on the default context +/nexus+:
+
+----
+http {
+...
+    proxy_send_timeout 120;
+    proxy_read_timeout 300;
+    proxy_buffering    off;
+    keepalive_timeout   5;
+    tcp_nodelay        on;
+..
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location /nexus {
+            proxy_pass http://127.0.0.1:8081;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+    }
+----
+
+The http://nginx.org/en/docs/[nginx documentation] contains furhter
+details for setting this up for HTTP as well as for HTTPS, if desired.
 
 [[install-sect-licensing]]
 === Installing a Nexus Professional License
