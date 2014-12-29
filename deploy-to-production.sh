@@ -20,13 +20,20 @@ function rsyncToProduction {
     connection=deployer@marketing01.int.sonatype.com
     echo "Uploading $1 to $2 on $connection"
     ssh $connection mkdir -pv $target
-    rsync -e ssh $options -av target/$source/ $connection:$target
+    rsync -e ssh $options -av target/$source  $connection:$target
 }
 
 if [ $publish_master == "true" ]; then
     rsyncToProduction site/reference/ reference --delete
     rsyncToProduction site/pdf/ pdf --delete
     rsyncToProduction site/other/ other --delete
+fi
+
+if [ $publish_index == "true" ]; then
+    rsyncToProduction site/index.html  "" --delete
+    rsyncToProduction site/js/ js --delete
+    rsyncToProduction site/images/ images --delete
+    rsyncToProduction site/css/ css --delete
 fi
 
 rsyncToProduction site/$nexus_version/reference/ $nexus_version/reference --delete
