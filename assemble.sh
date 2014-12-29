@@ -12,12 +12,13 @@ echo "nexus_version set to $nexus_version"
 
 if [ $publish_master == "true" ]; then
     echo "Preparing for master deployment"
+    
     rm -rf target/site/reference
     rm -rf target/site/pdf
     rm -rf target/site/other
     mkdir -p target/site/reference
     mkdir -p target/site/pdf
-    mkdir -p target/site/other 
+    mkdir -p target/site/other
 fi
 
 echo "Preparing for version $nexus_version deployment"
@@ -30,7 +31,7 @@ mkdir -p target/site/$nexus_version/other
 
 if [ $publish_master == "true" ]; then
     echo "Copying for master deployment"
-    cp -r target/book-nexus.chunked/* target/site/reference
+    cp -r target/book-nexus.chunked/*  target/site/reference
     mkdir -p target/site/reference/css
     cp -r site/css target/site/reference
     cp -r site/js target/site/reference
@@ -43,6 +44,8 @@ fi
 
 echo "Copying for version $nexus_version deployment"
 
+# NOT copying the overall index into version specific directories since links would be broken and 
+# it is an overall index
 cp -r target/book-nexus.chunked/* target/site/$nexus_version/reference
 mkdir -p target/site/$nexus_version/reference/css
 cp -r site/css target/site/$nexus_version/reference
@@ -54,5 +57,17 @@ cp target/sonatype-nexus-eval-guide.pdf target/site/$nexus_version/pdf/sonatype-
 cp target/book-nexus.epub target/site/$nexus_version/other/nexus-book.epub
 
 
-python template.py -p "target/site/reference"
-python template.py -p "target/site/$nexus_version/reference"
+python template.py -p "target/site/reference" -t "../" -s "block"
+python template.py -p "target/site/$nexus_version/reference" -t "../../" -s "block"
+
+
+if [ $publish_index == "true" ]; then
+    echo "Preparing index for deployment"
+    echo "  Copying content and resources"
+    cp target/index.html target/site
+    cp -r site/css target/site
+    cp -r site/js target/site
+    cp -r site/images target/site
+    python template.py -p 'target/site/' -b '<body class="article">' -t "./"
+    echo "... done"
+fi
