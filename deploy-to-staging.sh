@@ -30,10 +30,10 @@ if [ $publish_master == "true" ]; then
 fi
 
 if [ $publish_index == "true" ]; then
-    rsyncToProduction site/index.html  "" --delete
-    rsyncToProduction site/js/ js --delete
-    rsyncToProduction site/images/ images --delete
-    rsyncToProduction site/css/ css --delete
+    rsyncToStage site/index.html  "" --delete
+    rsyncToStage site/js/ js --delete
+    rsyncToStage site/images/ images --delete
+    rsyncToStage site/css/ css --delete
 fi
 
 rsyncToStage site/$nexus_version/reference/ $nexus_version/reference --delete
