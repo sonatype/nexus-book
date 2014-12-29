@@ -6,6 +6,9 @@ set -u
 
 ./prepare.sh
 
+echo "Building index page"
+asciidoc -o target/index.html index.asciidoc 
+
 echo "Building pdf version of book"
 a2x -k -fpdf -dbook --xsl-file=docbook-xsl/fo.xsl --dblatex-opts="-P toc.section.depth=1 -P latex.output.revhistory=0 -P doc.publisher.show=0 -s ./latex/custom-docbook.sty" -D target book-nexus.asciidoc
 
