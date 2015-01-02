@@ -278,136 +278,86 @@ Snapshots. This allows you to expose the components of the Central
 Repositories as well as your internal components in one single,
 simple-to-use repository and therefore URL.
 
+[[admin-repository-repositories]]
+==== Managing Repositories and Repository Groups
 
-////
+The administration user interface for repositories and repository
+groups is available via the 'Repositories' item in the 'Repository'
+sub menu of the 'Administration' menu. It allows you to create and
+update repositories as well as delete them and perform various
+operations for the maintenance. The initial view displayed in
+<<fig-admin-repository-repositories-list>> features a list of all
+configured repositories and repository groups.
 
-[[admin-support]]
-=== Support Features
+[[fig-admin-repository-repositories-list]]
+.List of Repositories
+image::figs/web/admin-repository-repositories-list.png[scale=50]
 
+The list of repositories displays some information
+for each repository in the following columns
 
-[[admin-security]]
-=== Security
-////
+Name:: the name of the repository or repository group
 
- 
-////
-
-
-[[config-sect-security]]
-==== Security Settings
-
-The security settings displayed in
-<<fig-config-administration-security>> allow you to activate and
-prioritize security realms by adding them to the 'Selected Realms'
-list on the left and placing them higher or lower on the list.
-
-[[fig-config-administration-security]]
-.Administration Security Settings
-image::figs/web/config-administration-security.png[scale=60]
-
-Effectively, this configuration determines what authentication realm is
-used to grant a user access and the order the realms are used.
-
-Xml Authenticating and Xml Authorizing Realm:: These identify the
-Nexus internal storage uses XML files for storing the security
-details.
-
-(Enterprise) LDAP Authentication Realm:: This realm identifies
-external storage in an LDAP system with details documented in
-<<ldap>>.
-
-Crowd Realm:: This realm identifies external storage in an Atlassian
-Crowd system with details documented in <<crowd>>.
-
-Rut Auth Realm:: This realm is external authentication in any system
-with the user authorization passed to Nexus in a HTTP header field
-with details documented in <<remote-user>>.
-
-The 'User Token Realm' is required for user token support documented
-in <<config-sect-usertoken>> and the 'NuGet API-Key Realm' is needed
-for NuGet support documented in <<nuget>>.
-
-In addition, you can enable or disable anonymous access and set the
-username and password for anonymous access. The anonymous username and
-password are used to integrate with other realms that may need a
-special username for anonymous access.  In other words, the username
-and password here are what we attempt to authorize when someone makes
-an anonymous request. You would change the anonymous username to
-+guest+ if you wanted to integrate Nexus with Microsoft's Active
-Directory.
-
-==== PGP Key Server Information
-
-Nexus Professional uses a PGP Key Server to retrieve PGP keys when
-validating artifact signatures. To add a new key server, enter the
-URL in the 'Key Server URL' field and click on the 'Add' button. To remove
-a key server, click on the URL you wish to remove from the list
-and click on the 'Remove' button. Key servers are consulted in the order
-that they are listed in the 'Key Server URLs' list. To reorder your key
-servers, click and drag a URL in the 'Key Server URLs' list.
-
-[[fig-config-administration-pgp-key-server]]
-.Administration PGP Key Server Information
-image::figs/web/config-administration-pgp-key-server.png[scale=60]
-
-==== Configuring Repositories
-
-The 'Repositories' window displayed in <<fig-repo-config>> allows you to
-create, update and delete different repositories with the 'Add', 'Delete'
-and 'Trash' button. Use the 'Refresh' button to update the displayed list
-of repositories and repository groups. The 'Trash' button allows you to
-empy the trash folder into which deleted components are copied, when
-any delete operations are performed from the Nexus user interface. 
-
-By default, the list of repositories displays the repositories
-configured and managed by the administrator. The drop down on the
-right of the 'Trash' button allows you to switch the list of
-repositories and view the repositories managed by Nexus. There are
-staging repositories as documented in <<staging>> or procurement
-repositories as documented in <<procure>>.
-
-[[fig-repo-config]]
-.Repository Configuration Screen for a Proxy Repository
-image::figs/web/repository-manager_repository-config.png[scale=50]
-
-The list of repositories visible in <<fig-repo-config>> allows you to
-access more details for each repository by selecting a specific row
-which displays some information for each repository in the following
-columns: 
-
-Repository:: the name of the repository with repository groups
-displayed in bold
-
-Type:: the type of the repository with values of proxy, hosted or
-virtual for repositories or group for a repository group
-
-Health Check:: the result counts for a repository health check as
-documented in <<rhc>>
+Type:: the type of the repository with values of 'Proxy', 'Hosted' or
+'Virtual' for repositories or group for a repository group
 
 Format:: the format used for the storage in the repository with values
-such as +maven2+, +nuget+, +site+ or others
+such as +Maven2+, +NuGet+, +Site+ or others
 
-Policy:: the deployment policy that applies to this repository. A
-policy applies only to Maven 1 and Maven 2 formatted repositories and
-allows usage of a 'Snapshot' or a 'Release' policy.
-
-Repository Status:: the status of the repository as well as further
+Status:: the status of the repository as well as further
 information about the status. For example, information about SSL
 certification problems or the status of the remote repository even for
 a currently disabled proxy repository
 
-Repository Path:: the direct URL path that exposes the repository via
-HTTP access and potentially allows access and directory browsing
-outside of the Nexus interface
+URL:: the direct URL path that exposes the repository via HTTP access
+and potentially, depending on the repository format, allows access and
+directory browsing
 
-Clicking on a colum header allows you to sort the list in ascending or
-descending order based on the column data.
+Health Check:: the result counts for a repository health check or a
+button to start the analysis
 
-If you right-click on a row, you can trigger a number of
-actions on the current repository, depending on the
-repository type. Actions include:
+////
+TBD as documented in <<rhc>>
+////
 
-Expire Cache:: expire the cache of hosted or a proxy repository or a
+The 'New' button above the repository list triggers a pop up dialog
+with a list of supported repository configurations based on the
+'Provider' and the 'Type'. The providers combines the repository
+format with repository policy. Depending on your Nexus version and
+installed plugins, the list of available choices differs. 
+
+For example to create another release repository in Maven2 format, you
+would click on the row 'Maven2 (hosted, release)' in the dialog. If
+you wanted to proxy another Maven 2 release repository, choose 'Maven
+2 (proxy, release)'. On the other hand if you want to proxy the NuGet
+Gallery, choose 'NuGet (proxy)'.
+
+After this selection, you are presented with a dialog, that allows you
+to fill in the required parameters and some further
+configuration. This will depend on the selected repository provider
+and type and be identical to the administration for updating
+documented in the following sections.
+
+Once you have created a repository or repository group, it is
+available in the list for further configuration and management.
+Clicking on a specific row allows you to navigate to this repository
+specific administration section. An example for the 'Central'
+repository is displayed in <<fig-admin-repository-repositories-central>>.
+
+[[fig-admin-repository-repositories-central]]
+.Repository Configuration for a Proxy Repository
+image::figs/web/admin-repository-repositories-central.png[scale=50]
+
+
+The 'Delete' button allows you to delete this repository and all
+related configuration and components, after confirming the operating
+in a pop up dialog. 
+
+The 'More...' button provides a drop down of further supported
+operations for the specific repository. These operations vary by
+repository format and can include the following:
+
+Expire Cache:: expire the cache of a hosted or a proxy repository or a
 repository group
 
 Rebuild Metadata:: rebuid the metadata of a hosted Maven 2 repository
@@ -421,16 +371,13 @@ service to allow changing the availability of all components in it
 Repair Index / Update Index:: repair or update the index of a hosted
 or proxy repository or a repository group
 
+The 'Browse' button navigates you to the repository browsing user
+interface in Nexus for the specific repository.
 
-[[fig-repo-config-2]]
-.Repository Configuration Screen for a Proxy Repository
-image::figs/web/repository-manager_repository-config-2.png[scale=50]
+////
 
-[[fig-repo-config-hosted]]
-.Repository Configuration Access Settings for a Hosted Repository
-image::figs/web/repository-manager_repository-config-3.png[scale=50]
 
-<<fig-repo-config>> and <<fig-repo-config-2>> show the repository
+fig1 and <<fig-repo-config-2>> show the repository
 configuration screen for a proxy repository in Nexus. From this
 screen, you can manage the settings for proxying an external
 repository:
@@ -587,6 +534,80 @@ also configure the 'User Agent' of the request, add parameters to a
 request, and set the timeout and retry behavior. The HTTP request
 configured is the request made from Nexus to the remote repository
 being proxied.
+
+
+
+
+
+[[admin-support]]
+=== Support Features
+
+
+[[admin-security]]
+=== Security
+////
+
+ 
+////
+
+
+[[config-sect-security]]
+==== Security Settings
+
+The security settings displayed in
+<<fig-config-administration-security>> allow you to activate and
+prioritize security realms by adding them to the 'Selected Realms'
+list on the left and placing them higher or lower on the list.
+
+[[fig-config-administration-security]]
+.Administration Security Settings
+image::figs/web/config-administration-security.png[scale=60]
+
+Effectively, this configuration determines what authentication realm is
+used to grant a user access and the order the realms are used.
+
+Xml Authenticating and Xml Authorizing Realm:: These identify the
+Nexus internal storage uses XML files for storing the security
+details.
+
+(Enterprise) LDAP Authentication Realm:: This realm identifies
+external storage in an LDAP system with details documented in
+<<ldap>>.
+
+Crowd Realm:: This realm identifies external storage in an Atlassian
+Crowd system with details documented in <<crowd>>.
+
+Rut Auth Realm:: This realm is external authentication in any system
+with the user authorization passed to Nexus in a HTTP header field
+with details documented in <<remote-user>>.
+
+The 'User Token Realm' is required for user token support documented
+in <<config-sect-usertoken>> and the 'NuGet API-Key Realm' is needed
+for NuGet support documented in <<nuget>>.
+
+In addition, you can enable or disable anonymous access and set the
+username and password for anonymous access. The anonymous username and
+password are used to integrate with other realms that may need a
+special username for anonymous access.  In other words, the username
+and password here are what we attempt to authorize when someone makes
+an anonymous request. You would change the anonymous username to
++guest+ if you wanted to integrate Nexus with Microsoft's Active
+Directory.
+
+==== PGP Key Server Information
+
+Nexus Professional uses a PGP Key Server to retrieve PGP keys when
+validating artifact signatures. To add a new key server, enter the
+URL in the 'Key Server URL' field and click on the 'Add' button. To remove
+a key server, click on the URL you wish to remove from the list
+and click on the 'Remove' button. Key servers are consulted in the order
+that they are listed in the 'Key Server URLs' list. To reorder your key
+servers, click and drag a URL in the 'Key Server URLs' list.
+
+[[fig-config-administration-pgp-key-server]]
+.Administration PGP Key Server Information
+image::figs/web/config-administration-pgp-key-server.png[scale=60]
+
 
 ==== Viewing the Summary Panel for a Repository
 
