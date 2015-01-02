@@ -35,8 +35,9 @@ Crowd', 'SSL Certificates' and 'User Token'.
 Nexus server successfullying like 'Logging' and 'System Information'.
 
 'System':: The general configuration of Nexus for getting started and
-keep it like that with e.g., 'HTTP' or 'Email Server' settings, but
-also 'Templates' for users and 'Tasks' to run regularly.
+keep it like that with e.g., <<admin-system-http, 'HTTP'>> or
+<<admin-system-email,'Email Server'>> settings, but also 'Templates' for
+users and 'Tasks' to run regularly.
 
 ////
 
@@ -50,7 +51,7 @@ and training..
 ////
 
 
-[[system]]
+[[admin-system]]
 === System Configuration
 
 The 'System' section of the 'Administration' menu gives you access to
@@ -60,7 +61,7 @@ sections detail how to configure aspects such as 'HTTP' and SMTP
 parameters as well as regular runs 'Tasks', 'Licensing' and the more
 advanced 'Capabilities'-based configuration of various aspects.
 
-[[config-sect-smtp]]
+[[admin-system-email]]
 ==== Email Server
 
 Nexus sends email to users who need to recover user names and
@@ -94,6 +95,7 @@ successful connection to the server. You will be asked to provide an
 email address that should receive a test email message. Successful
 sending will be confirmed in another pop up message.
 
+[[admin-system-general]]
 ==== General Server Settings
 
 The 'General' server configuration is available via the
@@ -117,7 +119,7 @@ an external proxy server using a different protocol like HTTPS rather
 than plain HTTP known to Nexus or a different hostname like
 repository.somecompany.com instead of an IP number only.
 
-[[config-default-http-proxy]]
+[[admin-system-http]]
 ==== HTTP and HTTPS Request and Proxy Settings
 
 Nexus uses HTTP requests to fetch content from remote servers. In some
@@ -174,14 +176,117 @@ administration interface. The HTTPS configuration interface looks the
 same and is found below the HTTP configuration.
 
 
-////
-
-[[repository]]
+[[admin-repository]]
 === Repository Management
 
-[[support]]
+Repositories are the containers for the components provided to your
+users. Configuring repositories is an essential part of your Nexus
+configuration. It can be performed in the 'Repository' sub menu of the
+the 'Administration' menu.
+
+Nexus supportsproxy repositories, hosted repositories, virtual
+repositories and repository groups using a number of different
+repository formats.
+
+To manage Nexus repositories, log in as the administrative user and
+click on 'Repositories' in the 'Repository' sub menu of the
+'Administration' menu.
+
+[[proxy-repository]]
+==== Proxy Repository
+
+A repository with the type 'Proxy', also known as a proxy repository,
+is a repository that is linked to a remote repository. Any request for
+a component is checked in the local content of the proxy
+repository. If no local component is found, the request is forwarded
+to the remote repository. The component is then retrieved and stored
+locally. Subsequent requests for the same component are then fulfilled
+from the local storage therefore eliminating the network and time
+overhead of retrieving the component from the remote repository again.
+
+By default, Nexus ships with the following configured proxy
+repositories in Maven2 format:
+
+Apache Snapshots:: This repository contains snapshot releases from the
+Apache Software Foundation.
+
+Codehaus Snapshots:: This repository contains snapshot releases from
+Codehaus.
+
+Central:: This is the 'Central Repository' containing release
+components. Formerly known as 'Maven Central', it is the default
+built-in repository for Apache Maven and directly supported in other
+build tools like Gradle, SBT or Ant/Ivy.
+
+[[hosted-repository]]
+==== Hosted Repository
+
+A repository with the type 'Hosted', also known as a hosted repository,
+is a repository that stores components as the authoritative location for
+these components. 
+
+A 'Hosted Repository' is a repository that is hosted by Nexus. Nexus
+ships with the following configured hosted repositories:
+
+3rd Party:: This hosted repository should be used for third-party
+dependencies not available in the public Maven2 repositories. Examples
+of these dependencies could be commercial, proprietary libraries such
+as an Oracle JDBC driver that may be referenced by your organization.
+
+Releases:: This hosted repository is where your organization can
+publish internal releases in a Maven2 format repository.
+
+Snapshots:: This hosted repository is where your organization can
+publish internal development versions, also known as snapshots, in a
+Maven2 format repository.
+
+
+[[virtual-repository]]
+==== Virtual Repository
+
+A repository with the type 'Virtual', also known as a virtual
+repository serves as an adaptor to and from different types of
+repositories. Currently, Nexus supports conversion to and from Maven 1
+repositories and Maven 2 repositories. In addition, you can expose any
+repository format as a NuGet or OBR repository. For example, a Maven 2
+repository can contain OSGi Bundles, which can be exposed as a OSGi
+Bundle repository with the virtual repository Provider set to OBR.
+
+By default it ships with a Central M1 shadow repository that exposes
+the Central repository in Maven 1 format.
+
+++++
+<?dbhtml-include href="promo_managingRepos.html"?>
+++++
+
+[[repsository-group]]
+==== Repository Group
+
+A repository with the type 'Group', also known as repository group,
+represents a powerful feature of Nexus. They allow you to combine
+multiple repositories and other repository groups in a single
+repository. This in turn means that your users can rely on a single
+URL for their configuration needs, while the Nexus administrators can
+add more repositories and therefore components to the repository
+group.
+
+Nexus ships with one group: 'public'. The 'Public Repositories' group
+is a repository group of Maven2 formatted repositories and combines
+the important external proxy repository for the Central
+Repository with the hosted repositories: 3rd Party, Releases, and
+Snapshots. This allows you to expose the components of the Central
+Repositories as well as your internal components in one single,
+simple-to-use repository and therefore URL.
+
+
+////
+
+[[admin-support]]
 === Support Features
 
+
+[[admin-security]]
+=== Security
 ////
 
  
@@ -244,70 +349,6 @@ servers, click and drag a URL in the 'Key Server URLs' list.
 [[fig-config-administration-pgp-key-server]]
 .Administration PGP Key Server Information
 image::figs/web/config-administration-pgp-key-server.png[scale=60]
-
-[[confignx-sect-manage-repo]]
-=== Managing Repositories
-
-To manage Nexus repositories, log in as the administrative user and
-click on 'Repositories' in the 'Views/Repositories' menu in the
-left-hand Nexus menu.
-
-Nexus provides for three different kinds of repositories: 'Proxy'
-Repositories, 'Hosted' repositories, and 'Virtual' repositories.
-
-==== Proxy Repository
-
-A 'Proxy Repository' is a proxy of a remote repository.  By default,
-Nexus ships with the following configured proxy repositories:
-
-Apache Snapshots:: This repository contains snapshot releases from the
-Apache Software Foundation.
-
-Codehaus Snapshots:: This repository contains snapshot releases from
-Codehaus.
-
-Central:: This is the 'Central Repository' containing release
-artifacts. Formerly known as 'Maven Central', it is the default
-built-in repository for Apache Maven and directly supported in other
-build tools like Gradle, SBT or Ant/Ivy. For Nexus OSS, the URL
-http://repo1.maven.org/maven2/ is used, while Nexus Professional has
-the SSL secured version https://secure.central.sonatype.com/maven2/
-preconfigured. Nexus OSS users and users of other repository managers
-can purchase usage of the secured version for a nominal fee.
-
-==== Hosted Repository
-
-A 'Hosted Repository' is a repository that is hosted by Nexus. Nexus
-ships with the following configured hosted repositories:
-
-3rd Party:: This hosted repository should be used for third-party
-dependencies not available in the public Maven repositories. Examples
-of these dependencies could be commercial, proprietary libraries such
-as an Oracle JDBC driver that may be referenced by your organization.
-
-Releases:: This hosted repository is where your organization will
-publish internal releases.
-
-Snapshots:: This hosted repository is where your organization will
-publish internal snapshots.
-
-[[virtual-repository]]
-==== Virtual Repository
-
-A 'Virtual Repository' serves as an adaptor to and from different types of
-repositories. Currently, Nexus supports conversion to and from Maven 1
-repositories and Maven 2 repositories. In addition, you can expose any
-repository format as a NuGet or OBR repository. For example, a Maven 2
-repository can contain OSGi Bundles, which can be exposed as a OSGi
-Bundle repository with the virtual repository Provider set to OBR.
-
-By default it ships with a Central M1 shadow repository that exposes
-the Central repository in Maven 1 format.
-
-++++
-<?dbhtml-include href="promo_managingRepos.html"?>
-++++
-
 
 ==== Configuring Repositories
 
@@ -641,24 +682,16 @@ to 'True':
 .Configuring Remote Repository Auto Block/Unblock
 image::figs/web/configuring_auto-block.png[scale=75]
 
-[[confignx-sect-managing-groups]]
-=== Managing Groups
 
-Groups are a powerful feature of Nexus. They allow you to combine
-multiple repositories and other repository groups in a single URL. Use
-the left-hand panel Repositories menu item in the Views/Repositories
-menu to access the repositories and groups management interface.
-
-Nexus ships with one group: public. The Public Repositories group
-combines the multiple important external proxy repositories like the
-Central Repository with the hosted repositories: 3rd Party, Releases,
-and Snapshots.
 
 In <<maven-sect-single-group>> we configured Maven via the
 settings.xml to look for artifacts in the public group managed by
 Nexus. <<fig-group-config>> shows the group configuration screen in
 Nexus. In this figure you can see the contents of the 'Public
 Repositories' group.
+
+
+=== Managing Groups
 
 [[fig-group-config]]
 .Group Configuration Screen in Nexus
