@@ -351,7 +351,7 @@ task, user authentication can be declared in e.g.,
 +gradle.properties+:
 
 ----
-nexusUrl=http://localhost:8081/nexus
+nexusUrl=http://localhost:8081
 nexusUsername=admin
 nexusPassword=admin123
 ----
@@ -414,8 +414,7 @@ config grails build to look at nexus
 http://www.scala-sbt.org/[sbt] has a built in dependency management
 component and defaults to the Maven repository format. In order to
 configure a sbt project to resolve dependencies declared in
-+build.sbt+ file, a +resolver+  as shown in
-<<sbt-minimal>> has to be declared
++build.sbt+ file, a +resolver+  as shown below has to be declared
 
 
 [[sbt-minimal]]
@@ -437,7 +436,7 @@ and then used in the +publishTo+ configuration:
 
 ----
 publishTo <<= version { v: String =>
-  val nexus = "http://localhost:8081/nexus/" 
+  val nexus = "http://localhost:8081/" 
   if (v.trim.endsWith("SNAPSHOT"))
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else
@@ -463,7 +462,7 @@ snapshot proxy repository and then add both to the public group.
 
 In order to configure a Leinigen project to resolve dependencies declared in
 the +project.clj+ file, a +mirrors+ section overriding the built in +central+
-and +clojars+ repositories as shown in <<leiningen-minimal>> has to be declared
+and +clojars+ repositories as shown below has to be declared
 
 
 [[leiningen-minimal]]
