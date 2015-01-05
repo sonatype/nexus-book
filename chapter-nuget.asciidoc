@@ -42,8 +42,13 @@ your project setup and configuration files. Removing a package will
 clean up any changes as required.
 
 TIP: Using NuGet repositories benefits from a larger memory
-size available to Nexus. This memory allocation can be configured in
+size available to Nexus. 
+
+////
+TBD
+This memory allocation can be configured in
 +wrapper.conf+ as documented in <<install-sect-running>>.
+////
 
 
 [[nuget-nuget_proxy_repositories]]
@@ -55,11 +60,10 @@ speeds for your developers and CI severs, you should proxy the NuGet
 Gallery with Nexus. If you use other external repositories, you should
 also proxy these. 
 
-To proxy an external NuGet repository, you simply create a new 'Proxy
-Repository' as documented in <<confignx-sect-manage-repo>>. The
-'Provider' has to be set to +NuGet+. The 'Remote Storage Location' has
-to be set to the URL of the remote repository you want to proxy. The
-URL for the main NuGet Gallery repository is 
+To proxy an external NuGet repository, you simply create a new 'NuGet
+(proxy)' as documented in <<admin-repositories>>. The 'Remote Storage
+Location' has to be set to the URL of the remote repository you want
+to proxy. The URL for the main NuGet Gallery repository is
 
 ----
 https://www.nuget.org/api/v2/
@@ -115,9 +119,9 @@ A hosted repository for NuGet can be used to upload your own
 packages as well as third-party packages. It is good practice to
 create two separate hosted repositories for these purposes.
 
-To create a NuGet hosted repository, simply create a new 'Hosted
-Repository' and set the 'Provider' to +NuGet+. A sample configuration for an
-internal releases NuGet hosted repository is displayed in
+To create a NuGet hosted repository, simply create a new 'NuGet
+(hosted)' repository. A sample configuration for an internal releases
+NuGet hosted repository is displayed in
 <<fig-nuget-hosted-releases-configuration>>.
 
 [[fig-nuget-hosted-releases-configuration]]
@@ -141,7 +145,7 @@ task.
 
 If you have deployed NuGet packages to a Maven repository in the past,
 you can expose them to Visual Studio by creating a virtual repository
-as documented in <<confignx-sect-manage-repo>> and setting the
+as documented in <<admin-repositories>> and setting the
 'Format' to 'NuGet Shadow Repository'. The setup displayed in
 <<fig-nuget-virtual-releases>> shows a virtual repository configured
 to expose the content of the regular Maven 'Releases' repository as a
@@ -203,6 +207,9 @@ proxy. Ideally, this will be your NuGet group.
 After this source was added, you can list the available packages with 
 the command +nuget list+.
 
+////
+TBD once linked sections are documented
+
 Access to the packages is not restricted by default. If access
 restrictions are desired, you can
 <<confignx-sect-managing-security,configure Nexus security>> directly
@@ -210,7 +217,7 @@ or via <<ldap,LDAP/Active Directory external role mappings>> combined with
 <<confignx-sect-managing-repo-targets,repository targets>> for fine
 grained control. Authentication from NuGet is then handled via NuGet
 API keys as documented in <<nuget-deploying_packages_to_nuget_hosted_repositories>>.
-
+////
 
 [[nuget-deploying_packages_to_nuget_hosted_repositories]]
 === Deploying Packages to NuGet Hosted Repositories
@@ -247,10 +254,9 @@ image::figs/web/nuget-api-key.png[scale=50]
 
 ==== Creating a Package for Deployment
 
-Creating a package for deployment can be done with the +pack+ command of
-the +nuget+ command line tool or within Visual Studio. Detailed
-documentation can be found on the http://docs.nuget.org/[NuGet
-website].
+Creating a package for deployment can be done with the +pack+ command
+of the +nuget+ command line tool or within Visual Studio. Detailed
+documentation can be found on the http://docs.nuget.org/[NuGet website].
 
 ==== Deployment with the NuPkg Upload User Interface
 
