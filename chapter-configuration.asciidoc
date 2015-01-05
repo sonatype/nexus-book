@@ -537,6 +537,94 @@ request, and set the timeout and retry behavior. The HTTP request
 configured is the request made from Nexus to the remote repository
 being proxied.
 
+==== Repository Management Example
+
+The following sections detail some common steps of your repository
+management efforts on the example of a Maven 2 repository.
+
+[[config-sect-custom]]  
+.Adding Repositories for Missing Dependencies
+
+If you've configured your Maven +settings.xml+ or other build tool
+configuration to use the Nexus +public+ repository group as a mirror
+for all repositories, you might encounter projects that are unable to
+retrieve components from your local Nexus installation.
+
+This usually happens because you are trying to build a project that
+has defined a custom set of repositories and snapshot repositories or
+relies on the content of other publically available repositories in
+its configuration. When you encounter such a project all you have to
+do is 
+
+* add this repository to Nexus as a new proxy repository 
+* and then add the new proxy repository to the public group.
+
+The advantage of this approach is that no configuration change on the
+build tool side is necessary at all.
+
+[[config-sect-new-repo]]
+.Adding a New Repository
+
+Once you have established the URL and format of the remote repository
+you are ready to configure Nexus. E.g. the JBoss.org releases
+repository contains your missing component. Click on the 'New' button
+in the 'Repositories' feature view and click on 'Maven2
+(proxy,release)' from the list in the dialog.
+
+In the configuration dialog configure the required parameters:
+
+* 'ID' set to +jboss-releases+
+* 'Name' set to +JBoss.org Releases+
+* 'Remote Storage Location' set to
+  +https://repository.jboss.org/nexus/content/repositories/releases/+
+* 'Checksum Policy' set to +Strict+
+
+Once you've filled out the dialog, click on the 'Add'
+button. Nexus will then be configured to proxy the repository. If the
+remote repository contains snapshots as well as release components,
+you will need to repeat the process creating a second proxy repository
+with the same URL using  'Maven2 (proxy,snapshot)' in the repository
+type dialog.
+
+++++
+<?dbhtml-include href="promo_nuget.html"?>
+++++
+
+[[config-sect-repo-group]]  
+.Adding a Repository to a Group
+
+Next you will need to add the new repositories to the 'Public
+Repositories' Nexus repository group. To do this, click on the row of
+the 'Public Repositories' group in the 'Repositories' feature
+view. You should see the 'Settings' tab.
+
+To add the new repository to the public group, find the repository in
+the  'Available Repositories' list on the left, click on the
+repository you want to add and drag it to the left to the 'Ordered
+Member Repositories' list. Once the repository is in the 'Ordered Member
+Repositories' list you can click and drag the repository within that
+list to alter the order in which a repository will be searched for a
+matching artifact. Press the 'Save' button to complete this
+configuration.
+
+In the last few sections, you learned how to add a new custom
+repositories to a build in order to download artifacts that are not
+available in the Central Repository.
+
+If you were not using a repository manager, you would have added these
+repositories to the repository element of your project's POM, or you
+would have asked all of your developers to modify +~/.m2/settings.xml+
+to reference two new repositories. Instead, you used the Nexus
+repository manager to add the two repositories to the public group. If
+all of the developers are configured to point to the public group in
+Nexus, you can freely swap in new repositories without asking your
+developers to change local configuration, and you've gained a certain
+amount of control over which repositories are made available to your
+development team. In addition the performance of the artifact
+resolving across multiple repositories will be handled by Nexus and
+therefore be much faster than client side resolution done by Maven
+each time.
+
 ////
 [[admin-support]]
 === Support Features
