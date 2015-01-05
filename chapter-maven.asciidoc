@@ -28,8 +28,8 @@ To do this, you add a +mirror+ configuration and override the default
 configuration for the +central+ repository in your +~/.m2/settings.xml+
 as shown in  <<ex-maven-nexus-simple>>.
 
-[[ex-maven-nexus-simple]]
-.Configuring Maven to Use a Single Nexus Group
+.Listing: Configuring Maven to Use a Single Nexus Group
+anchor:ex-maven-nexus-simple[Listing: Configuring Maven to Use a Single Nexus Group]
 ----
 <settings>
   <mirrors>
@@ -100,134 +100,6 @@ As a last configuration the +nexus+ profile is listed as an active
 profile in the +activeProfiles+ element.
 
 
-////
-
-TBD - activate sections below or move them to main config probably
-
-[[config-sect-custom]]  
-=== Adding Repositories for Missing Dependencies
-
-If you've configured your Maven +settings.xml+ or other build tool
-configuration to use the Nexus +public+ repository group as a mirror
-for all repositories, you might encounter projects that are unable to
-retrieve artifacts from your local Nexus installation.
-
-This usually happens because you are trying to build a project that
-has defined a custom set of repositories and snapshot repositories or
-relies on the content of other publically available repositories in
-its configuration. When you encounter such a project all you have to
-do is 
-
-* add this repository to Nexus as a new proxy repository 
-* and then add the new proxy repository to the public group.
-
-The advantage of this approach is that no configuration change on the
-build tool side is necessary at all.
-
-[[config-sect-new-repo]]
-=== Adding a New Repository
-
-To add a repository, log into Nexus as an administrator, and click on
-the 'Repositories' link in the left-hand navigation menu in the
-'Views/Repositories' section as displayed in
-<<fig-repository-manager-add-repository-dropdown>>.
-
-Clicking on this link should bring up a window that lists all of the
-repositories that Nexus knows about. You'll then want to create a new
-proxy repository. To do this, click on the 'Add' link that is directly
-above the list of repositories. When you click the 'Add' button, click
-the down arrow directly to the right of the word 'Add', this will show a
-drop-down which has the options: 'Hosted Repository', 'Proxy Repository',
-'Virtual Repository', and 'Repository Group'. Since you are creating a
-proxy repository, click on 'Proxy Repository'.
-
-[[fig-repository-manager-add-repository-dropdown]]
-.Creating a New Proxy Repository
-image::figs/web/repository-manager_add-repository-dropdown.png[scale=50]
-
-Once you do this, you will see a screen resembling
-<<fig-add-repo>>. Populate the required fields 'Repository ID' and the
-'Repository Name'. The 'Repository ID' will be part of the URL used to
-access the repository, so it is recommended to avoid characters that
-could cause problems there or on the filesystem storage. It is best to
-stick with lowercase alphanumerics. Set the 'Repository Policy' to
-'Release', and the 'Remote Storage Location' to the public URL of the
-repository you want to proxy.
-
-
-[[fig-add-repo]]
-.Configuring a Proxy Repository
-image::figs/web/repository-manager_add-repository.png[scale=50]
-
-Once you've filled out this screen, click on the 'Save'
-button. Nexus will then be configured to proxy the repository. If the
-remote repository contains snapshots as well as release components,
-you will need to repeat the process creating a second proxy repository
-and setting the policy to 'Snapshots'.
-
-++++
-<?dbhtml-include href="promo_nuget.html"?>
-++++
-
-[[config-sect-repo-group]]  
-=== Adding a Repository to a Group
-
-Next you will need to add the new repositories to the 'Public
-Repositories' Nexus repository group. To do this, click on the
-'Repositories' link in the left-hand Nexus menu in the
-'Views/Repositories' section. Nexus lists Groups and Repositories in
-the same list so click on the public group.  After clicking on the
-'Public Repositories' group, you should see the 'Browse' and
-'Configuration' tabs in the lower half of the Nexus window.
-
-NOTE: If you click on a repository or a group in the 'Repositories' list
-and you do not see the 'Configuration' tab, this is because your Nexus
-user does not have administrative privileges. To perform the
-configuration tasks outlined in this chapter, you will need to be
-logged in as a user with administrative privileges.
-
-Clicking on the 'Configuration' tab will bring up a screen which looks
-like <<fig-add-to-group>>.
-
-[[fig-add-to-group]]
-.Adding New Repositories to a Nexus Group
-image::figs/web/repository-manager_add-to-group.png[scale=50]
-
-To add the new repository to the public group, find the repository in
-the  'Available Repositories' list on the right, click on the
-repository you want to add and drag it to the left to the 'Ordered
-Group Repositories' list. Once the repository is in the 'Ordered Group
-Repositories' list you can click and drag the repository within that
-list to alter the order in which a repository will be searched for a
-matching artifact.
-
-NOTE: Nexus makes use of the Javascript widget library
- http://extjs.com/[ExtJS]. ExtJS provides for a number of UI widgets
- that allow for rich interaction like the drag-drop UI for adding
- repositories to a group and reordering the contents of a group.
-
-In the last few sections, you learned how to add a new custom
-repositories to a build in order to download artifacts that are not
-available in the Central Repository.
-
-If you were not using a repository manager, you would have added these
-repositories to the repository element of your project's POM, or you
-would have asked all of your developers to modify +~/.m2/settings.xml+
-to reference two new repositories. Instead, you used the Nexus
-repository manager to add the two repositories to the public group. If
-all of the developers are configured to point to the public group in
-Nexus, you can freely swap in new repositories without asking your
-developers to change local configuration, and you've gained a certain
-amount of control over which repositories are made available to your
-development team. In addition the performance of the artifact
-resolving across multiple repositories will be handled by Nexus and
-therefore be much faster than client side resolution done by Maven
-each time.
-
-////
-
-
-
 [[ant-ivy]]
 === Apache Ant and Apache Ivy
 
@@ -239,7 +111,8 @@ can be configured to download dependencies that can be declared in the
 Nexus server running on +localhost+ is shown in
 <<ivysettings-minimal>>.
 
-[[ivysettings-minimal]]
+anchor:ivysettings-minimal[Listing: Minimal Ivy Configuration in an Ant file]
+Listing: Minimal Ivy Configuration in an Ant file
 ----
 <ivysettings>
   <settings defaultResolver="nexus"/>
@@ -289,7 +162,8 @@ separate file that is imported. A minimal
 example for resolving dependencies from a Nexus server running on
 +localhost+ is shown in <<aether-minimal>>.
 
-[[aether-minimal]]
+anchor:aether-minimal[Listing: Minimal Aether Configuration in an Ant file]
+.Listing: Minimal Aether Configuration in an Ant file
 ----
 <project xmlns:aether="antlib:org.eclipse.aether.ant" ....>
   <taskdef uri="antlib:org.eclipse.aether.ant" resource="org/eclipse/aether/ant/antlib.xml">
@@ -301,7 +175,6 @@ example for resolving dependencies from a Nexus server running on
 ...
 </project>
 ----
-
 
 These minimal settings allow the +aether:resolve+ task to download the declared
 dependencies.
@@ -335,7 +208,9 @@ resolve +dependencies+ declared in +build.gradle+ file, a +maven+
 repository as shown in <<gradle-minimal>> has to be declared
 
 
-[[gradle-minimal]]
+
+anchor:gradle-minimal[Listing: Gradle Repositories Configuration]
+Listing: Gradle Repositories Configuration
 ----
 repositories {
     maven {
@@ -417,7 +292,8 @@ configure a sbt project to resolve dependencies declared in
 +build.sbt+ file, a +resolver+  as shown below has to be declared
 
 
-[[sbt-minimal]]
+anchor:sbt-minimal[Listing: SBT Resolvers Configuration]
+.Listing: SBT Resolvers Configuration
 ----
 resolvers += "Nexus" at "http://localhost:8081/content/groups/public"
 ----
@@ -465,7 +341,8 @@ the +project.clj+ file, a +mirrors+ section overriding the built in +central+
 and +clojars+ repositories as shown below has to be declared
 
 
-[[leiningen-minimal]]
+anchor:leiningen-minima[Listing: Leiningen Configuration]
+.Listing: Leiningen Configuration
 ----
   :mirrors {
     "central" {:name "Nexus"
