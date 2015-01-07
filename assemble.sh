@@ -34,7 +34,6 @@ if [ $publish_master == "true" ]; then
     mkdir -p target/site/reference/css
     cp -r site/css target/site/reference
     cp -r site/js target/site/reference
-    cp -r site/assets target/site/reference
     cp -r site/images target/site/reference
     cp site/search.html target/site/reference
     cp target/book-nexus.pdf target/site/pdf/nxbook-pdf.pdf
@@ -48,7 +47,6 @@ cp -r target/book-nexus.chunked/* target/site/$nexus_version/reference
 mkdir -p target/site/$nexus_version/reference/css
 cp -r site/css target/site/$nexus_version/reference
 cp -r site/js target/site/$nexus_version/reference
-cp -r site/assets target/site/$nexus_version/reference
 cp -r site/images target/site/$nexus_version/reference
 cp site/search.html target/site/$nexus_version/reference
 cp target/book-nexus.pdf target/site/$nexus_version/pdf/nxbook-pdf.pdf
@@ -56,5 +54,5 @@ cp target/sonatype-nexus-eval-guide.pdf target/site/$nexus_version/pdf/sonatype-
 cp target/book-nexus.epub target/site/$nexus_version/other/nexus-book.epub
 
 
-python template.py -p "target/site/reference"
-python template.py -p "target/site/$nexus_version/reference"
+python template.py -p "target/site/reference" -t "../" -s "block"
+python template.py -p "target/site/$nexus_version/reference"  -t "../../" -s "block"
