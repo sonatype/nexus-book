@@ -499,7 +499,7 @@ artifact will result in an error. If this policy is set to
 repository and overwrite the same artifact in subsequent
 deployments. This option is visible for hosted repositories only.
 
-Allow File Browsing;; When set to true, users can browse the contents
+Allow file browsing;; When set to true, users can browse the contents
 of the repository with a web browser.
 
 Include in Search;; When set to true, this repository is included when
@@ -547,6 +547,56 @@ also configure the 'User Agent' of the request, add parameters to a
 request, and set the timeout and retry behavior. The HTTP request
 configured is the request made from Nexus to the remote repository
 being proxied.
+
+.Repository Groups
+
+The creation and configuration for a repository group differs a little
+from pure repositories. It allows you to manage the member
+repositories of a repository group. An example for a repository group
+using the Maven2 format is visible in <<fig-group-config>>.In this
+figure you can see the contents of the 'Public Repositories' group
+that is pre-configured in Nexus with some additional repositories.
+
+[[fig-group-config]]
+.Repository Group Configuration
+image::figs/web/repository-manager_add-to-group.png[scale=50]
+
+The 'Content provider' and 'Content format' are determined by the
+selection of the provider in the creation dialog e.g., 'Maven2
+(group)' for the 'Public Repositories' as a 'Maven2' format repository
+group.
+
+The 'ID' and 'Name' are set during the creation. 'Name' continues to
+be editable, while 'ID' is fixed once the repository group is created.
+
+'Allow file browsing' and 'Publish URL' have the same functionality as
+for repositories as documented earlier. The 'Member Repositories'
+selector allows you to add repositories to the repository group as
+well as remove them. The 'Member' columns includes all the
+repositories that constitute the group. Note that the order of the
+repositories listed in the 'Member' section is important. When Nexus
+searches for a component in a repository group, it will return the
+first match. To reorder a repository in this list, click and the drag
+the repositories and groups in the 'Member' list or use the arrow
+buttons between the 'Available' and 'Member' list. These arrows can be
+used to add and remove repositories as well.
+
+The order of repositories or other groups in a group can be used to
+influence the effective metadata that will be retrieved by Maven or
+other tools from a Nexus Repository Group. We recommend placing hosted
+repositories higher in the list than proxy repositories. For proxy
+repositories Nexus needs to periodically check the remote for updates,
+which will incur more overhead than a hosted repository lookup.
+
+We also recommend placing repositories with a higher probability of
+matching the majority of artifacts higher in this list. If most of
+your components are going to be retrieved from the Central Repository,
+putting 'Central' higher in this list than a smaller, more focused
+repository is going to be better for performance, as Nexus is not
+going to interrogate the smaller remote repository for as many missing
+artifacts. These best practices are implemented in the default
+configuration.
+
 
 ==== Repository Management Example
 
@@ -755,39 +805,6 @@ image::figs/web/configuring_auto-block.png[scale=75]
 
 
 
-In <<maven-sect-single-group>> we configured Maven via the
-settings.xml to look for artifacts in the public group managed by
-Nexus. <<fig-group-config>> shows the group configuration screen in
-Nexus. In this figure you can see the contents of the 'Public
-Repositories' group.
-
-
-=== Managing Groups
-
-[[fig-group-config]]
-.Group Configuration Screen in Nexus
-image::figs/web/repository-manager_add-to-group.png[scale=50]
-
-Note that the order of the repositories listed in 'Ordered Group
-Repositories' is important. When Nexus searches for an artifact in a
-group, it will return the first match. To reorder a repository in this
-list, click and the drag the repositories and groups in the 'Ordered
-Group Repositories' selection list.
-
-The order of repositories or other groups in a group can be used to
-influence the effective metadata that will be retrieved by Maven from
-a Nexus Repository Group. We recommend placing hosted repositories
-higher in the list than proxy repositories within the list. For proxy
-repositories Nexus needs to periodically check the remote for updates, 
-which will incur more overhead than a hosted repository lookup.
-
-We also recommend placing repositories with a higher probability of
-matching the majority of artifacts higher in this list. If most of
-your artifacts are going to be retrieved from the Central
-Repository, putting 'Central' higher in this list than a smaller, more
-focused repository is going to be better for performance, as Nexus is
-not going to interrogate the smaller remote repository for as many
-missing artifacts.
 
 [[confignx-sect-managing-routes]]
 === Managing Routing
