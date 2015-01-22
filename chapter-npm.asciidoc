@@ -189,8 +189,30 @@ echo -n 'admin:admin123' | openssl base64
 ----
 
 Other tools for the encoding are +uuencode+ or, for Windows users,
-+certutil+. The value as well as author information can then be added
-to the +.npmrc+ file: 
++certutil+. To use +certutil+ on Windows you need to put the credentials
+to be encoded into a file:
+
+----
+admin:admin123
+----
+
+Then run:
+
+----
+c:\certutil /encode in.txt out.txt
+----
+
+After this the base64 encoded credentials can be found in between the
+begin and end certiicate lines in the output file:
+
+----
+-----BEGIN CERTIFICATE-----
+YWRtaW46YWRtaW4xMjM=
+-----END CERTIFICATE-----
+----
+
+Once you have the encoded credentials the value as well as author 
+information can then be added to the +.npmrc+ file: 
 
 ----
 init.author.name = Jane Doe
