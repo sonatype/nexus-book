@@ -50,5 +50,5 @@ cp target/sonatype-nexus-eval-guide.pdf target/site/$nexus_version/pdf/sonatype-
 
 
 
-python template.py -p "target/site/reference" -t "../" -s "block"
-python template.py -p "target/site/$nexus_version/reference"  -t "../../" -s "block"
+python template.py -p "target/site/reference" -t "../" -s "block" -v "$nexus_version"
+python template.py -p "target/site/$nexus_version/reference"  -t "../../" -s "block" -v "$nexus_version"
