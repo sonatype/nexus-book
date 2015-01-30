@@ -55,10 +55,14 @@ cp site/search.html target/site/$nexus_version/reference
 cp target/book-nexus.pdf target/site/$nexus_version/pdf/nxbook-pdf.pdf
 cp target/sonatype-nexus-eval-guide.pdf target/site/$nexus_version/pdf/sonatype-nexus-eval-guide.pdf
 cp target/book-nexus.epub target/site/$nexus_version/other/nexus-book.epub
+echo "Copying redirector"
+cp -v site/global/index.html target/site/$nexus_version/
 
 
 python template.py -p "target/site/reference" -t "../" -s "block" -v "$nexus_version"
 python template.py -p "target/site/$nexus_version/reference" -t "../../" -s "block" -v "$nexus_version"
+
+
 
 
 if [ $publish_index == "true" ]; then

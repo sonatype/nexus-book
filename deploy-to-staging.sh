@@ -32,6 +32,7 @@ fi
 rsyncToStage site/$nexus_version/reference/ $nexus_version/reference --delete
 rsyncToStage site/$nexus_version/pdf/ $nexus_version/pdf --delete
 rsyncToStage site/$nexus_version/other/ $nexus_version/other --delete
+rsyncToStage site/$nexus_version/index.html $nexus_version --delete
 
 if [ $publish_index == "true" ]; then
     rsyncToStage site/index.html  "" --delete
