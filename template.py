@@ -9,13 +9,14 @@ parser.add_argument('-t','--toindex',help='Relative path reference to the index 
 # defaults to invisible for search and index pages to work ok
 parser.add_argument('-s','--searchdisplay',help='CSS display style value for the search box, defaults to none (=invisible)', required=False)
 parser.add_argument('-b','--body',help='Body open tag', required=False)
-
+parser.add_argument('-v','--version',help='The version of Nexus the documents are for', required=True)
 
 args = parser.parse_args()
 path = args.path
 bodyTag = args.body
 toindex = args.toindex
 searchdisplay = args.searchdisplay
+version = args.version
 
 if not bodyTag:
   bodyTag = "<body>"
@@ -35,7 +36,8 @@ for infile in glob.glob( os.path.join(path, '*.html') ):
   body = open(infile, "r").read()
   if infile.endswith( 'search.html'):
     t = airspeed.Template(open("site/search.html", "r").read())
-    print( "  search.html - skipping processing of body and title" )
+    print( "  search.html replacements" )
+    body = body.replace(bookTitle, title)
   else:
     t = airspeed.Template(open("site/book-template.html", "r").read())
     title = body[ body.index( "<title>" ) + 7 : body.rindex("</title>") ]

@@ -57,17 +57,18 @@ cp target/sonatype-nexus-eval-guide.pdf target/site/$nexus_version/pdf/sonatype-
 cp target/book-nexus.epub target/site/$nexus_version/other/nexus-book.epub
 
 
-python template.py -p "target/site/reference" -t "../" -s "block"
-python template.py -p "target/site/$nexus_version/reference" -t "../../" -s "block"
+python template.py -p "target/site/reference" -t "../" -s "block" -v "$nexus_version"
+python template.py -p "target/site/$nexus_version/reference" -t "../../" -s "block" -v "$nexus_version"
 
 
 if [ $publish_index == "true" ]; then
-    echo "Preparing index for deployment"
+    echo "Preparing root index for deployment"
     echo "  Copying content and resources"
     cp target/index.html target/site
     cp -r site/css target/site
     cp -r site/js target/site
     cp -r site/images target/site
-    python template.py -p 'target/site/' -b '<body class="article">' -t "./"
+    python template.py -p 'target/site/' -b '<body class="article">' -t "./" -v "$nexus_version"
+    cp -rv site/global/sitemap.xml target/site
     echo "... done"
 fi

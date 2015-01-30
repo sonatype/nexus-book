@@ -29,16 +29,16 @@ if [ $publish_master == "true" ]; then
     rsyncToStage site/other/ other --delete
 fi
 
+rsyncToStage site/$nexus_version/reference/ $nexus_version/reference --delete
+rsyncToStage site/$nexus_version/pdf/ $nexus_version/pdf --delete
+rsyncToStage site/$nexus_version/other/ $nexus_version/other --delete
+
 if [ $publish_index == "true" ]; then
     rsyncToStage site/index.html  "" --delete
     rsyncToStage site/js/ js --delete
     rsyncToStage site/images/ images --delete
     rsyncToStage site/css/ css --delete
 fi
-
-rsyncToStage site/$nexus_version/reference/ $nexus_version/reference --delete
-rsyncToStage site/$nexus_version/pdf/ $nexus_version/pdf --delete
-rsyncToStage site/$nexus_version/other/ $nexus_version/other --delete
 
 # Important to use separate rsync run WITHOUT --delete since its an archive! and we do NOT want old archives to be deleted
 #rsyncToStage archive/ archive
