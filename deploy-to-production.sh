@@ -13,7 +13,7 @@ echo "nexus_version set to $nexus_version"
 # can we get rid of this? 
 ./assemble.sh
 
-function rsyncToProduction {
+function rsyncToDest {
     source=$1
     target=/var/www/domains/sonatype.com/www/shared/books/nexus-book/$2
     options=$3
@@ -24,22 +24,23 @@ function rsyncToProduction {
 }
 
 if [ $publish_master == "true" ]; then
-    rsyncToProduction site/reference/ reference --delete
-    rsyncToProduction site/pdf/ pdf --delete
-    rsyncToProduction site/other/ other --delete
+    rsyncToDest site/reference/ reference --delete
+    rsyncToDest site/pdf/ pdf --delete
+    rsyncToDest site/other/ other --delete
 fi
 
 if [ $publish_index == "true" ]; then
-    rsyncToProduction site/index.html  "" --delete
-    rsyncToProduction site/js/ js --delete
-    rsyncToProduction site/images/ images --delete
-    rsyncToProduction site/css/ css --delete
+    rsyncToDest site/index.html  "" --delete
+    rsyncToDest site/sitemap.xml  "" --delete
+    rsyncToDest site/js/ js --delete
+    rsyncToDest site/images/ images --delete
+    rsyncToDest site/css/ css --delete
 fi
 
-rsyncToProduction site/$nexus_version/reference/ $nexus_version/reference --delete
-rsyncToProduction site/$nexus_version/pdf/ $nexus_version/pdf --delete
-rsyncToProduction site/$nexus_version/other/ $nexus_version/other --delete
-rsyncToProduction site/$nexus_version/index.html $nexus_version --delete
+rsyncToDest site/$nexus_version/reference/ $nexus_version/reference --delete
+rsyncToDest site/$nexus_version/pdf/ $nexus_version/pdf --delete
+rsyncToDest site/$nexus_version/other/ $nexus_version/other --delete
+rsyncToDest site/$nexus_version/index.html $nexus_version --delete
 
 
 # Important to use separate rsync run WITHOUT --delete since its an archive! and we do NOT want old archives to be deleted
