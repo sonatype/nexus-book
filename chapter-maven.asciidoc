@@ -335,7 +335,26 @@ repositories {
 }
 ----
 
-These minimal settings allow Gradle to download the declared dependencies.
+These minimal settings allow Gradle to download the declared
+dependencies.
+
+The above setup is specific to each project. Alternatively an
++init.gradle+ file placed e.g., in +~/.gradle+ can establish Nexus the
+source for dependencies in all projects. A simple implementation could
+look like
+
+----
+allprojects {
+  ext.RepoConfigurator = {
+    maven { url = uri('http://localhost:8081/nexus/content/groups/public') }
+  }
+  buildscript.repositories RepoConfigurator
+  repositories RepoConfigurator
+----
+
+Gradle init scripts can be much more powerful and customized and are
+explained with more examples in the
+http://gradle.org/docs/current/userguide/init_scripts.html[official Gradle documentation].
 
 To deploy build outputs to a Nexus repository with the +uploadArchives+
 task, user authentication can be declared in e.g.,
