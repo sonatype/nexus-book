@@ -621,10 +621,10 @@ like mod_rewrite.
 Some brief instructions for establishing such a setup with Apache
 httpd follow as an example. We assume that you've already installed
 Apache 2, and that you are using a virtual host for
-repo.somecompany.com.
+repo.example.com.
 
 Let's assume that you wanted to host Nexus behind Apache httpd at the
-URL +http://repo.somecompany.com+. To do this, you'll need to change the
+URL +http://repo.example.com+. To do this, you'll need to change the
 context path that Nexus is served from.
 
 . Edit nexus.properties in +$NEXUS_HOME/conf+. You'll see an
@@ -637,23 +637,23 @@ context path that Nexus is served from.
 . Set the Base URL in Nexus as shown in
   <<fig-config-administration-application-server>> under 'Application
   Server Settings' to the URL that will be the externally available 
-  URL of Nexus e.g. +http://repo.somecompany.com+ 
+  URL of Nexus e.g. +http://repo.example.com+ 
 
 At this point, edit the httpd configuration file for the
-repo.somecompany.com virtual host. Include the following to expose
-Nexus via mod_proxy at http://repo.somecompany.com/.
+repo.example.com virtual host. Include the following to expose
+Nexus via mod_proxy at +http://repo.example.com/+.
 
 ----
 ProxyRequests Off 
 ProxyPreserveHost On 
 
 <VirtualHost *:80> 
-  ServerName www.somecompany.com 
-  ServerAdmin admin@somecompany.com 
+  ServerName repo.example.com 
+  ServerAdmin admin@example.com 
   ProxyPass / http://localhost:8081/
   ProxyPassReverse / http://localhost:8081/
-  ErrorLog logs/somecompany/nexus/error.log 
-  CustomLog logs/somecompany/nexus/access.log common 
+  ErrorLog logs/repo.example.com/nexus/error.log 
+  CustomLog logs/repo.example.com/nexus/access.log common 
 </VirtualHost>
 ----
 
