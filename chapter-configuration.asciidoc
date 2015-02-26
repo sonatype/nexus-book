@@ -731,24 +731,24 @@ URL Pattern::
     particular artifact query. In <<fig-route-config>>
     the two patterns are:
 
-    +.\*/(com|org)/somecompany/.*+;; This pattern would match all
-    paths which includes either +/com/somecompany/+ or
+    +^/(com|org)/somecompany/.*+;; This pattern would match all
+    paths that start with either +/com/somecompany/+ or
     +/org/somecompany/+. The expression in the parenthesis matches
     either com or org, and the +.*+ matches zero or more
     characters. You would use a route like this to match your own
     organization's artifacts and map these requests to the hosted
     Releases and Snapshots repositories.
 
-    +.\*/org/some-oss/.*+;; This pattern is used in an exclusive
-    route. It matches every path that contains +/org/some-oss/+. This
+    +^/org/some-oss/.*+;; This pattern is used in an exclusive
+    route. It matches every path that starts with +/org/some-oss/+. This
     particular exclusive route excludes the local hosted Releases and
     Snapshots directory for all artifacts that match this path.  When
     Nexus tries to resolve artifacts that match this path, it will
     exclude the Releases and Snapshots repositories.
 
-    Example "(?!/org/some-oss/.*).*";; Using this pattern in an
+    +(?!/org/some-oss/.*).*+;; Using this pattern in an
     exclusive route allows you to exclude everything, except the
-    "org/some-oss" project(s).
+    "org/some-oss" project(s). It uses a special negative matching regular expression.
 
 Rule Type:: Rule Type can be either 'inclusive', 'exclusive' or 'blocking'. An
 inclusive rule type defines the set of repositories that should be
