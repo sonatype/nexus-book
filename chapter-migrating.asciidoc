@@ -10,7 +10,7 @@ standard Maven 2 repository file layout to Nexus.
 Depending on your repository managers, you will have to use different
 approaches to get access to a repository in Maven 2 format on disk.
 
-Nexus stores its artifacts in standard Maven 2 layout, and they are
+Nexus stores its components in standard Maven 2 layout, and they are
 served directly from disk, and can therefore be easily integrated into
 an existing Nexus instance as a new hosted repository.
 
@@ -59,7 +59,7 @@ image::figs/web/archiva-managed-repositories.png[scale=60]
 
 To migrate this Managed repository to a Nexus Hosted repository, 
 find the directory in which Archiva stores all of the
-repository artifacts. To do this, click on the 'Edit' link listed next
+repository components. To do this, click on the 'Edit' link listed next
 to the name of the repository you want to migrate as shown in <<fig-archiva-managed>>.
 Clicking on 'Edit' should load the form shown in <<fig-archiva-managed-edit>>.
 
@@ -109,12 +109,12 @@ server, you can simply create an archive of the
 to the new server, and then decompress your repository archive in the
 appropriate directory.
 
-WARNING: Archiva stores artifacts from proxied remote repositories in
-the same directory as artifacts in a managed repository. If you have
-been proxying a remote repository, you might want to remove artifacts
+WARNING: Archiva stores components from proxied remote repositories in
+the same directory as components in a managed repository. If you have
+been proxying a remote repository, you might want to remove components
 that have been proxied from a remote repository. For example, if your
 organization uses a groupId of org.company for internal project, you
-can make sure to only copy the artifacts under the corresponding
+can make sure to only copy the components under the corresponding
 org/company/.
 
 Once the contents of the repository have been copied to the Nexus
@@ -134,19 +134,19 @@ the contents of your newly migrated Nexus Hosted repository.
 ==== Migrating an Archiva Proxy Connector
 
 Archiva allows you to define remote repositories and repository
-connectors to proxy remote repositories and cache remote artifacts
+connectors to proxy remote repositories and cache remote components
 from remote repositories in Archiva Managed Repositories.  While Nexus
 also provides Proxy repositories, there is one major difference
 between Nexus and Archiva. Where Nexus maintains a separate local
 storage directory for each proxy repository, Archiva combines cached
-remote artifacts into a single file system with the contents of a
+remote components into a single file system with the contents of a
 managed repository. In other words, there is no good way to transfer
-an existing local cache of artifacts between Archiva and Nexus without
+an existing local cache of components between Archiva and Nexus without
 manually manipulating the contents of Archiva's Managed Repository
 directory.
 
 To recreate an Archiva repository connector in Nexus as a Proxy
-repository and to preserve the local cache of artifacts from this
+repository and to preserve the local cache of components from this
 repository. You'll need to create a Proxy repository in Nexus, copy
 the contents of the existing proxy repository to the Nexus storage
 location for you new Proxy repository, and then rebuild the metadata
@@ -166,7 +166,7 @@ image::figs/web/archiva-remote-repositories.png[scale=60]
 Defining a proxy repository in Archiva involves associating one of the
 remote repositories defined in <<fig-archiva-browsing-remote>> with one
 of the Managed Repositories defined in <<fig-archiva-managed>>. Once
-you do this, requests for artifacts from the managed repository will
+you do this, requests for components from the managed repository will
 also query the remote repository. If an artifact is found in the
 remote repository, it will be retrieved and stored in the managed
 repository's storage directory. To see a list of proxy connectors and
@@ -217,9 +217,9 @@ list of Ordered Group Repositories, and click Save.
 image::figs/web/archiva-nx-repo-group-proxy.png[scale=60]
 
 Next, you will need to define repository groups that will tell Nexus
-to only locate certain artifacts in the newly created proxy
+to only locate certain components in the newly created proxy
 repository. In , Archiva defined three patterns that were used to
-filter artifacts available from the proxy connector. These three
+filter components available from the proxy connector. These three
 patterns were "javax/**", "com/sun/**", and "org/jvnet/**". To
 recreate this behavior in Nexus, define three Routes which will be
 applied to the group you configured in <<fig-archiva-proxy-to-group>>.
