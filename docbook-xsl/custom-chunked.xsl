@@ -79,16 +79,19 @@
           <p>
             If you are developing software without a repository
             manager you are likely missing a number of opportunities
-            to reduce some pretty obvious ineffeciencies.  If everyone
-            on your team has to hit Central to download artifacts you
+            to reduce some pretty obvious inefficiencies.  If everyone
+            on your team has to contact the Central Repository to download 
+            components you
             are missing out on some simple gains in speed and
-            efficiency. If you don't have a local place to deploy
-            artifacts you are forced to share binary artifacts using
-            half-measures and compromises such as storing binaries in
-            source control.  Stop developing in the Dark Ages, read
+            efficiency. If you don't have an internal location to deploy
+            components you are forced to share binary components using
+            half-measures and compromises such as storing them in
+            source control. 
+          </p>
+          <p>Stop developing in the Dark Ages, read
             this book, and start using a repository manager.  Trust
-            us, once you start using Nexus, you'll wonder how you ever
-            functioned without it.
+            us, once you start using Sonatype Nexus, you will wonder 
+            how you ever functioned without it.
           </p>
         </div>
         <div class="{name(.)}">
