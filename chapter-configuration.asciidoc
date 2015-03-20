@@ -415,7 +415,7 @@ Auto Blocking Enabled;; If Auto blocking active is set to true, Nexus
 will automatically block a proxy repository if the remote repository
 becomes unavailable. While a proxy repository is blocked, components
 will still be served to clients from a local cache, but Nexus will not
-attempt to locate an artifact in a remote repository. Nexus will
+attempt to locate a component in a remote repository. Nexus will
 periodically retest the remote repository and unblock the repository
 once it becomes available.
 
@@ -433,12 +433,12 @@ default. The possible values of this setting are:
 * 'Ignore' - Ignore the checksums entirely
 * 'Warn' - Print a warning in the log if a checksum is not correct
 +
-* 'StrictIfExists' - Refuse to cache an artifact if the calculated
+* 'StrictIfExists' - Refuse to cache a component if the calculated
 checksum is inconsistent with a checksum in the repository. Only
 perform this check if the checksum file is present.
 +
-* 'Strict' - Refuse to cache an artifact if the calculated checksum is
-inconsistent or if there is no checksum for an artifact.
+* 'Strict' - Refuse to cache a component if the calculated checksum is
+inconsistent or if there is no checksum for a component.
 
 Authentication;; This section allows you to set a Username, Password,
 NT LAN Host, and NT Lan Manager Domain for a remote repository.
@@ -474,14 +474,14 @@ Expiration Settings:: Nexus maintains a local cache of components and
 metadata, you can configure expiration parameters for a proxy
 repository. The expiration settings are:
 
-Not Found Cache TTL;; If Nexus fails to locate an artifact, it will
+Not Found Cache TTL;; If Nexus fails to locate a component, it will
 cache this result for a given number of minutes. In other words, if
-Nexus can't find an artifact in a remote repository, it will not
+Nexus can't find a component in a remote repository, it will not
 perform repeated attempts to resolve this artifact until the 'Not
 Found Cache TTL' time has been exceeded. The default for this setting
 is 1440 minutes (or 24 hours).
 
-Artifact Max Age;; Tells Nexus what that maximum age of an artifact
+Artifact Max Age;; Tells Nexus what that maximum age of a component
 is, before it retrieves a new version from the remote repository.  The
 default for this setting is -1 for a repository with a release policy
 and 1440 for a repository with snapshot policy.
@@ -491,7 +491,7 @@ repository. It will only retrieve updates to metadata after the
 'Metadata Max Age' has been exceeded. The default value for this
 setting is 1440 minutes (or 24 hours).
 
-Item Max Age;; Some items in a repository may be neither an artifact
+Item Max Age;; Some items in a repository may be neither a component
 identified by the Maven GAV coordinates or metadata for such components. This
 cache value determines the maximum age for these items before
 updates are retrieved. 
@@ -726,7 +726,7 @@ navigation panel.
 
 Routes allow you to configure Nexus to include or exclude specific
 repository content paths from a particular artifact search when Nexus
-is trying to locate an artifact in a repository group. There are a
+is trying to locate a component in a repository group. There are a
 number of different scenarios in which you might configure a route.
 
 The most commonly configured scenario is when you want to make sure
@@ -735,9 +735,9 @@ particular repository. This is especially useful when you want your
 own organization's components from the hosted Release and Snapshot
 repositories only.
 
-Routes are applicable when you are trying to resolve an artifact from
+Routes are applicable when you are trying to resolve a component from
 a repository group. Using routes allows you to modify the repositories
-Nexus will consult when it tries to resolve an artifact from a group
+Nexus will consult when it tries to resolve a component from a group
 of repositories.
 
 [[fig-route-config]]
@@ -817,7 +817,7 @@ therefore the search effort is reduced.
 What if there is a conflict between two routes? Nexus will process
 inclusive routes before it will process the exclusive routes.
 Remember that routes only affect Nexus' resolution of components when
-it is searching a Group. When Nexus starts to resolve an artifact from
+it is searching a Group. When Nexus starts to resolve a component from
 a repository group it will start with the list of repositories in a
 group. If there are matching inclusive routes, Nexus will then take
 the intersection of the repositories in the group and the repositories
@@ -867,7 +867,7 @@ designers of Nexus may not have anticipated, but we advise you to
 proceed with caution if you start relying on conflicting or
 overlapping routes.  Use routes sparingly, and use coarse URL
 patterns. Remember that routes are only applied to groups and are
-not used when an artifact is requested from a specific repository.
+not used when a component is requested from a specific repository.
 
 [[scheduled-tasks]]
 === Managing Scheduled Tasks
@@ -939,7 +939,7 @@ Download NuGet Feed:: This task allows you to download the feed for a
 NuGet proxy repository. For one-time invocation, you can enable the
 'Clear feed cache?' setting, which will delete the cache completely and
 re-fetch all data. The setting 'Fetch all versions?' will trigger the
-download of all versions of an artifact in contrast to the default
+download of all versions of a component in contrast to the default
 behavior of getting only the latest version.
 
 Drop Inactive Staging Repositories:: Staging repositories can be
