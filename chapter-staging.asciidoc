@@ -24,10 +24,10 @@ on the same binaries that will ultimately be released.
 ==== Releasing Software without a Staging Repository
 
 Without the staging suite, when a developer deploys a component to a
-hosted repository such as the release repository, this artifact is
+hosted repository such as the release repository, this component is
 published and immediately made available, having no oversight, no 
 process and no certification process. There is no chance to
-test the artifact before writing the artifact to a hosted
+test the component before writing the component to a hosted
 repository. If there is a mistake in the release, often the only
 option available is to republish the components to the release
 repository or deploy a new version of the components.
@@ -110,7 +110,7 @@ Repositories', 'Staging Ruleset', and 'Staging Upload' options in the
 left-hand navigation menu of the Nexus interface called 'Build
 Promotion'.
 
-'Staging Profiles' define the rules by which artifact deployments from
+'Staging Profiles' define the rules by which component deployments from
 your project are intercepted by Nexus and staged in 'Staging
 Repositories'. 
 
@@ -133,7 +133,7 @@ the user interface rather than by using your build system.
 Staging profiles control the process by which components are selected
 for staging. When you define a Staging profile, you are defining a set
 of rules which will control the way in that Nexus intercepts an
-artifact deployment and what actions to perform during and after
+component deployment and what actions to perform during and after
 staging the components. When you click on 'Staging Profiles' in the 'Nexus'
 menu, you will see a list of configured staging profiles. This list
 allows you to 'Add...' and 'Delete' staging profiles. Click on an
@@ -233,7 +233,7 @@ Plugin].
 
 Repository Target:: When a developer deploys a component to the
 generic Deploy URL, the Staging Suite will check to see if the
-artifact matches the patterns defined in this Repository Target. The
+component matches the patterns defined in this Repository Target. The
 repository target defines the "trigger" for the creation of a staging
 repository from this staging profile and is only needed for implicit
 deployments with the Deploy URL and not for explicit deployments using
@@ -373,7 +373,7 @@ created by the 'Test' staging profile.
 Staging: Promoter (Test):: This role grants the user to right to
 promote staging repositories created by the 'Test' staging profile.
 
-To perform a staged deployment, the user deploying the artifact must
+To perform a staged deployment, the user deploying the component must
 have the 'Staging: Deployer (admin)' role or the 'Staging: Deployer'
 role for a specific staging profile.
 
@@ -409,7 +409,7 @@ select that specific role.
 Once the deployment user has the "Staging: Deployer (admin)" role, you
 can then use this user to deploy to the staging URL and trigger any
 staging profile. Without this permission, the deployment user would
-not be able to publish a staged artifact. 
+not be able to publish a staged component. 
 
 In a similar fashion, you can assign the promoter role to users.
 
@@ -520,7 +520,7 @@ staging is available.
 
 With this configuration the Nexus staging Maven plugin will stage the
 components locally and connect to Nexus. Nexus will try to determine
-the appropriate staging profile by matching the artifact path with any
+the appropriate staging profile by matching the component path with any
 repository targets configured with staging profiles with an activated
 implicit profile selection strategy. If an appropriate staging profile
 is found, a staging repository is created on the fly and the components
@@ -709,10 +709,10 @@ Failures are accompanied by error reports that reveal further details:
 [ERROR]   Rule "RepositoryWritePolicy" failures
 [ERROR]     * Artifact updating: Repository ='releases:Releases' does
 not allow updating 
-artifact='/com/sonatype/training/nexus/explicit-staging-example/t1.0.0/staging-example-1.0.0.jar'
+component='/com/sonatype/training/nexus/explicit-staging-example/t1.0.0/staging-example-1.0.0.jar'
 [ERROR]     * Artifact updating: Repository ='releases:Releases' does 
 not allow updating 
-artifact='/com/sonatype/training/nexus/explicit-staging-example/1.0.0/staging-example-1.0.0.pom'
+component='/com/sonatype/training/nexus/explicit-staging-example/1.0.0/staging-example-1.0.0.pom'
 [ERROR] 
 [ERROR] 
 ----
@@ -1218,9 +1218,9 @@ com/sonatype/sample/staging-test/1.0/staging-test-1.0.jar
 2K uploaded
 [INFO] Uploading project information for staging-test 1.0
 [INFO] Retrieving previous metadata from nexus
-[INFO] repository metadata for: 'artifact com.sonatype.sample:staging-test' 
+[INFO] repository metadata for: 'component com.sonatype.sample:staging-test' 
 could not be found on repository: nexus, so will be created
-[INFO] Uploading repository metadata for: 'artifact com.sonatype.sample:staging-test'
+[INFO] Uploading repository metadata for: 'component com.sonatype.sample:staging-test'
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESSFUL
 ----
@@ -1254,11 +1254,11 @@ https://github.com/sonatype/nexus-book-examples[Nexus book examples project].
 You can also upload a staged deployment via the Nexus interface. To
 upload a staged deployment, select 'Staging Upload' from the 'Nexus'
 menu. Clicking 'Staging Upload' will show the panel shown in
-<<fig-staging-artifact-upload>>.
+<<fig-staging-component-upload>>.
 
-[[fig-staging-artifact-upload]]
+[[fig-staging-component-upload]]
 .Uploading a Staged Deployment in Nexus
-image::figs/web/staging_artifact-upload.png[scale=60]
+image::figs/web/staging_component-upload.png[scale=60]
 
 To upload a component, click on 'Select Artifact(s) for Upload...' and
 select an components from the filesystem to upload. Once you have
@@ -1269,7 +1269,7 @@ upload mutltiple components for the same 'Group', 'Artifact' and 'Version'
 JAR in addition. Once you have added all the components, you can then
 configure the source of the Group, Artifact, Version (GAV) parameters.
 
-If the artifact you are uploading is a JAR file that was created by
+If the component you are uploading is a JAR file that was created by
 Maven, it will already have POM information embedded in it, but if you
 are uploading a JAR from a vendor you will likely need to set the
 Group Identifier, Artifact Identifier, and Version manually. To do
@@ -1278,7 +1278,7 @@ top of this form.  Selecting 'GAV Parameters' will expose a set of form
 fields that will let you set the 'Group', 'Artifact', 'Version', and
 'Packaging' of the components being uploaded. If you would prefer to set
 the Group, Artifact, and Version from a POM file that was associated
-with the uploaded artifact, select From POM in the GAV Definition
+with the uploaded component, select From POM in the GAV Definition
 drop-down. Selecting From POM in this drop-down will expose a button
 labeled 'Select POM to Upload'. Once a POM file has been selected for
 upload, the name of the POM file will be displayed in the form field
@@ -1289,10 +1289,10 @@ The 'Staging Upload' panel supports multiple components with the same
 upload multiple components with different classifiers, you may do so by
 clicking on 'Select Artifact(s) for Upload' and 'Add Artifact' multiple
 times.  This interface also accepts an 'Artifact Bundle' which is a JAR
-that contains more than one artifact, which is documented in more
+that contains more than one component, which is documented in more
 detail in <<bundles>>.
 
-Once a staging artifact upload has been completely configured, click
+Once a staging component upload has been completely configured, click
 on Upload Artifact(s) button to begin the upload process. Nexus will
 upload the components to the Staging URL which will trigger any staging
 profiles that are activated by the upload by explicity matching using
@@ -1873,9 +1873,9 @@ repository:bundle-create goal. This goal will check the POM to see if
 it complies with the standards for publishing a bundle to a public
 repository. It will then bundle all of the components generated by
 a particular build. To build a bundle that only contains the standard,
-unclassified artifact from a project, run mvn
+unclassified component from a project, run mvn
 repository:bundle-create. To generate a bundle that contains more
-than one artifact, run +mvn javadoc:jar source:jar
+than one component, run +mvn javadoc:jar source:jar
 repository:bundle-create+:
 
 ----
@@ -1934,7 +1934,7 @@ Selection:
 Once the bundle has been created, there will be a bundle JAR in the
 +target+ directory. As shown in the following command
 output, the bundle JAR contains a POM, the project's unclassified
-artifact, the javadoc artifact, and the sources artifact.
+component, the javadoc component, and the sources component.
 
 ----
 ~/examples/sample-project$ cd target

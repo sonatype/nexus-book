@@ -193,15 +193,15 @@ Maven developers are familiar with the concept of a repository: a
 collection of binary software components and metadata stored in a
 defined directory structure which is used by clients such as Apache
 Ivy to retrieve binaries during a build process. In the case of the
-Maven repository, the primary type of binary artifact is a JAR file
+Maven repository, the primary type of binary component is a JAR file
 containing Java bytecode, but there is no limit to what type of
-artifact can be stored in a Maven repository. For example, one could
+component can be stored in a Maven repository. For example, one could
 just as easily deploy documentation archives, source archives, Flash
 libraries and applications, or Ruby libraries to a Maven repository. A
 Maven repository provides a platform for the storage, retrieval, and
 management of binary software components and metadata.
 
-In Maven, every software artifact is described by an XML document
+In Maven, every software component is described by an XML document
 called a Project Object Model (POM). This POM contains information
 that describes a project and lists a project's dependencies -- the
 binary software components which a given component depends upon for
@@ -262,28 +262,28 @@ stability and repeatability concerns.
 
 The two types of components managed by a repository manager are:
 
-Release:: A release artifact is a component which was created by a
+Release:: A release component is a component which was created by a
 specific, versioned release. For example, consider the 1.2.0 release
 of the commons-lang library stored in the Maven Central
-repository. This release artifact, commons-lang-1.2.0.jar, and the
+repository. This release component, commons-lang-1.2.0.jar, and the
 associated POM, commons-lang-1.2.0.pom, are static objects which will
 never change in the Maven Central repository. Released components are
 considered to be solid, stable, and perpetual in order to guarantee
 that builds which depend upon them are repeatable over time. The
-released JAR artifact is associated with a PGP signature, an MD5 and
+released JAR component is associated with a PGP signature, an MD5 and
 SHA checksum which can be used to verify both the authenticity and
-integrity of the binary software artifact.
+integrity of the binary software component.
 
 Snapshot:: Snapshot components are components generated during the
-development of a software project. A Snapshot artifact has both a
+development of a software project. A Snapshot component has both a
 version number such as "1.3.0" or "1.3" and a timestamp in its
-name. For example, a snapshot artifact for commons-lang 1.3.0 might
+name. For example, a snapshot component for commons-lang 1.3.0 might
 have the name commons-lang-1.3.0-20090314.182342-1.jar the associated
 POM, MD5 and SHA hashes would also have a similar name.  To facilitate
 collaboration during the development of software components, Maven and
 other clients that know how to consume snapshot components from a
 repository also know how to interrogate the metadata associated with a
-Snapshot artifact to retrieve the latest version of a Snapshot
+Snapshot component to retrieve the latest version of a Snapshot
 dependency from a repository.
 
 A project under active development produces snapshot components that
@@ -306,16 +306,16 @@ which a particular software component is being produced. For example,
 software components being produced by the Maven project at the Apache
 Software Foundation are available under the groupId org.apache.maven.
 
-artifactId:: An artifact is an identifier for a software component. An
-artifact can represent an application or a library; for example, if
+artifactId:: An component is an identifier for a software component. An
+component can represent an application or a library; for example, if
 you were creating a simple web application your project might have the
 artifactId "simple-webapp", and if you were creating a simple library,
-your artifact might be "simple-library". The combination of groupId
+your component might be "simple-library". The combination of groupId
 and artifactId must be unique for a project.
 
 version:: The version of a project follows the established convention
 of Major, Minor, and Point release versions. For example, if your
-simple-library artifact has a Major release version of 1, a minor
+simple-library component has a Major release version of 1, a minor
 release version of 2, and point release version of 3, your version
 would be 1.2.3. Versions can also have alphanumeric qualifiers which
 are often used to denote release status. An example of such a
@@ -323,13 +323,13 @@ qualifier would be a version like "1.2.3-BETA" where BETA signals a
 stage of testing meaningful to consumers of a software component.
 
 packaging:: Maven was initially created to handle JAR files, but a
-Maven repository is completely agnostic about the type of artifact it
+Maven repository is completely agnostic about the type of component it
 is managing. Packaging can be anything that describes any binary
 software format including ZIP, SWC, SWF, NAR, WAR, EAR, SAR.
 
 ==== Addressing Resources in a Repository
 
-Tools designed to interact Maven repositories translate artifact
+Tools designed to interact Maven repositories translate component
 coordinates into a URL which corresponds to a location in a Maven
 repository. If a tool such as Maven is looking for version 1.2.0 of
 the commons-lang JAR in the group org.apache.commons, this request is
@@ -362,16 +362,16 @@ release repositories such as the Central Repository:
 
 Artifact Metadata:: All software components added to the Central
 Repository require proper metadata, including a Project Object Model
-(POM) for each artifact which describes the artifact itself and any
-dependencies that software artifact might have.
+(POM) for each component which describes the component itself and any
+dependencies that software component might have.
 
 Release Stability:: Once published to the Central Repository, an
-artifact and the metadata describing that artifact never change. This
+component and the metadata describing that component never change. This
 property of release repositories guarantees that projects which depend
 on releases will be repeatable and stable over time. While new
 software components are being published every day, once a component is
 assigned a release number on the Central Repository, there is a strict
-policy against modifying the contents of a software artifact after a
+policy against modifying the contents of a software component after a
 release.
 
 Repository Mirrors:: The Central Repository is a public resource, and
@@ -382,7 +382,7 @@ Central Repository which are constantly synchronized. Users are
 encouraged to query for project metadata and cryptographic hashes and
 they are encouraged to retrieve the actual software components from one
 of Central's many mirrors.  Tools like Nexus are designed to retrieve
-metadata from the Central Repository and artifact binaries from
+metadata from the Central Repository and component binaries from
 mirrors.
 
 Artifact Security:: The Central Repository contains cryptographic
@@ -410,7 +410,7 @@ that defines what a repository manager does.
 Put simply, a repository manager provides two core features:
 
 * The ability to proxy a remote repository and cache components saving
-  both bandwidth and time required to retrieve a software artifact
+  both bandwidth and time required to retrieve a software component
   from a remote repository, and
 
 * The ability the host a repository providing an organization with a
@@ -439,7 +439,7 @@ Management of Software Metadata:: A repository manager should have
 some knowledge of the metadata that describes components. In a Maven
 repository this would include project coordinates (groupId,
 artifactId, version, classifier) and information about a given
-artifact's releases.
+component's releases.
 
 Proxying of External Repositories:: Proxying an external repository
 yields more stable build,s as the components used in a build can be
@@ -560,7 +560,7 @@ benefits of using a repository manager.
 
 When you run your multimodule project in Maven, how do you think Maven
 knows if it needs to update plugins or snapshot dependencies? It has
-to make a request for each artifact it needs to test. Even if nothing
+to make a request for each component it needs to test. Even if nothing
 has changed, if your project depends on a few snapshot or if you don't
 specify plugin version, Maven might have to make tens to hundreds of
 requests to a remote repository. All of these requests over the public
@@ -675,7 +675,7 @@ expose a hosted repository to the outside world, you could use the
 packaging and assembly capabilities of Maven and the structure of the
 Maven repository to make a release that is more easily consumed. 
 This isn't just for JAR files and Java web applications. Maven
-repositories can host any kind of artifact. Nexus, and Maven
+repositories can host any kind of component. Nexus, and Maven
 repositories in general, define a known structure for releases. If you
 are writing some Java library, publishing it to your own Nexus
 instance serving a public repository will make it easier for people to
@@ -718,7 +718,7 @@ Maven was introduced to improve this build process by introducing the
 concept of structured repositories from which the build scripts can
 retrieve the software components. In Maven language, these software
 components or dependencies are referred to as components, a term
-which can refer to any generic software artifact including components,
+which can refer to any generic software component including components,
 libraries, frameworks, containers, etc. Maven can identify components
 in repositories, understand their dependencies, retrieve all that are
 needed for a successful build, and deploy its output back to
@@ -727,7 +727,7 @@ repositories when completed.
 Developers using Maven without a repository manager find most of their
 software components and dependencies in Maven Central. If they happen
 to use another remote repository or if they need to add a custom
-artifact, the solution in Stage Zero is to manually manipulate the
+component, the solution in Stage Zero is to manually manipulate the
 files in a local repository and share this local repository with
 multiple developers. While this approach may yield a working build for
 a small team, managing a shared local repository doesn't allow an
@@ -804,7 +804,7 @@ repository, it changes the way that developers and development groups
 can interact with one another in an enterprise. Developers in one
 development group can code and release a stable version of an internal
 library, deploy this library to an internal Nexus release repository,
-and so share this binary artifact with another group or department.
+and so share this binary component with another group or department.
 Without a repository manager managing internal components, you have
 ad-hoc solutions and the organizational equivalent of duct tape. How
 does the infrastructure group send a new library to the applications

@@ -174,7 +174,7 @@ image::figs/web/config-administration-system-notification.png[scale=70]
 ==== PGP Key Server Information
 
 Nexus Pro uses a PGP Key Server to retrieve PGP keys when
-validating artifact signatures. To add a new key server, enter the
+validating component signatures. To add a new key server, enter the
 URL in the 'Key Server URL' field and click on the 'Add' button. To remove
 a key server, click on the URL you wish to remove from the list
 and click on the 'Remove' button. Key servers are consulted in the order
@@ -408,8 +408,8 @@ m2eclipse). The default for new proxy repositories is enabled, but all
 of the default repositories included in Nexus have this option
 disabled. To change this setting for one of the proxy repositories
 that ship with Nexus, change the option, save the repository, and then
-re-index the repository. Once this is done, artifact search will
-return every artifact available on the Maven Central repository.
+re-index the repository. Once this is done, component search will
+return every component available on the Maven Central repository.
 
 Auto Blocking Enabled;; If Auto blocking active is set to true, Nexus
 will automatically block a proxy repository if the remote repository
@@ -447,13 +447,13 @@ Access Settings:: This section allows for the detailed configuration
 of access to a repository.
 
 Deployment Policy;; This setting controls how a Hosted repository
-allows or disallows artifact deployment. If this policy is set
+allows or disallows component deployment. If this policy is set
 to 'Read Only', no deployment is allowed. If this policy is
 set to 'Disable Redeploy', a client can only deploy a
-particular artifact once and any attempt to redeploy an
-artifact will result in an error. If this policy is set to
+particular component once and any attempt to redeploy an
+component will result in an error. If this policy is set to
 'Allow Redeploy', clients can deploy components to this
-repository and overwrite the same artifact in subsequent
+repository and overwrite the same component in subsequent
 deployments. This option is visible for hosted repositories as
 shown in <<fig-repo-config-hosted>>.
 
@@ -477,7 +477,7 @@ repository. The expiration settings are:
 Not Found Cache TTL;; If Nexus fails to locate a component, it will
 cache this result for a given number of minutes. In other words, if
 Nexus can't find a component in a remote repository, it will not
-perform repeated attempts to resolve this artifact until the 'Not
+perform repeated attempts to resolve this component until the 'Not
 Found Cache TTL' time has been exceeded. The default for this setting
 is 1440 minutes (or 24 hours).
 
@@ -720,12 +720,12 @@ documented in <<manual-routing>>.
 Nexus routes are like filters you can apply to groups in terms
 of security access and general component retrieval, and can reduce the
 number of repositories within a group accessed in order to retrieve an
-artifact. The administration interface for routes can be accessed via
+component. The administration interface for routes can be accessed via
 the 'Routing' menu item in the 'View/Repositories' menu in the left-hand
 navigation panel.
 
 Routes allow you to configure Nexus to include or exclude specific
-repository content paths from a particular artifact search when Nexus
+repository content paths from a particular component search when Nexus
 is trying to locate a component in a repository group. There are a
 number of different scenarios in which you might configure a route.
 
@@ -753,7 +753,7 @@ URL Pattern::
     Nexus uses the 'URL Pattern' will use to match a request to
     Nexus. If the regular expression in this pattern is matched, Nexus
     will either include or exclude the listed repositories from a
-    particular artifact query. In <<fig-route-config>>
+    particular component query. In <<fig-route-config>>
     the two patterns are:
 
     `^/(com|org)/somecompany/.*`;; This pattern would match all
@@ -779,12 +779,12 @@ Rule Type:: Rule Type can be either 'inclusive', 'exclusive' or 'blocking'. An
 inclusive rule type defines the set of repositories that should be
 searched for components when the URL pattern has been matched. An
 exclusive rule type defines repositories which should not be searched
-for a particular artifact. A blocking rule will completely remove
+for a particular component. A blocking rule will completely remove
 accessibility to the components under the specific pattern in a
 specified repository group.
 
 Ordered Route Repositories:: Nexus searches an ordered list of
-repositories to locate a particular artifact.  This order only affects
+repositories to locate a particular component.  This order only affects
 the order of routes used and not the order of the repositories
 searched. That order is set by the order of the repositories in the
 group repository's configuration.
@@ -811,7 +811,7 @@ dependencies. In other words, don't bother looking for an Apache
 dependency in your organization's internal repositories.
 
 TIP: Exclusive rules will positively impact performance, since the
-number of repositories that qualify for locating the artifact, and
+number of repositories that qualify for locating the component, and
 therefore the search effort is reduced.
 
 What if there is a conflict between two routes? Nexus will process
@@ -825,7 +825,7 @@ in the inclusive route. The order as defined in the group will not be
 affected by the inclusive route. Nexus will then take the result of
 applying the inclusive route and apply the exclusive route to that
 list of repositories. The resulting list is then searched for a
-matching artifact.
+matching component.
 
 One straightforward use of routes is to create a route that excludes
 the Central Repository from all searches for your own organization's
@@ -847,7 +847,7 @@ configuration. Without this configuration, requests for internal
 components will be broadcasted to all configured external proxy
 repositories. This could lead to an information leak, where e.g., your
 internet traffic reveals that your organization works on a component
-with the artifact coordinates of
+with the component coordinates of
 +com.yourcompany.website:new-super-secret-feature:1.0-SNAPSHOT+.
 
 
@@ -858,7 +858,7 @@ you to completely block access to components with the specified
 pattern(s) from the group. As such, blocking routes are a simplified,
 coarse-grained access control.
 
-TIP: Check out <<procure>> for fine-grained control of artifact
+TIP: Check out <<procure>> for fine-grained control of component
 availability and use blocking routes sparingly.
 
 
@@ -1088,7 +1088,7 @@ the trash folder.  When you create a scheduled task to remove
 snapshots, you can specify the 'Repository/Group' to affect as well as:
 +
 'Minimum Snapshot Count';; This configuration option allows you to
-specify a minimum number of snapshots to preserve per artifact.  For
+specify a minimum number of snapshots to preserve per component.  For
 example, if you configured this option with a value of 2, Nexus will
 always preserve at least two snapshot components. A value of -1
 indicates that all snapshots should be preserved.
@@ -1099,7 +1099,7 @@ if you want to make sure that you are always keeping the last three
 day's worth of snapshot components, configure this option with a value
 of 3. The minimum count overrides this setting.
 +
-'Remove if released';; If enabled and a released artifact with the same
+'Remove if released';; If enabled and a released component with the same
 GAV coordinates is detected all snapshots will be removed.
 + 
 'Grace period after release (days)';; The configuration 'Remove if
