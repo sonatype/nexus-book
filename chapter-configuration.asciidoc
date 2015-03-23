@@ -456,14 +456,14 @@ m2eclipse). The default for new proxy repositories is enabled, but all
 of the default repositories included in Nexus have this option
 disabled. To change this setting for one of the proxy repositories
 that ship with Nexus, change the option, save the repository, and then
-re-index the repository. Once this is done, artifact search will
-return every artifact available on the Maven Central repository.
+re-index the repository. Once this is done, component search will
+return every component available on the Maven Central repository.
 
 Auto Blocking Enabled;; If Auto blocking active is set to true, Nexus
 will automatically block a proxy repository if the remote repository
-becomes unavailable. While a proxy repository is blocked, artifacts
+becomes unavailable. While a proxy repository is blocked, components
 will still be served to clients from a local cache, but Nexus will not
-attempt to locate an artifact in a remote repository. Nexus will
+attempt to locate an component in a remote repository. Nexus will
 periodically retest the remote repository and unblock the repository
 once it becomes available.
 
@@ -481,24 +481,24 @@ default. The possible values of this setting are:
 * 'Ignore' - Ignore the checksums entirely
 * 'Warn' - Print a warning in the log if a checksum is not correct
 +
-* 'StrictIfExists' - Refuse to cache an artifact if the calculated
+* 'StrictIfExists' - Refuse to cache an component if the calculated
 checksum is inconsistent with a checksum in the repository. Only
 perform this check if the checksum file is present.
 +
-* 'Strict' - Refuse to cache an artifact if the calculated checksum is
-inconsistent or if there is no checksum for an artifact.
+* 'Strict' - Refuse to cache an component if the calculated checksum is
+inconsistent or if there is no checksum for an component.
 
 Access Settings:: This section allows for the detailed configuration
 of access to a repository.
 
 Deployment Policy;; This setting controls how a Hosted repository
-allows or disallows artifact deployment. If this policy is set
+allows or disallows component deployment. If this policy is set
 to 'Read Only', no deployment is allowed. If this policy is
 set to 'Disable Redeploy', a client can only deploy a
-particular artifact once and any attempt to redeploy an
-artifact will result in an error. If this policy is set to
-'Allow Redeploy', clients can deploy artifacts to this
-repository and overwrite the same artifact in subsequent
+particular component once and any attempt to redeploy an
+component will result in an error. If this policy is set to
+'Allow Redeploy', clients can deploy components to this
+repository and overwrite the same component in subsequent
 deployments. This option is visible for hosted repositories only.
 
 Allow file browsing;; When set to true, users can browse the contents
@@ -514,14 +514,14 @@ this repository remotely. You would set this configuration
 property to false if you want to prevent clients for
 connecting to this repository directly.
 
-Expiration Settings:: Nexus maintains a local cache of artifacts and
+Expiration Settings:: Nexus maintains a local cache of components and
 metadata, you can configure expiration parameters for a proxy
 repository. The expiration settings are:
 
-Not Found Cache TTL;; If Nexus fails to locate an artifact, it will
+Not Found Cache TTL;; If Nexus fails to locate an component, it will
 cache this result for a given number of minutes. In other words, if
-Nexus can't find an artifact in a remote repository, it will not
-perform repeated attempts to resolve this artifact until the 'Not
+Nexus can't find an component in a remote repository, it will not
+perform repeated attempts to resolve this component until the 'Not
 Found Cache TTL' time has been exceeded. The default for this setting
 is 1440 minutes (or 24 hours).
 
@@ -536,7 +536,7 @@ repository. It will only retrieve updates to metadata after the
 setting is 1440 minutes (or 24 hours).
 
 Item Max Age;; Some items in a repository may be neither an artifact
-identified by the Maven GAV coordinates or metadata for such artifacts. This
+identified by the Maven GAV coordinates or metadata for such components. This
 cache value determines the maximum age for these items before
 updates are retrieved. 
 
@@ -591,12 +591,12 @@ repositories Nexus needs to periodically check the remote for updates,
 which will incur more overhead than a hosted repository lookup.
 
 We also recommend placing repositories with a higher probability of
-matching the majority of artifacts higher in this list. If most of
+matching the majority of components higher in this list. If most of
 your components are going to be retrieved from the Central Repository,
 putting 'Central' higher in this list than a smaller, more focused
 repository is going to be better for performance, as Nexus is not
 going to interrogate the smaller remote repository for as many missing
-artifacts. These best practices are implemented in the default
+components. These best practices are implemented in the default
 configuration.
 
 
@@ -669,11 +669,11 @@ repository you want to add and drag it to the left to the 'Ordered
 Member Repositories' list. Once the repository is in the 'Ordered Member
 Repositories' list you can click and drag the repository within that
 list to alter the order in which a repository will be searched for a
-matching artifact. Press the 'Save' button to complete this
+matching component. Press the 'Save' button to complete this
 configuration.
 
 In the last few sections, you learned how to add a new custom
-repositories to a build in order to download artifacts that are not
+repositories to a build in order to download components that are not
 available in the Central Repository.
 
 If you were not using a repository manager, you would have added these
@@ -748,8 +748,8 @@ Directory.
 
 ==== PGP Key Server Information
 
-Nexus Professional uses a PGP Key Server to retrieve PGP keys when
-validating artifact signatures. To add a new key server, enter the
+Nexus Pro uses a PGP Key Server to retrieve PGP keys when
+validating component signatures. To add a new key server, enter the
 URL in the 'Key Server URL' field and click on the 'Add' button. To remove
 a key server, click on the URL you wish to remove from the list
 and click on the 'Remove' button. Key servers are consulted in the order
@@ -768,7 +768,7 @@ virtual repository and then clicking on the 'Summary'
 tab. The 'Summary' tab of a hosted repository, as shown
 in <<fig-configuring-summary-hosted>>, displays the
 +distributionManagement+ settings that can be used to configure
-Maven to publish artifacts to the hosted repository.
+Maven to publish components to the hosted repository.
 
 [[fig-configuring-summary-hosted]]
 .Repository Summary Panel for a Hosted Repository
@@ -897,24 +897,24 @@ documented in <<manual-routing>>.
 Nexus routes are like filters you can apply to groups in terms
 of security access and general component retrieval, and can reduce the
 number of repositories within a group accessed in order to retrieve an
-artifact. The administration interface for routes can be accessed via
+component. The administration interface for routes can be accessed via
 the 'Routing' menu item in the 'View/Repositories' menu in the left-hand
 navigation panel.
 
 Routes allow you to configure Nexus to include or exclude specific
-repository content paths from a particular artifact search when Nexus
-is trying to locate an artifact in a repository group. There are a
+repository content paths from a particular component search when Nexus
+is trying to locate an component in a repository group. There are a
 number of different scenarios in which you might configure a route.
 
 The most commonly configured scenario is when you want to make sure
-that you are retrieving artifacts in a particular group ID from a
+that you are retrieving components in a particular group ID from a
 particular repository. This is especially useful when you want your
-own organization's artifacts from the hosted Release and Snapshot
+own organization's components from the hosted Release and Snapshot
 repositories only.
 
-Routes are applicable when you are trying to resolve an artifact from
+Routes are applicable when you are trying to resolve an component from
 a repository group. Using routes allows you to modify the repositories
-Nexus will consult when it tries to resolve an artifact from a group
+Nexus will consult when it tries to resolve an component from a group
 of repositories.
 
 [[fig-route-config]]
@@ -930,7 +930,7 @@ URL Pattern::
     Nexus uses the 'URL Pattern' will use to match a request to
     Nexus. If the regular expression in this pattern is matched, Nexus
     will either include or exclude the listed repositories from a
-    particular artifact query. In <<fig-route-config>>
+    particular component query. In <<fig-route-config>>
     the two patterns are:
 
     +.\*/(com|org)/somecompany/.*+;; This pattern would match all
@@ -938,14 +938,14 @@ URL Pattern::
     +/org/somecompany/+. The expression in the parenthesis matches
     either com or org, and the +.*+ matches zero or more
     characters. You would use a route like this to match your own
-    organization's artifacts and map these requests to the hosted
+    organization's components and map these requests to the hosted
     Releases and Snapshots repositories.
 
     +.\*/org/some-oss/.*+;; This pattern is used in an exclusive
     route. It matches every path that contains +/org/some-oss/+. This
     particular exclusive route excludes the local hosted Releases and
-    Snapshots directory for all artifacts that match this path.  When
-    Nexus tries to resolve artifacts that match this path, it will
+    Snapshots directory for all components that match this path.  When
+    Nexus tries to resolve components that match this path, it will
     exclude the Releases and Snapshots repositories.
 
     Example "(?!/org/some-oss/.*).*";; Using this pattern in an
@@ -954,14 +954,14 @@ URL Pattern::
 
 Rule Type:: Rule Type can be either 'inclusive', 'exclusive' or 'blocking'. An
 inclusive rule type defines the set of repositories that should be
-searched for artifacts when the URL pattern has been matched. An
+searched for components when the URL pattern has been matched. An
 exclusive rule type defines repositories which should not be searched
-for a particular artifact. A blocking rule will completely remove
+for a particular component. A blocking rule will completely remove
 accessibility to the components under the specific pattern in a
 specified repository group.
 
 Ordered Route Repositories:: Nexus searches an ordered list of
-repositories to locate a particular artifact.  This order only affects
+repositories to locate a particular component.  This order only affects
 the order of routes used and not the order of the repositories
 searched. That order is set by the order of the repositories in the
 group repository's configuration.
@@ -970,11 +970,11 @@ In <<fig-route-config>> you can see the two dummy routes that Nexus
 has configured as default routes. The first route is an inclusive
 route, and it is provided as an example of a custom route an
 organization might use to make sure that internally generated
-artifacts are resolved from the Releases and Snapshots repositories
+components are resolved from the Releases and Snapshots repositories
 only. If your organization's group IDs all start with
-+com.somecompany+, and if you deploy internally generated artifacts to
++com.somecompany+, and if you deploy internally generated components to
 the Releases and Snapshots repositories, this Route will make sure
-that Nexus doesn't waste time trying to resolve these artifacts from
+that Nexus doesn't waste time trying to resolve these components from
 public repositories like the Central Repository or the Apache
 Snapshots repository.
 
@@ -988,13 +988,13 @@ dependencies. In other words, don't bother looking for an Apache
 dependency in your organization's internal repositories.
 
 TIP: Exclusive rules will positively impact performance, since the
-number of repositories that qualify for locating the artifact, and
+number of repositories that qualify for locating the component, and
 therefore the search effort is reduced.
 
 What if there is a conflict between two routes? Nexus will process
 inclusive routes before it will process the exclusive routes.
-Remember that routes only affect Nexus' resolution of artifacts when
-it is searching a Group. When Nexus starts to resolve an artifact from
+Remember that routes only affect Nexus' resolution of components when
+it is searching a Group. When Nexus starts to resolve an component from
 a repository group it will start with the list of repositories in a
 group. If there are matching inclusive routes, Nexus will then take
 the intersection of the repositories in the group and the repositories
@@ -1002,36 +1002,36 @@ in the inclusive route. The order as defined in the group will not be
 affected by the inclusive route. Nexus will then take the result of
 applying the inclusive route and apply the exclusive route to that
 list of repositories. The resulting list is then searched for a
-matching artifact.
+matching component.
 
 One straightforward use of routes is to create a route that excludes
 the Central Repository from all searches for your own organization's
-hosted artifacts. If you are deploying your own artifacts to Nexus
+hosted components. If you are deploying your own components to Nexus
 under a groupId of +org.mycompany+, and if you are not deploying these
-artifacts to a public repository, you can create a rule that tells
+components to a public repository, you can create a rule that tells
 Nexus not to interrogate Central for your own organization's
-artifacts. This will improve performance because Nexus will not need
+components. This will improve performance because Nexus will not need
 to communicate with a remote repository when it serves your own
-organization's artifacts. In addition to the performance benefits,
-excluding the Central Repository from searches for your own artifacts
+organization's components. In addition to the performance benefits,
+excluding the Central Repository from searches for your own components
 will reduce needless queries to the public repositories.
 
 TIP: This practice of defining an inclusive route for your internal
-artifacts to only hit internal repositories is a crucial best practice
+components to only hit internal repositories is a crucial best practice
 of implementing a secure component lifecycle management in your
 organization and a recommended step for initial Nexus
 configuration. Without this configuration, requests for internal
-artifacts will be broadcasted to all configured external proxy
+components will be broadcasted to all configured external proxy
 repositories. This could lead to an information leak, where e.g., your
 internet traffic reveals that your organization works on a component
-with the artifact coordinates of
+with the component coordinates of
 +com.yourcompany.website:new-super-secret-feature:1.0-SNAPSHOT+.
 
 
 In addition to defining inclusive and exclusive routes, you can define
 blocking routes. A blocking route can be created by creating a route
 with no repositories in the ordered list of repositories. It allows
-you to completely block access to artifacts with the specified
+you to completely block access to components with the specified
 pattern(s) from the group. As such, blocking routes are a simplified,
 coarse-grained access control.
 
@@ -1044,7 +1044,7 @@ designers of Nexus may not have anticipated, but we advise you to
 proceed with caution if you start relying on conflicting or
 overlapping routes.  Use routes sparingly, and use coarse URL
 patterns. Remember that routes are only applied to groups and are
-not used when an artifact is requested from a specific repository.
+not used when an component is requested from a specific repository.
 
 [[scheduled-tasks]]
 === Managing Scheduled Tasks
@@ -1100,7 +1100,7 @@ archive the contents of the +sonatype-work/nexus/conf+ directory.
 Once a backup has been run, the contents of the backup will be
 available in +sonatype-work/nexus/backup+ in a series of ZIP archives
 that use a datetimestamp in the filename. This task is a feature of
-Nexus Professional.
+Nexus Pro.
 
 Download Indexes:: This scheduled task will cause Nexus to download
 indexes from remote repositories for proxied repositories. The
@@ -1111,7 +1111,7 @@ Download NuGet Feed:: This task allows you to download the feed for a
 NuGet proxy repository. For one-time invocation, you can enable the
 'Clear feed cache?' setting, which will delete the cache completely and
 re-fetch all data. The setting 'Fetch all versions?' will trigger the
-download of all versions of an artifact in contrast to the default
+download of all versions of an component in contrast to the default
 behavior of getting only the latest version.
 
 Drop Inactive Staging Repositories:: Staging repositories can be
@@ -1142,9 +1142,9 @@ task tells Nexus to delete all proxied items that haven't been "used"
 (referenced or retrieved by a client) in a number of days as specified
 in Evict Items older than (days). This can be a good job to run if you
 are trying to conserve storage space and do not need all of the
-artifacts in the future e.g., to reproduce old builds without renewed
+components in the future e.g., to reproduce old builds without renewed
 retrieval. This is particularly useful for a personal Nexus deployment
-with a large change rate of artifacts combined with limited diskspace.
+with a large change rate of components combined with limited diskspace.
 
 Expire Repository Caches:: Repositories have several caches to improve
 performance. This task expires the caches causing Nexus to recheck the
@@ -1191,7 +1191,7 @@ validate the checksums (.mh5/.sha1) for all files in the specified
 Repository/Group. Typically this task is run manually to repair a
 corrupted repository.
 
-Rebuild NuGet Feed:: If you are using NuGet, pushing your artifacts
+Rebuild NuGet Feed:: If you are using NuGet, pushing your components
 into a NuGet hosted repository and are proxying that repository to
 other users, this task can be used to rebuild the feed.
  
@@ -1246,18 +1246,18 @@ the trash folder.  When you create a scheduled task to remove
 snapshots, you can specify the 'Repository/Group' to affect as well as:
 +
 'Minimum Snapshot Count';; This configuration option allows you to
-specify a minimum number of snapshots to preserve per artifact.  For
+specify a minimum number of snapshots to preserve per component.  For
 example, if you configured this option with a value of 2, Nexus will
-always preserve at least two snapshot artifacts. A value of -1
+always preserve at least two snapshot components. A value of -1
 indicates that all snapshots should be preserved.
 +
 'Snapshot Retention (days)';; This configuration option allows you to
-specify the number of days to retain snapshot artifacts.  For example,
+specify the number of days to retain snapshot components.  For example,
 if you want to make sure that you are always keeping the last three
-day's worth of snapshot artifacts, configure this option with a value
+day's worth of snapshot components, configure this option with a value
 of 3. The minimum count overrides this setting.
 +
-'Remove if released';; If enabled and a released artifact with the same
+'Remove if released';; If enabled and a released component with the same
 GAV coordinates is detected all snapshots will be removed.
 + 
 'Grace period after release (days)';; The configuration 'Remove if
@@ -1268,7 +1268,7 @@ a number of days to delay the deletion, giving the respective projects
 referencing the snapshot dependency time to upgrade to the release
 component or the next snapshot version.
 +
-'Delete immediately';; If you want to have artifacts deleted directly
+'Delete immediately';; If you want to have components deleted directly
 rather than moved to the trash, you can enable this setting.
 +
 When doing regular deployments to a snapshot repository via a CI
@@ -1340,7 +1340,7 @@ WARNING: In many cases you will not need to configure anything in
 support team. Execute any capability changes with caution, potentially
 backing up your configuration before proceeding.
 
-Nexus Professional ships with a number of capabilities preinstalled
+Nexus Pro ships with a number of capabilities preinstalled
 and allows you to enable/disable them. An example capability is
 'Outreach Management' displayed in <<fig-capability-outreach>>. The
 capabilities management interface supports adding new capabilities by
@@ -1427,7 +1427,7 @@ corner of the user interface header and is described in
 [[nexus-branding]]
 === Customizing the Nexus Application with Branding
 
-The branding plugin is part of Nexus Professional and allows you to
+The branding plugin is part of Nexus Pro and allows you to
 customize your Nexus instance by replacing the default Sonatype Nexus
 logo in the top left-hand corner of the header with an image of your
 choice.
@@ -1444,8 +1444,8 @@ PNG image. To blend in well in the UI, it is recommended that it is of
 If it fails to find a new logo, the plugin will fall back to using
 the default Sonatype Nexus logo.
 
-Prior to Nexus 2.7, the branding plugin was an optional plugin of Nexus
-Professional and needed to be installed following the documentation in 
+Prior to Nexus 2.7, the branding plugin was an optional plugin of Nexus Pro
+and needed to be installed following the documentation in 
 <<install-additional-plugins>>. In this case you needed to add a
 branding.image.path property to the 'nexus.properties' file in 
 '$NEXUS_HOME/conf/':
@@ -1457,8 +1457,8 @@ branding.image.path=/data/images/nexus_logo.png
 [[nexus-outreach-plugin]]
 === Configuring Outreach Content in Welcome Tab
 
-The Nexus Outreach Plugin is installed and enabled by default in Nexus
-Open Source and Nexus Professional. It allocates space underneath the
+The Nexus Outreach Plugin is installed and enabled by default in Nexus OSS
+and Nexus Pro. It allocates space underneath the
 search feature on the 'Welcome' tab for linking to further
 documentation and support resources. This data is retrieved from
 Sonatype servers.
@@ -1651,7 +1651,7 @@ very fine-grained control over who can read from a repository (or a
 subset of repositories), who can administer the server, and who can
 deploy to repositories. The security model in Nexus is also so
 flexible as to allow you to specify that only certain users or roles
-can deploy and manage artifacts in a specific repository under a
+can deploy and manage components in a specific repository under a
 specific groupId or asset class. The default configuration of Nexus
 ships with four roles and four users with a standard set of
 permissions that will make sense for most users. As your security
@@ -1732,7 +1732,7 @@ image::figs/web/repository-manager_security-privileges-3.png[scale=60]
 === Managing Repository Targets
 
 A 'Repository Target' is a set of regular expressions to match on the
-path of artifacts in a repository (in the same way as the routing
+path of components in a repository (in the same way as the routing
 rules work). Nexus is preconfigured with a number of repository
 targets and allows you to create additional ones. Access the
 management interface visible in <<fig-config-repo-target-mgt>> via
@@ -1746,15 +1746,15 @@ image::figs/web/repository-manager_repository-targets.png[scale=60]
 
 Repository targets allow you to define, for example, a target called
 Apache Maven with a pattern of `^/org/apache/maven/.*`. This would
-match all artifacts with a groupId of 'org.apache.maven' and any
-artifacts within nested groupIds like 'org.apache.maven.plugins'.
+match all components with a groupId of 'org.apache.maven' and any
+components within nested groupIds like 'org.apache.maven.plugins'.
 
-A pattern that would capture more artifacts like all artifacts with
+A pattern that would capture more components like all components with
 any part of the path containing 'maven' could be `.*maven.*`.
 
-The regular expressions can also be used to exclude artifacts as
+The regular expressions can also be used to exclude components as
 visible with the pattern `(?!.*-sources.*).*` in
-<<fig-config-repo-target-exclude>> where artifacts with the qualifier
+<<fig-config-repo-target-exclude>> where components with the qualifier
 '-sources' are excluded. The syntax used for the expressions is the
 http://docs.oracle.com/javase/tutorial/essential/regex/[Java syntax],
 that is similar but not identical to the Perl syntax.
@@ -1764,17 +1764,17 @@ that is similar but not identical to the Perl syntax.
 image::figs/web/repository-manager_repository-targets-2.png[scale=60]
 
 By combining multiple patterns in a repository target, you can
-establish a fine-grained control of artifacts included and excluded.
+establish a fine-grained control of components included and excluded.
 
 Once you have created a repository target, you can it as part of your
 security setup.  You can add a new privilege that relates to the
-target and controls the CRUD operations for artifacts matching that
+target and controls the CRUD operations for components matching that
 path. The privilege can even span multiple repositories. With this
-setup you can delegate all control of artifacts in 'org.apache.maven'
+setup you can delegate all control of components in 'org.apache.maven'
 to a "Maven" team. In this way, you don't need to create separate
-repositories for each logical division of your artifacts.
+repositories for each logical division of your components.
 
-Repository targets are also be used for matching artifacts for
+Repository targets are also be used for matching components for
 implicit capture in the Staging Suite as documented in <<staging>>.
 
 [[confignx-sect-manage-security]]
@@ -1831,8 +1831,8 @@ every action in the system. For example, you could make a target that
 includes everything except sources `(.*(?!-sources)\.*)` and assign that
 to one role while giving yet another role access to everything. Using
 these different access roles e.g., you can host your public and private
-artifacts in a single repository without giving up control of your
-private artifacts.
+components in a single repository without giving up control of your
+private components.
 
 [[confignx-sect-managing-users]]
 === Managing Users
@@ -1886,7 +1886,7 @@ image::figs/web/repository-manager_security-users-privilege.png[scale=60]
 
 Additional plugins can contribute further panels for the security
 configuration of a user. An example of an additional panel is the 'User
-Token' panel, added by the User Token feature of Nexus Professional as
+Token' panel, added by the User Token feature of Nexus Pro as
 documented in <<config-sect-usertoken>>.
 
 [[config-sect-usertoken]]
