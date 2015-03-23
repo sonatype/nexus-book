@@ -168,7 +168,7 @@ Staging Maven Plugin. It uses the template 'Maven2 (hosted, release)'
 for newly created temporary staging repositories, and it will
 automatically add closed staging repositories to the 'Public
 Repositories' group. In addition, it is configured to verify the
-deployment against the rules defined in Sonatype CLM for the 'CLM
+deployment against the rules defined in Nexus Lifecycle for the 'CLM
 Application Id' +bom1-12345678+.
 
 [[fig-staging-edit-profile]]
@@ -245,7 +245,7 @@ as their final storage place. The Release Repository setting
 configures this target release repository for this staging profile.
 
 CLM Application Id:: Configure the application identifier defined in the
-Sonatype CLM server to allow to use of the rules defined there for 
+Nexus Lifecycle server to allow to use of the rules defined there for 
 staging within Nexus. More details can be found in <<staging-sect-clm>>.
 
 Content Type:: Nexus can create staging repositories for repositories
@@ -505,7 +505,7 @@ Following Maven best practices, the version should be pulled out into a
 
 This configuration works only in Maven 3 and automatically replaces
 the deploy goal invocation of the Maven deploy plugin in the deploy
-Maven lifecycle phase with the deploy goal invocation of the Nexus
+Maven life cycle phase with the deploy goal invocation of the Nexus
 staging Maven plugin. 
 
 The minimal required configuration parameters for the Nexus staging
@@ -783,7 +783,7 @@ set the property to set a different folder for the local staging.
 autoReleaseAfterClose:: If you set this flag to +true+, the staging
 repository will be closed and, following a
 successful validation of all staging rules including potential
-Sonatype CLM based validation, released. By default this property is
+Nexus Lifecycle based validation, released. By default this property is
 set to +false+. Changing it to +true+ can be a useful setup for
 continuous integration server based releases.
 
@@ -826,7 +826,7 @@ performed by the Maven deploy plugin.
 stagingProgressTimeoutMinutes:: Defaulting to 5 minutes, this
 configuration allows you to set the timeout for staging
 operations. Changes are most often required for complex staging operations
-involving custom staging rules or Sonatype CLM integration.
+involving custom staging rules or Nexus Lifecycle integration.
 
 stagingProgressPauseDurationSeconds:: The default of 3 seconds can be
 changed if larger pauses between progress polls for staging operations
@@ -1135,7 +1135,7 @@ configuration parameters:
 stagingProgressTimeoutMinutes:: Defaulting to 5 minutes, this
 configuration allows you to set the timeout for staging
 operations. Changes are most often required for complex staging operations
-involving custom staging rules or Sonatype CLM integration.
+involving custom staging rules or Nexus Lifecycle integration.
 
 stagingProgressPauseDurationSeconds:: The default of 3 seconds can be
 changed if larger pauses between progress polls for staging operations
@@ -1472,7 +1472,7 @@ repository to the repository groups configured in the staging
 profile. The updated status will be visible in the list of staging
 repositories after a 'Refresh', since the transition could take longer
 depending on the configured staging rules and potential validation
-against Sonatype CLM.
+against Nexus Lifecycle.
 
 [[staging-sect-using-repository]]
 ==== Using the Staging Repository
@@ -1760,27 +1760,28 @@ all of the rules in the associated rulesets are being followed.
 
 
 [[staging-sect-clm]]
-=== Policy Enforcement with Sonatype CLM
+=== Policy Enforcement with Nexus Lifecycle
 
-As discussed in <<repoman>>, Component Lifecycle Management (CLM) and
-Repository Management are closely related activities. The Sonatype CLM
+As discussed in <<repoman>>, repository management and
+managing components in your software development life cycle are 
+closely related activities. The Nexus Lifecycle
 suite of tools provides a server application for administrating your
 component usage policies and other features that integrate with other
 tools of the suite. It has access to extensive security vulnerability
-and license information data from the Sonatype CLM backend that can
+and license information data from the Nexus Lifecycle backend that can
 be used as input for your policies. For example you could establish a
 policy that is logged as violated, if any component in your software
 has a known security vulnerability or uses a license that is
 incompatible with your business model.
 
-Nexus Pro - CLM Edition is an important component that can
-take advantage of the CLM server. The Sonatype CLM server can be
+Nexus Pro+ is an important component that can take advantage of the 
+Nexus Lifeycle suite of tools server. The Nexus Lifecycle server can be
 integrated to validate policies as part of your usage of the staging
 suite of Nexus.
 
-Detailed instructions on how to install and configure the Sonatype CLM
+Detailed instructions on how to install and configure the Nexus Lifecycle
 server as well as the integration in Nexus can be found in the
-Sonatype CLM
+Nexus Lifecycle
 http://links.sonatype.com/products/clm/doc[documentation].
 
 [[bundles]]
