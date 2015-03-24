@@ -89,7 +89,7 @@
             source control. 
           </p>
           <p>Stop developing in the Dark Ages, read
-            this book, and start using a repository manager.  Trust
+            this documentation, and start using a repository manager.  Trust
             us, once you start using Sonatype Nexus, you will wonder 
             how you ever functioned without it.
           </p>
