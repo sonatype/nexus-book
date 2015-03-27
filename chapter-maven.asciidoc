@@ -79,7 +79,7 @@ change the repositories by enabling snapshots and replacing the URL
 with a bogus URL. This URL is overridden by the +mirror+ setting in
 the same settings.xml file to point to the URL of your single Nexus
 group. This Nexus group can, therefore, contain release as well as
-snapshot artifacts and Maven will pick them up.
+snapshot components and Maven will pick them up.
 
 The +mirrorOf+ pattern of +*+ causes any repository request to be
 redirected to this mirror and to your single repository group, which
@@ -105,7 +105,7 @@ profile in the +activeProfiles+ element.
 If you've configured your Maven +settings.xml+ or other build tool
 configuration to use the Nexus +public+ repository group as a mirror
 for all repositories, you might encounter projects that are unable to
-retrieve artifacts from your local Nexus installation.
+retrieve components from your local Nexus installation.
 
 This usually happens because you are trying to build a project that
 has defined a custom set of repositories and snapshot repositories or
@@ -196,7 +196,7 @@ repository you want to add and drag it to the left to the 'Ordered
 Group Repositories' list. Once the repository is in the 'Ordered Group
 Repositories' list you can click and drag the repository within that
 list to alter the order in which a repository will be searched for a
-matching artifact.
+matching component.
 
 NOTE: Nexus makes use of the Javascript widget library
  http://extjs.com/[ExtJS]. ExtJS provides for a number of UI widgets
@@ -204,7 +204,7 @@ NOTE: Nexus makes use of the Javascript widget library
  repositories to a group and reordering the contents of a group.
 
 In the last few sections, you learned how to add a new custom
-repositories to a build in order to download artifacts that are not
+repositories to a build in order to download components that are not
 available in the Central Repository.
 
 If you were not using a repository manager, you would have added these
@@ -216,7 +216,7 @@ all of the developers are configured to point to the public group in
 Nexus, you can freely swap in new repositories without asking your
 developers to change local configuration, and you've gained a certain
 amount of control over which repositories are made available to your
-development team. In addition the performance of the artifact
+development team. In addition the performance of the component
 resolving across multiple repositories will be handled by Nexus and
 therefore be much faster than client side resolution done by Maven
 each time.
@@ -275,7 +275,7 @@ Further details about using these example projects can be found in
 http://www.eclipse.org/aether/[Eclipse Aether] is the dependency
 management component used in Apache Maven 3+. The project provides Ant
 tasks that can be configured to download dependencies that can be
-declared in +pom.xml+ file or in the Ant build fiel directly.
+declared in +pom.xml+ file or in the Ant build file directly.
 
 This configuration can be contained in your Ant +build.xml+ or a
 separate file that is imported. A minimal
@@ -428,7 +428,7 @@ nexusUsername=admin
 nexusPassword=admin123
 ----
 
-and then used in the uploadArchives task with a mavenDeployer
+and then used in the `uploadArchives` task with a `mavenDeployer`
 configuration from the Maven plugin:
 
 ----
@@ -534,24 +534,24 @@ snapshot proxy repository and then add both to the public group.
 
 In order to configure a Leinigen project to resolve dependencies declared in
 the +project.clj+ file, a +mirrors+ section overriding the built in +central+
-and +clojars+ repositories as shown in <<leiningen-minimal>> has to be declared
+and +clojars+ repositories as shown in <<leiningen-minimal>> has to be declared.
 
 
 [[leiningen-minimal]]
 .Minimal Leiningen Configuration
 ----
-  :mirrors {
+:mirrors {
     "central" {:name "Nexus"
-                          :url "http://localhost:8081/nexus/content/groups/public"
-                          :repo-manager true}
+                   :url "http://localhost:8081/nexus/content/groups/public"
+                   :repo-manager true}
   #"clojars" {:name "Nexus"
-                          :url ""http://localhost:8081/nexus/content/groups/public""
-                          :repo-manager true}
-                        }
-
+                   :url ""http://localhost:8081/nexus/content/groups/public"
+                   :repo-manager true}
+                  }
 ----
 
-These minimal settings allow Leiningen to download the declared dependencies.
+These minimal settings allow Leiningen to download the declared
+dependencies.
 
 To deploy build outputs to a Nexus repository with the +deploy+
 command, the target repositories have to be add to +project.clj+ as

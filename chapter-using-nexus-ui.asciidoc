@@ -87,7 +87,7 @@ structure of a repository. If you click on the 'Repositories' menu item
 in the 'Views/Repositories' menu, you should see the following
 display. The tophalf of <<fig-nexus-browse-repo>> shows you a list of
 groups and repositories along with the type of the repository and the
-repository status. To browse the artifacts that are stored in a local
+repository status. To browse the components that are stored in a local
 Nexus instance, click on the Browse Storage tab for a repository as
 shown in <<fig-nexus-browse-repo>>.
 
@@ -96,26 +96,26 @@ shown in <<fig-nexus-browse-repo>>.
 image::figs/web/repository-manager_browse-repositories.png[scale=50]
 When you are browsing a repository, you can right-click on any file
 and download it directly to your browser. This allows you to retrieve
-specific artifacts manually or examine a POM file in
-the browser. In addition, artifacts as well as directories can be
+specific components manually or examine a POM file in
+the browser. In addition, components as well as directories can be
 deleted using right-click.
 
 NOTE: When browsing a remote repository you might notice that the tree
-doesn't contain all of the artifacts in a repository. When you browse
-a proxy repository, Nexus is displaying the artifacts that have been
+doesn't contain all of the components in a repository. When you browse
+a proxy repository, Nexus is displaying the components that have been
 cached locally from the remote repository. If you don't see an
-artifact you expected to see through Nexus, it only means that Nexus
-has yet to cache the artifact locally. If you have enabled remote
+component you expected to see through Nexus, it only means that Nexus
+has yet to cache the component locally. If you have enabled remote
 repository index downloads, Nexus will return search results that may
-include artifacts not yet downloaded from the remote
+include components not yet downloaded from the remote
 repository. <<fig-nexus-browse-repo>>, is just an example, and you may
-or may not have the example artifact available in your
+or may not have the example component available in your
 installation of Nexus.
 
 A Nexus proxy repository acts as a local cache for a remote
-repository, in addition to downloading and caching artifacts locally,
-Nexus will also download an index of all the artifacts stored in a
-particular repository. When searching or browsing for artifacts, it is
+repository, in addition to downloading and caching components locally,
+Nexus will also download an index of all the components stored in a
+particular repository. When searching or browsing for components, it is
 often more useful to search and browse the repository index. To view
 the repository index, click on the Browse Index tab for a particular
 repository to load the interface shown in
@@ -132,22 +132,22 @@ Once you located an archive in the repository index or storage or via
 a search the right-hand panel will at minimum show the 'Artifact
 Information' tab as visible in
 <<fig-using-artifact-information>>. Besides showing details like the
-'Repository Path', 'Size', 'Checksums', location of the artifact and other
-details, you are able to download and delete the artifact with the
+'Repository Path', 'Size', 'Checksums', location of the component and other
+details, you are able to download and delete the component with the
 respective buttons.
 
 [[fig-using-artifact-information]]
 .Viewing the Artifact Information
 image::figs/web/using-artifact-information.png[scale=50]
 
-[[using-artifact-maven-information]]
+[[using-component-maven-information]]
 === Viewing the Maven Information
 
-If the artifact you are examining is a Maven-related artifact like a
+If the component you are examining is a Maven-related component like a
 pom file or a jar, you will see the 'Maven Information' tab in the
 right-hand panels. As visible in <<fig-using-maven-information>>, the
 GAV parameters are displayed above an XML snippet identifying the
-artifact that you can just cut and paste into a Maven pom.xml file.
+component that you can just cut and paste into a Maven pom.xml file.
 
 [[fig-using-maven-information]]
 .Viewing the Maven Information
@@ -158,8 +158,8 @@ image::figs/web/using-maven-information.png[scale=60]
 === View and Editing Artifact Metadata
 
 Support for custom metadata for components in Maven 2 repositories is
-part of Nexus Professional. You can view, edit, and search for
-additional metadata associated to any artifact in your Nexus
+part of Nexus Pro. You can view, edit, and search for
+additional metadata associated to any component in your Nexus
 repositories.
 
 The features for custom metadata usage need to be activated by adding
@@ -174,7 +174,7 @@ code is called nexus-custom-metadata-plugin-X.Y.Z. Install the plugin
 Security privileges allow you to define "read only" as well as "write"
 access for custom metadata as well as grant or disallow access.
 
-When viewing a specific artifact from browsing repository storage or a
+When viewing a specific component from browsing repository storage or a
 repository index or from a search, the 'Artifact Metadata' tab
 displays the interface shown in <<fig-using-viewing-metadata>>.
 
@@ -183,14 +183,14 @@ displays the interface shown in <<fig-using-viewing-metadata>>.
 image::figs/web/meta_existing-meta-value.png[scale=60]
 
 Artifact metadata consists of a key, a value, and a namespace.
-Existing metadata from an artifact's POM is given a +urn:maven+
+Existing metadata from a component's POM is given a +urn:maven+
 namespace, and custom attributes are stored under the +urn:nexus/user+
 namespace.
 
-To add a custom attribute, click on an artifact in Nexus, and select
+To add a custom attribute, click on a component in Nexus, and select
 the 'Artifact Metadata' tab. Click 'Add...' there and a new row will
 be inserted into the list of attributes. Supply a 'Key' and 'Value'
-and click 'Save' to update the artifact's
+and click 'Save' to update the component's
 metadata. <<fig-using-editing-metadata>> shows the Artifact Metadata
 panel with two custom attributes: "approvedBy" and "approved".
 
@@ -199,18 +199,18 @@ panel with two custom attributes: "approvedBy" and "approved".
 image::figs/web/meta_setting-meta-value.png[scale=60]
 
 You can upload custom metadata data into Nexus using an xml file. The
-file will be processed as artifact metadata if it meets the following
+file will be processed as component metadata if it meets the following
 criteria:
 
 * file extension is +.n3+ or +.xml+
-* the artifact classifier is +metadata+
+* the component classifier is +metadata+
 
 Here are example contents of a metadata file which adds additional
-custom metadata to an artifact with GAV of "test:project:1.0" and
+custom metadata to a component with GAV of "test:project:1.0" and
 packaging of "jar":
 
 ----
-<urn:maven/artifact#test:project:1.0::jar>
+<urn:maven/component#test:project:1.0::jar>
 <urn:mycustomspace#repositoryId> "releases" ;
 <urn:mycustomspace#mavenVersion> "2.2.1" ;
 <urn:mycustomspace#releaseManager> "myusername" ;
@@ -218,7 +218,7 @@ packaging of "jar":
 ----
 
 A file with the above metadata content and a name of +metadata.n3+ can
-e.g., be attached as an additional project output artifact with the
+e.g., be attached as an additional project output component with the
 build helper maven plugin.
 
 ----
@@ -228,10 +228,10 @@ build helper maven plugin.
   <version>1.7</version>
   <executions>
     <execution>
-      <id>attach-artifacts</id>
+      <id>attach-components</id>
       <phase>package</phase>
       <goals>
-        <goal>attach-artifact</goal>
+        <goal>attach-component</goal>
       </goals>
       <configuration>
         <artifacts>
@@ -255,9 +255,9 @@ metadata can be changed.
 
 
 [[archive-browser]]
-=== Using the Artifact Archive Browser
+=== Using the Archive Browser
 
-For binary artifacts like jar files Nexus displays an 'Archive Browser'
+For binary components like jar files Nexus displays an 'Archive Browser'
 panel, as visible in <<fig-archive-browser>> that allows
 you to view the contents of the archive. Clicking on invidiual files
 in the browser will download them and potentially display them in your
@@ -268,32 +268,32 @@ an archive without manually downloading and extracting it.
 .Using the Archive Browser
 image::figs/web/using-archive-browser.png[scale=60]
 
-IMPORTANT: The archive browser is a feature of Nexus Professional.
+IMPORTANT: The archive browser is a feature of Nexus Pro.
 
 [[dependency-inspection]]
 === Inspecting the Component Dependencies
 
-Nexus Professional provides you with the ability to browse an
-artifact's dependencies. Using the artifact metadata found in an
-artifact's POM, Nexus will scan a repository or a repository group and
-attempt to resolve and display an artifact's dependencies. To view an
-artifact's dependencies, browse the repository storage or the
-repository index, select an artifact (or an artifact's POM), and then
+Nexus Pro provides you with the ability to browse an
+component's dependencies. Using the component metadata found in an
+component's POM, Nexus will scan a repository or a repository group and
+attempt to resolve and display a component's dependencies. To view an
+component's dependencies, browse the repository storage or the
+repository index, select a component (or a component's POM), and then
 click on the 'Maven Dependency' tab.
 
 On the 'Maven Dependency' tab, you will see the following form elements:
 
-Repository:: When resolving an artifact's dependencies, Nexus will
+Repository:: When resolving a component's dependencies, Nexus will
 query an existing repository or repository group. In many cases it
 will make sense to select the same repository group you are
 referencing in your Maven settings. If you encounter any problems
 during the dependency resolution, you need to make sure that you are
 referencing a repository or a group that contains these dependencies.
 
-Mode:: An artifact's dependencies can be listed as either a tree or a
+Mode:: An component's dependencies can be listed as either a tree or a
 list. When dependencies are displayed in a tree, you can inspect
 direct dependencies and transitive dependencies. This can come in
-handy if you are assessing an artifact, based on the dependencies it is
+handy if you are assessing a component, based on the dependencies it is
 going to pull into your project's build. When you list dependencies as
 a list, Nexus is going to perform the same process used by Maven to
 collapse a tree of dependencies into a list of dependencies using
@@ -301,36 +301,37 @@ rules to merge and override dependency versions if there are any
 overlaps or conflicts.
 
 Once you have selected a repository to resolve against and a mode to
-display an artifact's dependencies, click on 'Resolve' as
+display a component's dependencies, click on 'Resolve' as
 shown in <<fig-using-dependencies>>. Clicking on this button will
 start the process of resolving dependencies, depending on the number
-of artifacts already cached by Nexus, this process can take anywhere
+of components already cached by Nexus, this process can take anywhere
 from a few seconds to a minute. Once the resolution process is finished,
-you should see the artifact's dependencies, as shown in
+you should see the component's dependencies, as shown in
 <<fig-using-dependencies>>.
 
 [[fig-using-dependencies]]
-.View an Artifact's Dependencies
+.View a Component's Dependencies
 image::figs/web/using_dependencies.png[scale=60]
 
-Once you have resolved an artifact's dependencies, you can use the
-Filter text input to search for particular artifact dependencies.  If
+Once you have resolved a component's dependencies, you can use the
+Filter text input to search for particular component dependencies.  If
 you double-click on a row in the tree or list of dependencies, you can
-navigate to other artifacts within the Nexus interface.
+navigate to other components within the Nexus interface.
 
 [[component-info]]
 === Viewing Component Security and License Information
 
-One of the added features of Nexus Professional is the usage of data
-from Sonatype CLM. This data contains security and license
-information about artifacts and is accessible for a whole repository
+One of the added features of Nexus Pro is the usage of the curated and 
+up to date information from the Sonatype data services. 
+This data contains security and license
+information about components and is accessible for a whole repository
 in the Repository Health Check feature described in <<rhc>>.  Details
 about the vulnerability and security issue ratings and others can be
 found there as well.
 
 The 'Component Info' tab displays the security and licence information
-available for a specific artifact. It is available in browsing or
-search results, once a you have selected an artifact in the search
+available for a specific component. It is available in browsing or
+search results, once a you have selected a component in the search
 results list or repository tree view. An example search for Jetty, with
 the 'Component Info' tab visible, is displayed in <<fig-clm-tab-jetty>>.  It
 displays the results from the 'License Analysis' and any found 'Security
@@ -363,16 +364,16 @@ image::figs/web/component-info-cve-jetty.png[scale=50]
 image::figs/web/component-info-osvdb-jetty.png[scale=50]
 
 
-.Understanding the Difference, Nexus Professional - CLM Edition
+.Understanding the Difference, Nexus Pro+
 
 
-In this section, we've talked about the various ways CLM data is being used, at
+In this section, we've talked about the various ways component data is being used, at
 least at an introductory level. However, understanding the differences between
-the Sonatype CLM usage in Nexus Professional and Nexus Professional CLM may 
-still be a little unclear. Rather you are likely asking, "What do I get with Nexus Professional - Sonatype CLM Edition.
+the Sonatype hosted data services usage in Nexus Pro and Nexus Pro+ may 
+still be a little unclear. Rather you are likely asking, "What do I get with Nexus Pro+?
 
-Great question. With Sonatype CLM, Nexus Professional is expanded in the two key
-areas.
+Great question. Nexus Pro+ you get a Nexus Lifecycle server. This expands Nexus Pro 
+in two key areas.
 
 Policy Management::
 
@@ -381,15 +382,15 @@ included in your applications. This could be as simple as limiting the age of
 the component, or more complex, like prohibiting components with a certain type
 of licenses or security issue.
 
-Whatever the case, the process is supported by rules. Sonatype CLM Policy
+Whatever the case, the process is supported by rules. Nexus Lifecycle Policy
 management is a way to create those rules, and then track and evaluate your
 application. Any time a rule is broken, that's considered a policy violation.
 Violations can then warn, or even prevent a release.
 
-Here's an example of the Sonatype CLM features for Nexus Staging.
+Here's an example of the Nexus Lifecycle features for Nexus Staging.
 
 [[fig-clm-staging-repository-failure]]
-.Staging Repository Activity with a CLM Evaluation Failure and Details
+.Staging Repository Activity with a Nexus Lifecycle Evaluation Failure and Details
 image::figs/web/clm-staging-repository-failure.png[scale=60]
 
 Component Information Panel::
@@ -410,8 +411,8 @@ what security or license issues were encountered, as well as any policy
 violations.
 
 If you would like more information about these features, check out our
-link:http://books.sonatype.com/sonatype-clm-book/html/repository-manager-user-guide/index.html[Sonatype
-CLM Repository Manager Guide].
+link:http://books.sonatype.com/sonatype-clm-book/html/repository-manager-user-guide/index.html[Nexus Lifecycle and 
+Repository Manager Guide].
 
 [[using-sect-browse-groups]]
 === Browsing Groups
@@ -420,7 +421,7 @@ Nexus contains ordered groups of repositories that allow you to expose
 a series of repositories through a single URL. More often than not, an
 organization is going to point Maven at the default Nexus groups
 'Public Repositories'. Most endusers of Nexus are not going to know
-what artifacts are being served from what specific repository, and
+what components are being served from what specific repository, and
 they are going to want to be able to browse the public repository
 group. 
 
@@ -437,8 +438,8 @@ image::figs/web/repository-manager_browse-group.png[scale=60]
 When browsing a repository group's storage, you are browsing the underlying
 storage for all of the repositories in a group. If a repository group
 contains proxy repositories, the 'Browse Storage' tab will show all of
-the artifacts in the group that have been downloaded from the
-remote repositories. To browse and search all artifacts available in a
+the components in the group that have been downloaded from the
+remote repositories. To browse and search all components available in a
 group, click on the 'Browse Index' tab to load the interface shown
 in <<fig-nexus-browse-group-index>>.
 
@@ -452,7 +453,7 @@ image::figs/web/repository-manager_browse-group-index.png[scale=60]
 ==== Search Overview
 
 In the left-hand navigation area, there is an 'Artifact Search' text
-field next to a magnifying glass. To search for an artifact by groupId
+field next to a magnifying glass. To search for a component by groupId
 or artifactId, type in some text and click the magnifying glass.
 Typing in the search term +junit+ and clicking the
 magnifying glass should yield a search result similar to
@@ -464,7 +465,7 @@ image::figs/web/search-results.png[scale=50]
 
 The groupId in the 'Group' column and the artifactId in the 'Artifact'
 column identify each row in the search results table. Each row
-represents an aggregration of all artifacts in this 'Group' and
+represents an aggregration of all components in this 'Group' and
 'Artifact' coordinate.
 
 The 'Version' column displays the lastest version number available as
@@ -473,15 +474,15 @@ well as a link to 'Show All Versions'.
 The 'Most Popular Version' column displays the version that has the most
 downloads by all users accessing the Central Repository. This data can
 help with the selection of an appropriate version to use for a
-particular artifact.
+particular component.
 
-The 'Download' column displays direct links to all the artifacts
+The 'Download' column displays direct links to all the components
 available for the latest version. A typical list of
-downloadable artifacts would include the Java archive 'jar', the Maven
+downloadable components would include the Java archive 'jar', the Maven
 pom.xml file 'pom', a Javadoc archive 'javadoc.jar' and a Sourcecode
 archive 'sources.jar', but other download options are also added if
-more artifacts are available. Click on the link to download an
-artifact.
+more components are available. Click on the link to download an
+component.
 
 Each of the columns in the search results table can be used to sort
 the table in 'Ascending' or 'Descending' order. In addition, you can choose
@@ -493,14 +494,14 @@ visible in <<fig-search-results-column-options>>.
 image::figs/web/search-results-column-options.png[scale=50]
 
 The repository browser interface below the search results table will
-displays the artifact selected in the list in the repository structure
+displays the component selected in the list in the repository structure
 with the same information panels available documented in
-<<using-sect-browsing>>. An artifact could be present in more than one
+<<using-sect-browsing>>. An component could be present in more than one
 repository. If this is the case, click on the value next to 'Viewing
 Repository' to switch between multiple matching repositories.
 
 WARNING: Let me guess? You installed Nexus, ran to the search box,
-typed in the name of a group or an artifact, pressed search, and saw
+typed in the name of a group or a component, pressed search, and saw
 absolutely nothing. No results. Nexus isn't going to retrieve the
 remote repository indexes by default. You need to activate downloading
 of remote indexes for the three proxy repositories that Nexus are
@@ -527,10 +528,10 @@ button to run a new search with the specified parameters.
 The search results table contains one row per 'Group' (groupId),
 'Artifact' (artifactId), and 'Version'(version). 
 
-In addition, the 'Age' column displays the age of the artifacts being
-available on the Central Repository. Since most artifacts are
+In addition, the 'Age' column displays the age of the components being
+available on the Central Repository. Since most components are
 published to the Central Repository when released, this age gives you a
-good indication of the actual time since the release of the artifact.
+good indication of the actual time since the release of the component.
 
 The 'Popularity' column shows a relative popularity as compared to the
 other results in the search table. This can give you a good idea
@@ -542,14 +543,14 @@ well. Another reason could be that the new version does not provide
 signifcant improvements to warrant an upgrade for most users.
 
 The 'Security Issues' column shows the number of known security issues
-for the specific artifact. The 'License Threat' column shows a colored
+for the specific component. The 'License Threat' column shows a colored
 square with blue indicating no license threat and yellow, orange and
 red indicating increased license threats. More information about both
 indicators can be seen in the 'Component Info' panel below the list of
-artifacts for the specific artifact.
+components for the specific component.
 
 The 'Download' column provides download links for all the available
-artifacts.
+components.
 
 The following advanced searches are available:
 
@@ -558,17 +559,17 @@ navigation, this search will look for the specified strings in the
 groupId and artifactId.
 
 Classname Search:: Rather than looking at the coordinates of an
-artifact in the repository, the 'Classname Search' will look at the
-contents of the artifacts and look for Java classes with the specified
+component in the repository, the 'Classname Search' will look at the
+contents of the components and look for Java classes with the specified
 name. For example, try a search for a classname of +Pair+ to see how
 many library authors saw a need to implement such a class, saving you
 from potentially implementing yet another version.
 
 GAV Search:: The GAV search allows a search using the Maven
-coordinatess of an artifact. These are 'Group' (groupId), 'Artifact'
+coordinates of a component. These are 'Group' (groupId), 'Artifact'
 (artifactId), 'Version' (version), 'Packaging' (packaging), and 'Classifier'
-(classifier). At a minimum you need to specify a group, artifact, or
-version in your search. An example search would be with an artifact
+(classifier). At a minimum you need to specify a group, component, or
+version in your search. An example search would be with a component
 +guice+ and a classifier +no_aop+ or a group of
 +org.glassfish.main.admingui+ and a packaging +war+. The default
 packaging is 'jar', with other values as used in the Maven packaging
@@ -576,28 +577,28 @@ like 'ear', 'war', 'maven-plugin', 'pom', 'ejb' and many others being
 possible choices.
 
 Checksum Search:: Sometimes it is necessary to determine the version
-of a jar artifact in order to migrate to a qualified version. When
+of a jar component in order to migrate to a qualified version. When
 attempting this and neither the filename nor the contents of the
 manfiest file in the jar contain any useful information about the
 exact version of the jar, you can use 'Checksum Search' to identify the
-artifact. Create a sha1 checksum, e.g., with the +sha1sum+ command
+component. Create a sha1 checksum, e.g., with the +sha1sum+ command
 available on Linux or +fciv+ on Windows, and use the created string in a
 checksum search. This will return one result, which will provide you
 with the GAV coordinates to replace the jar file with a dependency
 declaration.
  
-Metadata Search:: Search for artifacts with specific metadata
+Metadata Search:: Search for components with specific metadata
 properties is documented in <<sect-metadata-search>>.
 
 TIP: The checksum search can be a huge timesaver when migrating a
 legacy build system, where the used libraries are checked into the
-version control system as binary artifacts with no version information
+version control system as binary components with no version information
 available.
 
 [[sect-metadata-search]]
 ==== Searching Artifact Metadata
 
-To search for artifacts with specific metadata, click on the 'Advanced
+To search for components with specific metadata, click on the 'Advanced
 Search' link directly below the search field in the 'Artifact Search'
 submenu of the Nexus menu. This opens the 'Search' panel and allows
 you to select 'Metadata Search' in the search type drop-down as shown
@@ -614,14 +615,14 @@ to 'Equals', 'Matches', 'Key Defined', or 'Not Equal'. 'Equals' and 'Not Equals'
 compare the value for a specific key. 'Matches' allows the usage of +\*+
 to allow any characters. E.g., looking for +tr*+ would match +true+ but
 also match +tree+. The 'Key Defined' operator will ignore any value provided
-and return all artifacts with the supplied key.
+and return all components with the supplied key.
 
 .Metadata Search Results for Custom Metadata
 image::figs/web/meta_search-function.png[scale=60]
 
-Once you locate a matching artifact in the results list,
-click on the artifact and then select the Artifact Metadata to examine
-an artifacts metadata as shown in <<fig-using-search-metadata-results>>.
+Once you locate a matching component in the results list,
+click on the component and then select the Artifact Metadata to examine
+an components metadata as shown in <<fig-using-search-metadata-results>>.
 
 [[fig-using-search-metadata-results]]
 .Metadata Search Results for Custom Metadata
@@ -632,26 +633,26 @@ image::figs/web/meta_search-result-0.png[scale=60]
 === Search Example: Analyzing a Security Vulnerability
 
 The following example details how you can analyze security issues of
-an artifact and determine a solution with the help of information available in
+a component and determine a solution with the help of information available in
 Nexus.
 
-You noticed the artifact with the 'Group' org.springframework, the
+You noticed the component with the 'Group' org.springframework, the
 'Artifact' spring-beans and 'Version' 2.5.4. Upon further inspection
 of your software build and the components used, you can confirm that
-this artifact is indeed part of your shipping software. You might have
+this component is indeed part of your shipping software. You might have
 discovered the need to investigate this initially by performing a
 repository health check as documented in the prior sections of <<rhc>>
 or an external resource such as a security mailing list.
 
-TIP: http://links.sonatype.com/products/insight/ci/home[Sonatype
-CLM for CI] can help you with the detection of license and
+TIP: http://links.sonatype.com/products/insight/ci/home[Nexus Lifecycle for CI] 
+can help you with the detection of license and
 security issues during continuous integration builds. 
 http://links.sonatype.com/products/insight/ac/home[Sonatype App Health
 Check] allows you to analyze already assembled application archives.
 
-A GAV search for the artifact in Nexus as documented in
+A GAV search for the component in Nexus as documented in
 <<search-components>> allows you to inspect the 'Component Info'
-tab for the artifact displayed in <<fig-rhc-spring-component-info>>.
+tab for the component displayed in <<fig-rhc-spring-component-info>>.
 
 [[fig-rhc-spring-component-info]]
 .GAV Search Results for +org.springframework:spring-beans+ and Component Info Tab for Version 2.5.4
@@ -661,7 +662,7 @@ For example, after reading the summary and inspecting the entries for the
 security issues in the security databases linked in the 'Problem Code' column,
 you decide that these issues affect your software and a fix is
 required. In order to determine your next steps you search for all
-versions of the +spring-beans+ artifact. As a result you receive the
+versions of the +spring-beans+ component. As a result you receive the
 list of all versions available partially displayed in
 <<fig-rhc-spring-list>>. The 'Security' column in the search results
 list displays the count of two security issues for the version 2.5.4
@@ -675,7 +676,7 @@ Looking at the 'Security Issues' column in the results allows you to
 determine that with the upgrade of the library to version 2.5.6.SEC02
 the count of security issues drops to zero. The same applies to
 version 2.5.6.SEC03, which appears to be the latest version of the 2.x
-version of the artifact. In addition, the table shows that early
+version of the component. In addition, the table shows that early
 versions of the 3.x releases were affected by security issues as well.
 
 With these results, you decide that an immediate update to version
@@ -692,8 +693,7 @@ the version used.
 
 The necessary steps will depend on the build system used, but in all
 cases you now have the information at your hands detailing why you should
-upgrade and what to what version to upgrade to. This allows you to carry out
-your component lifecycle management effectively. Sonatype CLM offers
+upgrade and what to what version to upgrade to. Nexus Lifecycle offers
 tools for these migration efforts as well as various ways to monitor
 your development for security, license, and other issues.
 
@@ -701,7 +701,7 @@ your development for security, license, and other issues.
 === Search Example: Resolving a License Issue
 
 The following example details how you can analyze a license issue of
-an artifact found in your repository health check and determine a
+a component found in your repository health check and determine a
 solution with the help of information available in Nexus. The same
 need for investigation might have been triggered by external means
 such as a need to do a legal review of all components as part of your
@@ -710,8 +710,8 @@ of materials.
 
 Your repository health check detail report indicated that Hibernate
 3.2.7.ga might have issues due to its 'Threat Level' declared as
-'Non-Standard'. Looking at your software artifacts you found that you
-are indeed using this version of Hibernate. Searching for the artifact
+'Non-Standard'. Looking at your software components you found that you
+are indeed using this version of Hibernate. Searching for the component
 in Nexus provides you with the search results list and the Component
 Info tab for the specific version displayed in <<fig-rhc-hibernate>>.
 
@@ -738,45 +738,45 @@ compatible with the distribution mechanism of your software and
 approved by your lawyers.
 
 In the above steps you learned how Nexus provides a lot of information
-allowing you to effectively carry out our component lifecycle
-management with a minimum amount of effort.
+allowing you to effectively manage your components during your 
+software development life cycle with a minimum amount of effort.
 
 [[using-sect-uploading]]
-=== Uploading Artifacts 
+=== Uploading Components 
 
 When your build makes use of proprietary or custom dependencies that
 are not available from public repositories, you will often need to
 find a way to make them available to developers in a custom Maven
 repository. Nexus ships with a preconfigured third-party repository
 that was designed to hold third-party dependencies that are used in
-your builds. To upload artifacts to a repository, select a hosted
+your builds. To upload components to a repository, select a hosted
 repository in the 'Repositories' panel and then click on the 'Artifact
 Upload' tab. Clicking on the 'Artifact Upload' tab will display the
-tab shown in <<fig-using-artifact-upload>>.
+tab shown in <<fig-using-component-upload>>.
 
-[[fig-using-artifact-upload]]
-.Artifact Upload Tab
+[[fig-using-component-upload]]
+.Component Upload Tab
 image::figs/web/using_artifact-upload.png[scale=50]
 
-To upload an artifact, click on 'Select Artifact(s) to Upload...', and
-select one or more artifacts from the filesystem to upload. Once you
-have selected an artifact, you can modify the classifier and the
+To upload a component, click on 'Select Artifact(s) to Upload...', and
+select one or more components from the filesystem to upload. Once you
+have selected a component, you can modify the classifier and the
 extension before clicking on the 'Add Artifact' button. Once you have
 clicked on the 'Add Artifact' button, you can then configure the source
 of the 'Group', 'Artifact', 'Version' (GAV) parameters. 
 
-If the artifact you are uploading is a jar file that was created by
+If the component you are uploading is a jar file that was created by
 Maven it will already have POM information embedded in it. If you are
 uploading a jar from a vendor you will likely need to set the group
-identifier, artifact identifier, and version manually. To do this,
+identifier, component identifier, and version manually. To do this,
 select 'GAV Parameters' from the 'GAV Definition' drop-down at the top of
 this form. This will expose a set of form fields
 which will let you set the 'Group', 'Artifact', 'Version', and 'Packaging' of
-the artifacts being uploaded. Packaging can be selected from the list
+the components being uploaded. Packaging can be selected from the list
 or provided by typing the value into the input box.
 
-If you would prefer to set the group, artifact, and version from a POM
-file associated with the uploaded artifact, select 'From POM' in the 'GAV
+If you would prefer to set the group, component, and version from a POM
+file associated with the uploaded component, select 'From POM' in the 'GAV
 Definition' drop-down.  This will
 expose a button labeled 'Select POM to Upload'. Once a POM file has
 been selected for upload, the name of the POM file will be displayed
@@ -786,12 +786,12 @@ TIP: Uploading a POM file allows you to add further details like
 dependencies to the file, which improves the quality of the upload by
 enabling transitive dependency management.
 
-The 'Artifact Upload' panel supports multiple artifacts with the same
-group, artifact, and version identifiers. For example, if you need to
-upload multiple artifacts with different classifiers, you may do so by
+The 'Artifact Upload' panel supports multiple components with the same
+group, component, and version identifiers. For example, if you need to
+upload multiple components with different classifiers, you may do so by
 clicking on 'Select Artifact(s) for Upload' and 'Add Artifact' multiple
 times. A common use case for this upload is to upload the pom and jar
-file as well as the javadoc and sources jar files file for an artifact.
+file as well as the javadoc and sources jar files file for a component.
 
 [[using-sect-feeds]]
 === Browsing System Feeds
@@ -800,8 +800,8 @@ Nexus provides feeds that expose system events. You can browse these
 feeds by clicking on 'System Feeds' under the 'Views/Repositories'
 menu.  Clicking on 'System Feeds' will show the panel in
 <<fig-repoman-system-feeds>>. You can use this simple interface to
-browse the most recent reports of artifact deployments, cached
-artifacts, broken artifacts, storage changes and other events that
+browse the most recent reports of component deployments, cached
+components, broken components, storage changes and other events that
 have occurred in Nexus.
 
 [[fig-repoman-system-feeds]]
@@ -840,35 +840,35 @@ you were attempting to read. Available system feeds include:
 
 - Authentication and Authorization Events
 
-- Broken artifacts in all Nexus repositories
+- Broken components in all Nexus repositories
 
 - Broken files in all Nexus repositories
 
 - Error and Warning events
 
-- New artifacts in all Nexus repositories
+- New components in all Nexus repositories
 
-- New cached artifacts in all Nexus repositories
+- New cached components in all Nexus repositories
 
 - New cached files in all Nexus repositories
 
-- New cached release artifacts in all Nexus repositories
+- New cached release components in all Nexus repositories
 
-- New deployed artifacts in all Nexus repositories
+- New deployed components in all Nexus repositories
 
 - New deployed files in all Nexus repositories
 
-- New deployed release artifacts in all Nexus repositories
+- New deployed release components in all Nexus repositories
 
 - New files in all Nexus repositories
 
-- New release artifacts in all Nexus repositories
+- New release components in all Nexus repositories
 
-- Recent artifact storage changes in all Nexus repositories
+- Recent component storage changes in all Nexus repositories
 
 - Recent file storage changes in all Nexus repositories
 
-- Recent release artifact storage changes in all Nexus repositories
+- Recent release component storage changes in all Nexus repositories
 
 - Repository Status Changes in Nexus
 
