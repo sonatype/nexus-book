@@ -1,92 +1,114 @@
-  
 [[repoman]]
 == Components, Repository Management and Software Supply Chain Automation
 
-=== The Basics - Components, Repositories and Repository Formats
-
-add assets as well? 
-
-=== Repository Management and Repository Manager
-
-tbd - all about Nexus repo manager
-
-=== Software Supply Chain Automation
-
-tbd - about Nexus Lifecycle
-
-
 === Introduction
 
-Component Lifecycle Management (CLM) in general and, specifically, the
-subset Repository Management are two aspects of current software
-development best practices that are closely related to Nexus usage. In
-this chapter you will learn more about CLM and repository management
-and how you can take advantage of Nexus features to implement these
-best practices.
+Using the repository manager Nexus as well as the tools for software
+supply chain automation from Nexus Lifecycle requires an understanding
+of a few concepts and terms like 'Component', 'Repository' and
+others. This chapter provides you with all the necessary background
+and knowledge as well as an idea of a progression in your usage of
+Nexus and Nexus Lifecyle.   
 
-[[clm]]
-=== Component Lifecycle Management
+=== The Basics - Components, Repositories and Repository Formats
 
-Component lifecycle management can be defined as the practice of
- analysis, control, and monitoring of all components used in your
- software development lifecycle.
+Nexus and Nexus Lifecycle are all about working with components and
+repositories. 
 
-It has emerged as a new category of software development products,
-information services, and practices that help manage agile,
-collaborative, component-based development efforts. They allows you to
-ensure the integrity of the modern software supply chain, amplifying
-the benefits of modern development, while reducing risk.
+.So what are components?
 
-==== Increasing Component Usage and Open Source Components
+A component is a resource that is used as part of your software
+application or required as part of your build process. It can also be
+an entire application or a plain resource without any dynamic
+behaviour.
 
-Modern software development practices have shifted dramatically from
-large efforts of writing new code to the usage of components to
-assemble applications. This approach limits the amount of code
-authorship to the business-specific aspects of your software. 
+Typically these components are archives of a large variety of files
+including
 
-A large number of open source components in the form of libraries,
-reusable widgets or whole applications, application servers and others
-are now available featuring very high levels of quality and feature
-sets that could not be implemented as a side effect of your business
-application development. For example creating a new web application
-framework and business workflow system just to create a website with a
-publishing workflow would be extremely inefficient.
+* Java byte code in class files
+* C object files
+* text files e.g. properties files, XML files, JavaScript code, HTML, CSS
+* binary files such as images, PDF files, sound and music files
+* and many others
 
-Open source has become an integral part of modern applications in this
-form of components. A typical enterprise application is comprised of
-tens, if not hundreds, of components accounting for 80% and more of the
-application.
+The archives are using a large variety of formats such as
 
-==== Security Vulnerability and License Compliance Risks
+* Java JAR, WAR, EAR formats
+* plain ZIP or .tar.gz files
+* Other package formats such as NuGet packages, Ruby gems, NPM
+  packages
+* Executable formats such as .exe or .sh files, Android APK files,
+  various installer formats, ...
 
-With the huge benefits derived from using open source as well as
-commercial components comes the complexity of understanding all the
-implications to your software delivery. These include security
-vulnerabilities, license compliance problems as well as quality
-issues that need to be managed through the whole life cycle starting
-at the inception of the sofware all the way through development,
-qualitiy assurance, production deployments and onwards until the
-decommissioning of the software. 
+Components can in turn be composed of multiple components
+themselves. E.g. consider a Java web application packaged as a WAR
+component. It contains a number of JAR components and a number of
+JavaScript libraries. All of these are standalone components in other
+contexts that were simply includes as part of the WAR component.
 
-The number of components, their rapid change rate with new releases, as
-well as the ease of adding new dependencies, make the management and
-full understanding of all involved components a task, that cannot be
-carried out manually and requires the assistance of tools such as
-Nexus and Nexus Lifecycle.
+.Components in Repositories
 
-==== Nexus and Component Lifecycle Management
+A wide variety of components exists and more are continuously created
+by the open source community as well as proprietary vendors. There are
+libraries and frameworks written in various languages on different
+platforms that are used the development of applications.
 
-Nexus provides a number of tools that can help you in your CLM
-efforts. Besides focusing on being a component repository manager it
-includes features, such as the display of security vulnerabilities as
-well as license analysis results within search results and the
-Repository Health Check reports for a proxy repository. 
+In order to ease the consumption and usage of components, they are
+aggregated into collections of components. These are most of a
+repository and are available on the internet. On different platforms
+terms such as registry are used for the same concept.
 
-Specific examples about using Nexus for CLM related tasks can be found
-in <<rhc>>.
+Example for such repositories are
+
+- the Central Repository also known as Maven Central
+- the NuGet Gallery
+- RubyGems.org
+- npmjs.org
+
+and a host of others. Components in these repositories are accessed by
+numerous tools including
+
+* package managers like npm, nuget or gem, 
+* build tools such as Maven, Gradle, rake, grunt
+* IDE's such as Eclipse, IntelliJ 
+
+and many, many others.
+
+.Repositories have Formats
+
+The different repositories use different technologies to store and
+expose the components in them to the client tools. This defines a
+repository format. 
+
+E.g. the Maven repository format relies on a specific directory
+structure defined by the identifiers of the components and a number of
+XML formatted files for metadata. Components interaction is performed
+via plain HTTP commands and some additional custom interaction with
+the XML files.
+
+Other repository formats use databases for storage and REST API
+interactions, or different diretory structures with format specific
+files for the metadata.
 
 [[repoman-sect-intro]]
 === Repository Management
+
+The proliferation of different repository formats and tools accessing
+them as well as the emergency of more publically available
+repositories has triggered the need to manage access and usage of
+these repositories.
+
+In addition hosting your own private repositories for internal
+components has proven to be a very efficient methodology to exchange
+components during all phases of the software development life
+cycle. It is considered a well-known best practice at this stage.
+
+
+
+
+
+
+
 
 Repository Management is a critical practice that is part of your
 Component Lifecycle Managment implementation.  Without repository
@@ -694,8 +716,74 @@ are writing some Java library, publishing it to your own Nexus
 instance serving a public repository will make it easier for people to
 start using your code right away.
 
+
+[[clm]]
+=== Software Supply Chain Automation
+
+Component lifecycle management can be defined as the practice of
+ analysis, control, and monitoring of all components used in your
+ software development lifecycle.
+
+It has emerged as a new category of software development products,
+information services, and practices that help manage agile,
+collaborative, component-based development efforts. They allows you to
+ensure the integrity of the modern software supply chain, amplifying
+the benefits of modern development, while reducing risk.
+
+==== Increasing Component Usage and Open Source Components
+
+Modern software development practices have shifted dramatically from
+large efforts of writing new code to the usage of components to
+assemble applications. This approach limits the amount of code
+authorship to the business-specific aspects of your software. 
+
+A large number of open source components in the form of libraries,
+reusable widgets or whole applications, application servers and others
+are now available featuring very high levels of quality and feature
+sets that could not be implemented as a side effect of your business
+application development. For example creating a new web application
+framework and business workflow system just to create a website with a
+publishing workflow would be extremely inefficient.
+
+Open source has become an integral part of modern applications in this
+form of components. A typical enterprise application is comprised of
+tens, if not hundreds, of components accounting for 80% and more of the
+application.
+
+==== Security Vulnerability and License Compliance Risks
+
+With the huge benefits derived from using open source as well as
+commercial components comes the complexity of understanding all the
+implications to your software delivery. These include security
+vulnerabilities, license compliance problems as well as quality
+issues that need to be managed through the whole life cycle starting
+at the inception of the sofware all the way through development,
+qualitiy assurance, production deployments and onwards until the
+decommissioning of the software. 
+
+The number of components, their rapid change rate with new releases, as
+well as the ease of adding new dependencies, make the management and
+full understanding of all involved components a task, that cannot be
+carried out manually and requires the assistance of tools such as
+Nexus and Nexus Lifecycle.
+
+==== Nexus and Component Lifecycle Management
+
+Nexus provides a number of tools that can help you in your CLM
+efforts. Besides focusing on being a component repository manager it
+includes features, such as the display of security vulnerabilities as
+well as license analysis results within search results and the
+Repository Health Check reports for a proxy repository. 
+
+Specific examples about using Nexus for CLM related tasks can be found
+in <<rhc>>.
+
+
+tbd - about Nexus Lifecycle
+
+
 [[repoman-sect-adopting]]
-=== Adopting a Repository Manager
+=== Adopting Nexus and Nexus Lifecycle
 
 Adopting a repository manager is not an all or nothing proposition,
 and there are various levels (or stages) of adoption that can be
@@ -897,40 +985,39 @@ in local repositories.
 
 Provisioning:: Using Nexus as an integration point between Engineering
 and Operations means that Engineering can be responsible for
-delivering solid, tested components to Quality Assurance and Operations
-via a standard repository format. Often development teams are roped
-into the production deployment story and become responsible for
-building entire production environments within a build system.  This
-blends the functions and roles of software engineering with those of
-systems administration thus blurring the lines between Engineering and
-Operations. If you use Nexus as an end point for releases from
+delivering solid, tested components to Quality Assurance and
+Operations via a standard repository format. Often development teams
+are roped into the production deployment story and become responsible
+for building entire production environments within a build system.
+This blends the functions and roles of software engineering with those
+of systems administration thus blurring the lines between Engineering
+and Operations. If you use Nexus as an end point for releases from
 Engineering, Operations can then retrieve, assemble, and configure an
 application from tested components in the Nexus repository.
 
 Compliance:: Procurement, staging, and audit logs are all features
 that increase the visibility into who and what is involved with your
-software development efforts. Using Nexus Pro, Engineering can
-create the reports and documents that can be used to facilitate
-discussions about oversight.  Organizations subject to various
-regulations often need to produce a list of components involved in a
-software release. Legal departments often require a list of open
-source licenses being used in a particular software component, and
-managers often lack critical visibility into the software development
-process.
+software development efforts. Using Nexus Pro, Engineering can create
+the reports and documents that can be used to facilitate discussions
+about oversight.  Organizations subject to various regulations often
+need to produce a list of components involved in a software
+release. Legal departments often require a list of open source
+licenses being used in a particular software component, and managers
+often lack critical visibility into the software development process.
 
 Procurement:: The ease with which today's developer can add a
 dependency on a new open source library and download this library from
 a Central repository has a downside. Organizations large and small are
 constantly wondering what open source libraries are being used in
 applications, and whether these libraries have acceptable open source
-licenses for distribution. The Procurement features of Nexus Pro 
-give architects and management more oversight of the
-components that are allowed into an organization. Using the Procurement
-features, a Nexus administrator or Procurement manager can allow or
-deny specific components by group, version, or path. You can use the
-procurement manager as a firewall between your own organization's
-development environment and the 95,000 components available on the
-Maven Central repository.
+licenses for distribution. The Procurement features of Nexus Pro give
+architects and management more oversight of the components that are
+allowed into an organization. Using the Procurement features, a Nexus
+administrator or Procurement manager can allow or deny specific
+components by group, version, or path. You can use the procurement
+manager as a firewall between your own organization's development
+environment and the 95,000 components available on the Maven Central
+repository.
 
 Enterprise Security:: Nexus' LDAP integration allows an enterprise to
 map existing LDAP groups to Nexus roles and provides Nexus
@@ -938,16 +1025,17 @@ administrators with a highly configurable interface to control which
 individuals or groups have access to a fine-grained set of Nexus
 permissions.
 
-Staging:: Nexus Pro adds an important step to the software
-release workflow, adding the concept of a managed (or staged) release
-to a hosted repository. When a developer needs to perform a production
-release, Nexus Pro can isolate the components involved in a
-release in a staged repository that can then be certified and
-tested. A manager or a quality assurance tester can then promote or
-discard a release. The staging feature allows you to specify the
-individuals that are allowed to promote a release and keeps an audit
-of who was responsible for testing, promoting, or discarding a
-software release.
+Staging:: Nexus Pro adds an important step to the software release
+workflow, adding the concept of a managed (or staged) release to a
+hosted repository. When a developer needs to perform a production
+release, Nexus Pro can isolate the components involved in a release in
+a staged repository that can then be certified and tested. A manager
+or a quality assurance tester can then promote or discard a
+release. The staging feature allows you to specify the individuals
+that are allowed to promote a release and keeps an audit of who was
+responsible for testing, promoting, or discarding a software release.
+
+
 
 ////
 /* Local Variables: */
