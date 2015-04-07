@@ -17,10 +17,10 @@ repositories.
 
 .So what are components?
 
-A component is a resource that is used as part of your software
-application or required as part of your build process. It can also be
-an entire application or a plain resource without any dynamic
-behaviour.
+A component is a resource like a library or a framework that is used
+as part of your software application or required as part of your build
+process. It can also be an entire application or a static resource
+like an image without any dynamic behaviour.
 
 Typically these components are archives of a large variety of files
 including
@@ -31,7 +31,7 @@ including
 * binary files such as images, PDF files, sound and music files
 * and many others
 
-The archives are using a large variety of formats such as
+The archives are using  numerous formats such as
 
 * Java JAR, WAR, EAR formats
 * plain ZIP or .tar.gz files
@@ -40,23 +40,26 @@ The archives are using a large variety of formats such as
 * Executable formats such as .exe or .sh files, Android APK files,
   various installer formats, ...
 
-Components can in turn be composed of multiple components
+Components can, in turn, be composed of multiple components
 themselves. E.g. consider a Java web application packaged as a WAR
 component. It contains a number of JAR components and a number of
 JavaScript libraries. All of these are standalone components in other
-contexts that were simply includes as part of the WAR component.
+contexts that are included as part of the WAR component.
 
 .Components in Repositories
 
 A wide variety of components exists and more are continuously created
 by the open source community as well as proprietary vendors. There are
 libraries and frameworks written in various languages on different
-platforms that are used the development of applications.
+platforms that are used the development of applications every day and
+it has become a default pattern to build applications by combining the
+features of muliple components with your own custom application code
+to create an application for a specific domain.
 
 In order to ease the consumption and usage of components, they are
-aggregated into collections of components. These are most of a
-repository and are available on the internet. On different platforms
-terms such as registry are used for the same concept.
+aggregated into collections of components. These are most of the time
+called a repository and are available on the internet. On different
+platforms terms such as registry are used for the same concept.
 
 Example for such repositories are
 
@@ -82,7 +85,7 @@ repository format.
 
 E.g. the Maven repository format relies on a specific directory
 structure defined by the identifiers of the components and a number of
-XML formatted files for metadata. Components interaction is performed
+XML formatted files for metadata. Component interaction is performed
 via plain HTTP commands and some additional custom interaction with
 the XML files.
 
@@ -90,178 +93,43 @@ Other repository formats use databases for storage and REST API
 interactions, or different diretory structures with format specific
 files for the metadata.
 
-[[repoman-sect-intro]]
-=== Repository Management
+=== An Example - Maven Repository Format
 
-The proliferation of different repository formats and tools accessing
-them as well as the emergency of more publically available
-repositories has triggered the need to manage access and usage of
-these repositories.
+Maven developers are familiar with the concept of a repository. In the
+case of a repository using the Maven format, the primary type of
+binary component is a JAR file containing Java bytecode.  Howeverv
+there is no limit to what type of component can be stored in a Maven
+repository. For example, one could just as easily deploy WAR or EAR
+archives, source archives, Flash libraries and applications, or Ruby
+libraries to a Maven repository.
 
-In addition hosting your own private repositories for internal
-components has proven to be a very efficient methodology to exchange
-components during all phases of the software development life
-cycle. It is considered a well-known best practice at this stage.
-
-
-
-
-
-
-
-
-Repository Management is a critical practice that is part of your
-Component Lifecycle Managment implementation.  Without repository
-management your component usage is effectively out of control and
-cannot be governed and managed. This makes it impossible to track
-security, license, and quality issues you are exposed to due to the
-components you use from your source code through your build
-environments and releases to production usage.
-
-Repository managers serve two purposes: they act as highly
-configurable proxies between your organization and the public 
-repositories and they provide an organization with a deployment
-destination for its own generated components. Just as Source Code
-Management (SCM) tools are designed to manage source components,
-repository managers have been designed to manage and track external
-dependencies and components generated by your build. They are an
-essential part of any enterprise or open-source software development
-effort, and they enable greater collaboration between developers and
-wider distribution of software.
-
-==== Proxying Public Repositories
-
-Proxying and caching a remote public repository can speed up your
-builds by reducing redundant downloads over the public Internet.  If a
-developer in your organization needs to download version 2.5 of the
-Spring Framework and you are using Nexus, the dependencies (and the
-dependency's dependencies) only need to be downloaded from the remote
-repository once.
-
-With a high-speed connection to the Internet this might seem like a
-minor concern, but if you are constantly asking your developers to
-download hundreds of megabytes of third-party dependencies, the real
-cost savings are going to be the time it takes Maven to check for new
-versions of dependencies and to download dependencies over the public
-Internet.
-
-Proxying and serving Maven dependencies from a local repository cache
-can save you hundreds of HTTP requests over the public Internet, and
-in very large multi-module projects, this can shave minutes from a
-build.
-
-==== Managing Releases and Snapshots
-
-If your project is relying on a number of snapshot dependencies, Maven
-will need to regularly check for updated versions of these
-snapshots. Depending on the configuration of your remote repositories,
-Maven will check for snapshot updates periodically, or it might be
-checking for snapshot updates on every build. When Maven checks for a
-snapshot update it needs to interrogate the remote repository for the
-latest version of the snapshot dependency. Depending on your
-connection to the public Internet and the load on the Maven Central
-repository, a snapshot update can add seconds to your project's build
-for each snapshot dependency you rely upon.
-
-When you host a local repository proxy with Nexus, you reduce the
-amount of time it takes for Maven to check for a newer version as your
-build interacts with a local repository cache. If you develop software
-with snapshot dependencies, using a local repository manager will save
-you a considerable amount of time, as your 5-10 second snapshot update
-checks against the public Central Repository are going to execute in
-hundreds of milliseconds (or less) when they are executed against a
-local resource.
-
-==== Getting Control of Dependencies
-
-In addition to the simple savings in time and bandwidth, a repository
-manager provides an organization with control over what is downloaded
-by Maven. You can include or exclude specific components from the
-public repository, and having this level of control over what is
-downloaded from the Maven Central repository is a prerequisite for
-many organizations which have a need for strict standards for the
-quality and security of the dependencies used in an enterprise system.
-
-If you want to standardize on a specific version of a dependency like
-Hibernate or Spring, you can enforce this standardization by only
-providing access to a specific version of a component in Nexus.  You
-might be concerned with making sure that every external dependency has
-a license compatible with your legal standards for adopting and
-integrating open source libraries. If you are producing an application
-which is distributed, you might want to make sure that no one
-inadvertently adds a dependency on a third-party library covered under
-a copy-left license like the General Public License (GPL). All of this
-is possible with Nexus.
-
-Repository managers are a central point of access to external binary
-software components and dependencies upon which your systems
-rely. Nexus provides a level of control that is essential when you are
-trying to track and manage the libraries and frameworks your software
-depends upon.
-
-==== Nexus for Collaboration
-
-Aside from the benefits of mediating access to remote repositories, a
-repository manager also provides an important platform for
-collaborative software development. Unless you expect every member of
-your organization to download and build every single internal project
-from source, you will want to provide a mechanism for developers and
-departments to share binary components (both snapshots and releases)
-for internal software projects. Internal groups often consume the APIs
-and systems which are generated by other internal groups. When you
-adopt Nexus as a deployment platform for internal components, you can
-easily share components and libraries between groups of developers.
-
-Nexus provides you with a deployment target for your software
-components. Once you install Nexus, you can start using Maven to
-deploy snapshots and releases to internal repositories, which can then
-be combined with other repositories in repository groups. Over time,
-this central deployment point for internal projects becomes the fabric
-for collaboration between different development teams and
-operations. Nexus is the secret ingredient that allows an organization
-to scale its development effort without sacrificing agility.
-
-[[repoman-sect-repo]]
-=== What is a Repository?
-
-Maven developers are familiar with the concept of a repository: a
-collection of binary software components and metadata stored in a
-defined directory structure which is used by clients such as Apache
-Ivy to retrieve binaries during a build process. In the case of the
-Maven repository, the primary type of binary component is a JAR file
-containing Java bytecode, but there is no limit to what type of
-component can be stored in a Maven repository. For example, one could
-just as easily deploy documentation archives, source archives, Flash
-libraries and applications, or Ruby libraries to a Maven repository. A
-Maven repository provides a platform for the storage, retrieval, and
-management of binary software components and metadata.
-
-In Maven, every software component is described by an XML document
+Every software component is described by an XML document
 called a Project Object Model (POM). This POM contains information
 that describes a project and lists a project's dependencies -- the
 binary software components which a given component depends upon for
 successful compilation or execution. 
 
-When Maven downloads a dependency from a repository, it also downloads
-that dependency's POM. Given a dependency's POM, Maven can then
-download any other libraries which are required by that
-dependency. The ability to automatically calculate a project's
-dependencies and transitive dependencies is made possible by the
-standard and structure set by the Maven repository.
+When Maven downloads a component like a dependency or a plugin from a
+repository, it also downloads that component's POM. Given a
+component's POM, Maven can then download any other components which
+are required by that component. The ability to automatically calculate
+a project's dependencies and transitive dependencies is made possible
+by the standard and structure set by the Maven repository format.
 
-Maven and other tools, such as Ivy which interact with a repository to
-search for binary software components, model the projects they manage
-and retrieve software components on-demand from a repository. When you
-download and install Maven without any customization, Maven will
-retrieve components from the Central Repository which serves
-millions of Maven users every single day. While you can configure
-Maven to retrieve binary software components from a collection of
-mirrors, the best practice is to install Nexus and use it to proxy and
-cache the contents of Central on your own network. 
+Maven and other tools, such as Ivy or Gradle which interact with a
+Maven repository to search for binary software components, model the
+projects they manage and retrieve software components on-demand from a
+repository. When you download and install Maven without any
+customization, Maven will retrieve components from the Central
+Repository which serves millions of Maven users every single day. It
+is the default, built-in repository using the Maven repository format
+managed by Sonatype.
 
-In addition to Central, there are a number of major organizations, such
-as Red Hat, Oracle, and Codehaus which maintain separate
-repositories.
+In addition to the Central, there are a number of major organizations,
+such as Red Hat, Oracle or the Apache Software foundation, which
+maintain separate, additional repositories. Best practice to
+facilitate these available repositories is to install Nexus and use it
+to proxy and cache the contents on your own network.
 
 While this might seem like a simple, obvious mechanism for
 distributing components, the Java platform existed for several years
@@ -299,10 +167,10 @@ The two types of components managed by a repository manager are:
 
 Release:: A release component is a component which was created by a
 specific, versioned release. For example, consider the 1.2.0 release
-of the commons-lang library stored in the Maven Central
-repository. This release component, commons-lang-1.2.0.jar, and the
+of the commons-lang library stored in the Central
+Repository. This release component, commons-lang-1.2.0.jar, and the
 associated POM, commons-lang-1.2.0.pom, are static objects which will
-never change in the Maven Central repository. Released components are
+never change in the Central Repository. Released components are
 considered to be solid, stable, and perpetual in order to guarantee
 that builds which depend upon them are repeatable over time. The
 released JAR component is associated with a PGP signature, an MD5 and
@@ -339,16 +207,16 @@ groupId:: A group identifier groups a set of components into a logical
 group. Groups are often designed to reflect the organization under
 which a particular software component is being produced. For example,
 software components being produced by the Maven project at the Apache
-Software Foundation are available under the groupId org.apache.maven.
+Software Foundation are available under the groupId `org.apache.maven`.
 
-artifactId:: An component is an identifier for a software component. An
+artifactId:: An 'artifactId' is an identifier for a software component. A
 component can represent an application or a library; for example, if
 you were creating a simple web application your project might have the
 artifactId "simple-webapp", and if you were creating a simple library,
 your component might be "simple-library". The combination of groupId
 and artifactId must be unique for a project.
 
-version:: The version of a project follows the established convention
+version:: The version of a project ideally follows the established convention
 of Major, Minor, and Point release versions. For example, if your
 simple-library component has a Major release version of 1, a minor
 release version of 2, and point release version of 3, your version
@@ -360,14 +228,14 @@ stage of testing meaningful to consumers of a software component.
 packaging:: Maven was initially created to handle JAR files, but a
 Maven repository is completely agnostic about the type of component it
 is managing. Packaging can be anything that describes any binary
-software format including ZIP, SWC, SWF, NAR, WAR, EAR, SAR.
+software format including ZIP, NAR, WAR, EAR, SAR, AAR and others.
 
 ==== Addressing Resources in a Repository
 
 Tools designed to interact Maven repositories translate component
 coordinates into a URL which corresponds to a location in a Maven
-repository. If a tool such as Maven is looking for version 1.2.0 of
-the commons-lang JAR in the group org.apache.commons, this request is
+repository. If a tool such as Maven is looking for version `1.2.0` of
+the `commons-lang` JAR in the group `org.apache.commons`, this request is
 translated into:
 
 ----
@@ -381,26 +249,26 @@ Maven would also download the corresponding POM for commons-lang
 <repoURL>/org/apache/commons/commons-lang/1.2.0/commons-lang-1.2.0.pom
 ----
 
-This POM may contain references to other dependencies which would then
+This POM may contain references to other dependencies, which would then
 be retrieved from the same repository using the same URL patterns.
 
 ==== The Central Repository
 
-The most useful Maven repository is the Central Repository. The
-Central Repository is the largest repository for Java-based components
-and the default repository built into Apache Maven. Statistics about
-the size of the Central Repository are available at
+The Central Repository is the largest repository for Java-based
+components and the default repository built into Apache Maven. It can
+be easily used from other build tools as well. Statistics about the
+size of the Central Repository are available at
 http://search.maven.org/#stats[http://search.maven.org/#stats]. You
-can look at the Central Repository as an example of how Maven repositories
-operate and how they are assembled. Here are some of the properties of
-release repositories such as the Central Repository:
+can look at the Central Repository as an example of how Maven
+repositories operate and how they are assembled. Here are some of the
+properties of release repositories such as the Central Repository:
 
 Component Metadata:: All software components added to the Central
 Repository require proper metadata, including a Project Object Model
 (POM) for each component which describes the component itself and any
 dependencies that software component might have.
 
-Release Stability:: Once published to the Central Repository, an
+Release Stability:: Once published to the Central Repository, a
 component and the metadata describing that component never change. This
 property of release repositories guarantees that projects which depend
 on releases will be repeatable and stable over time. While new
@@ -409,30 +277,46 @@ assigned a release number on the Central Repository, there is a strict
 policy against modifying the contents of a software component after a
 release.
 
-Repository Mirrors:: The Central Repository is a public resource, and
-it is currently used by the millions of developers who have adopted
-Maven and other build tools that understand how to interact with the
-Maven repository structure. There are a series of mirrors for the
-Central Repository which are constantly synchronized. Users are
-encouraged to query for project metadata and cryptographic hashes and
-they are encouraged to retrieve the actual software components from one
-of Central's many mirrors.  Tools like Nexus are designed to retrieve
-metadata from the Central Repository and component binaries from
-mirrors.
-
 Component Security:: The Central Repository contains cryptographic
 hashes and PGP signatures, which can be used to verify the authenticity
 and integrity of software components served from Central or one of the
 many mirrors of Central and supports connection to Central in a secure
-manner via HTTP.
+manner via HTTPS.
 
-[[repoman-sect-repoman]]
-=== What is a Repository Manager
+Performance:: The Central Repository is exposed to the users globally
+via high performance content delivery network of servers. 
 
-If you use Maven, you are using a repository to retrieve components and
-Maven plugins. In fact, Maven used a Maven repository to retrieve core
-plugins that implement the bulk of the features used in your
-builds. Once you start to rely on repositories, you realize how easy
+[[repoman-sect-intro]]
+=== Repository Management
+
+The proliferation of different repository formats and tools accessing
+them as well as the emergence of more publically available
+repositories has triggered the need to manage access and usage of
+these repositories.
+
+In addition, hosting your own private repositories for internal
+components has proven to be a very efficient methodology to exchange
+components during all phases of the software development life
+cycle. It is considered a well-known best practice at this stage.
+
+The task of managing all the repositories your development teams
+interact with can be supported by the use of a dedicated server
+application - a repository manager.
+
+Repository managers serve two purposes. They act as highly
+configurable proxies between your organization and the public 
+repositories and they provide an organization with a deployment
+destination for its own generated components. Just as Source Code
+Management (SCM) tools are designed to manage source components,
+repository managers have been designed to manage and track external
+dependencies and components generated by your build.
+
+Repository managers are an essential part of any enterprise or
+open-source software development effort, and they enable greater
+collaboration between developers and wider distribution of software,
+by facilitating the exchange and usage of binary components.
+
+ Once you start to rely on repositories, you realize how easy
 it is to add a dependency on an open source software library available
 in the Maven Central repository, and you might start to wonder how you
 can provide a similar level of convenience for your own
@@ -451,6 +335,9 @@ Put simply, a repository manager provides two core features:
 * The ability the host a repository providing an organization with a
   deployment target for software components.
 
+
+==== Capabilites of a Repository Manager
+
 In addition to these two core features, a repository manager also
 allows you to manage binary software components through the software
 development lifecycle, search and catalogue software components, audit
@@ -458,11 +345,48 @@ development and release transactions, and integrate with external
 security systems, such as LDAP. The following sections define the
 feature sets of Nexus OSS and Nexus Pro.
 
-==== Core Capabilities of a Repository Manager
 
-The base-line features of a repository manager are a description of
-the core capabilities of Nexus OSS. Nexus OSS provides
-for the:
+Proxying Public Repositories:: Proxying and caching a remote public
+repository can speed up your builds by reducing redundant downloads
+over the public Internet.  If a developer in your organization needs
+to download version 2.5 of the Spring Framework and you are using
+Nexus, the dependencies (and the dependency's dependencies) only need
+to be downloaded from the remote repository once. Without a repository
+manager each developer workstation and each continuous integration
+server node needs to download the component at least once.
++
+With a high-speed connection to the Internet this might seem like a
+minor concern, but if you are constantly asking your developers to
+download hundreds of megabytes of third-party dependencies, the real
+cost savings are going to be the time it takes Maven to check for new
+versions of dependencies and to download dependencies over the public
+Internet.
++
+Proxying and serving Maven dependencies from a local repository cache
+can save you hundreds of HTTP requests over the public Internet, and
+in very large multi-module projects, this can shave minutes from a
+build and signifcantly reduce your download requirements.
+
+Managing Releases and Snapshots:: If your project is relying on a
+number of snapshot dependencies, Maven will need to regularly check
+for updated versions of these snapshots. Depending on the
+configuration of your remote repositories, Maven will check for
+snapshot updates periodically, or it might be checking for snapshot
+updates on every build. When Maven checks for a snapshot update it
+needs to interrogate the remote repository for the latest version of
+the snapshot dependency. Depending on your connection to the public
+Internet and the load on the Maven Central repository, a snapshot
+update can add seconds to your project's build for each snapshot
+dependency you rely upon.
++
+When you host a local repository proxy with Nexus, you reduce the
+amount of time it takes for Maven to check for a newer version as your
+build interacts with a local repository cache. If you develop software
+with snapshot dependencies, using a local repository manager will save
+you a considerable amount of time, as your 5-10 second snapshot update
+checks against the public Central Repository are going to execute in
+hundreds of milliseconds (or less) when they are executed against a
+local resource.
 
 Management of Software Components:: A repository manager is able to
 manage packaged binary software components. In Java development, this
@@ -507,14 +431,6 @@ also provide the appropriate infrastructure for managing software
 components and a solid API for extension. In Nexus, Sonatype has
 provided a plugin API, which allows developers to customize both the
 behavior, appearance, and functionality of the tool.
-
-==== Additional Features of a Repository Manager
-
-Once you adopt the core features of a repository manager, you start to
-view a repository manager as a tool that enables more efficient
-collaboration between development groups. Nexus Pro builds
-upon the foundations of a repository manager and adds capabilities
-such as Procurement and Staging.
 
 Managing Project Dependencies:: Many organizations require some level
 of oversight over the open source libraries and external components
@@ -780,6 +696,57 @@ in <<rhc>>.
 
 
 tbd - about Nexus Lifecycle
+
+
+
+Getting Control of Dependencies:: In addition to the simple savings in time and bandwidth, a repository
+manager provides an organization with control over what is downloaded
+by Maven. You can include or exclude specific components from the
+public repository, and having this level of control over what is
+downloaded from the Maven Central repository is a prerequisite for
+many organizations which have a need for strict standards for the
+quality and security of the dependencies used in an enterprise system.
++
+If you want to standardize on a specific version of a dependency like
+Hibernate or Spring, you can enforce this standardization by only
+providing access to a specific version of a component in Nexus.  You
+might be concerned with making sure that every external dependency has
+a license compatible with your legal standards for adopting and
+integrating open source libraries. If you are producing an application
+which is distributed, you might want to make sure that no one
+inadvertently adds a dependency on a third-party library covered under
+a copy-left license like the General Public License (GPL). All of this
+is possible with Nexus.
++
+Repository managers are a central point of access to external binary
+software components and dependencies upon which your systems
+rely. Nexus provides a level of control that is essential when you are
+trying to track and manage the libraries and frameworks your software
+depends upon.
+
+==== Nexus for Collaboration
+
+Aside from the benefits of mediating access to remote repositories, a
+repository manager also provides an important platform for
+collaborative software development. Unless you expect every member of
+your organization to download and build every single internal project
+from source, you will want to provide a mechanism for developers and
+departments to share binary components (both snapshots and releases)
+for internal software projects. Internal groups often consume the APIs
+and systems which are generated by other internal groups. When you
+adopt Nexus as a deployment platform for internal components, you can
+easily share components and libraries between groups of developers.
+
+Nexus provides you with a deployment target for your software
+components. Once you install Nexus, you can start using Maven to
+deploy snapshots and releases to internal repositories, which can then
+be combined with other repositories in repository groups. Over time,
+this central deployment point for internal projects becomes the fabric
+for collaboration between different development teams and
+operations. Nexus is the secret ingredient that allows an organization
+to scale its development effort without sacrificing agility.
+
+
 
 
 [[repoman-sect-adopting]]
