@@ -332,7 +332,7 @@ the Central Repository into your organization. You can use it to proxy
 the Central Repositories and other repositories, and host your own
 repositories for internal and external use. 
 
-==== Capabilites of a Repository Manager
+.Capabilites of a Repository Manager
 
 In addition to these two core features, a repository manager can
 support the following use cases: 
@@ -349,158 +349,32 @@ development lifecycle,
 * browse component archive contents
 
 
+.Advantages of Using a Repository Manager
 
-=== Reasons to Use a Repository Manager
+Using a repository manager provides a number of benefits including:
 
-Here are a few reasons why using a repository manager is
-imperative. While most people wouldn't even think of developing
-software without the use of a source code control system like
-Subversion or Perforce, the concept of using a repository manager is
-still something that needs development. There are many who have used
-Maven for years without realizing the benefits of using a repository
-manager. This section was written as an attempt to capture some of the
-benefits of using a repository manager.
-
-==== Speed Up Your Builds
-
-When you run your multimodule project in Maven, how do you think Maven
-knows if it needs to update plugins or snapshot dependencies? It has
-to make a request for each component it needs to test. Even if nothing
-has changed, if your project depends on a few snapshot or if you don't
-specify plugin version, Maven might have to make tens to hundreds of
-requests to a remote repository. All of these requests over the public
-internet add up to real, wasted time. We have found complex builds to
-cut build time by up to 75 percent after installing a local instance
-of Nexus.  You are wasting time better spent coding waiting for your
-build to needlessly interrogate a remote Maven repository.
-
-==== Save Bandwidth
-
-The larger the organization, the more critical bandwidth savings can
-be. If you have thousands of developers regularly wasting good
-bandwidth to download the same files over and over again, using a
-repository manager to keep a local cache is going to save you a good
-deal of bandwidth. Even for smaller organizations with limited budgets
-for connectivity and IT operations, having to deal with a set of
-developers maxing out your connection to the Internet to download the
-same things over and over again seems backwards.
-
-==== Ease the Burden on Central
-
-Running the Maven Central repository is no short order. It ain't cheap
-to serve the millions of requests and Terabytes of data required to
-satisfy the global demand for software components from the Maven
-Central repository. Something as simple as installing a repository
-manager at every organization that uses Maven would likely cut the
-bandwidth requirements for Central by at least half. If you have more
-than a couple developers using Maven, install a repository manager for
-the sake of keeping Central available and in business.
-
-==== Gain Predictability and Scalability
-
-How often in the past few years has your business come to a crashing
-halt because of an outage? Depending on Central for your day-to-day
-operations also means that you depend on having Internet connectivity
-(and on the fact the Central will remain available 24/7).  While
-Sonatype is confident in its ability to keep Central running 24/7, you
-should take some steps of your own to make sure that your development
-team isn't going to be surprised by some network outage on either
-end. If you have a local repository manager, like Nexus, you can be
-sure that your builds will continue to work, even if you lose
-connectivity.
-
-==== Control and Audit Dependencies and Releases
-
-So, you've moved over to Maven (or maybe Ivy that reads the same
-repository), and you now have a whole room full of developers who feel
-empowered to add or remove dependencies and experiment with new
-frameworks. We've all seen this. We've all worked in places with a
-developer who might be more interested in experimenting than in
-working.  It is unfortunate to say so, but there are often times when
-an architect or an architecture group needs to establish some
-baseline standards that are going to be used in an
-organization. Nexus provides this level of control. If you need more
-oversight over the components that are making it into your
-organization, take a look at Nexus. Without a repository manager, you
-are going to have little control over what dependencies are going to
-be used by your development team.
-
-==== Deploy Third-Party Components
-
-How do you deal with that one-off JAR from a vendor that is not open
-source, and not available on the Maven Central repository? You need to
-deploy these components to a repository and configure your Maven
-instance to read from that repository. Instead of handcrafting some
-POMs, download Nexus and take the two or three minutes it is going to
-take to get your hands on a tool that can create such a repository
-from third-party components. Nexus provides an intuitive upload form that
-you can use to upload any random free-floating JAR that finds its way
-into your project's dependencies.
-
-==== Collaborate with Internal Repositories
-
-Many organizations require every developer to check out and build the
-entire system from source, simply because they have no good way of
-sharing internal JARs from a build. You can solve a problem like this
-by dividing projects and using Nexus as an internal repository to
-host internal dependencies.
-
-For example, consider a company that has 30 developers split into
-three groups of 10 with each group focused on a different part of the
-system. Without an easy way to share internal dependencies, a group
-like this is forced either to create an ad-hoc filesystem-based
-repository or to build the system in its entirety so that dependencies
-are installed in every developer's local repository.
-
-The alternative is to separate the projects into different modules
-that all have dependencies on components hosted by an internal Nexus
-repository. Once you've done this, groups can collaborate by
-exchanging compiled snapshot and release components via Nexus. In other
-words, you don't need to ask every developer to check out a massive
-multimodule project that includes the entire organization's code. Each
-group within the organization can deploy snapshots and components to a
-local Nexus instance, and each group can maintain a project structure,
-which includes only the projects it is responsible
-for.
-
-==== Distribute with Public Repositories
-
-If you are an open source project, or if you release software to the
-public, Nexus can be the tool you use to serve components to external
-users. Think about it this way… When was the last time you cut a
-release for your software project? Assuming it wasn't deployed to a
-Maven repository, you likely had to write some scripts to package the
-contents of the release, maybe someone special had to sign the release
-with a super-secret cryptographic key. Then, you had to upload it to
-some web server, and then make sure that the pages that describe the
-upload were themselves updated. Lots of needless complexity…
-
-If you were using something like Nexus, which can be configured to
-expose a hosted repository to the outside world, you could use the
-packaging and assembly capabilities of Maven and the structure of the
-Maven repository to make a release that is more easily consumed. 
-This isn't just for JAR files and Java web applications. Maven
-repositories can host any kind of component. Nexus, and Maven
-repositories in general, define a known structure for releases. If you
-are writing some Java library, publishing it to your own Nexus
-instance serving a public repository will make it easier for people to
-start using your code right away.
+* Improved software build performance due to faster component download
+  off the local repository manager
+* Reduced bandwidth usage due to component caching
+* Higher predictability and scalability due to limited dependency on
+  external repositories
+* Increased understanding of component usage due to centralized
+  storage of all used components
+* Simplified developer configuration due to central access
+  configuration to remote repositories and components on the
+  repository manager
+* Unified method to provide components to consumers reducing
+complexity overheads
+* Improved collaboration due the simplified exchange of binary
+  components 
 
 
-[[clm]]
 === Software Supply Chain Automation
 
-Component lifecycle management can be defined as the practice of
- analysis, control, and monitoring of all components used in your
- software development lifecycle.
-
-It has emerged as a new category of software development products,
-information services, and practices that help manage agile,
-collaborative, component-based development efforts. They allows you to
-ensure the integrity of the modern software supply chain, amplifying
-the benefits of modern development, while reducing risk.
-
-==== Increasing Component Usage and Open Source Components
+Once you adopting a repository manager as a central point of of
+storage and exchange for all component usage, the next step is expand
+its use in your efforts to automate and manage the software supply
+chain throughout your software development lifecycle.
 
 Modern software development practices have shifted dramatically from
 large efforts of writing new code to the usage of components to
@@ -515,347 +389,27 @@ application development. For example creating a new web application
 framework and business workflow system just to create a website with a
 publishing workflow would be extremely inefficient.
 
-Open source has become an integral part of modern applications in this
-form of components. A typical enterprise application is comprised of
-tens, if not hundreds, of components accounting for 80% and more of the
-application.
-
-==== Security Vulnerability and License Compliance Risks
-
-With the huge benefits derived from using open source as well as
-commercial components comes the complexity of understanding all the
-implications to your software delivery. These include security
-vulnerabilities, license compliance problems as well as quality
-issues that need to be managed through the whole life cycle starting
-at the inception of the sofware all the way through development,
-qualitiy assurance, production deployments and onwards until the
-decommissioning of the software. 
-
-The number of components, their rapid change rate with new releases, as
-well as the ease of adding new dependencies, make the management and
-full understanding of all involved components a task, that cannot be
-carried out manually and requires the assistance of tools such as
-Nexus and Nexus Lifecycle.
-
-==== Nexus and Component Lifecycle Management
-
-Nexus provides a number of tools that can help you in your CLM
-efforts. Besides focusing on being a component repository manager it
-includes features, such as the display of security vulnerabilities as
-well as license analysis results within search results and the
-Repository Health Check reports for a proxy repository. 
-
-Specific examples about using Nexus for CLM related tasks can be found
-in <<rhc>>.
-
-
-tbd - about Nexus Lifecycle
-
-
-
-Getting Control of Dependencies:: In addition to the simple savings in time and bandwidth, a repository
-manager provides an organization with control over what is downloaded
-by Maven. You can include or exclude specific components from the
-public repository, and having this level of control over what is
-downloaded from the Maven Central repository is a prerequisite for
-many organizations which have a need for strict standards for the
-quality and security of the dependencies used in an enterprise system.
-+
-If you want to standardize on a specific version of a dependency like
-Hibernate or Spring, you can enforce this standardization by only
-providing access to a specific version of a component in Nexus.  You
-might be concerned with making sure that every external dependency has
-a license compatible with your legal standards for adopting and
-integrating open source libraries. If you are producing an application
-which is distributed, you might want to make sure that no one
-inadvertently adds a dependency on a third-party library covered under
-a copy-left license like the General Public License (GPL). All of this
-is possible with Nexus.
-+
-Repository managers are a central point of access to external binary
-software components and dependencies upon which your systems
-rely. Nexus provides a level of control that is essential when you are
-trying to track and manage the libraries and frameworks your software
-depends upon.
-
-==== Nexus for Collaboration
-
-Aside from the benefits of mediating access to remote repositories, a
-repository manager also provides an important platform for
-collaborative software development. Unless you expect every member of
-your organization to download and build every single internal project
-from source, you will want to provide a mechanism for developers and
-departments to share binary components (both snapshots and releases)
-for internal software projects. Internal groups often consume the APIs
-and systems which are generated by other internal groups. When you
-adopt Nexus as a deployment platform for internal components, you can
-easily share components and libraries between groups of developers.
-
-Nexus provides you with a deployment target for your software
-components. Once you install Nexus, you can start using Maven to
-deploy snapshots and releases to internal repositories, which can then
-be combined with other repositories in repository groups. Over time,
-this central deployment point for internal projects becomes the fabric
-for collaboration between different development teams and
-operations. Nexus is the secret ingredient that allows an organization
-to scale its development effort without sacrificing agility.
-
-
-
-
-=== Adopting Nexus and Nexus Lifecycle
-
-Adopting a repository manager is not an all or nothing proposition,
-and there are various levels (or stages) of adoption that can be
-distinguished when approaching repository management. On one end of
-the adoption spectrum is the organization that installs a repository
-manager just to control and consolidate access to a set of remote
-repositories. On the other end of the spectrum is the organization
-that has integrated the repository manager into an efficient software
-development lifecycle, using it to facilitate decision points in the
-lifecycle, encouraging more efficient collaboration throughout the
-enterprise, and keeping detailed records to increase visibility into
-the software development process.
-
-==== Stage Zero: Before Using a Repository Manager
-
-While this isn't a stage of adoption, Stage Zero is a description of
-the way software builds work in the absence of a repository manager.
-When a developer decides that he needs a particular open source
-software component, he will download it from the component's web site,
-read the documentation, and find the additional software that his
-components rely on (referred to as "dependencies"). Once he has
-manually assembled a collection of dependencies from various open
-source project web sites and proprietary vendors, he will place all
-these components somewhere on the network so that he, his team
-members, the build script, the QA team, and the production support
-team can find it. At any time, other developers may bring in other
-components, sometimes with overlapping dependencies, placing them in
-different network locations.  The instructions to bring all of these
-ad-hoc, developer-managed components libraries together in a software
-build process can become very complicated and hard to maintain.
-
-Maven was introduced to improve this build process by introducing the
-concept of structured repositories from which the build scripts can
-retrieve the software components. In Maven language, these software
-components or dependencies are referred to as components, a term
-which can refer to any generic software component including components,
-libraries, frameworks, containers, etc. Maven can identify components
-in repositories, understand their dependencies, retrieve all that are
-needed for a successful build, and deploy its output back to
-repositories when completed.
-
-Developers using Maven without a repository manager find most of their
-software components and dependencies in Maven Central. If they happen
-to use another remote repository or if they need to add a custom
-component, the solution in Stage Zero is to manually manipulate the
-files in a local repository and share this local repository with
-multiple developers. While this approach may yield a working build for
-a small team, managing a shared local repository doesn't allow an
-organization to scale a development effort. There is no inherent
-control over who can set up a local repository, who can add to them or
-change or delete from them nor are there tools to protect the
-integrity of these repositories.
-
-That is, until Repository Managers were introduced.
-
-==== Proxying Remote Repositories
-
-This is the easiest stage to understand both in terms of benefits to
-an organization and action required to complete this stage. All you
-need to do to start proxying a remote repository is to deploy Nexus
-and start the server with the default configuration. Configure your
-Maven clients to read from the Nexus public repository group, and
-Nexus will automatically retrieve components from remote repositories,
-such as Maven Central, caching them locally.
-
-Without a repository manager, your organization might have hundreds of
-developers independently downloading the same components from public,
-remote repositories. With a repository manager, these components can be
-downloaded once and stored locally. After Stage One, your builds run
-considerably faster than they did when you relied upon the Maven
-Central repository.
-
-Once you've installed Nexus and you've configured all of your
-organization's clients to use it as a single point of access to remote
-repositories, you begin to realize that it now provides you with a
-central configuration point for the components used throughout your
-organization. Once you've started to proxy, you can start to think
-about using Nexus as a tool to control policy and what dependencies
-are allowed to be used in your organization. Nexus Pro
-provides a procurement plugin which allows for fine-grained control
-over which components can be accessed from a remote repository. This
-procurement feature is described in more detail in the section which
-deals with lifecycle integration.
-
-==== Hosting a Repository Manager
-
-Once you have started to proxy remote repositories and you are using
-Nexus as a single, consolidated access point for remote repositories,
-you can start to deploy your own components to Nexus hosted
-repositories. Most people approach repository management to find a
-solution for proxying remote repositories, and while proxying is the
-most obvious and immediate benefit of installing a repository manager,
-hosting internally generated components tends to be the stage that has
-the most impact on collaboration within an organization.
-
-To understand the benefits of hosting an internal repository, you have
-to understand the concept of managing binary software components.
-Software development teams are very familiar with the idea of a source
-code repository or a source code management tool. Version control
-systems such as Subversion, Clearcase, Git, and CVS provide solid
-tools for managing the various source components that comprise a
-complex enterprise application, and developers are comfortable
-checking out source from source control to build enterprise
-applications. However, past a certain point in the software
-development lifecycle, source components are no longer relevant. A QA
-department trying to test an application or an Operations team
-attempting to deploy an application to a production network no longer
-needs access to the source components. QA and Operations are more
-interested in the compiled end-product of the software development
-lifecycle -- the binary software components. A repository manager
-allows you to version, store, search, archive, and release binary
-software components derived from the source components stored in a
-source control system. A repository manager allows you to apply the
-same systematic operations on binary software components that you
-currently apply to your source code.
-
-When your build system starts to deploy components to an internal
-repository, it changes the way that developers and development groups
-can interact with one another in an enterprise. Developers in one
-development group can code and release a stable version of an internal
-library, deploy this library to an internal Nexus release repository,
-and so share this binary component with another group or department.
-Without a repository manager managing internal components, you have
-ad-hoc solutions and the organizational equivalent of duct tape. How
-does the infrastructure group send a new library to the applications
-group without Nexus? Someone copies a file to a shared directory and
-sends an email to the team lead. Organizations without repository
-managers are full of these ad-hoc processes that get in the way of
-efficient development and deployment.
-
-With a repository manager, every developer and every development group
-within the enterprise understands and interacts with a common
-collaborative structure -- the repository manager. Do you need to
-interact with the Commerce team's new API? Just add a dependency to
-your project and Maven will retrieve the library from Nexus
-automatically.
-
-One of the other direct benefits of deploying your own components to a
-repository such as Nexus is the ability to quickly search the metadata
-and contents of those components both via a web UI and through IDE
-integration tools such as m2eclipse. When you start to deploy internal
-components you can synchronize all development groups to a common
-version and naming standard, and you can use the highly
-configurable authentication and role-based access controls to control
-which developers and which development groups can deploy components to
-specific repositories or paths within a repository.
-
-==== Continuous Collaboration
-
-Developing this collaborative model further, if your application is
-being continuously built and deployed using a tool like Hudson, a
-developer can check out a specific module from a large multimodule
-build and not have to constantly deal with the entire source tree at
-any given time. This allows a software development effort to scale
-efficiently. If every developer working on a complex enterprise
-application needs to checkout the entire source tree every time he or
-she needs to make a simple change to a small component, you are
-quickly going to find that building the entire application becomes a
-burdensome bottleneck to progress. The larger your enterprise grows,
-the more complex your application becomes, the larger the collective
-burden of wasted time and missed opportunities. A slow enterprise
-build prevents the quick turnaround or quick feedback loop that helps
-your developers maintain focus during a development cycle.
-
-Once you are building with Maven, sharing binary components with Nexus,
-continuously testing and deploying with Hudson, and generating reports
-and metrics with tools like Sonar, your entire organization gains a
-collaborative "central nervous system" that enables a more agile
-approach to software development.
-
-==== Lifecycle Integration
-
-Once you've configured a repository manager to proxy remote
-repositories and you are using a repository manager as an integration
-point between developers and departments, you start to think about the
-various ways your repository manager can be used to support the
-decisions that go into software development. You can start using the
-repository manager to stage releases and supporting the workflow
-associated with a managed release, and you can use the procurement
-features of a tool like Nexus Pro to give management more
-visibility into the origins, characteristics, and open source licenses
-of the components used during the creation of an enterprise
-application.
-
-Nexus Pro enables organizations to integrate the management
-of software components tightly with the software development lifecycle:
-Provisioning, Compliance, Procurement, Enterprise Security, Staging
-and other capabilities that support the workflow that surrounds a
-modern software development effort.
-
-Using Nexus Pro's Maven Settings management feature
-and integrated security features you can configure a developer's
-Maven settings by running a single, convenient Maven goal and
-downloading customized settings for a particular developer. When
-you use Maven and Nexus Pro together, developers can get
-up and running quickly, collaborating on projects that share
-common conventions without having to manually install dependencies
-in local repositories.
-
-Provisioning:: Using Nexus as an integration point between Engineering
-and Operations means that Engineering can be responsible for
-delivering solid, tested components to Quality Assurance and
-Operations via a standard repository format. Often development teams
-are roped into the production deployment story and become responsible
-for building entire production environments within a build system.
-This blends the functions and roles of software engineering with those
-of systems administration thus blurring the lines between Engineering
-and Operations. If you use Nexus as an end point for releases from
-Engineering, Operations can then retrieve, assemble, and configure an
-application from tested components in the Nexus repository.
-
-Compliance:: Procurement, staging, and audit logs are all features
-that increase the visibility into who and what is involved with your
-software development efforts. Using Nexus Pro, Engineering can create
-the reports and documents that can be used to facilitate discussions
-about oversight.  Organizations subject to various regulations often
-need to produce a list of components involved in a software
-release. Legal departments often require a list of open source
-licenses being used in a particular software component, and managers
-often lack critical visibility into the software development process.
-
-Procurement:: The ease with which today's developer can add a
-dependency on a new open source library and download this library from
-a Central repository has a downside. Organizations large and small are
-constantly wondering what open source libraries are being used in
-applications, and whether these libraries have acceptable open source
-licenses for distribution. The Procurement features of Nexus Pro give
-architects and management more oversight of the components that are
-allowed into an organization. Using the Procurement features, a Nexus
-administrator or Procurement manager can allow or deny specific
-components by group, version, or path. You can use the procurement
-manager as a firewall between your own organization's development
-environment and the 95,000 components available on the Maven Central
+This starts with the selection of suitable components for your
+projects based on comprehensive information about the components and
+their characterisitics e.g., in terms of licenses used or known
+security vulnerabilities available in {pro}. Besides focusing on being
+a repository manager it includes features, such as the display of
+security vulnerabilities as well as license analysis results within
+search results and the Repository Health Check reports for a proxy
 repository.
 
-Enterprise Security:: Nexus' LDAP integration allows an enterprise to
-map existing LDAP groups to Nexus roles and provides Nexus
-administrators with a highly configurable interface to control which
-individuals or groups have access to a fine-grained set of Nexus
-permissions.
+Software supply chain auotmation progresses through your daily
+development efforts, your continuous integration builds and your
+release processes all the way to your applications deployed in
+production environments at your clients or your own infrastructure.
 
-Staging:: Nexus Pro adds an important step to the software release
-workflow, adding the concept of a managed (or staged) release to a
-hosted repository. When a developer needs to perform a production
-release, Nexus Pro can isolate the components involved in a release in
-a staged repository that can then be certified and tested. A manager
-or a quality assurance tester can then promote or discard a
-release. The staging feature allows you to specify the individuals
-that are allowed to promote a release and keeps an audit of who was
-responsible for testing, promoting, or discarding a software release.
-
-
+{lifecycle} provides a number of tools to improve your component usage
+in your software supply chain allowing you to automate your processes
+to ensure high quality output, while increasing your development speed
+towards continuous deployment procedures.It enables you to ensure the
+integrity of the modern software supply chain, amplifying the benefits
+of modern development facilitating component usage, while reducing
+associated risks.
 
 ////
 /* Local Variables: */
