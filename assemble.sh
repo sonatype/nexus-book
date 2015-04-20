@@ -73,6 +73,6 @@ if [ $publish_index == "true" ]; then
     cp -r site/js target/site
     cp -r site/images target/site
     python template.py -p 'target/site/' -b '<body class="article">' -t "./" -v "$nexus_version"
-    cp -rv site/global/sitemap.xml target/site
+    cp -rv site/global/sitemap*.xml target/site
     echo "... done"
 fi
