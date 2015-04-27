@@ -35,10 +35,10 @@ Crowd', 'SSL Certificates' and 'User Token'.
 and monitor your Nexus server successfully like 'Logging' and 'System
 Information'.
 
-'System':: The general configuration of Nexus for getting started and
-keep it like that with e.g., <<admin-system-http, 'HTTP'>> or
-<<admin-system-email,'Email Server'>> settings, but also 'Templates' for
-users and 'Tasks' to run regularly.
+'System':: The <<admin-system, general configuration of Nexus>> for
+getting started and running Nexus with e.g., <<admin-system-http,
+'HTTP'>> or <<admin-system-email,'Email Server'>> settings, but also
+<<capabilities,'Capabilities'>> and 'Tasks' to run regularly and other configurations.
 
 ////
 
@@ -49,6 +49,7 @@ tbd ... write about what to do when first getting going, some system
 config and some repo config probably, take from other section in book
 and training.. 
 
+this should link to the various sections
 ////
 
 
@@ -58,9 +59,118 @@ and training..
 The 'System' section of the 'Administration' menu gives you access to
 a number of configuration features for Nexus that you typically need
 to configure, after successful installation of Nexus. The following
-sections detail how to configure aspects such as 'HTTP' and SMTP
-parameters as well as regular runs 'Tasks', 'Licensing' and the more
-advanced 'Capabilities'-based configuration of various aspects.
+sections detail how to configure aspects such as
+<<admin-system-http,'HTTP/S proxy server setting'>>
+and<<admin-system-email,'Email/SMTP' server configuration>> parameters
+as well as regular runs 'Tasks', 'Licensing' and the more advanced
+<<capabilities,'Capabilities'>>-based configuration of various
+aspects.
+
+////
+[[bundles]]
+==== Bundles
+Available in image:figs/web/nexus-oss-icon.png[scale=50] 
+image:figs/web/nexus-pro-icon.png[scale=50] image:figs/web/nexus-proplus-icon.png[scale=50]
+
+tbd
+////
+
+
+[[capabilities]]
+==== Accessing and Configuring Capabilities
+Available in image:figs/web/nexus-oss-icon.png[scale=50] 
+image:figs/web/nexus-pro-icon.png[scale=50] image:figs/web/nexus-proplus-icon.png[scale=50]
+
+Capabilities are features of Nexus and Nexus plugins that can be
+configured by a user in a generic administration feature view
+accessible in the 'System' section of the 'Administration' main menu
+via 'Capabilities'.
+
+{nexus} ships with a number of capabilities preinstalled
+and allows you to enable/disable them. An example capability is
+'Outreach: Management' displayed in <<fig-capability-outreach>>. 
+
+[[fig-capability-outreach]]
+.Outreach: Management Capability Settings
+image::figs/web/capability-outreach.png[scale=60]
+
+The list of capabilities can be filtered with the search input box in
+the header of the list and sorted by the different columns by pressing
+a column header. The list uses the following columns:
+
+State:: The state column does not have a title. Enabled capabilities
+have a green checkmark added on top of a blue icon. Disabled
+capabilities use a greyed out icon.
+
+Type:: The 'Type' column provides the specific type of a capability in
+the list.
+
+Category:: The 'Category' is optional and details the wider context
+the capability belongs to.
+
+Description:: The 'Description' column contains further descriptive
+information about the capability.
+
+Notes:: A 'Notes' columns can contain user created notes about the
+capability.
+
+Every capability can be inspected and configured by selecting it in
+the list. The resulting view display the 'Summary' view of the
+specific capability. This view includes the display of 'Type',
+'Description', 'State' and 'Category' in the 'Summary' section as well
+as further information in the 'Status', 'About' and 'Notes' section.
+The 'Status' section displays a text message that details the status
+of the capability and any potential problems with the configuration.
+Depending on the capability, the reasons can vary widely.  The 'About'
+section displays a descriptive text about the purpose of the
+capability.  The 'Notes' field can be used to provide a descriptive
+text about the capability or any other notes related to it and can be
+persisted by pressing the 'Save' button.
+
+The 'Delete' button below the title allows you to remove a capability and
+it's configuration entirely. The 'Enable' and 'Disable' buttons on the
+other hand can be used to switch the state of the capability.
+
+The 'Settings' view allows you to activate or deactivate the
+capability with the 'Enable this capability' checkbox. Below this
+checkbox, each capability type has specific additional configuration
+parameters available. Once you have completed the configuration, press
+the 'Save' button.
+
+The capabilities management feature view supports adding new
+capabilities by pressing the 'Create capability' button above the list
+and selecting the desired capability 'Type' from the list. The next
+view allows you to perform any capability-specific configuration and
+finish the process by pressing the 'Create capability' button below
+the parameters.
+
+Many of the built-in capabilities and plugins can be configured in the
+'Capabilities' administration section but also in other more user
+friendly, targeted user interface sections, e.g., the user token
+feature administrated by using the interface available via the 'User
+Token' menu item in the 'Security' left-hand menu as well as by
+editing the user token capability. Other capabilities are internal to
+Nexus functionality and sometimes managed automatically by the
+responsible plugin. Some optional configuration like the branding
+plugin or advanced features of the smart proxy configuration are only
+done in the capabilities administration
+
+Usage of specific capabilities to achieve a variety of tasks is
+documented in parts of the documentation.
+
+////
+tbd  ... add links to all sections maybe.. 
+
+The branding
+plugin allows the customization of the icon in the top left-hand
+corner of the user interface header and is described in
+<<nexus-branding>>.
+////
+
+WARNING: In many cases you will not need to configure anything in
+'Capabilities' unless explicitly instructed to do so by the Sonatype
+support team. Execute any capability changes with caution, potentially
+backing up your configuration before proceeding.
 
 [[admin-system-email]]
 ==== Email Server
@@ -196,7 +306,7 @@ users. Configuring repositories is an essential part of your Nexus
 configuration. It can be performed in the 'Repository' sub menu of the
 the 'Administration' menu.
 
-Nexus supportsproxy repositories, hosted repositories, virtual
+Nexus supports proxy repositories, hosted repositories, virtual
 repositories and repository groups using a number of different
 repository formats.
 
@@ -374,7 +484,7 @@ repository format and can include the following:
 Expire Cache:: expire the cache of a hosted or a proxy repository or a
 repository group
 
-Rebuild Metadata:: rebuid the metadata of a hosted Maven 2 repository
+Rebuild Metadata:: rebuild the metadata of a hosted Maven 2 repository
 
 Block Proxy / Allow Proxy:: toggle between allowing or blocking the
 remote repository configured in a proxy repository
@@ -547,7 +657,7 @@ NT LAN Host, and NT Lan Manager Domain for a remote repository.
 HTTP Request Settings:: In the 'HTTP Request Settings' you can change
 the properties of the HTTP request to the remote repository. You can
 also configure the 'User Agent' of the request, add parameters to a
-request, and set the timeout and retry behavior. The HTTP request
+request, and set the timeout and retry behaviour. The HTTP request
 configured is the request made from Nexus to the remote repository
 being proxied.
 
@@ -616,7 +726,7 @@ retrieve components from your local Nexus installation.
 
 This usually happens because you are trying to build a project that
 has defined a custom set of repositories and snapshot repositories or
-relies on the content of other publically available repositories in
+relies on the content of other publicly available repositories in
 its configuration. When you encounter such a project all you have to
 do is 
 
@@ -909,14 +1019,9 @@ file stores.
 You can copy a subsection of the text from the panel or use the
 'Download' button to retrieve a JSON-formatted text file.
 
-
 ////
 [[admin-security]]
 === Security
-////
-
- 
-////
 
 
 [[config-sect-security]]
@@ -1015,7 +1120,7 @@ you've defined a proxy repository and the remote repository is
 unavailable, Nexus will now automatically block the remote repository.
 Once a repository has been auto-blocked, Nexus will then periodically
 retest the remote repository and unblock the repository once it
-becomes available. You can control this behavior by changing the 'Auto
+becomes available. You can control this behaviour by changing the 'Auto
 Blocking Enabled' setting under the 'Remote Repository Access' section
 of the proxy repository configuration as shown in the following figure
 to 'True':
@@ -1060,7 +1165,7 @@ repository access and therefore greatly improves performance.
 Nexus generates the prefixes.txt file for a hosted repository and
 makes it available for remote downloads. Each deployment of a new
 component will trigger an update of the file for the hosted repository
-as well as the prefix files for any repoisitory groups that contain
+as well as the prefix files for any repository groups that contain
 the hosted repository. You can access it in the 'Routing' tab of a
 hosted repository as displayed in <<fig-automatic-routing-hosted>> by
 clicking on the 'Show prefix file' link on the right. In addition, the
@@ -1328,13 +1433,13 @@ NuGet proxy repository. For one-time invocation, you can enable the
 'Clear feed cache?' setting, which will delete the cache completely and
 re-fetch all data. The setting 'Fetch all versions?' will trigger the
 download of all versions of an component in contrast to the default
-behavior of getting only the latest version.
+behaviour of getting only the latest version.
 
 Drop Inactive Staging Repositories:: Staging repositories can be
 dropped by user interaction or automated systems using the Nexus
 Staging Maven Plugin or Ant Task or a REST API call. Heavy users of
 the Nexus staging features observe that some staging and build
-promotion repositories are inevidently left behind. This scheduled
+promotion repositories are in-evidently left behind. This scheduled
 task can be used to drop all these repositories.  You can configure
 the duration of inactivity to include the days after the repositories
 are dropped as well as the status of the repositories. Any change of
@@ -1360,7 +1465,7 @@ in Evict Items older than (days). This can be a good job to run if you
 are trying to conserve storage space and do not need all of the
 components in the future e.g., to reproduce old builds without renewed
 retrieval. This is particularly useful for a personal Nexus deployment
-with a large change rate of components combined with limited diskspace.
+with a large change rate of components combined with limited disk-space.
 
 Expire Repository Caches:: Repositories have several caches to improve
 performance. This task expires the caches causing Nexus to recheck the
@@ -1395,7 +1500,7 @@ age of the data to be deleted.
 Purge Orphaned API Keys:: This scheduled tasks will delete old, unused
 API keys generated and used by various plugins. For example, it should
 be scheduled when using the User Token feature or NuGet
-repositoriies. It will purge orphaned API keys e.g., after users reset
+repositories. It will purge orphaned API keys e.g., after users reset
 their token and should be scheduled to run regularly, specifically
 when internal security policies for password resets and you are using
 an external security provider like LDAP with this requirement for
@@ -1403,7 +1508,7 @@ resets to access Nexus.
  
 Rebuild Maven Metadata Files:: This task will rebuild the
 maven-metadata.xml files with the correct information and will also
-validate the checksums (.mh5/.sha1) for all files in the specified
+validate the checksums (.md5/.sha1) for all files in the specified
 Repository/Group. Typically this task is run manually to repair a
 corrupted repository.
 
@@ -1431,13 +1536,13 @@ components, supporting these use cases taking care of meta data
 updates, and removing the need to manually delete the components or use
 an external system to trigger the deletion.
 + 
-To configure the task, you specifiy the repository where release
+To configure the task, you specify the repository where release
 components are to be deleted as well as the number of component
 versions to keep for a specific groupId and artifactId coordinate. The
 task generates a list of all versions of a component for each groupId
 and artifactId coordinate combination and sorts it according to the
 version number. The ordering is derived by parsing the version string
-and supports http://semver.org[sematic versioning] with additional
+and supports http://semver.org[semantic versioning] with additional
 semantics for specific classifiers. Further details can be
 found in the documentation for the implementing class
 http://sonatype.github.io/sonatype-aether/apidocs/org/sonatype/aether/util/version/GenericVersionScheme.html[GenericVersionScheme].
@@ -1544,101 +1649,6 @@ update your scheduled tasks when changing your usage. E.g., if you
 start to regularly deploy snapshots by introducing continuous
 integration server builds with deployment.
 
-[[capabilities]]
-=== Accessing and Configuring Capabilities
-
-Capabilities are features of Nexus and Nexus plugins that can be
-configured by a user in the generic administration view accessible in
-the left-hand navigation menu 'Administration' under 'Capabilities'.
-
-WARNING: In many cases you will not need to configure anything in
-'Capabilities' unless explicitly instructed to do so by the Sonatype
-support team. Execute any capability changes with caution, potentially
-backing up your configuration before proceeding.
-
-Nexus Pro ships with a number of capabilities preinstalled
-and allows you to enable/disable them. An example capability is
-'Outreach Management' displayed in <<fig-capability-outreach>>. The
-capabilities management interface supports adding new capabilities by
-pressing the 'New' button, copying a selected capability from the list
-by pressing the 'Duplicate' button and deleting a selected capability with the
-'Delete' button. Pressing the 'Refresh' button updates the list of
-capabilities. The list of capabilities can be filtered with the search
-input box in the header of the list and sorted by the different
-columns by pressing a column header. The list uses the following
-columns: 
-
-Status:: The status column does not have a title. Enabled capabilities
-have a green checkmark added on top of a blue icon. Disabled
-capabilities use a greyed out icon.
-
-Type:: The type columns provides the specific type of a capability in
-the list.
-
-Category:: The 'Category' is optional and details the wider context
-the capability belongs to.
-
-Repository:: The 'Repsitory' value is optional and references the
-repository for which the specific capability is configured.
-
-Description:: The 'Description' column contains further descriptive
-information about the capability.
-
-Notes:: A 'Notes' columns can contain user created notes about the
-capability.
-
-[[fig-capability-outreach]]
-.Capabilities Management Interface with the Outreach Management Details Visible
-image::figs/web/capability-outreach.png[scale=60]
-
-Every capability can be inspected and configured by selecting it in
-the list and using the tabs underneath the list. 
-
-The 'Summary' tab displays the 'Type' of the capability as well as
-optionally the 'Description', the 'Category' and the 'Repository'. The
-'Notes' field can be used to provide a descriptive text about the
-capability or any other notes related to it and can be persisted by
-pressing the 'Save' button.
-
-The 'Settings' tab allows you to activate or deactivate the capability
-with the 'Enabled' checkbox. Below this checkbox, each capability type
-has specific additional configuration parameters available. Pressing
-the help icon beside the input field or checkbox reveals further
-information about the specific parameter. Once you have completed the
-configuration, press the 'Save' button.
-
-The 'Status' tab displays a text message that details the status of
-the capability and any potential problems with the configuration.
-Depending on the capability, the reasons can vary widely. For example,
-the 'Secure Central' capability requires Nexus to run on a JVM with
-specific security features. If the JVM is not suitable, an error
-message with further details is displayed in the 'Status' column.
-
-The 'About' tab displays a descriptive text about the purpose of the
-capability. 
-
-Creating a new capability by pressing the 'New' button will display a
-new form allowing you to configure the capability in a dialog. The
-'Type' drop-down allows you to decide what capability to create, and a
-selection changes the rest of the available information and
-configuration in the dialog. You can configure if the capability
-should be enabled with the 'Enabled' checkbox. Once you have completed
-the configuration, press 'Add' and the capability will be saved and
-appear in the list.
-
-Many of the built-in capabilities and plugins can be configured in the
-'Capabilities' administration section but also in other more user
-friendly, targeted user interface sections, e.g., the user token
-feature administrated by using the interface available via the 'User
-Token' menu item in the 'Security' left-hand menu as well as by
-editing the user token capability. Other capabilities are internal to
-Nexus functionality and sometimes managed automatically by the
-responsible plugin. Some optional configuration like the branding
-plugin is only done in the capabilities administration. The branding
-plugin allows the customization of the icon in the top left-hand
-corner of the user interface header and is described in
-<<nexus-branding>>.
-
 
 [[nexus-branding]]
 === Customizing the Nexus Application with Branding
@@ -1648,7 +1658,7 @@ customize your Nexus instance by replacing the default Sonatype Nexus
 logo in the top left-hand corner of the header with an image of your
 choice.
 
-You can configure it by adding the 'Branding' capabililty as
+You can configure it by adding the 'Branding' capability as
 documented in <<capabilities>> and enabling it. By default, the
 branding plugin will look for the new logo in a file called
 +branding.png+ in your Nexus data directory's +conf+ folder. By
@@ -1957,7 +1967,7 @@ privilege quickly.
 image::figs/web/repository-manager_security-add-roles-dialog.png[scale=60]
 
 The built-in roles are managed by Nexus and cannot be edited or
-deleted. The role confirguration section below the list is visible but 
+deleted. The role configuration section below the list is visible but 
 disabled for these roles.
 
 A Nexus role is comprised of other Nexus roles and individual
@@ -2180,18 +2190,18 @@ template feature automating updates as documented in <<settings>>.
 NOTE: The user tokens are created at first access whether that is by
 using the Nexus user interface or the Nexus Maven Plugin.
 
-==== Configuring User Token behavior
+==== Configuring User Token behaviour
 
 The user token feature is preconfigured with built-in parameters and
 no external configuration file is created by default. It is however
-possible to customize some behavior by creating a file
+possible to customize some behaviour by creating a file
 'sonatype-work/nexus/conf/usertoken.properties''.
 
 The following properties can be configured:
 
 According to Jason Dillon this is mostly for testing the underlying
-mechanis and the super edge case when the default strategy incurs too
-many name-code collissions, this is also not well tested so we remove
+mechanism and the super edge case when the default strategy incurs too
+many name-code collisions, this is also not well tested so we remove
 it for now (or ever)
 usertoken.encodingStrategyProvider.strategy:: 	Define the
 EncodingStrategy for the token with the default value being
