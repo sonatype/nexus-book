@@ -184,6 +184,306 @@ Hosts' setting. <<fig-admin-system-http-proxy>> shows the 'HTTP Proxy'
 administration interface. The HTTPS configuration interface looks the
 same and is found below the HTTP configuration.
 
+[[tasks]]
+==== Configuring and Executing Tasks
+Available in image:figs/web/nexus-oss-icon.png[scale=50] 
+image:figs/web/nexus-pro-icon.png[scale=50]  image:figs/web/nexus-proplus-icon.png[scale=50]
+
+Nexus allows you to schedule the execution of maintenance tasks. The
+tasks can carry out regular maintenance steps that will be applied to
+all repositories or to specific repositories on a configurable
+schedule or simply perform other system maintenance. Use the 'Tasks'
+menu item in the 'System' section of the 'Administration' menu to
+access the feature view, shown in <<fig-repomap-scheduled>>, that
+allows you to manage your 'Tasks'.
+
+[[fig-repomap-scheduled]]
+.Managing Tasks
+image::figs/web/tasks.png[scale=50]
+
+The list interface allows you to add new tasks with the 'Create task'
+button as well as inspect and work with the configured tasks. The list
+shows the following columns:
+
+Name:: A user-defined name for the task to identify it in the user interface and
+log files.
+
+Type:: The type of action the scheduled task executes. The list of
+available task types is documented in more detail below.
+
+Status:: Tasks can either be 'Waiting' for their next run, currently
+'Running' or 'Disabled'.
+
+Schedule:: The 'Schedule' column shows the 'Task frequency' e.g.,
+'Daily', 'Monthly' , 'Manual' and others.
+
+Next run:: This column displays date and time of the next execution of
+the task based on the configured schedule.
+
+Last run and Last result:: These columns display the date and time as
+well as the result and duration of the last execution of the specific task.
+
+
+When creating or updating a scheduled task, you can configure the
+following additional properties:
+
+Task enabled:: Enable or disable a specific task with the checkbox.
+
+Notification Email:: Configure a notification email for task execution
+failures. If a scheduled task fails a notification email containing
+the task identifier and name as well as the stack trace of the failure
+will be sent to the configured email recipient. 
+
+Task frequency:: Selecting the task frequencey allows you to configure
+the schedule for the task executions. Available choices are 'Manual',
+'Once', 'Hourly', 'Daily', 'Weekly', 'Monthly' and 'Advanced (provide
+a CRON expression'. All choices trigger display of a custom user
+interface for scheduling the specific recurrence. Weekly scheduling
+requires at least one day of the week to be selected. The advanced
+setting allows you to provide a CRON expression to configure more
+complex schedules. The 'Start time' allows you to configure a specific
+date on time from when the schedule should be started.
+
+Task-type specific configuration is displayed below the notification
+email input and differs for each scheduled task.
+
+The following kinds of scheduled task types are available:
+
+Purge Timeline:: Nexus maintains data that relates to the interaction
+between itself, proxied remote repositories, and clients on Nexus.
+While this information can be important for purposes of auditing, it
+can also take up storage space. Using this task you can tell Nexus to
+periodically purge this information. The setting 'Purge Items older
+than (days)' controls the age of the data to be deleted.
+
+////
+Backup All Nexus Configuration Files:: This scheduled task will
+archive the contents of the +sonatype-work/nexus/conf+ directory.
+Once a backup has been run, the contents of the backup will be
+available in +sonatype-work/nexus/backup+ in a series of ZIP archives
+that use a datetimestamp in the filename. This task is a feature of
+Nexus Pro.
+
+Download Indexes:: This scheduled task will cause Nexus to download
+indexes from remote repositories for proxied repositories. The
+Download Remote Indexes configuration also needs to be enabled on the
+proxy repository.
+
+Download NuGet Feed:: This task allows you to download the feed for a
+NuGet proxy repository. For one-time invocation, you can enable the
+'Clear feed cache?' setting, which will delete the cache completely and
+re-fetch all data. The setting 'Fetch all versions?' will trigger the
+download of all versions of an component in contrast to the default
+behavior of getting only the latest version.
+
+Drop Inactive Staging Repositories:: Staging repositories can be
+dropped by user interaction or automated systems using the Nexus
+Staging Maven Plugin or Ant Task or a REST API call. Heavy users of
+the Nexus staging features observe that some staging and build
+promotion repositories are inevidently left behind. This scheduled
+task can be used to drop all these repositories.  You can configure
+the duration of inactivity to include the days after the repositories
+are dropped as well as the status of the repositories. Any change of
+the staging repository like a state change from open to closed to
+promoted or released as well other changes to the repository meta data
+like a description update are counted as an activity. You can
+configure to 'Scan open repositories', 'Scan closed repositories',
+'Scan promoted repositories' and 'Scan released repositories' for
+inactivity and therefore potentially drop them with this task. This
+will allow you to avoid accumulating a large number of stale staging
+repositories.
+
+Empty Trash:: The Evict and Purge actions do not delete data from the
+Nexus working directory. They simply move data to be cleared or
+evicted to a trash directory under the Nexus work directory. This
+task deletes the data in this trash directory older than the number of
+days specified in the task setting 'Purge Items older than (days)'.
+
+Evict Unused Proxied Items From Repository Caches:: This scheduled
+task tells Nexus to delete all proxied items that haven't been "used"
+(referenced or retrieved by a client) in a number of days as specified
+in Evict Items older than (days). This can be a good job to run if you
+are trying to conserve storage space and do not need all of the
+components in the future e.g., to reproduce old builds without renewed
+retrieval. This is particularly useful for a personal Nexus deployment
+with a large change rate of components combined with limited diskspace.
+
+Expire Repository Caches:: Repositories have several caches to improve
+performance. This task expires the caches causing Nexus to recheck the
+remote repository for a proxy repository or the file system for a
+hosted repository. You can configure the repository or group to be
+affected with the task setting Repository/Group. Alternatively you can
+provide a Repository Path to configure the content that should be
+expired.
+
+Mirror Eclipse Update Site:: The P2 plugin
+allows you to mirror Eclipse update sites. This task can be used to
+force updates of repositories that went out of sync.
+
+Optimize Repository Index:: To speed up searches in Nexus, this task
+tells the internal search engine to optimize its index files. This has
+no affect on the indexes published by Nexus. Typically, this task does
+not have to run more than once a week.
+
+Publish Indexes:: Just as Maven downloads an index from a remote
+repository, Nexus can publish an index in the same format. This will
+make it easier for people using m2eclipse or Nexus to interact with
+your repositories.
+ 
+ 
+Purge Orphaned API Keys:: This scheduled tasks will delete old, unused
+API keys generated and used by various plugins. For example, it should
+be scheduled when using the User Token feature or NuGet
+repositoriies. It will purge orphaned API keys e.g., after users reset
+their token and should be scheduled to run regularly, specifically
+when internal security policies for password resets and you are using
+an external security provider like LDAP with this requirement for
+resets to access Nexus.
+ 
+Rebuild Maven Metadata Files:: This task will rebuild the
+maven-metadata.xml files with the correct information and will also
+validate the checksums (.mh5/.sha1) for all files in the specified
+Repository/Group. Typically this task is run manually to repair a
+corrupted repository.
+
+Rebuild NuGet Feed:: If you are using NuGet, pushing your components
+into a NuGet hosted repository and are proxying that repository to
+other users, this task can be used to rebuild the feed.
+ 
+Rebuild P2 metadata and Rebuild P2 repository:: These tasks can be
+used to rebuild the metadata or the full repository with a P2
+format. You can specify a Repository/Group or a Repository Path to
+determine which content to affect.
+ 
+Remove Releases From Repository:: In many use cases of a repository
+manager, it is necessary to keep release components for long periods
+of time or forever. This can be necessary for reproducibility reasons,
+in order to ensure users have access to old versions or even just for
+audit or legal reasons. However, in other use cases, there is no value
+in keeping old release components. One example would be a when using a
+continuous delivery approach onto a single deployment platform with no
+roll back support. In other cases, it could also be impractical due to
+the mere number and size of the release components.
++ 
+This scheduled task allows you to trigger the deletion of release
+components, supporting these use cases taking care of meta data
+updates, and removing the need to manually delete the components or use
+an external system to trigger the deletion.
++ 
+To configure the task, you specifiy the repository where release
+components are to be deleted as well as the number of component
+versions to keep for a specific groupId and artifactId coordinate. The
+task generates a list of all versions of a component for each groupId
+and artifactId coordinate combination and sorts it according to the
+version number. The ordering is derived by parsing the version string
+and supports http://semver.org[sematic versioning] with additional
+semantics for specific classifiers. Further details can be
+found in the documentation for the implementing class
+http://sonatype.github.io/sonatype-aether/apidocs/org/sonatype/aether/util/version/GenericVersionScheme.html[GenericVersionScheme].
++
+Optionally, the 'Repository Target' parameter can be used to narrow
+down the content of the repository that is analyzed, to determine if
+any deletion should occur. Choosing +All(Maven2)+ is suitable to cause
+all Maven 2-formatted repositories to be analysed. If you want to only
+target a specific groupId and artifactId combination or a number of
+them you can create a suitable repository target as documented in
+<<confignx-sect-managing-repo-targets>> and use it in the
+configuration of the scheduled task.
+ 
+Remove Snapshots from Repository:: Often, you will want to remove
+snapshots from a snapshot repository to preserve storage space. This
+task supports this deletion for time stamped snapshots as created by
+Maven 3.x in a deployment repository. Note that configuring and
+running this job is not enough to reclaim disk space.  You will also
+need to configure a scheduled job to empty the trash folder.  Files
+are not deleted by the 'Remove Snapshots' job. They are only moved into
+the trash folder.  When you create a scheduled task to remove
+snapshots, you can specify the 'Repository/Group' to affect as well as:
++
+'Minimum Snapshot Count';; This configuration option allows you to
+specify a minimum number of snapshots to preserve per component.  For
+example, if you configured this option with a value of 2, Nexus will
+always preserve at least two snapshot components. A value of -1
+indicates that all snapshots should be preserved.
++
+'Snapshot Retention (days)';; This configuration option allows you to
+specify the number of days to retain snapshot components.  For example,
+if you want to make sure that you are always keeping the last three
+day's worth of snapshot components, configure this option with a value
+of 3. The minimum count overrides this setting.
++
+'Remove if released';; If enabled and a released component with the same
+GAV coordinates is detected all snapshots will be removed.
++ 
+'Grace period after release (days)';; The configuration 'Remove if
+released' causes snapshots to be deleted as soon as the scheduled task
+is executed. This can lead to builds that still reference the snapshot
+dependency to fail. This grace period parameter allows you to specify
+a number of days to delay the deletion, giving the respective projects
+referencing the snapshot dependency time to upgrade to the release
+component or the next snapshot version.
++
+'Delete immediately';; If you want to have components deleted directly
+rather than moved to the trash, you can enable this setting.
++
+When doing regular deployments to a snapshot repository via a CI
+server, this task should be configured to run regularly.
+ 
+Repair Repositories Index:: In certain cases it might be required to
+remove the internal index as well as the published ones of a
+repository.  This task does that and then rebuilds the internal index
+by first trying to download remote indexes (if a proxy repository),
+then scanning the local storage and updating the internal index
+accordingly. Lastly, the index is published for the repository as
+well. There should be no need to schedule this task. But when
+upgrading Nexus, the upgrade instructions may sometimes include a
+manual step of executing this task.
+ 
+Synchronize Shadow Repository:: This service synchronizes a shadow (or
+virtual) repository with its master repository. This task is only
+needed when external changes affected a source repository of a virtual
+repository you are using.
+
+Update Repositories Index:: If files are deployed directly to a
+repository's local storage (not deployed through Nexus), you will need
+to instruct Nexus to update its index. When executing this task, Nexus
+will update its index by first downloading remote indexes (if a proxy
+repository) and then scan the local storage to index the new files.
+Lastly, the index is published for the repository as well. Normally,
+there should be no need to schedule this task. One possible exception
+would be if files are deployed directly to the local storage regularly.
+ 
+Yum: Generate Metadata:: The metadata for a yum repository is created
+and maintained by the http://createrepo.baseurl.org/[createrepo]
+tool. This scheduled task allows you to run it for a specific
+repository and optionally configure the output directory. 
+////
+
+Beyond these tasks any plugin can provide additional scheduled tasks,
+which will appear once you have installed the plugin.
+
+////
+The Evict and Purge actions do not delete data from the Nexus
+working directory. They simply move data to be cleared or evicted to a
+trash directory under the Nexus work directory. If you want to reclaim
+disk space, you need to clear the Trash on the Browse Repositories
+screen. If something goes wrong with a evict or clear service, you can
+move the data back to the appropriate storage location from the trash.
+You can also schedule the Empty Trash service to clear this directory
+on a periodic basis.
+
+TIP: In order to keep the heap usage in check it is recommended that
+you schedule an "optimize indexes" task to run weekly. A number of
+other maintenance tasks should also be scheduled for production
+deployments.
+////
+
+Setting up tasks execution adapted to your usage of Nexus is an
+important first step when setting up a Nexus instance. Go through the
+list of task types and consider your usage patterns of Nexus. Also
+update your tasks when changing your usage. E.g., if you
+start to regularly deploy snapshots by introducing continuous
+integration server builds with deployment.
 
 [[admin-repositories]]
 === Repository Management
@@ -1261,288 +1561,6 @@ proceed with caution if you start relying on conflicting or
 overlapping routes.  Use routes sparingly, and use coarse URL
 patterns. Remember that routes are only applied to groups and are
 not used when an component is requested from a specific repository.
-
-[[scheduled-tasks]]
-=== Managing Scheduled Tasks
-
-Nexus allows you to schedule tasks that will be applied to all
-repositories or to specific repositories on a configurable
-schedule. Use the 'Scheduled Tasks' menu item in the 'Administration'
-menu to access the screen, shown in <<fig-repomap-scheduled>>, that
-allows you to manage your Scheduled Tasks.
-
-[[fig-repomap-scheduled]]
-.Managing Nexus Scheduled Tasks
-image::figs/web/repository-manager_schedule-service.png[scale=50]
-
-The list interface allows you to 'Add' new tasks and 'Run', 'Cancel', and
-'Delete' existing tasks as well as 'Refresh' the list with respective
-buttons above the list.
-
-When creating or updating a scheduled task, you can configure the
-following properties:
-
-Enabled:: Enable or disable a specific task.
-
-Name:: Provide a name to identify the task in the user interface and
-log files.
-
-Task Type:: Specify the type of action the scheduled task
-executes. The list of available task types is documented in more
-detail below.
-
-Task Settings:: Configure the task settings specific to the selected task
-type. Tasks affecting a repository have a setting called
-'Repository/Group' that allows you to let the task affect all
-repositories and groups or only a specific one.
-
-Alert Email:: Configure a notification email for task execution
-failures. If a scheduled task fails a notification email containing
-the task identifier and name as well as the stack trace of the failure
-will be sent to the configured email recipient. 
-
-Recurrence:: configure the schedule for the task executions. Available
-choices are Manual, Once, Hourly, Daily, Weekly, Monthly and
-Advanced. All choices provide a custom user interface
-for scheduling the specific recurrence. Weekly scheduling requires at
-least one day of the week to be selected. The Advanced setting allows
-you to provide a CRON expression to configure more complex
-schedules.
-
-The following kinds of scheduled task types are available:
-
-Backup All Nexus Configuration Files:: This scheduled task will
-archive the contents of the +sonatype-work/nexus/conf+ directory.
-Once a backup has been run, the contents of the backup will be
-available in +sonatype-work/nexus/backup+ in a series of ZIP archives
-that use a datetimestamp in the filename. This task is a feature of
-Nexus Pro.
-
-Download Indexes:: This scheduled task will cause Nexus to download
-indexes from remote repositories for proxied repositories. The
-Download Remote Indexes configuration also needs to be enabled on the
-proxy repository.
-
-Download NuGet Feed:: This task allows you to download the feed for a
-NuGet proxy repository. For one-time invocation, you can enable the
-'Clear feed cache?' setting, which will delete the cache completely and
-re-fetch all data. The setting 'Fetch all versions?' will trigger the
-download of all versions of an component in contrast to the default
-behavior of getting only the latest version.
-
-Drop Inactive Staging Repositories:: Staging repositories can be
-dropped by user interaction or automated systems using the Nexus
-Staging Maven Plugin or Ant Task or a REST API call. Heavy users of
-the Nexus staging features observe that some staging and build
-promotion repositories are inevidently left behind. This scheduled
-task can be used to drop all these repositories.  You can configure
-the duration of inactivity to include the days after the repositories
-are dropped as well as the status of the repositories. Any change of
-the staging repository like a state change from open to closed to
-promoted or released as well other changes to the repository meta data
-like a description update are counted as an activity. You can
-configure to 'Scan open repositories', 'Scan closed repositories',
-'Scan promoted repositories' and 'Scan released repositories' for
-inactivity and therefore potentially drop them with this task. This
-will allow you to avoid accumulating a large number of stale staging
-repositories.
-
-Empty Trash:: The Evict and Purge actions do not delete data from the
-Nexus working directory. They simply move data to be cleared or
-evicted to a trash directory under the Nexus work directory. This
-task deletes the data in this trash directory older than the number of
-days specified in the task setting 'Purge Items older than (days)'.
-
-Evict Unused Proxied Items From Repository Caches:: This scheduled
-task tells Nexus to delete all proxied items that haven't been "used"
-(referenced or retrieved by a client) in a number of days as specified
-in Evict Items older than (days). This can be a good job to run if you
-are trying to conserve storage space and do not need all of the
-components in the future e.g., to reproduce old builds without renewed
-retrieval. This is particularly useful for a personal Nexus deployment
-with a large change rate of components combined with limited diskspace.
-
-Expire Repository Caches:: Repositories have several caches to improve
-performance. This task expires the caches causing Nexus to recheck the
-remote repository for a proxy repository or the file system for a
-hosted repository. You can configure the repository or group to be
-affected with the task setting Repository/Group. Alternatively you can
-provide a Repository Path to configure the content that should be
-expired.
-
-Mirror Eclipse Update Site:: The P2 plugin
-allows you to mirror Eclipse update sites. This task can be used to
-force updates of repositories that went out of sync.
-
-Optimize Repository Index:: To speed up searches in Nexus, this task
-tells the internal search engine to optimize its index files. This has
-no affect on the indexes published by Nexus. Typically, this task does
-not have to run more than once a week.
-
-Publish Indexes:: Just as Maven downloads an index from a remote
-repository, Nexus can publish an index in the same format. This will
-make it easier for people using m2eclipse or Nexus to interact with
-your repositories.
- 
-Purge Nexus Timeline:: Nexus maintains a lot of data that relates to
-the interaction between itself, proxied remote repositories, and
-clients on Nexus.  While this information can be important for
-purposes of auditing, it can also take up storage space. Using this
-scheduled task you can tell Nexus to periodically purge this
-information. The setting "Purge Items older than (days)" controls the
-age of the data to be deleted.
- 
-Purge Orphaned API Keys:: This scheduled tasks will delete old, unused
-API keys generated and used by various plugins. For example, it should
-be scheduled when using the User Token feature or NuGet
-repositoriies. It will purge orphaned API keys e.g., after users reset
-their token and should be scheduled to run regularly, specifically
-when internal security policies for password resets and you are using
-an external security provider like LDAP with this requirement for
-resets to access Nexus.
- 
-Rebuild Maven Metadata Files:: This task will rebuild the
-maven-metadata.xml files with the correct information and will also
-validate the checksums (.mh5/.sha1) for all files in the specified
-Repository/Group. Typically this task is run manually to repair a
-corrupted repository.
-
-Rebuild NuGet Feed:: If you are using NuGet, pushing your components
-into a NuGet hosted repository and are proxying that repository to
-other users, this task can be used to rebuild the feed.
- 
-Rebuild P2 metadata and Rebuild P2 repository:: These tasks can be
-used to rebuild the metadata or the full repository with a P2
-format. You can specify a Repository/Group or a Repository Path to
-determine which content to affect.
- 
-Remove Releases From Repository:: In many use cases of a repository
-manager, it is necessary to keep release components for long periods
-of time or forever. This can be necessary for reproducibility reasons,
-in order to ensure users have access to old versions or even just for
-audit or legal reasons. However, in other use cases, there is no value
-in keeping old release components. One example would be a when using a
-continuous delivery approach onto a single deployment platform with no
-roll back support. In other cases, it could also be impractical due to
-the mere number and size of the release components.
-+ 
-This scheduled task allows you to trigger the deletion of release
-components, supporting these use cases taking care of meta data
-updates, and removing the need to manually delete the components or use
-an external system to trigger the deletion.
-+ 
-To configure the task, you specifiy the repository where release
-components are to be deleted as well as the number of component
-versions to keep for a specific groupId and artifactId coordinate. The
-task generates a list of all versions of a component for each groupId
-and artifactId coordinate combination and sorts it according to the
-version number. The ordering is derived by parsing the version string
-and supports http://semver.org[sematic versioning] with additional
-semantics for specific classifiers. Further details can be
-found in the documentation for the implementing class
-http://sonatype.github.io/sonatype-aether/apidocs/org/sonatype/aether/util/version/GenericVersionScheme.html[GenericVersionScheme].
-+
-Optionally, the 'Repository Target' parameter can be used to narrow
-down the content of the repository that is analyzed, to determine if
-any deletion should occur. Choosing +All(Maven2)+ is suitable to cause
-all Maven 2-formatted repositories to be analysed. If you want to only
-target a specific groupId and artifactId combination or a number of
-them you can create a suitable repository target as documented in
-<<confignx-sect-managing-repo-targets>> and use it in the
-configuration of the scheduled task.
- 
-Remove Snapshots from Repository:: Often, you will want to remove
-snapshots from a snapshot repository to preserve storage space. This
-task supports this deletion for time stamped snapshots as created by
-Maven 3.x in a deployment repository. Note that configuring and
-running this job is not enough to reclaim disk space.  You will also
-need to configure a scheduled job to empty the trash folder.  Files
-are not deleted by the 'Remove Snapshots' job. They are only moved into
-the trash folder.  When you create a scheduled task to remove
-snapshots, you can specify the 'Repository/Group' to affect as well as:
-+
-'Minimum Snapshot Count';; This configuration option allows you to
-specify a minimum number of snapshots to preserve per component.  For
-example, if you configured this option with a value of 2, Nexus will
-always preserve at least two snapshot components. A value of -1
-indicates that all snapshots should be preserved.
-+
-'Snapshot Retention (days)';; This configuration option allows you to
-specify the number of days to retain snapshot components.  For example,
-if you want to make sure that you are always keeping the last three
-day's worth of snapshot components, configure this option with a value
-of 3. The minimum count overrides this setting.
-+
-'Remove if released';; If enabled and a released component with the same
-GAV coordinates is detected all snapshots will be removed.
-+ 
-'Grace period after release (days)';; The configuration 'Remove if
-released' causes snapshots to be deleted as soon as the scheduled task
-is executed. This can lead to builds that still reference the snapshot
-dependency to fail. This grace period parameter allows you to specify
-a number of days to delay the deletion, giving the respective projects
-referencing the snapshot dependency time to upgrade to the release
-component or the next snapshot version.
-+
-'Delete immediately';; If you want to have components deleted directly
-rather than moved to the trash, you can enable this setting.
-+
-When doing regular deployments to a snapshot repository via a CI
-server, this task should be configured to run regularly.
- 
-Repair Repositories Index:: In certain cases it might be required to
-remove the internal index as well as the published ones of a
-repository.  This task does that and then rebuilds the internal index
-by first trying to download remote indexes (if a proxy repository),
-then scanning the local storage and updating the internal index
-accordingly. Lastly, the index is published for the repository as
-well. There should be no need to schedule this task. But when
-upgrading Nexus, the upgrade instructions may sometimes include a
-manual step of executing this task.
- 
-Synchronize Shadow Repository:: This service synchronizes a shadow (or
-virtual) repository with its master repository. This task is only
-needed when external changes affected a source repository of a virtual
-repository you are using.
-
-Update Repositories Index:: If files are deployed directly to a
-repository's local storage (not deployed through Nexus), you will need
-to instruct Nexus to update its index. When executing this task, Nexus
-will update its index by first downloading remote indexes (if a proxy
-repository) and then scan the local storage to index the new files.
-Lastly, the index is published for the repository as well. Normally,
-there should be no need to schedule this task. One possible exception
-would be if files are deployed directly to the local storage regularly.
- 
-Yum: Generate Metadata:: The metadata for a yum repository is created
-and maintained by the http://createrepo.baseurl.org/[createrepo]
-tool. This scheduled task allows you to run it for a specific
-repository and optionally configure the output directory. 
-
-
-Beyond these tasks any plugin can provide additional scheduled tasks,
-which will appear in the drop-down once you have installed the plugin.
-
-The Evict and Purge actions do not delete data from the Nexus
-working directory. They simply move data to be cleared or evicted to a
-trash directory under the Nexus work directory. If you want to reclaim
-disk space, you need to clear the Trash on the Browse Repositories
-screen. If something goes wrong with a evict or clear service, you can
-move the data back to the appropriate storage location from the trash.
-You can also schedule the Empty Trash service to clear this directory
-on a periodic basis.
-
-TIP: In order to keep the heap usage in check it is recommended that
-you schedule an "optimize indexes" task to run weekly. A number of
-other maintenance tasks should also be scheduled for production
-deployments.
-
-Setting up scheduled tasks adapted to your usage of Nexus is an
-important first step when setting up a Nexus instance. Go through the
-list of task types and consider your usage patterns of Nexus. Also
-update your scheduled tasks when changing your usage. E.g., if you
-start to regularly deploy snapshots by introducing continuous
-integration server builds with deployment.
 
 [[capabilities]]
 === Accessing and Configuring Capabilities
