@@ -32,6 +32,8 @@ fi
 if [ $publish_index == "true" ]; then
     rsyncToDest site/index.html  "" --delete
     rsyncToDest site/sitemap.xml  "" --delete
+    rsyncToDest site/sitemap-nexus-2.xml  "" --delete
+    rsyncToDest site/sitemap-nexus-3.xml  "" --delete
     rsyncToDest site/js/ js --delete
     rsyncToDest site/images/ images --delete
     rsyncToDest site/css/ css --delete
