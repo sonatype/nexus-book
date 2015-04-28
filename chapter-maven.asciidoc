@@ -238,8 +238,8 @@ Nexus server running on +localhost+ is shown in
 ----
 <ivysettings>
   <settings defaultResolver="nexus"/>
-  <property name="nexus-public" 
-                      value="http://localhost:8081/nexus/content/groups/public"    
+  <property name="nexus-public"
+                   value="http://localhost:8081/nexus/content/groups/public"    
   <resolvers>
       <ibiblio name="nexus" m2compatible="true" root="${nexus-public}"/>
     </resolvers>
@@ -286,12 +286,16 @@ example for resolving dependencies from a Nexus server running on
 .Minimal Setup for Aether Ant Tasks
 ----
 <project xmlns:aether="antlib:org.eclipse.aether.ant" ....>
-  <taskdef uri="antlib:org.eclipse.aether.ant" resource="org/eclipse/aether/ant/antlib.xml">
+  <taskdef uri="antlib:org.eclipse.aether.ant" 
+      resource="org/eclipse/aether/ant/antlib.xml">
     <classpath>
-      <fileset dir="${aether.basedir}" includes="aether-ant-tasks-*.jar" />
+      <fileset dir="${aether.basedir}" 
+                   includes="aether-ant-tasks-*.jar" />
     </classpath>
   </taskdef>
-  <aether:mirror id="mirror" url="http://localhost:8081/nexus/content/groups/public/" mirrorOf="*"/>
+  <aether:mirror id="mirror" 
+     url="http://localhost:8081/nexus/content/groups/public/" 
+     mirrorOf="*"/>
 ...
 </project>
 ----
@@ -348,7 +352,8 @@ look like
 ----
 allprojects {
   ext.RepoConfigurator = {
-    maven { url = uri('http://localhost:8081/nexus/content/groups/public') }
+    maven { 
+      url = uri('http://localhost:8081/nexus/content/groups/public') }
   }
   buildscript.repositories RepoConfigurator
   repositories RepoConfigurator
@@ -375,8 +380,8 @@ class NexusRepositoryPlugin implements Plugin<Gradle> {
       name = 'standard-nexus'
       url = 'http://localhost:8081/nexus/content/groups/public'
     }
-    // if required you can add further repositories or groups here and they will
-    // be left intact if the name starts with standard-
+    // if required you can add further repositories or groups here 
+    // and they will be left intact if the name starts with standard-
     // although it is better to just add those repositories in Nexus 
     // and expose them via the public group
   }
@@ -384,13 +389,13 @@ class NexusRepositoryPlugin implements Plugin<Gradle> {
   final Closure RepoHandler = {
     all { ArtifactRepository repo ->
       if (repo.name.toString().startsWith("standard-") ) {
-         println "$LOG_PREFIX    $repo.name at $repo.url activated as repository."
+         println "$LOG_PREFIX $repo.name at $repo.url activated as repository."
       } else {
         if (repo instanceof MavenArtifactRepository) {
           remove repo
-          println "$LOG_PREFIX    $repo.name at $repo.url removed."
+          println "$LOG_PREFIX $repo.name at $repo.url removed."
         } else {
-          println "$LOG_PREFIX    $repo.name kept (not a Maven repository)."
+          println "$LOG_PREFIX $repo.name kept (not a Maven repository)."
         }
       }
     }
@@ -398,9 +403,10 @@ class NexusRepositoryPlugin implements Plugin<Gradle> {
 
           
   void apply(Gradle gradle) {
-    // Override all project specified Maven repos with standard defined in here
+    // Override all project specified Maven repos with standard 
+    // defined in here
     gradle.allprojects{ project ->
-      println "$LOG_PREFIX  Reconfiguring repositories and buildscript repositories."
+      println "$LOG_PREFIX  Reconfiguring repositories."
       project.repositories RepoHandler
       project.buildscript.repositories RepoHandler
 
@@ -411,12 +417,10 @@ class NexusRepositoryPlugin implements Plugin<Gradle> {
 }
 ----
 
-
-
-
 Gradle init scripts can be much more powerful and customized and are
 explained with more examples in the
-http://gradle.org/docs/current/userguide/init_scripts.html[official Gradle documentation].
+http://gradle.org/docs/current/userguide/init_scripts.html[official
+Gradle documentation].
 
 To deploy build outputs to a Nexus repository with the +uploadArchives+
 task, user authentication can be declared in e.g.,
@@ -433,16 +437,18 @@ configuration from the Maven plugin:
 
 ----
 uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "${nexusUrl}/content/repositories/releases") {
-                authentication(userName: nexusUsername, password: nexusPassword)
-            }
-            snapshotRepository(url: "${nexusUrl}/content/repositories/snapshots") {
-                authentication(userName: nexusUsername, password: nexusPassword)
-            }
-        }
+  repositories {
+    mavenDeployer {
+      repository(
+        url: "${nexusUrl}/content/repositories/releases") {
+          authentication(userName: nexusUsername, password: nexusPassword)
+      }
+      snapshotRepository(
+        url: "${nexusUrl}/content/repositories/snapshots") {
+          authentication(userName: nexusUsername, password: nexusPassword)
+      }
     }
+  }
 }
 ----
 
@@ -541,13 +547,16 @@ and +clojars+ repositories as shown in <<leiningen-minimal>> has to be declared.
 .Minimal Leiningen Configuration
 ----
 :mirrors {
-    "central" {:name "Nexus"
-                   :url "http://localhost:8081/nexus/content/groups/public"
-                   :repo-manager true}
-  #"clojars" {:name "Nexus"
-                   :url ""http://localhost:8081/nexus/content/groups/public"
-                   :repo-manager true}
-                  }
+  "central" {
+    :name "Nexus"
+    :url "http://localhost:8081/nexus/content/groups/public"
+    :repo-manager true
+  }
+  #"clojars" {
+    :name "Nexus"
+    :url ""http://localhost:8081/nexus/content/groups/public"
+    :repo-manager true}
+  }
 ----
 
 These minimal settings allow Leiningen to download the declared
@@ -561,8 +570,10 @@ part of the Nexus +public+ repository group used in +mirrors+.
 
 ----
   :deploy-repositories [
-    ["snapshots" "http://localhost:8081/nexus/content/repositories/snapshots"]
-    ["releases" "http://localhost:8081/nexus/content/repositories/releases"]
+    ["snapshots" 
+      "http://localhost:8081/nexus/content/repositories/snapshots"]
+    ["releases" 
+      "http://localhost:8081/nexus/content/repositories/releases"]
   ]
 ----
 
