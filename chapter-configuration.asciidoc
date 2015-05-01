@@ -823,19 +823,17 @@ enabling the 'Strict Content Type Validation'.
 
 ===== Proxy Repositories
 
-A proxy repository on the other hand requires the configuration of the
-'Remote Storage'. It needs to be configured with the URL of the remote
-repository, that should to be proxied. When selecting the URL to proxy
-it is beneficial to avoid proxying remote repository groups. Proxying
-repository groups prevents some performance optimization in terms of
-accessing and retrieving the content of the remote repository. If you
-require components from the group that are found in different hosted
-repositories on the remote repository server it is better to create
-multiple proxy repositories that proxy the different hosted
-repositories from the remote server on your Nexus server instead of
-simply proxying the group.
-
-===== Additional Configuration for Maven Proxy Repositories
+Remote Storage:: A proxy repository on the other hand requires the
+configuration of the 'Remote Storage'. It needs to be configured with
+the URL of the remote repository, that should to be proxied. When
+selecting the URL to proxy it is beneficial to avoid proxying remote
+repository groups. Proxying repository groups prevents some
+performance optimization in terms of accessing and retrieving the
+content of the remote repository. If you require components from the
+group that are found in different hosted repositories on the remote
+repository server it is better to create multiple proxy repositories
+that proxy the different hosted repositories from the remote server on
+your Nexus server instead of simply proxying the group.
 
 Use the Nexus truststore:: This checkbox allows you to elect for Nexus
 to manage the SSL certificate of the remote repository. 
@@ -859,7 +857,10 @@ re-index the repository. Once this is done, component search will
 return every component available on the Maven Central repository.
 ////
 
-Auto blocking enabled:: If Auto blocking enabled is set to true, Nexus
+Blocked:: Setting a repository to blocked causes Nexus to no longer
+send outbound requests to the remote repository.
+
+Auto blocking enabled:: If 'Auto blocking enabled' is set to true, Nexus
 will automatically block a proxy repository if the remote repository
 becomes unavailable. While a proxy repository is blocked, components
 will still be served to clients from a local cache, but Nexus will not
@@ -877,16 +878,16 @@ The default for this setting is -1 for a repository with
 a release policy and 1440 for a repository with snapshot policy.
 ////
 
+////
 Strict Content Type Validation:: see proxy repo
+////
 
-Not found cache enabled:: 
-
-Not found cache TTL:: If Nexus fails to locate an component, it will
-cache this result for a given number of minutes. In other words, if
-Nexus can't find an component in a remote repository, it will not
-perform repeated attempts to resolve this component until the 'Not
-found cache TTL' time has been exceeded. The default for this setting
-is 1440 minutes (or 24 hours).
+Not found cache enabled/Not found cache TTL:: If Nexus fails to locate
+an component, it will cache this result for a given number of
+minutes. In other words, if Nexus can't find an component in a remote
+repository, it will not perform repeated attempts to resolve this
+component until the 'Not found cache TTL' time has been exceeded. The
+default for this setting is 1440 minutes (or 24 hours).
 
 Authentication:: This section allows you to set a 'Username' and
 'Password' for plain authentication or 'Username', 'Password',
@@ -963,6 +964,15 @@ or development components. The 'Version policy' allows you to set
 the version string. This allows repeated uploads where the actual
 number used is composed of a date/timestamp and an enumerator and the
 retrieval can still use the '-SNAPSHOT' version string.
+
+===== Additional Configuration for Repositories Using the NuGet Format
+
+The NuGet repository format works via communicattion to the remote
+repository via http://www.odata.org/[OData] queries. These queries are
+triggered by requests from client tools to Nexus and are cached
+internally to enhance performance. The parameters 'Query cache size'
+and 'Query cache age' can be used to configure the size of the cache
+as well as the rate at which queries expire and are re-run.
 
 ===== Repository Groups
 
