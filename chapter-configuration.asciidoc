@@ -495,7 +495,7 @@ http://sonatype.github.io/sonatype-aether/apidocs/org/sonatype/aether/util/versi
 Optionally, the 'Repository Target' parameter can be used to narrow
 down the content of the repository that is analyzed, to determine if
 any deletion should occur. Choosing +All(Maven2)+ is suitable to cause
-all Maven 2-formatted repositories to be analysed. If you want to only
+all Maven2-formatted repositories to be analysed. If you want to only
 target a specific groupId and artifactId combination or a number of
 them you can create a suitable repository target as documented in
 <<confignx-sect-managing-repo-targets>> and use it in the
@@ -616,7 +616,7 @@ To manage Nexus repositories select the 'Repositories' item in the
 
 A repository with the type 'proxy', also known as a proxy repository,
 is a repository that is linked to a remote repository. Any request for
-a component is verified againts the local content of the proxy
+a component is verified against the local content of the proxy
 repository. If no local component is found, the request is forwarded
 to the remote repository. The component is then retrieved and stored
 locally in Nexus acting as a cache. Subsequent requests for the same
@@ -631,11 +631,11 @@ maven-central:: This proxy repository accesses the
 http://search.maven.org/[Central Repository], formerly known as Maven
 Central. It is the default component repository built into Apache
 Maven and is well-supported by other build tools like Gradle, SBT or
-Ant/Ivy. It uses the Maven repository format.
+Ant/Ivy.
 
 nuget.org-proxy:: This proxy repository accesses the
 http://www.nuget.org/[NuGet Gallery]. It is the default component
-repository used by the `nuget` pacakge management tool used for .Net
+repository used by the `nuget` package management tool used for .Net
 development.
 
 [[hosted-repository]]
@@ -648,21 +648,25 @@ authoritative location for these components.
 By default, Nexus ships with the following configured hosted
 repositories:
 
-maven-releases:: This hosted repository is where your organization can
- publish internal releases in a Maven2 format repository. You can also
- use this repository for third-party components that are not available
- in external repositories. Examples of these components could be
- commercial, proprietary libraries such as an Oracle JDBC driver that
- may be referenced by your organization.
+maven-releases:: This hosted repository uses the Maven2 repository
+ format with a release version policy. It is intended to be the
+ repository where your organization publishes internal releases. You
+ can also use this repository for third-party components that are not
+ available in external repositories and can therefore not be retrieved
+ via a configured proxy repository. Examples of these components could
+ be commercial, proprietary libraries such as an Oracle JDBC driver
+ that may be referenced by your organization.
 
-maven-snapshots:: This hosted repository is where your organization
- can publish internal development versions, also known as snapshots,
- in a Maven2 format repository.
+maven-snapshots:: This hosted repository uses the Maven2 repository
+ format with a snapshot version policy. It is intended to be the the
+ repository where your organization publishes internal development
+ versions, also known as snapshots.
  
 nuget-hosted:: This hosted repository is where your organization can
-publish internal releases in a nuget format repository. You can also
-use this repository for third-party components that are not available
-in external repositories.
+publish internal releases in repository using the NuGet repository
+format. You can also use this repository for third-party components
+that are not available in external repositories, that could
+potentially be proxied to gain access to the components.
 
 [[repository-group]]
 ==== Repository Group
@@ -687,7 +691,7 @@ therefore URL.
 
 nuget-group:: This group combines the nuget formatted repositories
 'nuget-hosted' and 'nuget.org-proxy' into a single repository for
-your .Net development with nuget.
+your .Net development with NuGet.
 
 [[admin-repository-repositories]]
 ==== Managing Repositories and Repository Groups
@@ -718,7 +722,7 @@ such as 'maven2', 'nuget' or others
 Status:: the status of the repository as well as further information
 about the status.  A functioning repository would show the status to
 be 'Online'. Additional information can e.g., be about SSL
-certification problems or the status of the remote repository even for
+certification problems or the status of the remote repository for
 a currently disabled proxy repository
 
 URL:: the direct URL path that exposes the repository via HTTP access
@@ -733,17 +737,17 @@ TBD as documented in <<rhc>>
 ////
 
 The 'Create repository' button above the repository list triggers a
-dialog to select the provider for the new repository. The provider
+dialog to select the 'Recipe' for the new repository. The recipe
 combines the format and the type of repository into a single
 selection. Depending on your Nexus version and installed plugins, the
 list of available choices differs.
 
 For example to create another release repository in Maven2 format, you
-would click on the row 'maven2 (hosted)' in the dialog. If you wanted
-to proxy another Maven 2 repository, choose 'maven 2 (proxy)'. On the
-other hand if you want to proxy a nuget repository, choose 'nuget
-(proxy)'. With 'maven2 (group) you can create a repository group for
-Maven 2 repositories.
+would click on the row with the recipe 'maven2 (hosted)' in the
+dialog. If you wanted to proxy a Maven2 repository, choose
+'maven 2 (proxy)'. On the other hand if you want to proxy a nuget
+repository, choose 'nuget (proxy)'. With 'maven2 (group)' you can
+create a repository group for Maven2 repositories.
 
 After this selection, you are presented with the configuration view,
 that allows you to fill in the required parameters and some further
@@ -756,20 +760,23 @@ Once you have created a repository or repository group, it is
 available in the list for further configuration and management.
 Clicking on a specific row allows you to navigate to this repository
 specific administration section. An example for the 'maven-central'
-repository is displayed in <<fig-admin-repository-repositories-central>>.
+repository is partially displayed in <<fig-admin-repository-repositories-central>>.
 
 [[fig-admin-repository-repositories-central]]
-.Repository Configuration for a Proxy Repository
+.Partial Repository Configuration for a Proxy Repository
 image::figs/web/admin-repository-repositories-central.png[scale=50]
 
 
 The 'Delete repository' button allows you to delete this repository and all
-related configuration and components, after confirming the operating
+related configuration and components, after confirming the operation
 in a dialog. 
+
+The following properties can be viewed for all repositories and can
+not be edited after the initial creation of the repository.
 
 Name:: The 'Name' is the identifier that will be used in the
 Nexus URL. For example, the proxy repository for the Central
-Repository has an ID of +maven-central+.  The 'Name' must be
+Repository has a name of +maven-central+.  The 'Name' must be
 unique in a given Nexus installation and is required.
 
 Format:: 'Format' defines in what format Nexus exposes the repository
@@ -777,12 +784,10 @@ to external tools. Supported formats depend on the Nexus edition and
 the installed plugins. Examples are 'maven2', 'nuget', 'raw' and
 others.
 
-Type:: The type of repository - 'proxy', 'hosted' or 'group'. You can
-not change the type of a repository as it is selected when you create
-a repository.
+Type:: The type of repository - 'proxy', 'hosted' or 'group'. 
 
 URL::  It shows the user facing URL this means that Maven and
-other tools can access the repository directly at
+other tools can access the repository directly at e.g., 
 +http://localhost:8081/repository/maven-central+. 
 
 Online:: The checkbox allows you set whether this repository on Nexus
@@ -795,26 +800,26 @@ and type.
 ===== Hosted Repositories
 
 A hosted repository includes configuration of a 'Deployment
-policy'. It setting controls how a hosted repository allows or
-disallows component deployment. If the policy is set to 'Read-only',
-no deployment is allowed. If this policy is set to 'Disable redeploy',
-a client can only deploy a particular component once and any attempt
-to deploy a component again will result in an error. If the policy is
-set to 'Allow redeploy', clients can deploy components to this
-repository and overwrite the same component in subsequent
-deployments. This option is visible for hosted repositories only.
+policy'. Its setting controls how a hosted repository allows or
+disallows component deployment. 
 
+If the policy is set to 'Read-only', no deployment is allowed. 
 
-.Additional Configuration for Maven Hosted Repositories
+If this policy is set to 'Disable redeploy', a client can only deploy
+a particular component once and any attempt to deploy a component
+again will result in an error. The disabled redeploy is the default
+value, since most client tools assume components to be immutable and
+will not check a repository for changed components thay have already
+been retrieved and cached locally.
 
-Version policy:: A Maven repository can either host release components
-or development components. The 'Version policy' allows you to set
-'Snapshot' for development version that end up in '-SNAPSHOT' in the
-version string. This allows repeated uploads with the actual number
-used is composed of a date/timestamp and an enumerator and the
-retrieval can still use the '-SNAPSHOT' version string. 
+If the policy is set to 'Allow redeploy', clients can deploy
+components to this repository and overwrite the same component in
+subsequent deployments.
 
-Strict Content Type Validation:: tbd
+Hosted repositories can be configured to validate any new components
+to see if the MIME-type corresponds to the content of the file by
+enabling the 'Strict Content Type Validation'.
+
 
 ===== Proxy Repositories
 
@@ -830,7 +835,7 @@ multiple proxy repositories that proxy the different hosted
 repositories from the remote server on your Nexus server instead of
 simply proxying the group.
 
-.Additional Configuration for Maven Proxy Repositories
+===== Additional Configuration for Maven Proxy Repositories
 
 Use the Nexus truststore:: This checkbox allows you to elect for Nexus
 to manage the SSL certificate of the remote repository. 
@@ -862,12 +867,15 @@ attempt to locate an component in a remote repository. Nexus will
 periodically retest the remote repository and unblock the repository
 once it becomes available.
 
-Maxium artifact age:: Tells Nexus what that maximum age of an artifact
-is, before it retrieves a new version from the remote repository.  The
-default for this setting is -1 for a repository with a release policy
-and 1440 for a repository with snapshot policy.
+Maximum artifact age:: Tells Nexus what that maximum age of a
+component is, before it retrieves a new version from the remote
+repository.  
 
-Version policy:: see proxy repo
+////
+tbd once fixed..
+The default for this setting is -1 for a repository with
+a release policy and 1440 for a repository with snapshot policy.
+////
 
 Strict Content Type Validation:: see proxy repo
 
@@ -947,6 +955,15 @@ cache value determines the maximum age for these items before
 updates are retrieved. 
 ////
 
+===== Additional Configuration for Repositories Using the Maven2 Format
+
+Version policy:: A Maven repository can either host release components
+or development components. The 'Version policy' allows you to set
+'Snapshot' for development components that end up in '-SNAPSHOT' in
+the version string. This allows repeated uploads where the actual
+number used is composed of a date/timestamp and an enumerator and the
+retrieval can still use the '-SNAPSHOT' version string.
+
 ===== Repository Groups
 
 The creation and configuration for a repository group differs a little
@@ -972,19 +989,22 @@ Nexus is available to client side tools or not.
 
 The 'Member repositories' selector allows you to add repositories to
 the repository group as well as remove them. The 'Members' column
-includes all the repositories that constitute the group. Note that the
-order of the repositories listed in the 'Member' section is
-important. When Nexus searches for a component in a repository group,
-it will return the first match. To reorder a repository in this list,
-click and the drag the repositories and groups in the 'Members' list
-or use the arrow buttons between the 'Available' and 'Members'
+includes all the repositories that constitute the group. The
+'Available' column includes all the repositories and repository groups
+that can potentially be added to the group.
+
+Note that the order of the repositories listed in the 'Member' section
+is important. When Nexus searches for a component in a repository
+group, it will return the first match. To reorder a repository in this
+list, click and the drag the repositories and groups in the 'Members'
+list or use the arrow buttons between the 'Available' and 'Members'
 list. These arrows can be used to add and remove repositories as well.
 
 The order of repositories or other groups in a group can be used to
 influence the effective metadata that will be retrieved by Maven or
 other tools from a Nexus Repository Group. We recommend placing hosted
 repositories higher in the list than proxy repositories. For proxy
-repositories Nexus needs to periodically check the remote for updates,
+repositories Nexus needs to check the remote repository
 which will incur more overhead than a hosted repository lookup.
 
 We also recommend placing repositories with a higher probability of
@@ -999,7 +1019,7 @@ configuration.
 ==== Repository Management Example
 
 The following sections detail some common steps of your repository
-management efforts on the example of a Maven 2 repository.
+management efforts on the example of a Maven2 repository.
 
 [[config-sect-custom]]  
 ===== Adding Repositories for Missing Dependencies
@@ -1035,37 +1055,36 @@ repository' button in the 'Repositories' feature view and click on
 
 In the configuration dialog:
 
-* Set 'Name' set to +jboss-releases+
-* Set 'Remote storage' set to
+* Set 'Name' to +jboss-releases+
+* Set 'Remote storage'  to
   +https://repository.jboss.org/nexus/content/repositories/releases/+
-* For a Maven2 format repositry, confirm that the 'Repository policy'
+* For a Maven2 format repositry, confirm that the 'Version policy'
   is set correctly to 'Release'.
 * Click on the 'Create repository' button at the end of the form
 
 Nexus is now configured to proxy the repository. If the remote
 repository contains snapshots as well as release components, you will
 need to repeat the process creating a second proxy repository with the
-same URL setting repository policy to 'Snapshot' in the repository
-type dialog.
+same URL setting version policy to 'Snapshot'.
 
 [[config-sect-repo-group]]  
 ===== Adding a Repository to a Group
 
-Next you will need to add the new repositories to the 'maven-public'
-Nexus repository group. To do this, click on the row of the
-'maven-public' group in the 'Repositories' feature view.
+Next you will need to add the new repository 'jboss-releases' to the
+'maven-public' repository group. To do this, click on the row of
+the 'maven-public' group in the 'Repositories' feature view.
 
 To add the new repository to the public group, find the repository in
 the 'Available' list on the left, click on the repository you want to
 add and drag it to the right to the 'Members' list. Once the
 repository is in that list, you can click and drag the repository
-within that list to alter the order in which a repository will be
+within that list to alter the order in which the group will be
 searched for a matching component. Press the 'Save' button to complete
 this configuration.
 
-In the last few sections, you learned how to add a new custom
-repositories to a build in order to download components that are not
-available in the Central Repository.
+In the last few sections, you learned how to add new repositories to a
+build in order to download components that are not available in the
+Central Repository.
 
 If you were not using a repository manager, you would have added these
 repositories to the repository element of your project's POM, or you
