@@ -35,7 +35,7 @@ anchor:ex-maven-nexus-simple[Listing: Configuring Maven to Use a Single Nexus Gr
       <!--This sends everything else to /public -->
       <id>nexus</id>
       <mirrorOf>*</mirrorOf>
-      <url>http://localhost:8081/content/groups/public</url>
+      <url>http://localhost:8081/repository/maven-public/</url>
     </mirror>
   </mirrors>
   <profiles>
@@ -115,7 +115,7 @@ Listing: Minimal Ivy Configuration in an Ant file
 <ivysettings>
   <settings defaultResolver="nexus"/>
   <property name="nexus-public" 
-                      value="http://localhost:8081/content/groups/public"    
+                      value="http://localhost:8081/repository/maven-public/"
   <resolvers>
       <ibiblio name="nexus" m2compatible="true" root="${nexus-public}"/>
     </resolvers>
@@ -169,7 +169,7 @@ anchor:aether-minimal[Listing: Minimal Aether Configuration in an Ant file]
       <fileset dir="${aether.basedir}" includes="aether-ant-tasks-*.jar" />
     </classpath>
   </taskdef>
-  <aether:mirror id="mirror" url="http://localhost:8081/content/groups/public/" mirrorOf="*"/>
+  <aether:mirror id="mirror" url="http://localhost:8081/repository/maven-public/" mirrorOf="*"/>
 ...
 </project>
 ----
@@ -212,7 +212,7 @@ Listing: Gradle Repositories Configuration
 ----
 repositories {
     maven {
-        url "http://localhost:8081/content/groups/public"
+        url "http://localhost:8081/repository/maven-public/"
     }
 }
 ----
@@ -236,18 +236,16 @@ configuration from the Maven plugin:
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "${nexusUrl}/content/repositories/releases") {
+            repository(url: "${nexusUrl}/repository/maven-releases/") {
                 authentication(userName: nexusUsername, password: nexusPassword)
             }
-            snapshotRepository(url: "${nexusUrl}/content/repositories/snapshots") {
+            snapshotRepository(url: "${nexusUrl}/repository/maven-snapshots") {
                 authentication(userName: nexusUsername, password: nexusPassword)
             }
         }
     }
 }
 ----
-
-
 
 
 Full example projects can be found in the +gradle+ folder of the
@@ -293,7 +291,7 @@ configure a sbt project to resolve dependencies declared in
 anchor:sbt-minimal[Listing: SBT Resolvers Configuration]
 .Listing: SBT Resolvers Configuration
 ----
-resolvers += "Nexus" at "http://localhost:8081/content/groups/public"
+resolvers += "Nexus" at "http://localhost:8081/repository/maven-public/"
 ----
 
 These minimal settings allow sbt to download the declared dependencies.
@@ -312,9 +310,9 @@ and then used in the +publishTo+ configuration:
 publishTo <<= version { v: String =>
   val nexus = "http://localhost:8081/" 
   if (v.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at nexus + "content/repositories/snapshots")
+    Some("snapshots" at nexus + "repository/maven-snapshots")
   else
-    Some("releases" at nexus + "content/repositories/releases")
+    Some("releases" at nexus + "repository/maven-releases")
 ----
 
 Further documentation can be found in the
@@ -344,13 +342,12 @@ anchor:leiningen-minima[Listing: Leiningen Configuration]
 ----
   :mirrors {
     "central" {:name "Nexus"
-                          :url "http://localhost:8081/content/groups/public"
+                          :url "http://localhost:8081/repository/maven-public/"
                           :repo-manager true}
   #"clojars" {:name "Nexus"
-                          :url ""http://localhost:8081/content/groups/public""
+                          :url ""http://localhost:8081/repository/maven-public/""
                           :repo-manager true}
                         }
-
 ----
 
 These minimal settings allow Leiningen to download the declared dependencies.
@@ -363,8 +360,8 @@ part of the Nexus +public+ repository group used in +mirrors+.
 
 ----
   :deploy-repositories [
-    ["snapshots" "http://localhost:8081/content/repositories/snapshots"]
-    ["releases" "http://localhost:8081/content/repositories/releases"]
+    ["snapshots" "http://localhost:8081/repository/maven-snapshots"]
+    ["releases" "http://localhost:8081/repository/maven-releases"]
   ]
 ----
 
