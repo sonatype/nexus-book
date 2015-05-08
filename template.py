@@ -25,7 +25,7 @@ if not searchdisplay:
   searchdisplay = "none"
 
 bookTitle = "Repository Management with Nexus"
-googleSearchToken = "011059148005191787079:jycarnaj42w"
+googleSearchToken = "011059148005191787079:ji60ljomyh8"
 
 print ("Applying template processing to ") + path
 print ("  Path to index set to: ") + toindex
