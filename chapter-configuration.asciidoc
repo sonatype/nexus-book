@@ -928,6 +928,9 @@ is created in the +sonatype-work/nexus/backup/npm+ with a date and time stamp
 in the filename. This backup is intended to be used for disaster recovery 
 in case the npm metadata datbase got corrupted. 
 
+Delete npm metadata:: This task allows you to completely delete the npm metadata 
+of a npm repository and should be only run manually upon advice from Sonatype support.
+
 Download Indexes:: This scheduled task will cause Nexus to download
 indexes from remote repositories for proxied repositories. The
 Download Remote Indexes configuration also needs to be enabled on the
@@ -994,9 +997,6 @@ repository, Nexus can publish an index in the same format. This will
 make it easier for people using m2eclipse or Nexus to interact with
 your repositories.
 
-Purge Broken Proxied Rubygems Metadata:: This task allows you to delete 
-the broken metadata of a proxy gem repository. 
- 
 Purge Nexus Timeline:: Nexus maintains a lot of data that relates to
 the interaction between itself, proxied remote repositories, and
 clients on Nexus.  While this information can be important for
@@ -1013,17 +1013,12 @@ their token and should be scheduled to run regularly, specifically
 when internal security policies for password resets and you are using
 an external security provider like LDAP with this requirement for
 resets to access Nexus.
- 
-Rebuild Hosted Rubygems Metadata Files:: This task can be used to 
-get the metadata file for a hosted gem repository recreated based 
-on the actual components found in the repository.
 
 Rebuild Maven Metadata Files:: This task will rebuild the
 maven-metadata.xml files with the correct information and will also
 validate the checksums (.mh5/.sha1) for all files in the specified
 Repository/Group. Typically this task is run manually to repair a
 corrupted repository.
-
 
 Rebuild NuGet Feed:: If you are using NuGet, pushing your components
 into a NuGet hosted repository and are proxying that repository to
@@ -1039,6 +1034,9 @@ can be rebuilt based on the components found in the storage of a hosted
 repository. The task can serve as a recovery tool in cases where the 
 npm metadata database got corrupted or the component storage was created 
 manually or via some external process like e.g. an rsync copying.
+
+Reconcile Repository Checksums: This task was used to repair checksums 
+and should only be used upon specific advise from Sonatype support.
 
 Remove Releases From Repository:: In many use cases of a repository
 manager, it is necessary to keep release components for long periods
@@ -1114,6 +1112,10 @@ rather than moved to the trash, you can enable this setting.
 When doing regular deployments to a snapshot repository via a CI
 server, this task should be configured to run regularly.
  
+Remove Unused Snapshots From Repository:: This task allows you to 
+have SNAPSHOT versions deleted from a Maven repository after they have 
+not been requested for a specified number of days.
+
 Repair Repositories Index:: In certain cases it might be required to
 remove the internal index as well as the published ones of a
 repository.  This task does that and then rebuilds the internal index
@@ -1123,8 +1125,15 @@ accordingly. Lastly, the index is published for the repository as
 well. There should be no need to schedule this task. But when
 upgrading Nexus, the upgrade instructions may sometimes include a
 manual step of executing this task.
- 
-Synchronize Proxied RubyGems Metadata Files:: This task can be used to 
+
+Rubygems: Purge Broken Files on Proxy:: This task allows you to delete 
+the broken metadata of a proxy gem repository. 
+
+Rubygems: Rebuild Hosted Index Files:: This task can be used to 
+get the metadata file for a hosted gem repository recreated based 
+on the actual components found in the repository.
+
+Rubygems: Synchronize Proxied Index File:: This task can be used to 
 force an update of the metadata in a Gem proxy repository and cause it to 
 be synchronized with the metadata in the remote repository.
  
@@ -1146,7 +1155,6 @@ Yum: Generate Metadata:: The metadata for a yum repository is created
 and maintained by the http://createrepo.baseurl.org/[createrepo]
 tool. This scheduled task allows you to run it for a specific
 repository and optionally configure the output directory. 
-
 
 Beyond these tasks any plugin can provide additional scheduled tasks,
 which will appear in the drop-down once you have installed the plugin.
