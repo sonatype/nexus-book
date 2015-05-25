@@ -961,12 +961,12 @@ Empty Trash:: The Evict and Purge actions do not delete data from the
 Nexus working directory. They simply move data to be cleared or
 evicted to a trash directory under the Nexus work directory. This
 task deletes the data in this trash directory older than the number of
-days specified in the task setting 'Purge Items older than (days)'.
+days specified in the task setting 'Purge items older than (days)'.
 
 Evict Unused Proxied Items From Repository Caches:: This scheduled
 task tells Nexus to delete all proxied items that haven't been "used"
 (referenced or retrieved by a client) in a number of days as specified
-in Evict Items older than (days). This can be a good job to run if you
+in 'Evict items older than (days)'. This can be a good job to run if you
 are trying to conserve storage space and do not need all of the
 components in the future e.g., to reproduce old builds without renewed
 retrieval. This is particularly useful for a personal Nexus deployment
@@ -976,7 +976,7 @@ Expire Repository Caches:: Repositories have several caches to improve
 performance. This task expires the caches causing Nexus to recheck the
 remote repository for a proxy repository or the file system for a
 hosted repository. You can configure the repository or group to be
-affected with the task setting Repository/Group. Alternatively you can
+affected with the task setting 'Repository/Group'. Alternatively you can
 provide a Repository Path to configure the content that should be
 expired.
 
@@ -1008,7 +1008,7 @@ age of the data to be deleted.
 Purge Orphaned API Keys:: This scheduled tasks will delete old, unused
 API keys generated and used by various plugins. For example, it should
 be scheduled when using the User Token feature or NuGet
-repositoriies. It will purge orphaned API keys e.g., after users reset
+repositories. It will purge orphaned API keys e.g., after users reset
 their token and should be scheduled to run regularly, specifically
 when internal security policies for password resets and you are using
 an external security provider like LDAP with this requirement for
@@ -1037,8 +1037,8 @@ determine which content to affect.
 Rebuild hosted npm metadata:: The npm metadata for a hosted repository 
 can be rebuilt based on the components found in the storage of a hosted 
 repository. The task can serve as a recovery tool in cases where the 
-npm metadata database got corrupoted or the component storage was created 
-manually or via some external process like e.g. an rsync copying
+npm metadata database got corrupted or the component storage was created 
+manually or via some external process like e.g. an rsync copying.
 
 Remove Releases From Repository:: In many use cases of a repository
 manager, it is necessary to keep release components for long periods
@@ -1055,7 +1055,7 @@ components, supporting these use cases taking care of meta data
 updates, and removing the need to manually delete the components or use
 an external system to trigger the deletion.
 + 
-To configure the task, you specifiy the repository where release
+To configure the task, you specify the repository where release
 components are to be deleted as well as the number of component
 versions to keep for a specific groupId and artifactId coordinate. The
 task generates a list of all versions of a component for each groupId
@@ -1085,13 +1085,13 @@ are not deleted by the 'Remove Snapshots' job. They are only moved into
 the trash folder.  When you create a scheduled task to remove
 snapshots, you can specify the 'Repository/Group' to affect as well as:
 +
-'Minimum Snapshot Count';; This configuration option allows you to
+'Minimum snapshot count';; This configuration option allows you to
 specify a minimum number of snapshots to preserve per component.  For
 example, if you configured this option with a value of 2, Nexus will
 always preserve at least two snapshot components. A value of -1
 indicates that all snapshots should be preserved.
 +
-'Snapshot Retention (days)';; This configuration option allows you to
+'Snapshot retention (days)';; This configuration option allows you to
 specify the number of days to retain snapshot components.  For example,
 if you want to make sure that you are always keeping the last three
 day's worth of snapshot components, configure this option with a value
