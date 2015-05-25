@@ -601,9 +601,10 @@ integration server builds with deployment.
 {in} {oss-icon} {pro-icon} {proplus-icon}
 
 Repositories are the containers for the components provided to your
-users as explained in more details in <<concepts>>. Configuring
-repositories is an essential part of your Nexus configuration, since
-it allows you to expose more components to your users. 
+users as explained in more detail in <<concepts>>. Creating and
+managing repositories is an essential part of your Nexus
+configuration, since it allows you to expose more components to your
+users.
 
 Nexus supports proxy repositories, hosted repositories and repository
 groups using a number of different repository formats.
@@ -620,9 +621,9 @@ a component is verified against the local content of the proxy
 repository. If no local component is found, the request is forwarded
 to the remote repository. The component is then retrieved and stored
 locally in Nexus acting as a cache. Subsequent requests for the same
-component are then fulfilled from the local storage therefore
-eliminating the network and time overhead of retrieving the component
-from the remote repository again.
+component are then fulfilled from the local storage, therefore
+eliminating the network bandwidth and time overhead of retrieving the
+component from the remote repository again.
 
 By default, Nexus ships with the following configured proxy
 repositories:
@@ -795,9 +796,17 @@ is available to client side tools or not.
 
 Beyond the generic fields used for any repository, a number of
 different fields are used and vary depending on the repository format
-and type.
+and type. They are grouped under a number of specific headers that
+include configuration for the related aspects and include:
 
-===== Hosted Repositories
+* Hosted
+* Proxy
+* Negative Cache 
+* HTTP
+* Maven 2
+* NuGet
+
+===== Hosted
 
 A hosted repository includes configuration of a 'Deployment policy' in
 the 'Hosted' configuration section. Its setting controls how a hosted
@@ -817,7 +826,7 @@ components to this repository and overwrite the same component in
 subsequent deployments.
 
 
-===== Proxy Repositories
+===== Proxy
 
 The configuration for proxy repositories in the 'Proxy' section
 contains the following parameters:
@@ -839,7 +848,7 @@ to manage the SSL certificate of the remote repository. It is only
 displayed, if the remote storage uses HTTPS. The 'View certificate'
 button triggers the display of the SSL certificated details in a
 dialog. The dialog allows you to add or remove the certificate from
-the certificate truststore maintaine dby Nexus.
+the certificate truststore maintained by Nexus.
 
 ////
 TBD link to SSL chapter once ready
@@ -879,21 +888,29 @@ The default for this setting is -1 for a repository with
 a release policy and 1440 for a repository with snapshot policy.
 ////
 
-////
-Strict Content Type Validation:: see proxy repo
-////
+
+==== Negative Cache
 
 Not found cache enabled/Not found cache TTL:: If Nexus fails to locate
-an component, it will cache this result for a given number of
-minutes. In other words, if Nexus can't find an component in a remote
+a component, it will cache this result for a given number of
+minutes. In other words, if Nexus can't find a component in a remote
 repository, it will not perform repeated attempts to resolve this
 component until the 'Not found cache TTL' time has been exceeded. The
-default for this setting is 1440 minutes (or 24 hours).
+default for this setting is 1440 minutes (or 24 hours) and this cache
+is enabled by default.
 
-Authentication:: This section allows you to set a 'Username' and
-'Password' for plain authentication or 'Username', 'Password',
-'Windows NTLM hostname' and 'Windows NTLM domain' for 'Windows NTLM'
--based authentication.
+==== HTTP 
+
+The 'HTTP' configuration section allows you to configure the necessary
+details to access the remote repository, even if you have to provide
+authentication details in order to acces it successfully or if you
+have to connect to it via a proxy server.
+
+Authentication:: This section allows you to select 'Username' or
+'Windows NTLM' as 'authentication type'. Subsequently you can provide
+the required 'Username' and 'Password' for plain authentication or
+'Username', 'Password', 'Windows NTLM hostname' and 'Windows NTLM
+domain' for 'Windows NTLM'-based authentication.
 
 HTTP request settings:: In the 'HTTP Request Settings' you can change
 the properties of the HTTP requests to the remote repository. You can
@@ -964,12 +981,16 @@ or development components. The 'Version policy' allows you to set
 'Snapshot' for development components that end up in '-SNAPSHOT' in
 the version string. This allows repeated uploads where the actual
 number used is composed of a date/timestamp and an enumerator and the
-retrieval can still use the '-SNAPSHOT' version string.
+retrieval can still use the '-SNAPSHOT' version string. The version
+policy can only be set, when the repository is created and can not be
+changed at a later stage. Repository groups can be used to expose a
+combination of release and development versions from multiple
+repositories.
 
-TBD 
-Hosted repositories can be configured to validate any new components
-to see if the MIME-type corresponds to the content of the file by
-enabling the 'Strict Content Type Validation'.
+Strict Content Type Validation:: Maven repositories can be configured
+to validate any new components to see if the MIME-type corresponds to
+the content of the file by enabling this setting. Any files with a
+mismatch are rejected.
 
 ===== Additional Configuration for Repositories Using the NuGet Format
 	
