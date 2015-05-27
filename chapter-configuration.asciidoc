@@ -344,10 +344,10 @@ failures. If a scheduled task fails a notification email containing
 the task identifier and name as well as the stack trace of the failure
 will be sent to the configured email recipient. 
 
-Task frequency:: Selecting the task frequencey allows you to configure
+Task frequency:: Selecting the task frequency allows you to configure
 the schedule for the task executions. Available choices are 'Manual',
 'Once', 'Hourly', 'Daily', 'Weekly', 'Monthly' and 'Advanced (provide
-a CRON expression)'. Apart from 'manula', all choices trigger display
+a CRON expression)'. Apart from 'manual', all choices trigger display
 of a custom user interface for scheduling the specific
 recurrence. Weekly scheduling requires at least one day of the week to
 be selected. The advanced setting allows you to provide a CRON
@@ -391,7 +391,7 @@ Drop Inactive Staging Repositories:: Staging repositories can be
 dropped by user interaction or automated systems using the Nexus
 Staging Maven Plugin or Ant Task or a REST API call. Heavy users of
 the Nexus staging features observe that some staging and build
-promotion repositories are inevidently left behind. This scheduled
+promotion repositories are in-evidently left behind. This scheduled
 task can be used to drop all these repositories.  You can configure
 the duration of inactivity to include the days after the repositories
 are dropped as well as the status of the repositories. Any change of
@@ -417,7 +417,7 @@ in Evict Items older than (days). This can be a good job to run if you
 are trying to conserve storage space and do not need all of the
 components in the future e.g., to reproduce old builds without renewed
 retrieval. This is particularly useful for a personal Nexus deployment
-with a large change rate of components combined with limited diskspace.
+with a large change rate of components combined with limited disk space.
 
 Expire Repository Caches:: Repositories have several caches to improve
 performance. This task expires the caches causing Nexus to recheck the
@@ -445,7 +445,7 @@ your repositories.
 Purge Orphaned API Keys:: This scheduled tasks will delete old, unused
 API keys generated and used by various plugins. For example, it should
 be scheduled when using the User Token feature or NuGet
-repositoriies. It will purge orphaned API keys e.g., after users reset
+repositories. It will purge orphaned API keys e.g., after users reset
 their token and should be scheduled to run regularly, specifically
 when internal security policies for password resets and you are using
 an external security provider like LDAP with this requirement for
@@ -481,13 +481,13 @@ components, supporting these use cases taking care of meta data
 updates, and removing the need to manually delete the components or use
 an external system to trigger the deletion.
 + 
-To configure the task, you specifiy the repository where release
+To configure the task, you specify the repository where release
 components are to be deleted as well as the number of component
 versions to keep for a specific groupId and artifactId coordinate. The
 task generates a list of all versions of a component for each groupId
 and artifactId coordinate combination and sorts it according to the
 version number. The ordering is derived by parsing the version string
-and supports http://semver.org[sematic versioning] with additional
+and supports http://semver.org[semantic versioning] with additional
 semantics for specific classifiers. Further details can be
 found in the documentation for the implementing class
 http://sonatype.github.io/sonatype-aether/apidocs/org/sonatype/aether/util/version/GenericVersionScheme.html[GenericVersionScheme].
@@ -495,7 +495,7 @@ http://sonatype.github.io/sonatype-aether/apidocs/org/sonatype/aether/util/versi
 Optionally, the 'Repository Target' parameter can be used to narrow
 down the content of the repository that is analyzed, to determine if
 any deletion should occur. Choosing +All(Maven2)+ is suitable to cause
-all Maven2-formatted repositories to be analysed. If you want to only
+all maven2-formatted repositories to be analysed. If you want to only
 target a specific groupId and artifactId combination or a number of
 them you can create a suitable repository target as documented in
 <<confignx-sect-managing-repo-targets>> and use it in the
@@ -601,9 +601,10 @@ integration server builds with deployment.
 {in} {oss-icon} {pro-icon} {proplus-icon}
 
 Repositories are the containers for the components provided to your
-users as explained in more details in <<concepts>>. Configuring
-repositories is an essential part of your Nexus configuration, since
-it allows you to expose more components to your users. 
+users as explained in more detail in <<concepts>>. Creating and
+managing repositories is an essential part of your Nexus
+configuration, since it allows you to expose more components to your
+users.
 
 Nexus supports proxy repositories, hosted repositories and repository
 groups using a number of different repository formats.
@@ -619,10 +620,10 @@ is a repository that is linked to a remote repository. Any request for
 a component is verified against the local content of the proxy
 repository. If no local component is found, the request is forwarded
 to the remote repository. The component is then retrieved and stored
-locally in Nexus acting as a cache. Subsequent requests for the same
-component are then fulfilled from the local storage therefore
-eliminating the network and time overhead of retrieving the component
-from the remote repository again.
+locally in Nexus, which acts as a cache. Subsequent requests for the same
+component are then fulfilled from the local storage, therefore
+eliminating the network bandwidth and time overhead of retrieving the
+component from the remote repository again.
 
 By default, Nexus ships with the following configured proxy
 repositories:
@@ -648,7 +649,7 @@ authoritative location for these components.
 By default, Nexus ships with the following configured hosted
 repositories:
 
-maven-releases:: This hosted repository uses the Maven2 repository
+maven-releases:: This hosted repository uses the 'maven2' repository
  format with a release version policy. It is intended to be the
  repository where your organization publishes internal releases. You
  can also use this repository for third-party components that are not
@@ -657,7 +658,7 @@ maven-releases:: This hosted repository uses the Maven2 repository
  be commercial, proprietary libraries such as an Oracle JDBC driver
  that may be referenced by your organization.
 
-maven-snapshots:: This hosted repository uses the Maven2 repository
+maven-snapshots:: This hosted repository uses the 'maven2' repository
  format with a snapshot version policy. It is intended to be the the
  repository where your organization publishes internal development
  versions, also known as snapshots.
@@ -682,10 +683,10 @@ group.
 Nexus ships with the following groups: 
 
 maven-public:: The 'maven-public' group is a repository group of
-Maven2 formatted repositories and combines the important external
+'maven2' formatted repositories and combines the important external
 proxy repository for the Central Repository with the hosted
 repositories 'maven-releases' and 'maven-snapshots'. This allows you
-to expose the components of the Central Repositories as well as your
+to expose the components of the Central Repository as well as your
 internal components in one single, simple-to-use repository and
 therefore URL.
 
@@ -742,12 +743,12 @@ combines the format and the type of repository into a single
 selection. Depending on your Nexus version and installed plugins, the
 list of available choices differs.
 
-For example to create another release repository in Maven2 format, you
+For example to create another release repository in 'maven2' format, you
 would click on the row with the recipe 'maven2 (hosted)' in the
-dialog. If you wanted to proxy a Maven2 repository, choose
+dialog. If you wanted to proxy a 'maven2' repository, choose
 'maven 2 (proxy)'. On the other hand if you want to proxy a nuget
 repository, choose 'nuget (proxy)'. With 'maven2 (group)' you can
-create a repository group for Maven2 repositories.
+create a repository group for 'maven2' repositories.
 
 After this selection, you are presented with the configuration view,
 that allows you to fill in the required parameters and some further
@@ -795,13 +796,21 @@ is available to client side tools or not.
 
 Beyond the generic fields used for any repository, a number of
 different fields are used and vary depending on the repository format
-and type.
+and type. They are grouped under a number of specific headers that
+include configuration for the related aspects and include:
 
-===== Hosted Repositories
+* Hosted
+* Proxy
+* Negative Cache 
+* HTTP
+* Maven 2
+* NuGet
 
-A hosted repository includes configuration of a 'Deployment
-policy'. Its setting controls how a hosted repository allows or
-disallows component deployment. 
+===== Hosted
+
+A hosted repository includes configuration of a 'Deployment policy' in
+the 'Hosted' configuration section. Its setting controls how a hosted
+repository allows or disallows component deployment.
 
 If the policy is set to 'Read-only', no deployment is allowed. 
 
@@ -809,19 +818,18 @@ If this policy is set to 'Disable redeploy', a client can only deploy
 a particular component once and any attempt to deploy a component
 again will result in an error. The disabled redeploy is the default
 value, since most client tools assume components to be immutable and
-will not check a repository for changed components thay have already
+will not check a repository for changed components that have already
 been retrieved and cached locally.
 
 If the policy is set to 'Allow redeploy', clients can deploy
 components to this repository and overwrite the same component in
 subsequent deployments.
 
-Hosted repositories can be configured to validate any new components
-to see if the MIME-type corresponds to the content of the file by
-enabling the 'Strict Content Type Validation'.
 
+===== Proxy
 
-===== Proxy Repositories
+The configuration for proxy repositories in the 'Proxy' section
+contains the following parameters:
 
 Remote Storage:: A proxy repository on the other hand requires the
 configuration of the 'Remote Storage'. It needs to be configured with
@@ -836,11 +844,13 @@ that proxy the different hosted repositories from the remote server on
 your Nexus server instead of simply proxying the group.
 
 Use the Nexus truststore:: This checkbox allows you to elect for Nexus
-to manage the SSL certificate of the remote repository. 
+to manage the SSL certificate of the remote repository. It is only
+displayed - if the remote storage uses a HTTPS URL. The 'View certificate'
+button triggers the display of the SSL certificate details in a
+dialog. The dialog allows you to add or remove the certificate from
+the certificate truststore maintained by Nexus.
 
 ////
-The 'View certificate' button .... TBD
-
 TBD link to SSL chapter once ready
 ////
 
@@ -878,21 +888,33 @@ The default for this setting is -1 for a repository with
 a release policy and 1440 for a repository with snapshot policy.
 ////
 
-////
-Strict Content Type Validation:: see proxy repo
-////
+
+==== Negative Cache
 
 Not found cache enabled/Not found cache TTL:: If Nexus fails to locate
-an component, it will cache this result for a given number of
-minutes. In other words, if Nexus can't find an component in a remote
+a component, it will cache this result for a given number of
+minutes. In other words, if Nexus can't find a component in a remote
 repository, it will not perform repeated attempts to resolve this
 component until the 'Not found cache TTL' time has been exceeded. The
-default for this setting is 1440 minutes (or 24 hours).
+default for this setting is 1440 minutes (or 24 hours) and this cache
+is enabled by default.
 
-Authentication:: This section allows you to set a 'Username' and
-'Password' for plain authentication or 'Username', 'Password',
-'Windows NTLM hostname' and 'Windows NTLM domain' for 'Windows NTLM'
--based authentication.
+==== HTTP 
+
+The 'HTTP' configuration section allows you to configure the necessary
+details to access the remote repository, even if you have to provide
+authentication details in order to acces it successfully or if you
+have to connect to it via a proxy server.
+
+NOTE: This configuration is only necessary, if it is specific to this
+repository. Global HTTP proxy and authentication is documented in
+<<admin-system-http>>.
+
+Authentication:: This section allows you to select 'Username' or
+'Windows NTLM' as 'authentication type'. Subsequently you can provide
+the required 'Username' and 'Password' for plain authentication or
+'Username', 'Password', 'Windows NTLM hostname' and 'Windows NTLM
+domain' for 'Windows NTLM'-based authentication.
 
 HTTP request settings:: In the 'HTTP Request Settings' you can change
 the properties of the HTTP requests to the remote repository. You can
@@ -960,10 +982,19 @@ updates are retrieved.
 
 Version policy:: A Maven repository can either host release components
 or development components. The 'Version policy' allows you to set
-'Snapshot' for development components that end up in '-SNAPSHOT' in
+'Snapshot' for development components that end up with '-SNAPSHOT' in
 the version string. This allows repeated uploads where the actual
 number used is composed of a date/timestamp and an enumerator and the
-retrieval can still use the '-SNAPSHOT' version string.
+retrieval can still use the '-SNAPSHOT' version string. The version
+policy can only be set, when the repository is created and can not be
+changed at a later stage. Repository groups can be used to expose a
+combination of release and development versions from multiple
+repositories.
+
+Strict Content Type Validation:: Maven repositories can be configured
+to validate any new components to see if the MIME-type corresponds to
+the content of the file by enabling this setting. Any files with a
+mismatch are rejected.
 
 ===== Additional Configuration for Repositories Using the NuGet Format
 	
@@ -989,7 +1020,7 @@ subsequently re-run.
 The creation and configuration for a repository group differs a little
 from pure repositories. It allows you to manage the member
 repositories of a repository group. An example for a repository group
-using the Maven2 format is visible in <<fig-group-config>>. In this
+using the 'maven2' format is visible in <<fig-group-config>>. In this
 figure you can see the contents of the 'maven-public' group that is
 pre-configured in Nexus.
 
@@ -999,7 +1030,7 @@ image::figs/web/admin-repository-repositories-group.png[scale=50]
 
 The 'Format' and 'Type' are determined by the selection of the
 provider in the creation dialog e.g., 'maven2 (group)' for the
-'maven-public' as a Maven2 format repository group.
+'maven-public' as a 'maven2' format repository group.
 
 The 'Name' is set during the creation and is fixed once the repository
 group is created.
@@ -1039,7 +1070,7 @@ configuration.
 ==== Repository Management Example
 
 The following sections detail some common steps of your repository
-management efforts on the example of a Maven2 repository.
+management efforts on the example of a 'maven2' repository.
 
 [[config-sect-custom]]  
 ===== Adding Repositories for Missing Dependencies
@@ -1058,7 +1089,7 @@ relies on the content of other publicly available repositories in
 its configuration. When you encounter such a project all you have to
 do is 
 
-* add this repository to Nexus as a new Maven2 format, proxy repository 
+* add this repository to Nexus as a new 'maven2' format, proxy repository 
 * and then add the new proxy repository to the 'maven-public' group.
 
 The advantage of this approach is that no configuration change on the
@@ -1078,7 +1109,7 @@ In the configuration dialog:
 * Set 'Name' to +jboss-releases+
 * Set 'Remote storage'  to
   +https://repository.jboss.org/nexus/content/repositories/releases/+
-* For a Maven2 format repositry, confirm that the 'Version policy'
+* For a 'maven2' format repository, confirm that the 'Version policy'
   is set correctly to 'Release'.
 * Click on the 'Create repository' button at the end of the form
 
