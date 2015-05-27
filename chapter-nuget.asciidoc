@@ -19,12 +19,12 @@ Nexus supports the NuGet repository format for hosted and proxy
 repositories as well as exposing them to the client-side tools as a
 repository group and has related repositories preconfigured.
 
-This allows you to improve collaboration and control, while speeding
-up .NET development, facilitating open source libraries and sharing of
-internal component across teams. When you standardize on a single
-repository for all your development and use it for internal components
-as well, you will get all the benefits of Nexus when working in
-the .NET architecture.
+Nexus and NuGet allow you to improve collaboration and control, while
+speeding up .NET development, facilitating open source libraries and
+sharing of internal component across teams. When you standardize on a
+single repository for all your development and use it for internal
+components as well, you will get all the benefits of Nexus when
+working in the .NET architecture.
 
 To share a library or tool with NuGet, you create a NuGet package and
 store it in the Nexus-based NuGet repository. Similarly, you can use
@@ -62,7 +62,7 @@ image::figs/web/nuget-proxy-org.png[scale=50]
 
 By default, searches in NuGet proxy repositories in Nexus initiated by
 a client like `nuget` or VisualStudio will be passed through to the
-remote repositories. Tthe search results are merged with internal
+remote repositories. The search results are merged with internal
 search results and included in an internally managed index. This
 merging has to make some assumptions to generate component
 counts. These counts should therefore be considered approximate
@@ -83,7 +83,7 @@ create two separate hosted repositories for these purposes.
 
 To create another NuGet hosted repository, simply create a new 'nuget
 (hosted)' repository. An example configuration from the default
-'nuget-hosted' repository is partially displayed in
+'nuget-hosted' repository is displayed in
 <<fig-nuget-hosted-releases-configuration>>.
 
 [[fig-nuget-hosted-releases-configuration]]
@@ -122,7 +122,7 @@ repositories added to the group will automatically be available.
 [[nuget-accessing_packages_in_repositories_and_groups]]
 === Accessing Packages in Repositories and Groups
 
-You can access the repository group or invidivual repositories with
+You can access the repository group or individual repositories with
 the +nuget+ tool on the command line using their 'URL' e.g.:
 
 ----
@@ -146,12 +146,13 @@ API keys as documented in <<nuget-deploying_packages_to_nuget_hosted_repositorie
 === Deploying Packages to NuGet Hosted Repositories
 
 In order to authenticate a client against a NuGet repository, NuGet
-uses an API key for deployment requests. These keys are generated
-separately on request from a user account and can be regenerated at
-any time. At regeneration, all previous keys generated for that user
-are invalid.
+uses an API key for deployment requests. The API key is acts as an
+alias for the user account, so the same API key is used for all NuGet
+repositories within Nexus. This user-specific key is generated
+separately by a user and can be regenerated at any time. At
+regeneration, all previous keys generated for that user are invalid.
 
-==== Acessing your NuGet API Key
+==== Accessing your NuGet API Key
 
 For usage with Nexus, NuGet API keys are only needed when packages are
 going to be deployed. Users with the necessary 'apikey-all' security
@@ -168,7 +169,7 @@ The 'Reset API Key' button can be used to invalidate an existing API
 key and create a new one.
 
 [[fig-nuget-api-key]]
-.Accessing you NuGet API Key
+.Accessing your NuGet API Key
 image::figs/web/nuget-api-key.png[scale=50]
 
 Usage of the API key requires the 'NuGet API-Key Realm' to be
