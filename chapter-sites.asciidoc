@@ -6,12 +6,13 @@ websites - the 'raw' format. Hosted repositories with this format can
 be used to store and provide a Maven-generated website. Proxy
 repositories can subsequently proxy them in other servers. The 'raw'
 format can also be used for other resources than HTML files exposed by
-straight HTTP like browsable directory structures.
+straight HTTP-like browsable directory structures.
 
 This chapter details the process of configuring raw repositories, 
 configuring a simple Maven project to publish a Maven-generated
 project site and other use cases for raw repositories.
 
+[[raw-hosted]]
 === Creating a Hosted Raw Repository
 
 To create a raw repository for hosting a static website, you simply
@@ -30,8 +31,9 @@ list can be used for deployment and access usage.
 
 ==== Creating a New Maven Project
 
-In this section, you are be creating a simple Maven project with a
-simple website that can be published to a hosted raw repository. 
+In this section, you are be creating a minimal Maven project with a
+simple website that can be published to the hosted raw repository
+created in <<raw-hosted>>.
 
 The following steps can be used to create a new Maven project:
 
@@ -90,20 +92,20 @@ your Maven project:
 ----
 
 <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.4</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-webdav-jackrabbit</artifactId>
-            <version>2.8</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
-  </build>
+  <plugins>
+    <plugin>
+      <artifactId>maven-site-plugin</artifactId>
+      <version>3.4</version>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.maven.wagon</groupId>
+          <artifactId>wagon-webdav-jackrabbit</artifactId>
+          <version>2.8</version>
+        </dependency>
+      </dependencies>
+    </plugin>
+  </plugins>
+</build>
 ----
 
 ==== Adding Credentials to Your Maven Settings
@@ -193,7 +195,7 @@ http://localhost:8081/repository/site/ - Session: Disconnected
 ----
 
 Once the site has been published, you can load the site in a browser
-by going to http://localhost:8081/repository/site/site/index.html[http://localhost:8081/repository/site/index.html].
+by going to http://localhost:8081/repository/site/index.html[http://localhost:8081/repository/site/index.html].
 
 .Maven-Created Sample Site Hosted in Nexus Raw Repository
 image::figs/web/sites-sample-site.png[scale=60]
@@ -213,15 +215,21 @@ recipes.
 
 A raw proxy repository can be used to proxy any static website. This
 includes a Maven site hosted in a raw repository in another
-Nexus server or a plain static website hosted on another webserver
+Nexus server or a plain static website hosted on another web server
 like Apache httpd. It can also be used to proxy directory structures
-exposed via a webserver to distribute archives such as
+exposed via a web server to distribute archives such as
 `https://nodejs.org/dist/`.
 
+NOTE: No content is modified when proxied. This means that e.g., any
+absolute URL used with HTML document remain absolute and therefore
+bypass the proxying mechanism.
+
 Grouping raw repositories is possible and can e.g., be used to
-aggregate mutliple site repositories. However keep in mind that the
+aggregate multiple site repositories. However keep in mind that the
 raw format does not contain any logic to resolve conflicts between the
-different repositories in the group.
+different repositories in the group. Any request to the group causes
+Nexus to check the member repositories in order and return the first
+matching content.
 
 ////
 /* Local Variables: */
