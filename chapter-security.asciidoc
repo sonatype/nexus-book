@@ -5,151 +5,170 @@
 TBD Do we need a better title?
 ////
 
+Nexus uses role-based access control (RBAC) that gives administrators
+very fine-grained control over user rights to 
+
+* read from a repository or a subset of repositories,
+* administer the Nexus server or parts of the Nexus configuration,
+* access specific parts of the user interface,
+* deploy to repositories or even just specific sections of a repository.
+
+The default configuration of Nexus ships with roles and users with a
+standard set of permissions. As your security requirements evolve,
+you will likely need to customize security settings to create protected
+repositories for multiple departments or development groups. Nexus
+provides a security model that can adapt to any scenario. 
+
 This chapter covers all aspects of security with Nexus including
 
 * user account and access right management related to Nexus user
-  interface as well as to component access
-* configuration of security backends including the built-in system as
-  well as LDAP
+  interface as well as to component access documented in
+  <<privileges>>, <<roles>> and <<users>>,
+* selection of security backend systems documented <<realms>>
+  including the built-in system as well as LDAP
 ////
 , Atlassian Crowd and others
 ////
 * management of SSL certificates from remote repositories, SMTP and
-  LDAP servers
+  LDAP servers,
+////
+ documented in <<ssl>>.
+////
 
+////
+TBD add more as applicable
+////
 
 Security-related configuration can be performed with the feature views
-available in the 'Security' section of the 'Administration' main
+available via the 'Security' section of the 'Administration' main
 menu. Many of the features shown in this section are only available to
 administrative users.
 
-[[admin-security]]
-== Security
+Nexus' role-based access control (RBAC) system is backed by different
+authentication and authorizations systems as documented in <<realms>>
+and designed around the following security concepts:
 
-
-[[config-sect-security]]
-==== Security Settings
-
-The security settings displayed in
-<<fig-config-administration-security>> allow you to activate and
-prioritize security realms by adding them to the 'Selected Realms'
-list on the left and placing them higher or lower on the list.
-
-[[fig-config-administration-security]]
-.Administration Security Settings
-image::figs/web/config-administration-security.png[scale=60]
-
-
-
-
-=== Realms
-
-Effectively, this configuration determines what authentication realm is
-used to grant a user access and the order the realms are used.
-
-Xml Authenticating and Xml Authorizing Realm:: These identify the
-Nexus internal storage uses XML files for storing the security
-details.
-
-(Enterprise) LDAP Authentication Realm:: This realm identifies
-external storage in an LDAP system.
+Privileges:: <<privileges, Privileges>> are rights to read, update,
+create, or manage resources and perform operations related to the
+Nexus user interface as well as the components managed by Nexus in the
+various repositories. Nexus ships with a set of core privileges that
+cannot be modified.
 ////
- with details documented in
-<<ldap>>.
+ and you can create new privileges to allow for
+fine-grained targeting of role and user permissions for specific
+repositories.
 ////
 
-Crowd Realm:: This realm identifies external storage in an Atlassian
-Crowd system.
+Roles:: Privileges can be grouped into collections called<<roles,
+roles>> to make it easier to define privileges common to certain
+classes of users. For example, administrative users will all have
+similar sets of permissions. Instead of assigning individual
+privileges to individual users, you use roles to make it easier to
+manage users with similar sets of privileges. A role has one or more
+privileges and/or one or more roles.
+
+Users:: <<users, Users>> can be assigned roles and privileges, and model the
+individuals who will be logging into Nexus and read, deploying, or
+managing repositories.
+
 ////
- with details documented in <<crowd>>.
-////
-
-Rut Auth Realm:: This realm is external authentication in any system
-with the user authorization passed to Nexus in a HTTP header field
-with details documented in <<remote-user>>.
-
-////
-The 'User Token Realm' is required for user token support 
-documented in <<config-sect-usertoken>> and 
-////
-
-The 'NuGet API-Key Realm' is needed
-for NuGet support documented in <<nuget>>.
-
-In addition, you can enable or disable anonymous access and set the
-username and password for anonymous access. The anonymous username and
-password are used to integrate with other realms that may need a
-special username for anonymous access.  In other words, the username
-and password here are what we attempt to authorize when someone makes
-an anonymous request. You would change the anonymous username to
-+guest+ if you wanted to integrate Nexus with Microsoft's Active
-Directory.
-
-[[confignx-sect-managing-security]]
-=== Managing Security
-
-Nexus has role-based access control (RBAC) that gives administrators
-very fine-grained control over who can read from a repository (or a
-subset of repositories), who can administer the server, and who can
-deploy to repositories. The security model in Nexus is also so
-flexible as to allow you to specify that only certain users or roles
-can deploy and manage components in a specific repository under a
-specific groupId or asset class. The default configuration of Nexus
-ships with four roles and four users with a standard set of
-permissions that will make sense for most users. As your security
-requirements evolve, you'll likely need to customize security settings
-to create protected repositories for multiple departments or
-development groups. Nexus provides a security model which can adapt to
-any scenario. The security configuration is done via menu items in the
-'Security' submenu in the left-hand Nexus menu.
-
-Nexus' role-based access control (RBAC) system is
-designed around the following four security concepts:
-
-Privileges:: Privileges are rights to read, update, create, or manage
-resources and perform operations. Nexus ships with a set of core
-privileges that cannot be modified, and you can create new privileges
-to allow for fine-grained targeting of role and user permissions for
-specific repositories.
-
 Targets:: Privileges are usually associated with resources or
 targets. In the case of Nexus, a target can be a specific repository
 or a set of repositories grouped in something called a repository
 target. A target can also be a subset of a repository or a specific
 asset classes within a repository. Using a target you can apply a
 specific privilege to a single groupId.
+////
 
-Roles:: Collections of privileges can be grouped into roles to make it
-easier to define collections of privileges common to certain classes
-of users. For example, deployment users will all have similar sets of
-permissions. Instead of assigning individual privileges to individual
-users, you use roles to make it easier to manage users with similar
-sets of privileges. A role has one or more privilege and/or one or
-more roles.
+[[realms]]
+=== Realms
 
-Users:: Users can be assigned roles and privileges, and model the
-individuals who will be logging into Nexus and read, deploying, or
-managing repositories.
+The feature view for security realms administration displayed in
+<<fig-realms>> allows you to activate and prioritize security realms
+used for authentication and authorization by adding them to the
+'Active' list on the right and placing them higher or lower on the
+list.
 
-[[confignx-sect-managing-privs]]
-=== Managing Privileges
+[[fig-realms]]
+.Security Realms Administration
+image::figs/web/realms.png[scale=60]
+
+Effectively, this configuration determines what authentication realm is
+used to grant a user access and the order the realms are used.
+
+Nexus Authenticating Realm and Nexus Authorizing Realm:: These are the
+built-in realms used by default and allow Nexus to manage
+security setup without additional external systems.
+
+LDAP Realm:: This realm identifies external storage in an LDAP system
+including e.g., Microsoft ActiveDirectory, ApacheDS, OpenLDAP and many
+others.
+////
+ with details documented in
+<<ldap>>.
+////
+
+////
+Crowd Realm:: This realm identifies external storage in an Atlassian
+Crowd system.
+
+ with details documented in <<crowd>>.
+////
+
+Rut Auth Realm:: This realm uses an external authentication in any system
+with the user authorization passed to Nexus in a HTTP header field
+with details documented in <<remote-user-token>>.
+
+////
+The 'User Token Realm' is required for user token support 
+documented in <<config-sect-usertoken>> and 
+////
+
+NuGet API-Key Realm:: This realm is required for deployments to
+nuget-format repositores as documented in <<nuget>>.
+
+[[privileges]]
+=== Privileges
 
 You can access the configuration of privileges via the 'Privileges'
-menu item in the 'Security' submenu in the left-hand Nexus menu.
+menu item in the 'Security' submenu in the 'Administration' main menu.
 
-Nexus has three types of privileges: 
+Nexus use a number of types of privileges: 
 
-* application privileges - covers actions a user can execute in Nexus, 
-* repository target privileges - governs the level of access a user 
-has to a particular repository or repository target, and 
-*repository view privileges - controls whether a user can view a repository
+application:: privileges related to the Nexus user interface and
+related functionality
+repository-admin:: privileges related to the administration and
+configuration of a specific repository separated into accees to '*'
+(all), 'browse', 'delete', 'edit' and 'read'.
+repository-view:: privileges controlling access to the content of a
+specific repository separate into access to '*' (all), 'add',
+'browse', 'delete', 'edit' and 'read'.
 
-Behind the scenes, a privilege is related to a single REST operation 
-and method like create, update, delete, read.
+Both 'repository-admin' as well as 'repository-view' privileges are
+automatically created and deleted by Nexus, when repositories are
+created. or deleted.
 
-.Managing Security Privileges
-image::figs/web/repository-manager_security-privileges.png[scale=60]
+The list of privileges displayed in <<fig-privileges-list>> displays
+an icon for the privilege 'type' as the first column and then adds:
 
+Name:: the Nexus internal identifier for the privilege
+
+Description:: a human readable description of the purpose of the
+privilege
+
+Type:: the larger aspect of Nexus to which this privilege applies
+
+Permission:: the Nexus internal permission definition as used by the
+embedded security framework
+
+Further details are available after pressing on a specific row in the
+detail view.
+
+[[fig-privileges-list]]
+.List of Security Privileges
+image::figs/web/privileges-list.png[scale=60]
+
+////
 To create a new privilege, click on the 'Add...' button in the
 'Privileges' panel and choose 'Repository Target Privilege'. Creating a
 privilege will load the New Repository Target Privilege form shown in
@@ -169,10 +188,12 @@ are shown in <<fig-configuring-new-privileges>>.
 [[fig-configuring-new-privileges]]
 .Create, Delete, Read, and Update Privileges Created
 image::figs/web/repository-manager_security-privileges-3.png[scale=60]
+////
+
 
 ////
-[[confignx-sect-managing-repo-targets]]
-=== Managing Repository Targets
+[[repository-targets]]
+=== Repository Targets
 
 A 'Repository Target' is a set of regular expressions to match on the
 path of components in a repository (in the same way as the routing
@@ -221,55 +242,67 @@ Repository targets are also be used for matching components for
 implicit capture in the Staging Suite as documented in <<staging>>.
 ////
 
-[[confignx-sect-manage-security]]
-=== Managing Roles
+[[roles]]
+=== Roles
 
-Nexus ships with a large number of predefined including 'Nexus
-Administrator Role', 'Nexus Anonymous Role', 'Nexus Developer Role',
-and 'Nexus Deployment Role'.  Click on the 'Roles' menu item under
-'Security' in the 'Nexus' menu to show the list of roles shown in
-<<fig-configuring-security-roles>>.
+Roles aggregate privileges into a related context and can in turn be
+grouped to create more complex roles.
 
-[[fig-configuring-security-roles]]
+Nexus ships with a number of predefined 'admin' as well as an
+'anonymous'. These can be inspected in the 'Roles' feature view
+accessible via the 'Roles' item in the 'Security' section of the
+'Administration' main menu. A simple example is shown in
+<<fig-roles-list>>. The list displays the 'Name' an
+'Description' of the role as well as the 'Source', which displays
+whether the role is internal ('Nexus') or a mapping to an external
+source like LDAP.
+
+[[fig-roles-list]]
 .Viewing the List of Defined Roles
-image::figs/web/repository-manager_security-roles.png[scale=60]
+image::figs/web/roles-list.png[scale=60]
 
-To create a new role, click on the 'Add...' button, select 'Nexus
+To create a new role, click on the 'Create role...' button, select 'Nexus
 Role' and fill out the New Nexus Role form shown in
-<<fig-configuring-creating-new-role>>.
+<<fig-roles-create>>.
 
-[[fig-configuring-creating-new-role]]
+[[fig-roles-create]]
 .Creating a New Nexus Role
-image::figs/web/repository-manager_security-new-nexus-role.png[scale=60]
+image::figs/web/roles-create.png[scale=60]
 
 When creating a new role, you will need to supply a 'Role ID', a
 'Name' and a 'Description'. Roles are comprised of other roles and
-individual privileges. To assign a role or privilege to a role, click
-on 'Add' button under 'Role/Privilege Management' to access the 'Add
-Roles and Privileges' dialog displayed in
-<<fig-configuring-add-role-dialog>>. It allows you to filter the paged
-displayed of all the available roles and privileges with a filter text
-as well as narrowing the search to roles or privileges only. Using the
-filter and the paging you will be able to find the desired role or
-privilege quickly.
+individual privileges. To assign a role or privilege to a role, drag
+and drop the desired privileges from the 'Available' list to the
+'Given' list under the 'Privileges' header. You can use the 'Filter'
+input to narrow down the list of displayed privileges and the arrow
+buttons to add or remove privileges.
 
-[[fig-configuring-add-role-dialog]]
-.The Dialog to Add Roles and Privileges
-image::figs/web/repository-manager_security-add-roles-dialog.png[scale=60]
+The same functionality is available under the 'Roles' header to
+select among the 'Available' roles and add them to the list of
+'Contained' roles.
 
-The built-in roles are managed by Nexus and cannot be edited or
-deleted. The role configuration section below the list is visible but 
-disabled for these roles.
+Finally press the 'Create Role' button to get the role created. The
+built-in roles are managed by Nexus and cannot be edited or
+deleted. 
 
-A Nexus role is comprised of other Nexus roles and individual
-Nexus privileges. To view the component parts of a Nexus Role, select
-the role in the Roles list and then choose the 'Role Tree' tab as shown
-in <<fig-configuring-role-tree>>.
+An existing role can be inspected and edited by clicking on the row in
+the list. This role-specific view allows you to delete the role with
+the 'Delete role' button. The 'Settings' section displays the same
+section as the creation view as displayed in <<fig-roles-create>>.
 
-[[fig-configuring-role-tree]]
+In addition you can inspect the 'Privileg trace' as well as the 'Role
+tree' view of the role displayed in <<fig-roles-tree>>. A role is
+comprised of other roles and individual privileges. The 'Privilege
+trace' view allows you to select a specific privilege and see a list of
+roles that contain the privilege. The 'Role tree' view allows you to
+browse through the tree list of roles and their nested roles and
+privileges that comprise the role.
+
+[[fig-roles-tree]]
 .Viewing a Role Tree
-image::figs/web/repository-manager_security-role-tree.png[scale=60]
+image::figs/web/roles-tree.png[scale=60]
 
+////
 TIP: With the Repository Targets, you have fine-grained control over
 every action in the system. For example, you could make a target that
 includes everything except sources `(.*(?!-sources)\.*)` and assign that
@@ -277,9 +310,10 @@ to one role while giving yet another role access to everything. Using
 these different access roles e.g., you can host your public and private
 components in a single repository without giving up control of your
 private components.
+////
 
-[[confignx-sect-managing-users]]
-=== Managing Users
+[[users]]
+=== Users
 
 Nexus ships with three users: 'admin', 'anonymous', and
 'deployment'. The admin user has all privileges, the anonymous user
@@ -336,7 +370,7 @@ documented in <<config-sect-usertoken>>.
 ////
 
 ////
-[[config-sect-usertoken]]
+[[user-token]]
 === Security Setup with User Tokens
 
 ==== Introduction
@@ -523,7 +557,8 @@ The 'usertoken.' prefix is optional when the properties are loaded
 from the 'usertoken.properties' file.
 ////
 
-[[remote-user]]
+
+[[remote-user-token]]
 === Authentication via Remote User Token
 
 Nexus allows integration with external security systems that can pass
@@ -551,7 +586,7 @@ the header populated by your security system. Typically, this value is
 +REMOTE_USER+, but any arbitrary value can be set. An enabled
 capability automatically causes the 'Rut Auth Realm' to be added to
 the 'Selected Realms' in the 'Security Settings' described in
-<<config-sect-security>>.
+<<realms>>.
 
 When an external system passes a value through the header,
 authentication will be granted and the value will be used as the user
@@ -565,6 +600,7 @@ security system is exposed via LDAP and configured in Nexus as LDAP
 authorization realm combined with external role mappings and in
 parallel the sign-on is integrated with the operating system sign-on
 for the user.
+
 
 
 ////
