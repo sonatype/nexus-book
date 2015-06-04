@@ -5,7 +5,7 @@
 TBD Do we need a better title?
 ////
 
-Nexus uses role-based access control (RBAC) that gives administrators
+Nexus uses role-based access control that gives administrators
 very fine-grained control over user rights to 
 
 * read from a repository or a subset of repositories,
@@ -25,12 +25,12 @@ This chapter covers all aspects of security with Nexus including
   interface as well as to component access documented in
   <<privileges>>, <<roles>> and <<users>>,
 * selection of security backend systems documented <<realms>>
-  including the built-in system as well as LDAP
+  including the built-in system as well as LDAP,
 ////
 , Atlassian Crowd and others
 ////
 * management of SSL certificates from remote repositories, SMTP and
-  LDAP servers,
+  LDAP servers.
 ////
  documented in <<ssl>>.
 ////
@@ -42,9 +42,9 @@ TBD add more as applicable
 Security-related configuration can be performed with the feature views
 available via the 'Security' section of the 'Administration' main
 menu. Many of the features shown in this section are only available to
-administrative users.
+users with the necessary privileges to access them.
 
-Nexus' role-based access control (RBAC) system is backed by different
+Nexus' role-based access control system is backed by different
 authentication and authorizations systems as documented in <<realms>>
 and designed around the following security concepts:
 
@@ -59,7 +59,7 @@ fine-grained targeting of role and user permissions for specific
 repositories.
 ////
 
-Roles:: Privileges can be grouped into collections called<<roles,
+Roles:: Privileges can be grouped into collections called <<roles,
 roles>> to make it easier to define privileges common to certain
 classes of users. For example, administrative users will all have
 similar sets of permissions. Instead of assigning individual
@@ -67,9 +67,10 @@ privileges to individual users, you use roles to make it easier to
 manage users with similar sets of privileges. A role has one or more
 privileges and/or one or more roles.
 
-Users:: <<users, Users>> can be assigned roles and privileges, and model the
-individuals who will be logging into Nexus and read, deploying, or
-managing repositories.
+Users:: <<users, Users>> can be assigned one or more roles, and model the
+individuals who will be logging into Nexus and read, deploy, or
+manage repositories as well as connect from client tools such at
+Apache Maven.
 
 ////
 Targets:: Privileges are usually associated with resources or
@@ -136,17 +137,17 @@ menu item in the 'Security' submenu in the 'Administration' main menu.
 Nexus use a number of types of privileges: 
 
 application:: privileges related to the Nexus user interface and
-related functionality
+related functionality.
 repository-admin:: privileges related to the administration and
 configuration of a specific repository separated into access to '*'
-(all), 'browse', 'delete', 'edit' and 'read'.
+(all), 'add', 'browse', 'delete', 'edit' and 'read'.
 repository-view:: privileges controlling access to the content of a
 specific repository separate into access to '*' (all), 'add',
 'browse', 'delete', 'edit' and 'read'.
 
 Both 'repository-admin' as well as 'repository-view' privileges are
 automatically created and deleted by Nexus, when repositories are
-created. or deleted.
+created or deleted.
 
 The list of privileges displayed in <<fig-privileges-list>> displays
 an icon for the privilege 'type' as the first column and then adds:
@@ -156,7 +157,7 @@ Name:: the Nexus internal identifier for the privilege
 Description:: a human readable description of the purpose of the
 privilege
 
-Type:: the larger aspect of Nexus to which this privilege applies
+Type:: the aspect of Nexus to which this privilege applies
 
 Permission:: the Nexus internal permission definition as used by the
 embedded security framework
@@ -248,8 +249,8 @@ implicit capture in the Staging Suite as documented in <<staging>>.
 Roles aggregate privileges into a related context and can, in turn, be
 grouped to create more complex roles.
 
-Nexus ships with a number of predefined 'admin' as well as an
-'anonymous'. These can be inspected in the 'Roles' feature view
+Nexus ships with a predefined 'admin' as well as an
+'anonymous' role. These can be inspected in the 'Roles' feature view
 accessible via the 'Roles' item in the 'Security' section of the
 'Administration' main menu. A simple example is shown in
 <<fig-roles-list>>. The list displays the 'Name' an
@@ -261,36 +262,35 @@ source like LDAP.
 .Viewing the List of Defined Roles
 image::figs/web/roles-list.png[scale=60]
 
-To create a new role, click on the 'Create role...' button, select 'Nexus
-Role' and fill out the New Nexus Role form shown in
+To create a new role, click on the 'Create role' button, select 'Nexus
+Role' and fill out the Role creation feature view shown in
 <<fig-roles-create>>.
 
 [[fig-roles-create]]
-.Creating a New Nexus Role
+.Creating a New Role
 image::figs/web/roles-create.png[scale=60]
 
-When creating a new role, you will need to supply a 'Role ID', a
-'Name' and a 'Description'. Roles are comprised of other roles and
-individual privileges. To assign a role or privilege to a role, drag
-and drop the desired privileges from the 'Available' list to the
-'Given' list under the 'Privileges' header. You can use the 'Filter'
-input to narrow down the list of displayed privileges and the arrow
-buttons to add or remove privileges.
+When creating a new role, you will need to supply a 'Role ID' and a
+'Name' and optionally a 'Description'. Roles are comprised of other
+roles and individual privileges. To assign a role or privilege to a
+role, drag and drop the desired privileges from the 'Available' list
+to the 'Given' list under the 'Privileges' header. You can use the
+'Filter' input to narrow down the list of displayed privileges and the
+arrow buttons to add or remove privileges.
 
 The same functionality is available under the 'Roles' header to
 select among the 'Available' roles and add them to the list of
 'Contained' roles.
 
-Finally press the 'Create Role' button to get the role created. The
-built-in roles are managed by Nexus and cannot be edited or
-deleted. 
+Finally press the 'Create Role' button to get the role created. 
 
 An existing role can be inspected and edited by clicking on the row in
 the list. This role-specific view allows you to delete the role with
-the 'Delete role' button. The 'Settings' section displays the same
-section as the creation view as displayed in <<fig-roles-create>>.
+the 'Delete role' button. The built-in roles are managed by Nexus and
+cannot be edited or deleted. The 'Settings' section displays the same
+section as the creation view as displayed in <<fig-roles-create>>. .
 
-In addition you can inspect the 'Privileg trace' as well as the 'Role
+In addition you can inspect the 'Privilege trace' as well as the 'Role
 tree' view of the role displayed in <<fig-roles-tree>>. A role is
 comprised of other roles and individual privileges. The 'Privilege
 trace' view allows you to select a specific privilege and see a list of
@@ -376,6 +376,10 @@ causes all roles that contain the specific privilege in the 'Role
 containment' column on the right. If a user has been assigned a
 specific privilege by more than one Role or Privilege assignment, you
 will be able to see this reflected in the 'Role Containment' list.
+
+The 'More' button in the allows you to select the 'Change Password'
+item in the drop down. The password can be changed in a dialog,
+provided the user is managed by the built-in security realm.
 
 [[anonymous]]
 === Anonymous Access
