@@ -12,12 +12,12 @@ process is only suitable for evaluation and testing usage.
 
 === Java Prerequisite
 
-{nexus} only has one prerequisite, a Java Runtime Environment
-(JRE) compatible with Java 7 or Java 8 from Oracle. Nexus is most
-often run with the JRE that is bundled with a Java Development Kit
-(JDK) installation. We recommend to use the latest version of Java
-available from the
-http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle website].
+{nexus} only has one prerequisite, a Java 7 or Java 8 Runtime
+Environment (JRE) from Oracle. Nexus is most often run with the JRE
+that is bundled with a Java Development Kit (JDK) installation. We
+recommend to use the latest version of Java available from the
+http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle
+website].
 
 You can confirm the installed Java version with the `java` command:
 
@@ -31,6 +31,8 @@ Java HotSpot 64-Bit Server VM (build 25.45-b02, mixed mode)
 When multiple JDK or JRE versions are installed, you need to ensure
 the correct version by running the above command as the
 operating system user, that is used to run Nexus.
+
+TIP: OpenJDK or other Java distributions or older Java versions are not supported.
 
 ////
 [[install-sect-downloading]]
@@ -87,12 +89,10 @@ version] for an evaluation.
 
 ===  Installing Nexus
 
-The following instructions are for installing {oss} or {pro} as a
-stand-alone server. The Nexus bundle combines the Nexus web
-application with an Eclipse Jetty server and supplementary files like
-startup scripts.
+The Nexus bundle combines the Nexus web application with an Eclipse
+Jetty server and supplementary files like startup scripts.
 
-Installing Nexus is straightforward. Unpack the Nexus bundle archive
+Installing Nexus is straightforward. Simply unpack the Nexus bundle archive
 in a directory, to which you have full access. If you are installing
 Nexus on a local workstation to give it a test run, you can install it
 in your home directory or wherever you like. Nexus doesn't have any
@@ -103,7 +103,7 @@ downloaded the ZIP archive, run:
 $ unzip nexus-3.0.0-b2015061001-bundle.zip
 ----
 
-And, if you download the GZip'd TAR archive, run:
+Or, if you downloaded the GZip'd TAR archive, run:
 
 ----
 $ tar xvzf nexus-3.0.0-b2015061001-bundle.tar.gz
@@ -116,25 +116,31 @@ $ unzip nexus-professional-3.0.0-b2015061001-bundle.zip
 $ tar xvzf nexus-professional-3.0.0-b2015061001-bundle.tar.gz
 ----
 
-If you are installing Nexus on a server, you might want to use a
-directory other than your home directory. On a Unix machine, we assume
-that Nexus is installed in +/opt1+ with a symbolic link +/opt/nexus+
-to the versioned +nexus+ directory. Using a generic symbolic link
-+nexus+ to a specific version is a common practice which makes it
-easier to upgrade when a newer version of Nexus is made available.
+Alternative you can use your favourite extraction tool.
+
+If you are installing Nexus on a server, you should use a directory
+other than your users home directory. On a Unix machine, we assume
+that Nexus is installed in +/opt+ with a symbolic link +/opt/nexus+ to
+the versioned +nexus+ directory. 
+
+////
+Using a generic symbolic link +nexus+
+to a specific version is a common practice which makes it easier to
+upgrade when a newer version of Nexus is made available.
+////
 
 ----
 $ sudo cp nexus-3.0.0-b2015061001-bundle.tar.gz /opt
 $ cd /opt
 $ sudo tar xvzf nexus-3.0.0-b2015061001-bundle.tar.gz
-$ ln -s nexus-2.9.0-02 nexus
+$ ln -s nexus-3.0.0-b2015061001 nexus
 ----
 
 NOTE: On Windows you should install Nexus outside +Program Files+ to
 avoid problems with Windows file registry virtualization. If you plan
 to run Nexus as a specific user you could install into the
 +AppData\Local+ directory of that users home directory. Otherwise
-simply go with e.g., +C:\nexus+ or something similar.
+simply use e.g., +C:\nexus+ or something similar.
 
 The Nexus installation directory +nexus-3.0.0-b2015061001+ or
 +nexus-professional-3.0.0-b2015061001+ has a sibling directory named
@@ -143,7 +149,7 @@ configuration data for Nexus and is stored outside of the Nexus
 installation directory to make it easier to upgrade to a newer version
 of Nexus.
 
-By default, this directory is always a sibling to the Nexus
+By default, this directory is a sibling to the Nexus
 installation directory. If you installed Nexus in the +/opt+
 directory it would also contain a +sonatype-work+ subdirectory with a
 nested +nexus+ directory containing all of the content and
@@ -201,13 +207,12 @@ source to the professional version of Nexus.
 [[install-sect-running]]
 === Running Nexus
 
-When you start Nexus, you are starting a web server on the default
-port +0.0.0.0:8081+. Nexus runs within a servlet container called
-Eclipse Jetty. Nexus ships with generic
-startup scripts for Unix-like platforms called +nexus+ and for
-Windows platforms called +nexus.bat+ in the +$NEXUS_HOME/bin+
-folder. To start Nexus on a Unix-like platform like Linux, MacOSX or
-Solaris use
+When you start Nexus, you are starting a web server running the Nexus
+application. Nexus runs within a servlet container called Eclipse
+Jetty. Nexus ships with generic startup scripts for Unix-like
+platforms called +nexus+ and for Windows platforms called +nexus.bat+
+in the +bin+ folder. To start Nexus on a Unix-like platform like
+Linux use
 
 ----
 cd /opt/nexus
@@ -225,14 +230,14 @@ INFO  [jetty-main-1] *SYSTEM org.eclipse.jetty.server.Server - Started @36628ms
 INFO  [jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer - Started
 ----
 
-At this point, Nexus will be running and listening on all IP addresses
-that are configured for the current host on port 8081. To
-use Nexus, fire up a web browser and type in the URL
-http://localhost:8081/[http://localhost:8081/]. 
+At this point, Nexus will be listening on all IP addresses that are
+configured for the current host on port 8081. To access the Nexus web
+application, fire up a web browser and type in the URL
+http://localhost:8081/[http://localhost:8081/].
 
-While we use +localhost+ throughout this book, you may need to use the
-IP Loopback Address of +127.0.0.1+, the IP address or the DNS hostname 
-assigned to the machine running Nexus. 
+While we use +localhost+ throughout this documentation, you may need
+to use the IP Loopback Address of +127.0.0.1+, the IP address or the
+DNS hostname assigned to the machine running Nexus.
 
 ////
 When first starting {pro} you are presented with a
