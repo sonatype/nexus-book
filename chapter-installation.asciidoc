@@ -1,17 +1,40 @@
 [[install]]
 == Installing and Running Nexus
 
-=== Nexus Prerequisites
+Nexus only requires a Java Runtime Environment and installation is a
+simple process. This chapter provides further details to get
+started with Nexus and keep it running successfully in production
+deployments.
 
-{oss} and {pro} only have one prerequisite, a
-Java Runtime Environment (JRE) compatible with Java 7. Nexus is most
-often run with the JRE that is bundled with a Java Development Kit
-(JDK) installation, and it can be run with Oracle's JDK for Java 7. To
-download the Oracle JDK, go to
-http://www.oracle.com/technetwork/java/javase/downloads/index.html . At
-a minium Java 7u2 is required, but we recommend to use the latest available
-version.
+WARNING: Currently Nexus 3 is a pre-release application and running it
+for production usage is not recommended. The installation
+process is only suitable for evaluation and testing usage.
 
+=== Java Prerequisite
+
+{nexus} only has one prerequisite, a Java 7 or Java 8 Runtime
+Environment (JRE) from Oracle. Nexus is most often run with the JRE
+that is bundled with a Java Development Kit (JDK) installation. We
+recommend to use the latest version of Java available from the
+http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle
+website].
+
+You can confirm the installed Java version with the `java` command:
+
+----
+$java -version
+java version "1.8.0_45"
+Java SE Runtime Environment (build 1.8.0_45-b14)
+Java HotSpot 64-Bit Server VM (build 25.45-b02, mixed mode)
+----
+
+When multiple JDK or JRE versions are installed, you need to ensure
+the correct version by running the above command as the
+operating system user, that is used to run Nexus.
+
+TIP: OpenJDK or other Java distributions or older Java versions are not supported.
+
+////
 [[install-sect-downloading]]
 === Downloading Nexus
 
@@ -49,10 +72,7 @@ type in the page displayed in
 .Selecting a Specific Version of {oss} to Download
 image::figs/web/installing-open-source-dl-select.png[scale=50]
 
-{oss} can also be deployed as a web application in a
-servlet container like Jetty or Tomcat or an application server like
-Glassfish or JBoss. Instructions for installing Nexus as a WAR are
-found in <<install-sect-as-a-war>>.
+
 
 ==== Downloading {pro}
 
@@ -65,83 +85,81 @@ Pro Support landing page].
 
 TIP: Use the http://www.sonatype.com/nexus/free-trial[{pro} trial
 version] for an evaluation.
+////
 
 ===  Installing Nexus
 
-The following instructions are for installing {oss} or
-{pro} as a stand-alone server. Nexus comes bundled with a
-Jetty instance that listens to all configured IP addresses on a host
-(0.0.0.0) and runs on port 8081 by default. If you would like to run
-Nexus as a web application in an existing application server or
-servlet container, please refer to the instructions in
-<<install-sect-as-a-war>>.
+The Nexus bundle combines the Nexus web application with an Eclipse
+Jetty server and supplementary files like startup scripts.
 
-Installing Nexus is straightforward. Unpack the Nexus web
-application archive in a directory. If you are installing Nexus on a
-local workstation to give it a test run, you can install it in your
-home directory or wherever you like. Nexus doesn't have any hard coded
-directories. It will run from any directory. If you downloaded the ZIP
+Installing Nexus is straightforward. Simply unpack the Nexus bundle archive
+in a directory, to which you have full access. If you are installing
+Nexus on a local workstation to give it a test run, you can install it
+in your home directory or wherever you like. Nexus doesn't have any
+hard-coded directories and will run from any directory. If you
+downloaded the {oss} ZIP archive, run:
 
 ----
-$ unzip nexus-2.9.0-02-bundle.zip
+$ unzip nexus-3.0.0-b2015061001-bundle.zip
 ----
 
-And, if you download the GZip'd TAR archive, run:
+Or, if you downloaded the GZip'd TAR archive, run:
 
 ----
-$ tar xvzf nexus-2.9.0-02-bundle.tar.gz
+$ tar xvzf nexus-3.0.0-b2015061001-bundle.tar.gz
 ----
 
-For Nexus professional the equivalent commands would be 
+////
+For {pro} the equivalent commands would be 
 
 ----
-$ unzip nexus-professional-2.9.0-02-bundle.zip
-$ tar xvzf nexus-professional-2.9.0-02-bundle.tar.gz
+$ unzip nexus-professional-3.0.0-b2015061001-bundle.zip
+$ tar xvzf nexus-professional-3.0.0-b2015061001-bundle.tar.gz
 ----
+////
 
-CAUTION: There are some known incompatibilities with the version of the tar
-command provided by Solaris and the GZip TAR format. If you are installing
-Nexus on Solaris, you must use the GNU tar application, or you will
-end up with corrupted files.
 
-NOTE: If you are installing Nexus on a server, you might want to use a
-directory other than your home directory. On a Unix machine, this book
-assumes that Nexus is installed in +/usr/local/nexus-2.9.0-02+
-with a symbolic link +/usr/local/nexus+ to the +nexus+ directory. Using a
-generic symbolic link +nexus+ to a specific version is a common practice
-which makes it easier to upgrade when a newer version of Nexus is made
-available.
+Alternatively you can use your favourite file archiver and extraction tool.
+
+If you are installing Nexus on a server, you should use a directory
+other than your users home directory. On a Unix machine, we assume
+that Nexus is installed in +/opt+ with a symbolic link +/opt/nexus+ to
+the versioned +/opt/nexus-3.0.0-b2015061001+ directory. The following
+commands can create this setup:
 
 ----
-$ sudo cp nexus-2.9.0-02-bundle.tar.gz /usr/local
-$ cd /usr/local
-$ sudo tar xvzf nexus-2.9.0-02-bundle.tar.gz
-$ ln -s nexus-2.9.0-02 nexus
+$ sudo cp nexus-3.0.0-b2015061001-bundle.tar.gz /opt
+$ cd /opt
+$ sudo tar xvzf nexus-3.0.0-b2015061001-bundle.tar.gz
+$ ln -s nexus-3.0.0-b2015061001 nexus
 ----
+////
+Using a generic symbolic link +nexus+
+to a specific version is a common practice which makes it easier to
+upgrade when a newer version of Nexus is made available.
+////
 
-Although it isn't required for Nexus to run, you may want to set an
-environment variable NEXUS_HOME in your environment that
-points to the installation directory of Nexus. This chapter will refer
-to this location as +$NEXUS_HOME+.
 
 NOTE: On Windows you should install Nexus outside +Program Files+ to
 avoid problems with Windows file registry virtualization. If you plan
 to run Nexus as a specific user you could install into the
 +AppData\Local+ directory of that users home directory. Otherwise
-simply go with e.g., +C:\nexus+ or something similar.
+simply use e.g., +C:\nexus+ or something similar.
 
-The Nexus installation directory +nexus-2.9.0-02+ or
-+nexus-professional-2.9.0-02+ has a sibling directory named
-+sonatype-work+. This directory contains all of the repository and
-configuration data for Nexus and is stored outside of the Nexus
-installation directory to make it easier to upgrade to a newer version
-of Nexus.
+The Nexus application directory +nexus-3.0.0-b2015061001+ requires
+another directory named +sonatype-work+. This directory contains all
+of the repository and configuration data for Nexus and is stored
+outside of the Nexus installation directory to make it easier to
+upgrade to a newer version of Nexus.
 
-By default, this directory is always a sibling to the Nexus
-installation directory. If you installed Nexus in the +/usr/local+
+By default, this directory is a sibling to the Nexus
+installation directory. If you installed Nexus in the +/opt+
 directory it would also contain a +sonatype-work+ subdirectory with a
 nested +nexus+ directory containing all of the content and
-configuration. The location of the +sonatype-work+ directory can be
+configuration. 
+
+////
+The location of the +sonatype-work+ directory can be
 customized by altering the nexus-work property in
 +$NEXUS_HOME/conf/nexus.properties+.
 
@@ -187,63 +205,44 @@ intermediate upgrade step to a 2.x version.
 
 NOTE: The same upgrade process can be used to change from the open
 source to the professional version of Nexus.
+////
 
 [[install-sect-running]]
 === Running Nexus
 
-When you start Nexus, you are starting a web server on the default
-port +0.0.0.0:8081+. Nexus runs within a servlet container called
-Eclipse Jetty, and it is started with a native service wrapper called the
-http://wrapper.tanukisoftware.org/doc/english/introduction.html[Tanuki
-Java Service Wrapper]. This service wrapper can be configured to run
-Nexus as a Windows service or a Unix daemon. Nexus ships with generic
-startup scripts for Unix-like platforms called +nexus+ and for
-Windows platforms called +nexus.bat+ in the +$NEXUS_HOME/bin+
-folder. To start Nexus on a Unix-like platform like Linux, MacOSX or
-Solaris use
+When you start Nexus, you are starting a web server running the Nexus
+application. Nexus runs within a servlet container called Eclipse
+Jetty. Nexus ships with generic startup scripts for Unix-like
+platforms called +nexus+ and for Windows platforms called +nexus.bat+
+in the +bin+ folder. To start Nexus on a Unix-like platform like
+Linux use
 
 ----
-cd /usr/local/nexus
+cd /opt/nexus
 ./bin/nexus console
 ----
 
 Similarly, starting on Windows can be done with the +nexus.bat+
-file. Starting Nexus with the console command will leave Nexus running
+file. Starting Nexus with the `console` command will leave Nexus running
 in the current shell and display the log output.
 
-On Unix systems, you can start Nexus detached from the starting shell
-with the start command even when not yet installed as a service.
+Nexus is fully started once you see the following message in the log:
 
 ----
-./bin/nexus start
+[jetty-main-1] *SYSTEM org.eclipse.jetty.server.Server - Started @36628ms
+[jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer - Started
 ----
 
-When executed you should see a feedback message and then you can follow
-the startup process viewing the log file +logs/wrapper.log+
-changes.  
-----
-Starting Nexus Repository Manager...
-Started Nexus Repository Manager.
-$ tail -f logs/wrapper.log 
-----
+At this point, Nexus will be listening on all IP addresses that are
+configured for the current host on port 8081. To access the Nexus web
+application, fire up a web browser and type in the URL
+http://localhost:8081/[http://localhost:8081/].
 
-At this point, Nexus will be running and listening on all IP addresses
-(0.0.0.0) that are configured for the current host on port 8081. To
-use Nexus, fire up a web browser and type in the URL
-http://localhost:8081/nexus[http://localhost:8081/nexus]. You should see 
-the Nexus user interface as displayed in <<fig-installing-nexus-default-screen>>.
+While we use +localhost+ throughout this documentation, you may need
+to use the IP Loopback Address of +127.0.0.1+, the IP address or the
+DNS hostname assigned to the machine running Nexus.
 
-While we use +localhost+ throughout this book, you may need to use the
-IP Loopback Address of +127.0.0.1+, the IP address or the DNS hostname 
-assigned to the machine running Nexus. 
-
-ifdef::promo[]
-++++
-<?dbhtml-include href="promo_group.html"?>
-++++
-endif::[]
-
-
+////
 When first starting {pro} you are presented with a
 form that allows you to request a trial activation. This page
 displayed in <<fig-installing-trial-form>> contains a link to
@@ -300,58 +299,7 @@ screen to logged in users.
 image::figs/web/installing-nexus-default-screen.png[scale=60]
 
 
-The files from Java Service Wrapper used for the start up process can
-be found in +$NEXUS_HOME/bin/jsw+ and are separated into generic
-files like the +wrapper.conf+ configuration file in conf and a
-number of libraries in +lib+. An optional +wrapper.conf+ include
-allows you to place further configuration optionally in
-+$NEXUS_HOME/conf/wrapper-override.conf+.
-
-
-The platform-specific directories are available for backwards
-compatibility with older versions only and should not be used. A full
-list of directories follows:
-
-----
-$ cd /usr/local/nexus/bin/jsw
-$ ls -1                                                                             
-conf
-lib
-license
-linux-ppc-64
-linux-x86-32
-linux-x86-64
-macosx-universal-32
-macosx-universal-64
-solaris-sparc-32
-solaris-sparc-64
-solaris-x86-32
-windows-x86-32
-windows-x86-64
-----
-
-The +wrapper.conf+ file is the central configuration file for the
-startup of the Jetty servlet container running Nexus on a Java virtual
-machine and therefore includes configuration for things such as the
-java command to use, Java memory configuration, logging configuration
-and other settings documented in the configuration file.
-
-Typical modifications include adapting the maximum memory size to your
-server hardware and usage requirements e.g. 2000 MB up from the
-default 768 and other JVM related configurations.
-
-----
-wrapper.java.maxmemory=2000
-----
-
-Additional configuration in the +wrapper.conf+ file includes
-activation of further Jetty configuration file for monitoring Nexus
-via <<jmx, JMX>> or using <<ssl-sect-ssl-direct,HTTPS>>.
-
-
-TIP: The startup script +nexus+ supports the common service
-commands +start+, +stop+, +restart+, +status+,
-+console+ and +dump+.
+tbd
 
 [[install-sect-repoman-post-install]]
 === Post-Install Checklist
@@ -420,25 +368,6 @@ will not show in the repository tree when you are browsing a
 repository. When browsing a repository, you will only be shown
 components which have been downloaded from the remote repository.
 
-==== Step 5: Change the Deployment Password
-
-The deployment user's password defaults to 'deployment123'. Change this
-password to make sure that only authorized developers can deploy
-components to your Nexus installation. To change the deployment password, 
-log in as an administrator. Click on 'Security' to expand the security menu. 
-When the menu appears, click on 'Users'.  A list of users will appear. 
-At that point, right-click on the user named 'Deployment' and select 'Set Password'.
-
-
-==== Step 6: If Necessary, Set the LANG Environment Variable
-
-If your Nexus instance needs to store configuration and data using an
-international character set, you should set the +LANG+ environment
-variable. The Java Runtime will adapt to the value of the +LANG+
-environment variable and ensure that configuration data is saved using
-the appropriate character type. If you are starting Nexus as a
-service, place this environment variable in the startup script found
-in +/etc/init.d/nexus+. 
 
 ==== Step 7: Configure Routes
 
@@ -449,6 +378,7 @@ the Central Repository or any other external, public repository. A route, as doc
 requests for internal components do not leak to external repositories.
 
 
+tbd once implemented
 [[install-sect-service]]
 === Configuring Nexus as a Service
 
@@ -609,6 +539,7 @@ service with the +install+ command, the batch file can be used to start
 and stop the service. In addition, the service will be available in the
 usual Windows service management console as a service named 'nexus'.
 
+
 [[install-sect-proxy]]
 === Running Nexus Behind a Reverse Proxy
 
@@ -693,6 +624,9 @@ requirements and the way you intend to expose Nexus to the outside
 world. If you need more details about Apache httpd and mod_proxy,
 please see http://httpd.apache.org
 
+
+tbd when needed
+
 [[install-sect-licensing]]
 === Installing a {pro} License
 
@@ -751,6 +685,9 @@ image::figs/web/installing_uninstall_completed.png[scale=50]
 When a {pro} license expires, the Nexus user interface
 will have all functionality disabled except for the ability to install
 a new license file.
+
+
+tbd prior to GA maybe.. 
  
 [[install-sect-dirs]]
 === Nexus Directories
@@ -979,6 +916,9 @@ for configuration changes. Examples were available in
 as they were intended to be standalone files that could not be merged
 into other files.
 
+
+tbd .. maybe move to other chapter 
+
 [[monitoring]]
 === Monitoring Nexus 
 
@@ -1101,6 +1041,9 @@ image::figs/web/monitoring-jmx-visualvm-charts.png[scale=50]
 Depending on the tool used to connect, a number of monitoring, analysis
 and troubleshooting actions can be performed. Please refer to the
 documentation about your specific tool for more information.
+
+////
+
 
 ////
 /* Local Variables: */
