@@ -626,15 +626,21 @@ usual Windows service management console as a service named 'nexus'.
 [[install-sect-proxy]]
 === Running Nexus Behind a Reverse Proxy
 
-Nexus is essentially a sophisticated web application, answering HTTP requests
+Nexus is a sophisticated web application, answering HTTP requests
 using the high-performance servlet container http://eclipse.org/jetty[Eclipse
-Jetty]. Jetty is very capable and highly configurable. Using a
-https://en.wikipedia.org/wiki/Reverse_proxy[reverse proxy] in front of Nexus
-is not typically required or necessary.
+Jetty].
 
-In some cases organizations are required to run applications behind a reverse
-proxy for security concerns, network administrator familiarity, company policy
-or to consolidate multiple disparate applications and virtual hosts.
+Organizations are sometimes required to run applications like Nexus behind a
+https://en.wikipedia.org/wiki/Reverse_proxy[reverse proxy]. Reasoning can
+include:
+
+* security and auditing concerns
+* network administrator familiarity
+* organizational policy
+* disparate application consolidation
+* virtual hosting
+* exposing applications on restricted ports
+* SSL termination
 
 We provide some general guidance on how to configure common reverse proxy
 servers to work with Nexus. Always consult your reverse proxy administrator
@@ -643,10 +649,10 @@ to ensure you configuration is secure.
 There are two main settings of Nexus which can affect how reverse proxies
 interact.
 
-[[nexus_web_application_context_path]]
+[[nexus_webapp_context_path]]
 ==== Nexus Webapp Context Path
 
-Nexus webapp context path is by default +/nexus+. This means every URL path used
+Nexus webapp context path is +/nexus+ by default. This means every URL path used
 to access Nexus must begin with +/nexus+.
 
 In cases where Nexus needs to be accessed at a different base path, through your
@@ -669,7 +675,7 @@ For example, to expose Nexus at path slash ( +/+ ) instead of +/nexus/+:
 
 ==== Do Not Force Base URL
 
-At Administration -> Server -> Application Server Settings Nexus has a
+At _Administration_ -> _Server_ -> _Application Server Settings_ Nexus has a
 deprecated _Force Base URL_ feature. The original use case for forcing base URL
 is no longer valid.
 
@@ -748,7 +754,7 @@ You need to expose Nexus using a custom host name of +repo.example.com+ on a
 restricted port at a base path of slash ( +/+ ).
 
 Ensure your external host name ( +repo.example.com+ ) routes to your reverse
-proxy server and <<nexus_web_application_context_path,edit the Nexus webapp
+proxy server and <<nexus_webapp_context_path,edit the Nexus webapp
 path to be slash ( +/+ )>>.
 
 .Apache httpd
