@@ -626,57 +626,71 @@ usual Windows service management console as a service named 'nexus'.
 [[install-sect-proxy]]
 === Running Nexus Behind a Reverse Proxy
 
-Nexus is essentially a sophisticated web application, answering HTTP requests using the high-performance servlet
-container http://eclipse.org/jetty[Eclipse Jetty]. Jetty is very capable and highly configurable. Using a https://en.wikipedia.org/wiki/Reverse_proxy[reverse proxy]
-in front of Nexus is not typically required or necessary.
+Nexus is essentially a sophisticated web application, answering HTTP requests
+using the high-performance servlet container http://eclipse.org/jetty[Eclipse
+Jetty]. Jetty is very capable and highly configurable. Using a
+https://en.wikipedia.org/wiki/Reverse_proxy[reverse proxy] in front of Nexus
+is not typically required or necessary.
 
-In some cases organizations are required to run applications behind a reverse proxy for security concerns,
-network administrator familiarity, company policy or to consolidate multiple disparate
-applications and virtual hosts.
+In some cases organizations are required to run applications behind a reverse
+proxy for security concerns, network administrator familiarity, company policy
+or to consolidate multiple disparate applications and virtual hosts.
 
-We provide some general guidance on how to configure common reverse proxy servers to work with Nexus. Always
-consult your reverse proxy administrator to ensure you configuration is secure.
+We provide some general guidance on how to configure common reverse proxy
+servers to work with Nexus. Always consult your reverse proxy administrator
+to ensure you configuration is secure.
 
-There are two main settings of Nexus which can affect how reverse proxies interact.
+There are two main settings of Nexus which can affect how reverse proxies
+interact.
 
 ==== Nexus Webapp Context Path
 
-Nexus webapp context path is by default +/nexus+. This means every URL path used to access Nexus must begin with +/nexus+.
+Nexus webapp context path is by default +/nexus+. This means every URL path used
+to access Nexus must begin with +/nexus+.
 
-In cases where Nexus needs to be accessed at a different base path, through your reverse proxy or directly, you must change
-the default path by editing a property value.
+In cases where Nexus needs to be accessed at a different base path, through your
+reverse proxy or directly, you must change the default path by editing a
+property value.
 
 For example, to expose Nexus at path slash ( +/+ ) instead of +/nexus/+:
 
-. Edit +$NEXUS_HOME/conf/nexus.properties+. Change +nexus-webapp-context-path=/nexus+ to +nexus-webapp-context-path=/+
+. Edit +$NEXUS_HOME/conf/nexus.properties+. Change
+  +nexus-webapp-context-path=/nexus+ to +nexus-webapp-context-path=/+
 
-. Restart Nexus and verify that it is available on +http://localhost:8081/+ and no longer available at +http://localhost:8081/nexus/+.
+. Restart Nexus and verify that it is available on +http://localhost:8081/+ and
+  no longer available at +http://localhost:8081/nexus/+.
 
-. Emails triggered by your Nexus instance may include absolute links back to the originating Nexus server.
-  As a matter of courtesy, set the Base URL in Nexus as shown in
-  <<fig-config-administration-application-server>> under 'Application
-  Server Settings' to the URL that will be externally available to your users e.g. +http://repo.example.com/+.
+. Emails triggered by your Nexus instance may include absolute links back to the
+  originating Nexus server. As a matter of courtesy, set the Base URL in
+  Nexus as shown in <<fig-config-administration-application-server>> under
+  'Application Server Settings' to the URL that will be externally available
+  to your users e.g. +http://repo.example.com/+.
 
 ==== Do Not Force Base URL
 
-At Administration -> Server -> Application Server Settings Nexus has a deprecated _Force Base URL_ feature. The original
-use case for forcing Base URL is no longer valid.
+At Administration -> Server -> Application Server Settings Nexus has a
+deprecated _Force Base URL_ feature. The original use case for forcing base URL
+is no longer valid.
 
-When enabled, the incoming request host and base path is ignored and Nexus acts like it is being accessed at the value of
-Base URL.
+When enabled, the incoming request host and base path is ignored and Nexus acts
+like it is being accessed at the value of base URL.
 
-WARNING: Do not enable the <<fig-config-administration-application-server>> 'Force Base URL' unless explicitly advised
-by Sonatype - enabling this feature will most likely cause Nexus to not work properly through a reverse proxy.
+WARNING: Do not enable the <<fig-config-administration-application-server>>
+'Force Base URL' unless explicitly advised by Sonatype - enabling this will most
+likely cause Nexus to not work properly through a reverse proxy.
 
 ==== Example: Reverse Proxy On Restricted Ports
 
 .Scenario:
 
-You need to expose Nexus on restricted port 80. <<nonrootuser,Nexus should not be run with the root
-user>>. Instead run your reverse proxy on the restricted port +80+ and Nexus on the default port +8081+. End
-users will access Nexus using the virtual host URL +http://www.example.com/nexus+ instead of +http://localhost:8081/nexus+ .
+You need to expose Nexus on restricted port 80. <<nonrootuser,Nexus should not
+be run with the root user>>. Instead run your reverse proxy on the restricted
+port +80+ and Nexus on the default port +8081+. End users will access Nexus
+using the virtual host URL +http://www.example.com/nexus+ instead of
++http://localhost:8081/nexus+.
 
-Ensure your external host name ( +www.example.com+ ) routes to your reverse proxy server.
+Ensure your external host name ( +www.example.com+ ) routes to your reverse
+proxy server.
 
 Apache httpd::
 
@@ -729,10 +743,12 @@ http {
 
 .Scenario:
 
-You need to expose Nexus using a custom host name of +repo.example.com+ on a restricted port at a base path of slash ( +/+ ).
+You need to expose Nexus using a custom host name of +repo.example.com+ on a
+restricted port at a base path of slash ( +/+ ).
 
-Ensure your external host name ( +repo.example.com+ ) routes to your reverse proxy server and
-<<nexus_web_application_context_path,edit the Nexus webapp path to be slash ( +/+ )>>.
+Ensure your external host name ( +repo.example.com+ ) routes to your reverse
+proxy server and <<nexus_web_application_context_path,edit the Nexus webapp
+path to be slash ( +/+ )>>.
 
 Apache httpd::
 
@@ -785,14 +801,18 @@ http {
 
 .Scenario:
 
-Your organization has standardized on a reverse proxy to handle SSL certificates and termination. The reverse
-proxy virtual host will accept HTTPS requests on the standard port +443+ and serve content from Nexus running on
-the default non-restricted HTTP port +8081+ transparently to end users.
+Your organization has standardized on a reverse proxy to handle SSL certificates
+and termination. The reverse proxy virtual host will accept HTTPS requests on
+the standard port +443+ and serve content from Nexus running on the default
+non-restricted HTTP port +8081+ transparently to end users.
 
-Ensure your external host name ( +repo.example.com+ ) routes to your reverse proxy server and
-<<nexus_web_application_context_path,edit the Nexus webapp path to be slash ( +/+ )>>.
+Ensure your external host name ( +repo.example.com+ ) routes to your reverse
+proxy server and <<nexus_web_application_context_path,edit the Nexus webapp
+path to be slash ( +/+ )>>.
 
-To test your configuration, we offer a https://support.sonatype.com/entries/95353268-SSL-Self-Signed-Certificate-Guide[quick reference on how to generate self-signed SSL certificates] for reverse proxy servers.
+To test your configuration, we offer a
+https://support.sonatype.com/entries/95353268-SSL-Self-Signed-Certificate-Guide[quick reference on how to generate self-signed SSL certificates]
+for reverse proxy servers.
 
 Apache httpd::
 
