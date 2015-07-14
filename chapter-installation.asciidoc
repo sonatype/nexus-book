@@ -634,14 +634,14 @@ In some cases organizations are required to run applications behind a reverse pr
 network administrator familiarity, company policy or to consolidate multiple disparate
 applications and virtual hosts.
 
-We provide some general guidance below on how to configure common reverse proxy servers to work with Nexus. Always
+We provide some general guidance on how to configure common reverse proxy servers to work with Nexus. Always
 consult your reverse proxy administrator to ensure you configuration is secure.
 
 There are two main settings of Nexus which can affect how reverse proxies interact.
 
 ==== Nexus Webapp Context Path
 
-Nexus webapp context path is by default +/nexus+. This means every URL used to access Nexus must begin with +/nexus+.
+Nexus webapp context path is by default +/nexus+. This means every URL path used to access Nexus must begin with +/nexus+.
 
 In cases where Nexus needs to be accessed at a different base path, through your reverse proxy or directly, you must change
 the default path by editing a property value.
@@ -665,18 +665,18 @@ use case for forcing Base URL is no longer valid.
 When enabled, the incoming request host and base path is ignored and Nexus acts like it is being accessed at the value of
 Base URL.
 
-WARNING: Do not enable the <<fig-config-administration-application-server>> 'Force Base URL' is unless explicitly advised
+WARNING: Do not enable the <<fig-config-administration-application-server>> 'Force Base URL' unless explicitly advised
 by Sonatype - enabling this feature will most likely cause Nexus to not work properly through a reverse proxy.
 
-==== Example: Reverse Proxy Restricted Ports
+==== Example: Reverse Proxy On Restricted Ports
 
-.Scenario
+.Scenario:
 
-You need to expose Nexus on restricted port 80. <<nonrootuser,Nexus should not be run as the ROOT
-user>>. Instead run your reverse proxy on the restricted port +80+ and Nexus on the default port +8081+. The end
-users will access Nexus using the virtual host +http://www.example.com/nexus+ instead of +http://localhost:8081/nexus+
+You need to expose Nexus on restricted port 80. <<nonrootuser,Nexus should not be run with the root
+user>>. Instead run your reverse proxy on the restricted port +80+ and Nexus on the default port +8081+. End
+users will access Nexus using the virtual host URL +http://www.example.com/nexus+ instead of +http://localhost:8081/nexus+ .
 
-Ensure your external host name ( +www.example.com+ ) routes to your reverse proxy server and use the examples as a guide.
+Ensure your external host name ( +www.example.com+ ) routes to your reverse proxy server.
 
 Apache httpd::
 
@@ -709,10 +709,10 @@ http {
         listen   *:80;
         server_name  www.example.com;
 
-        # allow large uploads of files - refer to nginx doc
-        client_max_body_size 1000m
+        # allow large uploads of files - refer to nginx documentation
+        client_max_body_size 1G
 
-        # optimize downloading files larger than 1024m - refer to nginx doc
+        # optimize downloading files larger than 1G - refer to nginx doc before adjusting
         #proxy_max_temp_file_size 2G
 
         location /nexus {
@@ -727,7 +727,7 @@ http {
 
 ==== Example: Reverse Proxy Virtual Host at Base Path
 
-.Scenario
+.Scenario:
 
 You need to expose Nexus using a custom host name of +repo.example.com+ on a restricted port at a base path of slash ( +/+ ).
 
@@ -766,9 +766,9 @@ http {
         server_name  repo.example.com;
 
         # allow large uploads of files - refer to nginx documentation
-        client_max_body_size 1000m
+        client_max_body_size 1G
 
-        # optimize downloading files larger than 1024m - refer to nginx doc
+        # optimize downloading files larger than 1G - refer to nginx doc before adjusting
         #proxy_max_temp_file_size 2G
 
         location / {
@@ -781,9 +781,9 @@ http {
 }
 ----
 
-==== Example 3: Reverse Proxy SSL Termination at Base Path
+==== Example: Reverse Proxy SSL Termination at Base Path
 
-.Scenario
+.Scenario:
 
 Your organization has standardized on a reverse proxy to handle SSL certificates and termination. The reverse
 proxy virtual host will accept HTTPS requests on the standard port +443+ and serve content from Nexus running on
@@ -792,7 +792,7 @@ the default non-restricted HTTP port +8081+ transparently to end users.
 Ensure your external host name ( +repo.example.com+ ) routes to your reverse proxy server and
 <<nexus_web_application_context_path,edit the Nexus webapp path to be slash ( +/+ )>>.
 
-To test your configuration, https://support.sonatype.com/entries/95353268-SSL-Self-Signed-Certificate-Guide[quick reference on how to generate self-signed SSL certificates] that can be used with reverse proxy servers.
+To test your configuration, we offer a https://support.sonatype.com/entries/95353268-SSL-Self-Signed-Certificate-Guide[quick reference on how to generate self-signed SSL certificates] for reverse proxy servers.
 
 Apache httpd::
 
@@ -863,8 +863,6 @@ NOTE: Reverse proxy configuration is going to vary and can get complex.
 Always consult the specific reverse proxy product documentation.
 http://httpd.apache.org[Apache httpd] ( http://httpd.apache.org/docs/current/mod/mod_proxy.html[mod_proxy], http://httpd.apache.org/docs/current/mod/mod_ssl.html[mod_ssl] ),
 http://nginx.org/en/docs/[nginx] ( http://nginx.org/en/docs/http/ngx_http_proxy_module.html[ngx_http_proxy_module], http://nginx.org/en/docs/http/configuring_https_servers.html#compatibility[ssl compatibility] )
-
-==== Quick Guide
 
 [[install-sect-licensing]]
 === Installing a Nexus Pro License
