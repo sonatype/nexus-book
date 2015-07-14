@@ -519,6 +519,7 @@ ifdef::promo[]
 ++++
 endif::[]
 
+[[nonrootuser]]
 WARNING: We recommend to avoid running Nexus as the root user or a
 similar privileged user, as this practice poses serious security risks
 to the host operating system unnecessarily. Instead we suggest to
@@ -625,126 +626,270 @@ usual Windows service management console as a service named 'nexus'.
 [[install-sect-proxy]]
 === Running Nexus Behind a Reverse Proxy
 
-The Nexus installation bundle is based on the high-performance servlet
-container Eclipse Jetty running the Nexus web application. This
-achieves a very high performance of Nexus and make installation of a
-separate proxy for performance improvements unnecessary.
+Nexus is a sophisticated web application, answering HTTP requests
+using the high-performance servlet container http://eclipse.org/jetty[Eclipse
+Jetty].
 
-However, in many cases organizations run applications behind a proxy
-for security concerns, familiarity with securing a particular proxy
-server or to consolidate multiple disparate applications using tools
-like mod_rewrite.
+Organizations are sometimes required to run applications like Nexus behind a
+https://en.wikipedia.org/wiki/Reverse_proxy[reverse proxy]. Reasoning can
+include:
 
-Some brief instructions for establishing such a setup with Apache
-httpd follow as an example. We assume that you've already installed
-Apache 2, and that you are using a virtual host for
-repo.example.com.
+* security and auditing concerns
+* network administrator familiarity
+* organizational policy
+* disparate application consolidation
+* virtual hosting
+* exposing applications on restricted ports
+* SSL termination
 
-Let's assume that you wanted to host Nexus behind Apache httpd at the
-URL +http://repo.example.com+. To do this, you'll need to change the
-context path that Nexus is served from.
+We provide some general guidance on how to configure common reverse proxy
+servers to work with Nexus. Always consult your reverse proxy administrator
+to ensure you configuration is secure.
 
-. Edit nexus.properties in +$NEXUS_HOME/conf+. You'll see an
-  element named nexus-webapp-context-path. Change this value from
-  +/nexus+ to +/+
+There are two main settings of Nexus which can affect how reverse proxies
+interact.
 
-. Restart Nexus and Verify that it is available on
-  +http://localhost:8081/+
+[[nexus_webapp_context_path]]
+==== Nexus Webapp Context Path
 
-. Set the Base URL in Nexus as shown in
-  <<fig-config-administration-application-server>> under 'Application
-  Server Settings' to the URL that will be the externally available 
-  URL of Nexus e.g. +http://repo.example.com+ 
+Nexus webapp context path is +/nexus+ by default. This means every URL path used
+to access Nexus must begin with +/nexus+.
 
-At this point, edit the httpd configuration file for the
-repo.example.com virtual host. Include the following to expose
-Nexus via mod_proxy at +http://repo.example.com/+.
+In cases where Nexus needs to be accessed at a different base path, through your
+reverse proxy or directly, you must change the default path by editing a
+property value.
+
+For example, to expose Nexus at path slash ( +/+ ) instead of +/nexus/+:
+
+. Edit +$NEXUS_HOME/conf/nexus.properties+. Change
+  +nexus-webapp-context-path=/nexus+ to +nexus-webapp-context-path=/+
+
+. Restart Nexus and verify that it is available on +http://localhost:8081/+ and
+  no longer available at +http://localhost:8081/nexus/+.
+
+. Emails triggered by your Nexus instance may include absolute links back to the
+  originating Nexus server. As a matter of courtesy, set the Base URL in
+  Nexus as shown in <<fig-config-administration-application-server>> under
+  'Application Server Settings' to the URL that will be externally available
+  to your users e.g. +http://repo.example.com/+.
+
+==== Do Not Force Base URL
+
+At _Administration_ -> _Server_ -> _Application Server Settings_ Nexus has a
+deprecated _Force Base URL_ feature. The original use case for forcing base URL
+is no longer valid.
+
+When enabled, the incoming request host and base path is ignored and Nexus acts
+like it is being accessed at the value of base URL.
+
+WARNING: Do not enable the <<fig-config-administration-application-server>>
+'Force Base URL' unless explicitly advised by Sonatype - enabling this will most
+likely cause Nexus to not work properly through a reverse proxy.
+
+==== Example: Reverse Proxy On Restricted Ports
+
+.Scenario:
+
+You need to expose Nexus on restricted port 80. <<nonrootuser,Nexus should not
+be run with the root user>>. Instead run your reverse proxy on the restricted
+port +80+ and Nexus on the default port +8081+. End users will access Nexus
+using the virtual host URL +http://www.example.com/nexus+ instead of
++http://localhost:8081/nexus+.
+
+Ensure your external host name ( +www.example.com+ ) routes to your reverse
+proxy server.
+
+.Apache httpd
 
 ----
-ProxyRequests Off 
-ProxyPreserveHost On 
+ProxyRequests Off
+ProxyPreserveHost On
 
-<VirtualHost *:80> 
-  ServerName repo.example.com 
-  ServerAdmin admin@example.com 
-  ProxyPass / http://localhost:8081/
-  ProxyPassReverse / http://localhost:8081/
-  ErrorLog logs/repo.example.com/nexus/error.log 
-  CustomLog logs/repo.example.com/nexus/access.log common 
+<VirtualHost *:80>
+  ServerName www.example.com
+  ServerAdmin admin@example.com
+  ProxyPass /nexus http://localhost:8081/nexus
+  ProxyPassReverse /nexus http://localhost:8081/nexus
+  ErrorLog logs/www.example.com/nexus/error.log
+  CustomLog logs/www.example.com/nexus/access.log common
 </VirtualHost>
 ----
 
-If you just wanted to continue to serve Nexus at the +/nexus+ context
-path, you would not change the +nexus-webapp-context-path+ and you
-would include the context path in your ProxyPass and ProxyPassReverse
-
-----
-  ProxyPass /nexus/ http://localhost:8081/nexus/
-  ProxyPassReverse /nexus/ http://localhost:8081/nexus/
-----
-
-For the user interface to work via the proxy reliably you also need to
-configure a +ProxyPassReverseCookiePath+.
-
-----
-  ProxyPass /nexus http://localhost:8081/
-  ProxyPassReverse /nexus http://localhost:8081/
-  ProxyPassReverseCookiePath / /nexus
-----
-
-When your reverse proxy is configured to serve https, but it proxies
-with plain http to your Nexus instance, an additional header is
-required. This will ensure Nexus renders absolute URLs using the
-correct protocol. When setting this header, make sure that in
-<<fig-config-administration-application-server>> 'Force Base URL' is
-not checked.
-
-----
-  RequestHeader set X-Forwarded-Proto "https"
-----
-
-Apache configuration is going to vary, based on your own application's
-requirements and the way you intend to expose Nexus to the outside
-world. If you need more details about Apache httpd and mod_proxy,
-please see the documentation at
-http://httpd.apache.org[http://httpd.apache.org] and specifically
-http://httpd.apache.org/docs/current/mod/mod_proxy.html[http://httpd.apache.org/docs/current/mod/mod_proxy.html].
-
-
-A similar setup can be configured with
-http://nginx.org/en/[nginx]. The following configuration is a
-simplified example for an nginx server running port +80+. This server
-proxies Neuxs running on the same server (127.0.0.1 = localhost) at
-the default port +8081+ on the default context +/nexus+:
+.nginx
 
 ----
 http {
-...
+
     proxy_send_timeout 120;
     proxy_read_timeout 300;
     proxy_buffering    off;
-    keepalive_timeout   5;
+    keepalive_timeout  5 5;
     tcp_nodelay        on;
-..
+
     server {
-        listen       80;
-        server_name  localhost;
+        listen   *:80;
+        server_name  www.example.com;
+
+        # allow large uploads of files - refer to nginx documentation
+        client_max_body_size 1G
+
+        # optimize downloading files larger than 1G - refer to nginx doc before adjusting
+        #proxy_max_temp_file_size 2G
 
         location /nexus {
-            proxy_pass http://127.0.0.1:8081;
+            proxy_pass http://localhost:8081/nexus;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto https;
         }
     }
+}
 ----
 
-The http://nginx.org/en/docs/[nginx documentation] contains further
-details for setting this up for HTTP as well as for HTTPS, if desired.
+==== Example: Reverse Proxy Virtual Host at Base Path
 
-If the components proxied include larger files be sure to set `client_max_body_size` 
-to an appropriate value to ensure uploads and downloads can succeed through nginx.
+.Scenario:
+
+You need to expose Nexus using a custom host name of +repo.example.com+ on a
+restricted port at a base path of slash ( +/+ ).
+
+Ensure your external host name ( +repo.example.com+ ) routes to your reverse
+proxy server and <<nexus_webapp_context_path,edit the Nexus webapp
+path to be slash ( +/+ )>>.
+
+.Apache httpd
+
+----
+ProxyRequests Off
+ProxyPreserveHost On
+
+<VirtualHost *:80>
+  ServerName repo.example.com
+  ServerAdmin admin@example.com
+  ProxyPass / http://localhost:8081/
+  ProxyPassReverse / http://localhost:8081/
+  ErrorLog logs/repo.example.com/nexus/error.log
+  CustomLog logs/repo.example.com/nexus/access.log common
+</VirtualHost>
+----
+
+.nginx
+
+----
+http {
+
+    proxy_send_timeout 120;
+    proxy_read_timeout 300;
+    proxy_buffering    off;
+    keepalive_timeout  5 5;
+    tcp_nodelay        on;
+
+    server {
+        listen   *:80;
+        server_name  repo.example.com;
+
+        # allow large uploads of files - refer to nginx documentation
+        client_max_body_size 1G
+
+        # optimize downloading files larger than 1G - refer to nginx doc before adjusting
+        #proxy_max_temp_file_size 2G
+
+        location / {
+            proxy_pass http://localhost:8081/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+    }
+}
+----
+
+==== Example: Reverse Proxy SSL Termination at Base Path
+
+.Scenario:
+
+Your organization has standardized on a reverse proxy to handle SSL certificates
+and termination. The reverse proxy virtual host will accept HTTPS requests on
+the standard port +443+ and serve content from Nexus running on the default
+non-restricted HTTP port +8081+ transparently to end users.
+
+Ensure your external host name ( +repo.example.com+ ) routes to your reverse
+proxy server and <<nexus_webapp_context_path,edit the Nexus webapp
+path to be slash ( +/+ )>>.
+
+To test your configuration, we offer a
+https://support.sonatype.com/entries/95353268-SSL-Self-Signed-Certificate-Guide[quick reference on how to generate self-signed SSL certificates]
+for reverse proxy servers.
+
+.Apache httpd
+
+Ensure Apache httpd is loading mod_ssl.
+
+----
+Listen 443
+
+ProxyRequests Off
+ProxyPreserveHost On
+
+<VirtualHost *:443>
+  SSLEngine on
+
+  SSLCertificateFile "example.pem"
+  SSLCertificateKeyFile "example.key"
+
+  ServerName repo.example.com
+  ServerAdmin admin@example.com
+  ProxyPass / http://localhost:8081/
+  ProxyPassReverse / http://localhost:8081/
+  RequestHeader set X-Forwarded-Proto "https"
+
+  ErrorLog logs/repo.example.com/nexus/error.log
+  CustomLog logs/repo.example.com/nexus/access.log common
+</VirtualHost>
+----
+
+.nginx
+
+Make sure nginx is compiled using the +--with-http_ssl_module+ option.
+
+----
+http {
+
+    proxy_send_timeout 120;
+    proxy_read_timeout 300;
+    proxy_buffering    off;
+    keepalive_timeout  5 5;
+    tcp_nodelay        on;
+
+    server {
+        listen   *:443;
+        server_name  repo.example.com;
+
+        # allow large uploads of files - refer to nginx documentation
+        client_max_body_size 1G
+
+        # optimize downloading files larger than 1G - refer to nginx doc before adjusting
+        #proxy_max_temp_file_size 2G
+
+        ssl on
+        ssl_certificate      example.pem;
+        ssl_certificate_key  example.key;
+
+        location / {
+            proxy_pass http://localhost:8081/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto "https";
+        }
+    }
+}
+----
+
+NOTE: Reverse proxy configuration is going to vary and can get complex.
+Always consult the specific reverse proxy product documentation.
+http://httpd.apache.org[Apache httpd] ( http://httpd.apache.org/docs/current/mod/mod_proxy.html[mod_proxy], http://httpd.apache.org/docs/current/mod/mod_ssl.html[mod_ssl] ),
+http://nginx.org/en/docs/[nginx] ( http://nginx.org/en/docs/http/ngx_http_proxy_module.html[ngx_http_proxy_module], http://nginx.org/en/docs/http/configuring_https_servers.html#compatibility[ssl compatibility] )
 
 [[install-sect-licensing]]
 === Installing a Nexus Pro License
