@@ -181,7 +181,7 @@ The form allows you to configure a profile with the following fields:
 Profile ID and Deploy URL:: These two fields are displayed as "read only" once 
 a profile has been created. The Profile ID displays the unique identifier 
 that can be used for staging to this
-repository using the Nexus Staging Maven Plugin. The Deploy URL
+repository using the Nexus Staging Maven plugin. The Deploy URL
 displays the generic staging URL that can be used with the default
 Maven Deploy Plugin together with the Repository Target configuration
 to intercept the deployment and move the components into the Staging
@@ -196,12 +196,12 @@ this profile.
 Profile Selection Strategy:: Select the strategy used by Nexus to
 select this staging profile. +Explicit or Implicit+ is the default
 behavior and causes Nexus to select the profile by the provided
-staging profile identifier and to fall back to an automatice determination, 
+staging profile identifier and to fall back to an automatic determination, 
 if none is provided. It is necessary to be used with
 the Maven deploy plugin and the correct staging profile is determined
 using repository targets together with the generic deploy URL of Nexus.
 +
-When using the Nexus Staging Maven Plugin for deployments, and
+When using the Nexus Staging Maven plugin for deployments, and
 therefore an explicitly defined staging profile in the project POM, the
 setting should be changed to +Explicit Only+. This will prevent the
 profile from implicitly capturing a deployment in this repository due
@@ -260,8 +260,8 @@ Groups. This field defines those groups. It is a best practice to
 create a separate group, different from the group typically used for
 development like the default 'Public Repositories' group for
 staging. This prevents the staged components from leaking to all users
-and allows you to control access to the them via security settings for
-the separate repository group. In many cases mulitple target groups
+and allows you to control access to them via security settings for
+the separate repository group. In many cases multiple target groups
 can be useful for different user groups to have access.
 
 Close Repository Notification Settings:: After a developer has
@@ -378,7 +378,7 @@ role for a specific staging profile.
 
 To configure the deployment user with the appropriate staging role,
 click on Users under the 'Security' menu in the 'Nexus' menu. Once you see
-the 'Users' panel , click on the deployment user to edit this user's
+the 'Users' panel, click on the deployment user to edit this user's
 roles. Click on the 'Add' button in the 'Role Management' section of the
 'Config' tab visible in <<fig-staging-user-add-role>> for the user to be
 able to add new roles to the user.
@@ -427,9 +427,9 @@ staging profile specific-privileges can be granted for drop, promote,
 read and finish operations.
 
 Staging: Rule Set and Staging: Rule Types:: Control access to staging
-rules and rule types
+rules and rule types.
 
-Staging: Upload:: controls access to the manual staging upload user interface
+Staging: Upload:: Controls access to the manual staging upload user interface.
 
 Staging: Repositories, Promote Repository, Profile Ordering, Close Staging and others::
 A number of application user interface-specific privileges allow fine-grained 
@@ -456,12 +456,12 @@ documented in <<staging-configuration>>, you will have to update
 your project build configuration to deploy to the staging suite.
 
 The preferred way to do this is to take advantage of the features
-provided by the Nexus staging Maven plugin or the Nexus staging Ant
+provided by the Nexus Staging Maven plugin or the Nexus staging Ant
 tasks  as documented in
 <<staging-maven>>
 and <<staging-ant>>.
 
-If you need to continue to use the Maven deploy plugin, you can read
+If you need to continue to use the Maven Deploy plugin, you can read
 about using it with the Nexus staging suite in 
 <<staging-deployment-maven-deploy-plugin>>. 
 
@@ -471,8 +471,8 @@ documented in <<staging-deployment-manual>>.
 [[staging-maven]]
 ==== Deployment with the Nexus Staging Maven Plugin
 
-The Nexus staging Maven plugin is a Nexus specific and more powerful
-replacement for the Maven deploy Plugin with a number of features
+The Nexus Staging Maven plugin is a Nexus specific and more powerful
+replacement for the Maven Deploy plugin with a number of features
 specifically geared towards usage with the Nexus staging suite. The
 simplest usage can be configured by adding it to the project build plugins
 section as an extension:
@@ -505,7 +505,7 @@ Following Maven best practices, the version should be pulled out into a
 +pluginManagement+ section in a company POM or parent POM.
 
 This configuration works only in Maven 3 and automatically replaces
-the deploy goal invocation of the Maven deploy plugin in the deploy
+the deploy goal invocation of the Maven Deploy plugin in the deploy
 Maven life cycle phase with the deploy goal invocation of the Nexus
 staging Maven plugin. 
 
@@ -517,7 +517,7 @@ the user credentials for accessing Nexus should be retrieved.
 nexusUrl:: The base URL at which the Nexus server to be used for
 staging is available.
 
-With this configuration the Nexus staging Maven plugin will stage the
+With this configuration the Nexus Staging Maven plugin will stage the
 components locally and connect to Nexus. Nexus will try to determine
 the appropriate staging profile by matching the component path with any
 repository targets configured with staging profiles with an activated
@@ -553,15 +553,15 @@ element in your ~/.m2/settings.xml file as shown in
 
 Note that the server identifier listed in
 <<ex-staging-deployment-credentials>> should match the serverId
-parameter you are passing to the Nexus Staging Maven Plugin and in the
+parameter you are passing to the Nexus Staging Maven plugin and in the
 example contains the default password for the Nexus deployment user -
 deployment123.  You should change this password to match the
 deployment password for your Nexus installation.
 
 If more control is desired over when the plugins deploy goal is
 activated or if Maven 2 is used, you have to explicitly deactivate the
-Maven Deploy Plugin and replace the Maven Deploy Plugin invocation
-with the Nexus Staging Maven Plugin like visible in
+Maven Deploy plugin and replace the Maven Deploy plugin invocation
+with the Nexus Staging Maven plugin like visible in
 in <<fig-staging-maven2and3>>.
 
 [[fig-staging-maven2and3]]
@@ -604,10 +604,10 @@ error prone approach when many staging profiles are in use.
 
 The preferred way to work in this sceneario is to change the profile
 selection strategy on all staging profiles to explicit only and pass
-the staging profile ID to the Nexus staging Maven plugin using the
+the staging profile ID to the Nexus Staging Maven plugin using the
 +stagingProfileId+ configuration parameter as documented above. A full
 example +pom.xml+ for deployment of snapshot as well as release builds
-with the Nexus staging Maven plugin using explicit matching for the
+with the Nexus Staging Maven plugin using explicit matching for the
 staging profile and locally staged builds and atomic uploads is
 available in <<fig-staging-example-pom>>.
 
@@ -653,7 +653,7 @@ would invoke a build with +mvn clean deploy+.
 The build will locally stage the components for deployment in
 +target/nexus-staging+ on the console and create a closed staging 
 repository in Nexus holding the build components. This execution of the +deploy+
-goal of the Nexus staging Maven plugin performs the following actions:
+goal of the Nexus Staging Maven plugin performs the following actions:
 
 - Components are staged locally. 
 
@@ -775,7 +775,7 @@ accessed via the REST interface and, therefore, any plugin and user
 interface integration. 
 
 In addition to the above documented configuration options that
-determine the behvaiour of the Nexus Staging Maven Plugin, further
+determine the behaviour of the Nexus Staging Maven plugin, further
 configuration can be provided with the following parameters:
 
 altStagingDirectory:: Defaulting to target/nexus-staging you can
@@ -799,7 +799,7 @@ repository for failed uploads, by default these clean up operations
 occur. 
 
 keepStagingRepositoryOnCloseRuleFailure:: With the default setting of
-+false+, the Nexus staging Maven plugin will drop the created staging
++false+, the Nexus Staging Maven plugin will drop the created staging
 repository if any staging rule violation occurs. If this flag is set
 to +true+, it will not drop the staging repository. This allows you to
 inspect the deployed components in order to figure out why a rule
@@ -845,7 +845,7 @@ explicitly like this
 mvn nexus-staging:deploy-staged
 ----
 
-Besides the default +deploy+ goal the Nexus staging Maven plugin
+Besides the default +deploy+ goal the Nexus Staging Maven plugin
 supports a number of additional goals. By configuring executions of
 the goals as part of your POM or manually invoking them further
 automation of a staged release process can be achieved.
@@ -882,13 +882,13 @@ To deploy this file system repository with the goal, you have to
 provide the path to this repository with the 'repositoryDirectory'
 parameter as well as 'nexusUrl', 'serverId' and
 'stagingProfileId'. Optionally you can configure the repository to
-stage into with 'stagingRepositoryId'. This aggregated command is then
+stage into with 'stagingRepositoryId'. This aggregated command can then
 be run outside any specific Maven project.
 
 While the above goals need the context of a project with configuration
 for the Nexus Staging Plugin in the POM file, it is possible to
 execute staging repository-related tasks without a project as
-well. The Nexus Staging Maven Plugin offers remote-control goals to
+well. The Nexus Staging Maven plugin offers remote-control goals to
 control staging in Nexus:
 
 rc-close:: Close a specified staging repository.
@@ -902,7 +902,7 @@ rc-promote:: Promote a specified staging repository.
 rc-list:: List all staging repositories.
 
 When invoking these goals outside a project context, you need to have
-the Nexus staging Maven plugin +groupId+ specified as a +pluginGroup+ in
+the Nexus Staging Maven plugin +groupId+ specified as a +pluginGroup+ in
 your +settings.xml+:
 
 ----
@@ -969,15 +969,15 @@ staging).
 ...
 ----
 
-WARNING: The Nexus Maven Plugin in versions earlier than 2.1.0 had goals
+WARNING: The Nexus Maven plugin in versions earlier than 2.1.0 had goals
 to work with staging repositories. These goals have been deprecated in
-favour of the remote control goals of the Nexus Staging Maven Plugin.
+favour of the remote control goals of the Nexus Staging Maven plugin.
 
 [[staging-ant]]
 ==== Deployment with the Nexus Staging Ant Tasks
 
 The Nexus staging Ant tasks provide equivalent features to the Nexus
-staging Maven plugin for Apache Ant users covering all use cases for
+Staging Maven plugin for Apache Ant users covering all use cases for
 interacting with the Nexus staging suite.
 
 Historically Ant builds typically have components that are required
@@ -1148,13 +1148,13 @@ are desired.
 [[staging-deployment-maven-deploy-plugin]]
 ==== Deployment with the Maven Deploy Plugin
 
-When using the Maven deploy plugin with the Nexus staging suite, you
+When using the Maven Deploy plugin with the Nexus staging suite, you
 rely on implicit matching of the components against a staging profile
 based on a repository target definition. 
 
 To deploy a staged release, a developer needs to deploy to the
 staging URL. To configure a project to deploy to the staging URL, add
-the a +distributionManagement+ element to your project's POM. 
+the +distributionManagement+ element to your project's POM. 
 
 [[ex-staging-dist-management]]
 .Listing the Staging URL in distributionManagement
@@ -1225,12 +1225,12 @@ could not be found on repository: nexus, so will be created
 ----
 
 If the staging suite is configured correctly, any deployment to the
-staging URL matching in a repository target configured for a staging
+staging URL matching a repository target configured for a staging
 profile should be intercepted by the staging suite and placed in a
-temporary staging repository. Deployment with the Maven deploy plugin
+temporary staging repository. Deployment with the Maven Deploy plugin
 will not automatically close the staging repository. Closing the
-staging repository has to be done with the Nexus user interface or the
-Nexus staging Maven plugin.  Once this repository has been closed, it
+staging repository has to be done via the Nexus user interface or the
+Nexus Staging Maven plugin.  Once this repository has been closed, it
 will be made available in the target group you selected when you
 configured the staging profile.
 
@@ -1239,8 +1239,8 @@ configured the staging profile.
 ==== Deployment and Staging with Gradle
 
 The Gradle build system can be used to deploy components to Nexus with
-the Gradle Maven plugin. The Nexus Staging Ant Tasks can be used in
-Gradle allowing full inegration of the staging suite features in a
+the Gradle Maven plugin. The Nexus Staging Ant tasks can be used in
+Gradle allowing full integration of the staging suite features in a
 Gradle build. 
 
 An example project showcasing this integration is available in the 
@@ -1276,7 +1276,7 @@ this, select GAV Parameters from the GAV Definition drop-down at the
 top of this form.  Selecting 'GAV Parameters' will expose a set of form
 fields that will let you set the 'Group', 'Artifact', 'Version', and
 'Packaging' of the components being uploaded. If you would prefer to set
-the Group, Artifact, and Version from a POM file that was associated
+the Group, Artifact, and Version identifiers from a POM file that was associated
 with the uploaded component, select From POM in the GAV Definition
 drop-down. Selecting From POM in this drop-down will expose a button
 labeled 'Select POM to Upload'. Once a POM file has been selected for
