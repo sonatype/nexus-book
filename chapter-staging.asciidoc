@@ -1714,6 +1714,15 @@ classifier. If you attempt to promote a staging repository that
 contains components not accompanied by "-javadoc.jar" components, this
 validation rule will fail.
 
+No promote action allowed:: This rule can be used to prevent the 
+promotion of a staging repository to a build promotion profile. 
+It can be used enforce a choice between releasing and dropping a 
+staging repository only.
+
+No release action allowed:: This rule can be used to prevent the 
+direct release of a staging repository. It can be used enforce a
+choice between promoting and dropping a staging repository only.
+ 
 POM Validation:: The Staging POM Validation rule will verify
 Project URL - project/url, Project Licenses - project/licenses and
 Project SCM Information - project/scm. Any of these POM elements
@@ -1726,10 +1735,15 @@ path and using it is considered bad practice and violates the idea of
 having all necessary components available in repositories.
 
 POM must not contain release repository:: This rule can ensure that
-no repository element is defined in the POM. This is important since
-it potentially would circumvent the usage of the repository manager
-and could point to other repositories that are not actually available
-to a user of the component
+no release repository is defined in the +repositories+ element in the POM. 
+This is important since it potentially would circumvent the usage of the 
+repository manager and could point to other repositories that are not actually 
+available to a user of the component.
+
+Profile target matcher:: This rule verifies the staging repository 
+content against the repository target configured in the staging 
+profile for this staging repository. This enforces that only components 
+using the correct repository path as a result of the groupId.
 
 Signature Validation:: The Signature Validation rule
 verifies that every item in the repository has a valid PGP
