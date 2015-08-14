@@ -1,0 +1,112 @@
+[[docker]]
+== Docker Container Registry Support
+{in} {oss}, {pro}, {proplus}
+
+https://www.docker.com/[Docker] containers and their usage have revolutionized
+the way applications and the underlying operation system are packaged and 
+deployed to production systems.
+
+The creation of the http://opencontainers.org/[Open Container Initiative] and 
+the involvement of a large number of stakeholders, guarantees that the ecosystem
+of tools around the lightweight containers and their usage will continue to 
+flourish.
+
+https://hub.docker.com/[Docker Hub] is the original registry for Docker 
+container images and it is being joined by more and more other publicly 
+available registries such as the 
+https://cloud.google.com/container-registry/[Google Container Registry] and 
+others.
+
+Nexus supports Docker registries as the Docker repository format for hosted and
+proxy repositories as well as exposing them to the client-side tools as a
+repository group.
+
+This allows you to reduce time and bandwidth usage for accessing Docker 
+containers in a registry as well as share your containers within your 
+organization in a hosted repository as a completely private Docker registry. 
+
+[[docker-proxy]]
+=== Docker Proxy Repositories
+
+Docker Hub is the common registry used by all container creators and consumers.
+To reduce duplicate downloads and improve download speeds for your developers
+and CI severs, you should proxy Docker Hub and any other container registry you
+use.
+
+To proxy a Docker registry, you simply create a new 'docker (proxy)' as 
+documented in <<admin-repositories>>. The 'Remote Storage' has to be set to the
+URL of the remote registry you want to proxy. 
+
+The configuration for proxying Docker Hub is partially visible in
+<<fig-docker-hub-proxy>> and uses the URL `https://hub.docker.com/`.
+
+[[fig-docker-hub-proxy]]
+.Docker Proxy Repository Configuration for Docker Hub
+image::figs/web/nuget-proxy-org.png[scale=50]
+
+////
+TBD - take screenshot and add, also verify URL above is correct
+////
+
+////
+[[docker-hosted]]
+=== Docker Hosted Repositories
+
+TBD - this is the same section from Nuget chapter- adapt to docker 
+
+A hosted repository for NuGet can be used to upload your own
+packages as well as third-party packages. Nexus includes a hosted
+NuGet repository named 'nuget-hosted' by default.
+
+ It is good practice to
+create two separate hosted repositories for these purposes.
+
+To create another NuGet hosted repository, simply create a new 'nuget
+(hosted)' repository. An example configuration from the default
+'nuget-hosted' repository is displayed in
+<<fig-nuget-hosted-releases-configuration>>.
+
+[[fig-nuget-hosted-releases-configuration]]
+.Example Configuration for a NuGet Hosted Repository
+image::figs/web/nuget-hosted-releases-configuration.png[scale=50]
+
+The NuGet feed is immediately updated as packages are deployed or
+deleted from the host repository. 
+
+[[docker-group]]
+=== Docker Repository Groups
+
+TBD - this is the same section from Nuget chapter- adapt to docker 
+
+A repository group is the recommended way to expose all your NuGet
+repositories from Nexus to your users, without needing any further
+client side configuration. A repository group allows you to expose the
+aggregated content of multiple proxy and hosted repositories with one
+URL to your tools. 
+
+Nexus includes a 'nuget-group' repository group by default. This
+typical, useful example groups the 'nuget.org-proxy' proxy repository
+that proxies the NuGet Gallery and the 'nuget-hosted' hosted
+repository. 
+
+Using the 'URL' of the repository group can be used in your client
+tool and will give you access to the packages in all repositories from
+the group with one URL. Any new packages added as well as any new
+repositories added to the group will automatically be available.
+////
+
+[[docker-access]]
+=== Accessing Docker Container Images from Repositories and Groups
+
+TBD - whats the client side config in Docker to be able to download from Nexus
+
+[[docker-push]]
+=== Pushing Container Images to Docker Hosted Repositories
+
+TBD - docker push and so on, what about credentials, ...
+
+////
+/* Local Variables: */
+/* ispell-personal-dictionary: "ispell.dict" */
+/* End:             */
+////
