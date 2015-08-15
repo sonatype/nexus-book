@@ -48,51 +48,51 @@ image::figs/web/nuget-proxy-org.png[scale=50]
 TBD - take screenshot and add, also verify URL above is correct
 ////
 
-////
 [[docker-hosted]]
 === Docker Hosted Repositories
 
-TBD - this is the same section from Nuget chapter- adapt to docker 
-
-A hosted repository for NuGet can be used to upload your own
-packages as well as third-party packages. Nexus includes a hosted
-NuGet repository named 'nuget-hosted' by default.
-
- It is good practice to
+A hosted repository using the Docker repository format is typically called a
+private Docker registry. It  can be used to upload your own
+container images as well as third-party images. It is common practice to
 create two separate hosted repositories for these purposes.
 
-To create another NuGet hosted repository, simply create a new 'nuget
-(hosted)' repository. An example configuration from the default
-'nuget-hosted' repository is displayed in
-<<fig-nuget-hosted-releases-configuration>>.
+To create a Docker hosted repository, simply create a new 'docker (hosted)' 
+repository as  documented in <<admin-repositories>>. An example configuration 
+is displayed in <<fig-docker-hosted>>.
 
-[[fig-nuget-hosted-releases-configuration]]
-.Example Configuration for a NuGet Hosted Repository
+[[fig-docker-hosted]]
+.Example Configuration for a Docker Hosted Repository
 image::figs/web/nuget-hosted-releases-configuration.png[scale=50]
 
-The NuGet feed is immediately updated as packages are deployed or
-deleted from the host repository. 
+////
+TBD - update screenshot and figure text above
+////
 
 [[docker-group]]
 === Docker Repository Groups
 
-TBD - this is the same section from Nuget chapter- adapt to docker 
+A repository group is the recommended way to expose all your Docker repositories
+from Nexus to your users, without needing any further client side configuration
+after the initial setup. A repository group allows you to expose the aggregated
+content of multiple proxy and hosted repositories with one URL to your tools. 
 
-A repository group is the recommended way to expose all your NuGet
-repositories from Nexus to your users, without needing any further
-client side configuration. A repository group allows you to expose the
-aggregated content of multiple proxy and hosted repositories with one
-URL to your tools. 
-
-Nexus includes a 'nuget-group' repository group by default. This
-typical, useful example groups the 'nuget.org-proxy' proxy repository
-that proxies the NuGet Gallery and the 'nuget-hosted' hosted
-repository. 
+To create a Docker hosted repository, simply create a new 'docker (group)' 
+repository as  documented in <<admin-repositories>>. An example configuration 
+is displayed in <<fig-docker-group>>. It groups proxy repositories of Docker 
+Hub and the Google Container Registry with hosted repositories for private 
+internal and third party images.
 
 Using the 'URL' of the repository group can be used in your client
-tool and will give you access to the packages in all repositories from
-the group with one URL. Any new packages added as well as any new
+tool and will give you access to the container images in all repositories from
+the group with one URL. Any new images added as well as any new
 repositories added to the group will automatically be available.
+
+[[fig-docker-group]]
+.Example Configuration for a Docker Hosted Repository
+image::figs/web/nuget-hosted-releases-configuration.png[scale=50]
+
+////
+TBD - update screenshot and figure text above
 ////
 
 [[docker-access]]
