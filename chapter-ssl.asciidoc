@@ -4,11 +4,11 @@
 [[ssl-sect-introduction]]
 === Introduction
 
-Using Secure Socket Layer (SSL) communication within Nexus is an important feature. Communication can be inbound or
-outbound.
+Using Secure Socket Layer (SSL) communication within Nexus is an important security feature. Communication can be
+inbound or outbound.
 
-Inbound client communication includes HTTPS client access to the user interface or repository content, or
-through specialized features such as Smart Proxy trust relationships.
+Inbound client communication includes web browser HTTPS access to the user interface or tool access to repository
+content. Some specialized features such as Smart Proxy trust relationships also establish secure connections.
 
 Outbound client communication may include integration with a remote proxy repository over HTTPS, SSL/TLS secured
 email servers, LDAPS LDAP servers, or specialized realms such as the Crowd realm.
@@ -17,15 +17,12 @@ email servers, LDAPS LDAP servers, or specialized realms such as the Crowd realm
 === SSL Client Certificates
 
 [[ssl-sect-client-cert-mgt]]
-==== SSL Certificate Management
+==== Outbound SSL Certificate Management: Manually Trusting Remote Certificates
 
-Nexus allows you to manage all SSL certificates directly in the user
-interface. The administration interface for SSL certificates as
-visible in <<fig-ssl-certificates-list>> and can be accessed by
-selecting 'SSL Certificates' in the left-hand 'Administration'
-menu. The list of certificates displayed shows the certificate for the
-SSL-secured Central Repository preconfigured in Nexus Pro and
-a self-signed certificate registered in Nexus.
+Nexus allows you to manage trust of remote SSL certificates directly in the user
+interface. Access <<fig-ssl-certificates-list>> by selecting 'SSL Certificates'
+in the left-hand 'Administration' menu. The list of certificates shows any remote certificates
+that are already trusted.
 
 NOTE: The SSL Certificate Management is a Nexus Pro feature.
 
@@ -33,62 +30,50 @@ NOTE: The SSL Certificate Management is a Nexus Pro feature.
 .SSL Certificates Administration
 image::figs/web/ssl-certificates-list.png[scale=50]
 
-The actual list of SSL certificates can be reloaded by clicking the
-'Refresh' button above the list. In addition, certificates can be added
-and deleted with the 'Add' and 'Delete' buttons.
+Buttons are provided to 'Refresh' the list from the server, add a new certificate or delete the selected certificate.
 
-Pressing the add button provides a choice to load a certificate from a
-server with the 'Load from server' option or to insert a certificate
-in PEM format with the 'Paste PEM'.
+The 'Add' button presents two options - 'Paste PEM' and 'Load from server'.
 
-The dialog to load a certificate from a server allows you to provide a
-host name, a +hostname:port+ string or a full URL. When providing a
-host name a connection via http:// using the default SSL port 443 will
-be attempted. Using a full URL on the other hand gives the most
-control.
+There are two types of secure addresses supported by the 'Load from server' option.
 
-As an example, you could retrieve the certificate for the secured Central
-Repository using the URL
+The simplest approach is to choose 'Load from server' and enter the full +https://+ url of the remote site. Nexus will
+connect using HTTPS and use the HTTP proxy server settings if applicable. Any other protocol than +https://+ is
+ignored, and a direct socket connection is attempted in that case.
+
+When the remote is not accessible using +https://+, only enter the host name or IP address,
+followed by colon and the port number. For example: +example.com:8443+ In this case Nexus will attempt a direct SSL
+socket connection to the remote host at the specified port.
+
+You can also choose the 'Paste PEM' option trust a remote certificate. Copy and paste the Base64 encoded X.509
+DER certificate to trust. This text should be enclosed between +-----BEGIN CERTIFICATE-----+ and +-----END
+CERTIFICATE-----+ .
+
+An example method to get the encoded X.509 certificate into a file on the command line using +keytool+ is:
+
 ----
-https://repo1.maven.org
+keytool -printcert -rfc -sslserver example.com:8443 > example.pem
 ----
 
-Besides retrieving certificates for servers running HTTPS, you can
-retrieve and register the certificate for email and
-directory servers. An LDAP directory server certificate can be loaded
-with a URL using the LDAPS protocol and the desired host name and port
-similar to +ldaps://localhost:10636+. A SMTP server can be queried
-with a similar pattern using +smtps://localhost:465+. After successful
-retrieval, the details of the certificate as displayed in a
-dialog. <<fig-ssl-add-server>> shows the result from querying a
-certificate from +smtps://smtp.gmail.com:465+. Pressing the 'Add
-Certificate' button will save the certificate within Nexus and allow
-you to connect to the associated services.
-
-[[fig-ssl-add-server]]
-.Certificate Details Displayed after Successful Retrieval
-image::figs/web/ssl-add-server.png[scale=50]
-
-The dialog displays details about the certificate owner in the
-'Subject' section, the certificate issuer in the 'Issuer' section and
-the certificate itself in the 'Certificate' section. The same data is
-displayed below the list of certificates,f when you select a specific
-certificate in the list.
-
-The alternate method of registering a certificate with Nexus uses the
-PEM format of the http://en.wikipedia.org/wiki/X.509[X.509
-certificate] as used by SSL. An example of inserting such a
-certificate in the dialog is shown in <<fig-ssl-pem>>.
+An example of inserting such a certificate is shown in <<fig-ssl-pem>>.
 
 [[fig-ssl-pem]]
 .Providing a Certificate in PEM Format
 image::figs/web/ssl-pem.png[scale=50]
 
-Once a certificate for an LDAP server or SMTP server has been
-registered in Nexus, you can configure connections to these servers in
-the LDAP and Server/SMTP Settings administration user interfaces.
+In some organizations, all of the remote sites are accessed through a globally configured proxy server which rewrites
+every SSL certificate, acting as a private certificate authority. In this case, you can https://support.sonatype
+.com/entries/83303437[follow special instructions for trusting the proxy server root certificate], which can will
+simplify certificate management in Nexus.
 
-==== Proxying SSL Secured Repositories
+If Nexus can successfully retrieve the remote certificate or decode the pasted certificate, you will be prompted with
+<<fig-ssl-add-server>> confirmation before it is trusted. Please review the displayed information carefully
+before clicking 'Add Certificate'.
+
+[[fig-ssl-add-server]]
+.Certificate Details Displayed after Successful Retrieval
+image::figs/web/ssl-add-server.png[scale=50]
+
+==== Proxying SSL Secured Remote Repositories
 
 When setting up a proxy repository with a remote storage location
 secured with HTTPS the repository administration will display an 'SSL'
@@ -147,7 +132,7 @@ that you trust to identify other parties. This truststore ships with a
 number of CA's out-of-the-box, trusted root certificates.
 
 A keystore contains private keys and the certificates with their 
-corresponding public keys. Typically,  they are stored in separate 
+corresponding public keys. Typically, they are stored in separate
 files stored in the default location of +$\{JRE_HOME\}/lib/security/cacerts+.
 
 Some notes about the location of the keystore and default
