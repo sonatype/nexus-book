@@ -10,38 +10,37 @@ inbound or outbound.
 Inbound client communication includes web browser HTTPS access to the user interface or tool access to repository
 content and REST APIs.
 
-Outbound client communication may include integration with a remote proxy repository over HTTPS, SSL/TLS secured
-email servers, LDAPS LDAP servers, or specialized authentication realms such as the Crowd realm.
+Outbound client communication may include integration with a remote proxy repository over HTTPS, SSL/TLS secured email
+servers, LDAPS LDAP servers, or specialized authentication realms such as the Crowd realm.
 
 
 [[ssl-sect-client-cert]]
 === SSL Client Certificates
 
-NOTE: SSL Certificate Management is a Nexus Pro feature. Other editions require externally trusting certificates from
+NOTE: SSL Certificate Management is a {pro} feature. Other editions require externally trusting certificates from
 the command line.
 
 ==== Trusting SSL Certificates of Remote Repositories
 
 When a remote proxy repository SSL certificate is not trusted, then you may notice the repository may be automatically
-blocked or that outbound requests fail with a message similar to "PKIX path building failed".
+blocked or that outbound requests fail with a message similar to `PKIX path building failed`.
 
-Nexus includes a specific per repository configuration tab to solve this problem.
-
-If you have a proxy repository using a remote URL that resolves to an +https://+ location, then when selected in the
-repositories list, it will display a 'SSL' configuration tab.
+Nexus includes a specific 'SSL' configuration tab for each repository to solve this problem. It is displayed
+when the remote URL of a proxy repository resolves to an `https://` location.
 
 The 'SSL' tab shows the details of the remote certificate, as in the example <<fig-ssl-secure-central>> . Use the
-'SSL' tab when the remote certificate is not trusted well-known public certificate authority in the default
+'SSL' tab when the remote certificate is not a trusted, well-known public certificate authority in the default
 Java trust store.
 
-To confirm you want to trust the remote certificate, click the 'Add to trust store' button on the
-top-right of the SSL tab. This feature is analogous to going to the SSL Certificates administration user interface
+To confirm that you want to trust the remote certificate, click the 'Add to trust store' button on the
+top-right of the 'SSL' tab. This feature is analogous to going to the SSL Certificates administration user interface
 and using the 'Add' button found there. If the certificate is already added, the button can undo this operation and
 will read 'Remove from trust store' instead.
 
-The checkbox labelled 'Use Nexus SSL trust store' is used to confirm that Nexus should consult the Nexus private
-internal trust store when confirming trust of the remote repository certificate. Without both adding the certificate
-to the private trust store and enabling the checkbox, the repository may not trust the remote.
+The checkbox labelled 'Use Nexus SSL trust store' is used to confirm that Nexus should consult the Nexus-private,
+internal trust store, when confirming trust of the remote repository certificate. Without both adding the certificate to
+the private trust store and enabling the checkbox, the Nexus repository may not trust the remote and therefore fail to
+retrieve components.
 
 Keep in mind that the default JVM trust store and the private Nexus trust stores are merged before deciding the trust
 of the remote server. The default Java trust store already contains public certificate authority trust certificates,
@@ -58,34 +57,33 @@ may become untrusted.
 [[ssl-sect-client-cert-mgt]]
 ==== General Management of Remote SSL Certificates
 
-Nexus Pro allows you to manage trust of all remote SSL certificates in a centralized user interface. Use this interface
-when you wish to examine all the currently trusted certificates for remote repositories, or manage certificates
-from remote hosts that are not repositories.
+{pro} allows you to manage trust of all remote SSL certificates in a centralized user interface. Use this interface when
+you wish to examine all the currently trusted certificates for remote repositories and other connection, or manage
+certificates from remote hosts that are not repositories.
 
-Access <<fig-ssl-certificates-list>> by selecting 'SSL Certificates'
-in the left-hand 'Administration' menu. The list of certificates shows any remote certificates
-that are already trusted.
+Access the 'SSL Certificated Administration' displayed in <<fig-ssl-certificates-list>> by selecting 'SSL Certificates'
+in the left-hand 'Administration' menu. The list of certificates shows any remote certificates that are already trusted.
 
 [[fig-ssl-certificates-list]]
 .SSL Certificates Administration
 image::figs/web/ssl-certificates-list.png[scale=50]
 
-Buttons are provided to 'Refresh' the list from the server, add a new certificate or delete the selected certificate.
+Buttons are provided to 'Refresh' the list from the server, 'Add' a new certificate or 'Delete' the selected certificate.
 
 The 'Add' button presents two options - 'Paste PEM' and 'Load from server'.
 
 There are two types of secure addresses supported by the 'Load from server' option.
 
 The common approach is to choose 'Load from server' and enter the full +https://+ url of the remote site. Nexus will
-connect using HTTPS and use the HTTP proxy server settings if applicable. Any other protocol than +https://+ is
-ignored, and a direct socket connection is attempted in that case.
+connect using HTTPS and use the proxy server settings if applicable. Any other protocol than +https://+ is ignored, and
+a direct socket connection is attempted in that case.
 
 When the remote is not accessible using +https://+, only enter the host name or IP address,
 followed by colon and the port number. For example: +example.com:8443+ In this case Nexus will attempt a direct SSL
 socket connection to the remote host at the specified port.
 
-You can also choose the 'Paste PEM' option trust a remote certificate. Copy and paste the Base64 encoded X.509
-DER certificate to trust. This text should be enclosed between +-----BEGIN CERTIFICATE-----+ and +-----END
+You can also choose the 'Paste PEM' option trust a remote certificate. Copy and paste the Base64 encoded X.509 DER
+certificate to trust. This text should be enclosed between +-----BEGIN CERTIFICATE-----+ and +-----END
 CERTIFICATE-----+ .
 
 An example method to get the encoded X.509 certificate into a file on the command line using +keytool+ is:
@@ -94,7 +92,7 @@ An example method to get the encoded X.509 certificate into a file on the comman
 keytool -printcert -rfc -sslserver example.com:8443 > example.pem
 ----
 
-The resulting example.pem file will contain the encoded certificate.
+The resulting `example.pem` file will contain the encoded certificate.
 
 An example of inserting such a certificate is shown in <<fig-ssl-pem>>.
 
@@ -103,8 +101,8 @@ An example of inserting such a certificate is shown in <<fig-ssl-pem>>.
 image::figs/web/ssl-pem.png[scale=50]
 
 If Nexus can successfully retrieve the remote certificate or decode the pasted certificate, you will be prompted with
-<<fig-ssl-add-server>> confirmation before it is trusted. Please review the displayed information carefully
-before clicking 'Add Certificate'.
+<<fig-ssl-add-server>> confirmation before it is trusted. Please review the displayed information carefully before
+clicking 'Add Certificate'.
 
 [[fig-ssl-add-server]]
 .Certificate Details Displayed after Successful Retrieval
@@ -112,13 +110,12 @@ image::figs/web/ssl-add-server.png[scale=50]
 
 In some organizations, all of the remote sites are accessed through a globally configured proxy server which rewrites
 every SSL certificate. This single proxy server is acting as a private certificate authority. In this case, you can
-https://support.sonatype.com/entries/83303437[follow special instructions for trusting the proxy server root certificate],
-which can greatly simplify your certificate management duties.
+https://support.sonatype.com/entries/83303437[follow special instructions for trusting the proxy server root certificate], which can greatly simplify your certificate management duties.
 
 ==== Managing SSL Certificate Trust Using Keytool
 
-*SSL certificate management features are available in Nexus Pro only*. When this feature is
-not available, then you need to manage trusted SSL certificates using the JVM command line tool
+*SSL certificate management features are available in {pro} only*. When this feature is not available, then you need to
+manage trusted SSL certificates using the JVM command line tool
 http://docs.oracle.com/javase/8/docs/technotes/tools/index.html#security[keytool].
 
 Before you begin the process of trusting a remote certificate from the command line you will need:
@@ -131,18 +128,17 @@ Before you begin the process of trusting a remote certificate from the command l
 * network access to the remote SSL server you want to trust from the host running Nexus. This must include any HTTP
 proxy server connection details.
 
-A reminder that a truststore contains certificates from servers run by other parties with who you expect to
-communicate, or from Certificate Authorities (CAs) that you trust to identify other parties. The default JVM
-truststore ships with a large number of public CAs certificates - these are called 'trusted root certificates'. If a
-remote site offers a certificate signed by a well known CA, then no additional steps to trust that certificate
-should be needed.
+A reminder that a truststore contains certificates from servers run by other parties with who you expect to communicate,
+or from Certificate Authorities (CAs) that you trust to identify other parties. The default JVM truststore ships with a
+large number of public CAs certificates - these are called 'trusted root certificates'. If a remote site offers a
+certificate signed by a well known CA, then no additional steps to trust that certificate should be needed.
 
-Some basic commands to manually trust remote certificates can be found in our https://sonatype.zendesk
-.com/entries/95353268-SSL-Certificate-Guide#common-keytool-commands[SSL Certificate Guide].
+Some basic commands to manually trust remote certificates can be found in our 
+https://sonatype.zendesk.com/entries/95353268[SSL Certificate Guide].
 
 It is possible to copy the default JVM trust store of the JVM to another location and configure Nexus to use this
-specific file. The advantage is that this file can survive JVM version upgrades. The disadvantage is that your file
-does not automatically pick up new public certificate authorities added in the upgraded JVM.
+specific file. The advantage is that this file can survive JVM version upgrades. The disadvantage is that your file does
+not automatically pick up new public certificate authorities added in the upgraded JVM.
 
 ===== Configuring Nexus Startup
 
