@@ -17,27 +17,34 @@ Inbound client communication includes
 * tool access to repository content 
 * and manual or scripted usage of the REST APIs.
 
-[[ssl-sect-client-cert]]
+[[ssl-outbound]]
 === Managing Outbound SSL Certificates
 
+[[ssl-proxy-repo]]
 ==== Trusting SSL Certificates of Remote Repositories
 
-Available in {pro}, {proplus}
+{in} {oss}, {pro}, {proplus}
 
 When the SSL certificate of a remote proxy repository is not trusted, the repository may be automatically blocked or
 outbound requests fail with a message similar to 'PKIX path building failed'.
 
-Nexus includes a specific 'SSL' configuration tab for each repository in the repository configuration documented in
-<<admin-repository-repositories>> to solve this problem. It is displayed when the remote URL of a proxy repository resolves
-to an `https://` location.
+The 'Proxy' configuration for each proxy repository documented in <<admin-repository-repositories>> includes a checkbox
+titled 'Use the Nexus truststore' and a 'View Certifacte' button. It allows you to manage the SSL certificate of the remote
+repository and solves these problems. It is only displayed - if the remote storage uses a HTTPS URL. 
 
-The 'SSL' tab shows the details of the remote certificate, as in the example <<fig-ssl-secure-central>>. Use the 'SSL'
-tab when the remote certificate is not issued by a well-known public certificate authority included in the default Java
-trust store. This specifically also included usage of self-signed certificates used in your organization.
+The 'View certificate' button triggers the display of the SSL 'Certificate Details' dialog. An example is shown in
+<<fig-ssl-certificate-details-dialog>>. 
 
-To confirm trust of the remote certificate, click the 'Add to trust store' button on the top-right of the 'SSL' tab.
-This feature is analogous to going to the <<fig-ssl-certificates-list>> user interface and using the 'Add' button found
-there. If the certificate is already added, the button can undo this operation and will read 'Remove from trust store'.
+[[fig-ssl-certificate-details-dialog]]
+.Certificate Details Dialog to Add an SSL to the Nexus Trust Store
+image::figs/web/ssl-certificate-details-dialog.png[scale=50]
+
+Use the 'Certificate Details' dialog when the remote certificate is not issued by a well-known public certificate
+authority included in the default Java trust store. This specifically also includes usage of self-signed certificates
+used in your organization. To confirm trust of the remote certificate, click the 'Add certificate to trust store' button
+in the dialog.  This feature is analogous to going to the <<fig-ssl-certificates-list>> user interface and using the
+'Add' button found there. If the certificate is already added, the button can undo this operation and will read 'Remove
+certificate from trust store'.
 
 The checkbox labelled 'Use Nexus SSL trust store' is used to confirm that Nexus should consult the Nexus-private,
 internal truststore when confirming trust of the remote repository certificate. Without adding the certificate to the
@@ -48,19 +55,21 @@ result of this merge is used to decide about the trust of the remote server. The
 contains public certificate authority trust certificates. If the remote certificate is signed by one of these
 authorities, then explicitly trusting the remote certificate will not be needed.
 
-[[fig-ssl-secure-central]]
-.SSL Tab for a Proxy Repository with Remote Server Using HTTPS
-image::figs/web/ssl-secure-central.png[scale=50]
-
 WARNING: When removing a remote trusted certificate from the truststore, a Nexus restart is required before a repository
 may become untrusted.
 
-[[ssl-sect-client-cert-mgt]]
+[[ssl-certificates]]
 ==== Trusting SSL Certificates Globally
 
-Available in {pro}, {proplus}
+{in} {oss}, {pro}, {proplus}
 
-{pro} and {proplus} allow you to manage trust of all remote SSL certificates in a centralized user interface. Use this interface when
+
+////
+should this be in the security chapter? imho yes, and linked from here.. 
+ either that or linked from there at least 
+////
+
+Nexus allows you to manage trust of all remote SSL certificates in a centralized user interface. Use this interface when
 you wish to examine all the currently trusted certificates for remote repositories, or manage certificates from secure
 remotes that are not repositories.
 
