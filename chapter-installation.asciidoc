@@ -388,7 +388,40 @@ are searched for. Typically, internal components are not available in
 the Central Repository or any other external, public repository. A route, as documented in
 <<confignx-sect-managing-routes>>, should be configured so that any
 requests for internal components do not leak to external repositories.
+////
 
+[[configure-runtime]]
+=== Configuring the Runtime Environment for Nexus
+
+Nexus is an application providing a web application user interface and running as a server application with the help of
+the Eclipse Jetty servlet container and the Apache Karaf OSGi container running on a Java Virtual Machine.
+
+Configuring the specifics of this runtime involves configuration for these components in various configuration files and
+startup scripts. This section details these and provides recipes for specific tasks.
+
+The startup of the JVM running Nexus is managed via files in the `bin` directory within the Nexus installation. Nexus
+startup is performed with the JVM configured via the `JAVA_HOME` environment variable and the configuration in the file
+`bin\setenv` .
+
+The main location for further configuration files is the `etc` directory within the Nexus installation. It numerous files
+including specifically:
+
+config.properties:: The main configuration for the Apache Karaf runtime. This file should 'not' be modified.
+
+custom.properties:: Customizable configuration used by Apache Karaf. This file can be used to pass additional parameters
+to the Apache Karaf container and includes configuration for modifiying the startup of Eclipse Jetty e.g. to add HTTPS
+configuration
+
+jetty-*.xml:: A number of configuration files for Eclipse Jetty
+
+org.apache.* and org.ops4j.*:: Various Karaf and OSGi related configuration files.
+
+org.sonatype.nexus.cfg:: Main configuration file for the Nexus application allowing you to configure aspects such as ports
+used for HTTP and HTTPS access as well as the context path and host.
+
+
+
+////
 
 tbd once implemented
 [[install-sect-service]]
