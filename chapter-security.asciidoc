@@ -655,6 +655,7 @@ for the user.
 [[ssl]]
 === Configuring Nexus for SSL
 
+
 Using Secure Socket Layer (SSL) communication within Nexus is an important security feature and a recommended best
 practice. Secure communication can be inbound or outbound.
 
@@ -671,11 +672,8 @@ Inbound client communication includes
 * tool access to repository content 
 * and manual or scripted usage of the REST APIs.
 
-[[ssl-outbound]]
-==== Managing Outbound SSL Certificates
-
 [[ssl-proxy-repo]]
-===== Trusting SSL Certificates of Remote Repositories
+==== Outbound SSL - Trusting SSL Certificates of Remote Repositories
 
 {in} {oss}, {pro}, {proplus}
 
@@ -713,7 +711,7 @@ WARNING: When removing a remote trusted certificate from the truststore, a Nexus
 may become untrusted.
 
 [[ssl-certificates]]
-===== Trusting SSL Certificates Globally
+==== Outbound SSL - Trusting SSL Certificates Globally
 
 {in} {oss}, {pro}, {proplus}
 
@@ -778,7 +776,7 @@ every SSL certificate. This single proxy server is acting as a private certifica
 https://support.sonatype.com/entries/83303437[follow special instructions for trusting the proxy server root
 certificate], which can greatly simplify your certificate management duties.
 
-===== Trusting SSL Certificates Using Keytool
+==== Trusting SSL Certificates Using Keytool
 
 Available in {oss}, {pro}, {proplus}
 
@@ -809,7 +807,7 @@ these steps:
 Some common commands to manually trust remote certificates can be found in our
 https://sonatype.zendesk.com/entries/95353268-SSL-Certificate-Guide#common-keytool-commands[SSL Certificate Guide].
 
-===== Configuring Nexus With a Custom Truststore
+==== Configuring Nexus With a Custom Truststore
 
 Once you have imported your trusted certificates into a truststore file, you can modify
 '$NEXUS_HOME/bin/jsw/conf/wrapper.conf' to set the system properties necessary to load this file. Make sure to adapt the
@@ -824,9 +822,9 @@ Once you have added the properties shown above, restart Nexus and attempt to pro
 imported certificated. Nexus will automatically register the certificates in the truststore file as trusted.
 
 [[ssl-sect-ssl-direct]]
-==== Configuring Nexus Inbound HTTPS
+==== Inbound SSL - Configuring Nexus to Serve Content via HTTPS
 
-Available in {oss}, {pro}, {proplus}
+{in} {oss}, {pro}, {proplus}
 
 Providing access to the Nexus user interface and content via HTTPS is a recommended best practice for any deployment.
 
@@ -862,7 +860,7 @@ Jetty startup configuration in +wrapper.conf+
 ////
 
 Next, the HTTP port you want to use for the HTTPS connection has to be defined by setting the +application-port-ssl+
-property in +nexus.properties+.
+property in +etc/org.sonatype.nexus.cfg+.
 
 ----
 application-port-ssl=8443
