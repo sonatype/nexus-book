@@ -20,21 +20,30 @@ exposes the contents of multiple repositories in one convenient URL.
 This allows you to reduce time and bandwidth usage for accessing Docker containers in a registry as well as share your
 containers within your organization in a hosted repository as a completely private Docker registry.
 
-[[docker-prerequisites]]
-=== Prerequisites
+[[docker-ssl-connector]]
+=== SSL and Docker Connector Configuration
 
 Docker relies on secure connections using SSL to connect to the repositories. You are therefore required to expose Nexus
 to your client tools via HTTPS. This can be configured via an external proxy server or directly with Nexus. Further
 details can be found in <<ssl-inbound>>.
 
-In addition the interaction with the Docker client requires specific ports to be used. This can be configured in
-repository configuration for Docker repositories in the 'Docker Connectors' section. In order for this to work on your
-network you need to ensure that the chosen ports are available in your organization and not used by some other
+Interaction of the Docker client with Docker repositories requires specific ports to be used. These can be configured in
+the repository configuration for Docker repositories in the 'Docker Connectors' section. In order for this to work on
+your network you need to ensure that the chosen ports are available in your organization and not used by some other
 application and that no firewall or other network configuration prevents connectivity.
 
 The recommended minimal configuration requires one port for a Docker repository group used for read access to all
-repositories and one port for each hosted Docker repository, that will receive push events from your users.
+repositories and one port for each hosted Docker repository, that will receive push events from your users. The 'Docker
+Connector' configuration displayed in <<fig-docker-connectors>> is available in the configuration for proxy and hosted
+Docker repositories as well as Docker repository groups.
 
+[[fig-docker-connectors]]
+.Docker Connector Configuration
+image::figs/web/docker-connectors.png[scale=50]
+
+If you have configured Nexus to use HTTPS directly, you have to configure a HTTPS docker connector. If an external proxy
+server translates incoming HTTPS requests to HTTP and forwards the request to Nexus you have to configure the respective
+HTTP port.
 
 [[docker-proxy]]
 === Docker Proxy Repositories
@@ -46,36 +55,30 @@ you use.
 To proxy a Docker registry, you simply create a new 'docker (proxy)' as documented in <<admin-repositories>>. The
 'Remote Storage' has to be set to the URL of the remote registry you want to proxy.
 
-The configuration for proxying Docker Hub is partially visible in
-<<fig-docker-hub-proxy>> and uses the URL `https://hub.docker.com/`.
+The configuration for proxying Docker Hub uses the URL `https://registry-1.docker.io` for the 'Remote storage' URL.
 
-[[fig-docker-hub-proxy]]
-.Docker Proxy Repository Configuration for Docker Hub
-image::figs/web/nuget-proxy-org.png[scale=50]
+The 'Proxy' configuration for a Docker proxy repository includes a configuration for the 'Docker Index' to be used for
+searches. The default option 'Use proxy registry (specified above)' will attempt to retrieve any index data by
+interacting with the Docker registry API configured as the 'Remote storage' URL.
 
-////
-TBD - take screenshot and add, also verify URL above is correct
-////
+The option to 'Use Docker Hub' fulfills any index related requests by querying Docker Hub. The results potentially do
+not reflect the content of the remote repository (TBD how does that make sense at all?).
+
+The option to use a 'Custom index' allows you to specify the URL of the index for the remote repository.
 
 [[docker-hosted]]
 === Docker Hosted Repositories
 
-A hosted repository using the Docker repository format is typically called a
-private Docker registry. It  can be used to upload your own
-container images as well as third-party images. It is common practice to
-create two separate hosted repositories for these purposes.
+A hosted repository using the Docker repository format is typically called a private Docker registry. It can be used to
+upload your own container images as well as third-party images. It is common practice to create two separate hosted
+repositories for these purposes.
 
-To create a Docker hosted repository, simply create a new 'docker (hosted)' 
-repository as  documented in <<admin-repositories>>. An example configuration 
-is displayed in <<fig-docker-hosted>>.
+To create a Docker hosted repository, simply create a new 'docker (hosted)' repository as documented in
+<<admin-repositories>>. If you add a 'Docker Connectors' configuration you can `push` images to this repository and
+subsequently access them directly from the hosted repository or ideally from the Docker repository group as documented
+in <<docker-group>>
 
-[[fig-docker-hosted]]
-.Example Configuration for a Docker Hosted Repository
-image::figs/web/nuget-hosted-releases-configuration.png[scale=50]
 
-////
-TBD - update screenshot and figure text above
-////
 
 [[docker-group]]
 === Docker Repository Groups
