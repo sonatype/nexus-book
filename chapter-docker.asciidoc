@@ -2,40 +2,49 @@
 == Docker Container Registry Support
 {in} {oss}, {pro}, {proplus}
 
-https://www.docker.com/[Docker] containers and their usage have revolutionized
-the way applications and the underlying operation system are packaged and 
-deployed to production systems.
+https://www.docker.com/[Docker] containers and their usage have revolutionized the way applications and the underlying
+operation system are packaged and deployed to development, testing and production systems.
 
-The creation of the http://opencontainers.org/[Open Container Initiative] and 
-the involvement of a large number of stakeholders, guarantees that the ecosystem
-of tools around the lightweight containers and their usage will continue to 
+The creation of the http://opencontainers.org/[Open Container Initiative] and the involvement of a large number of
+stakeholders, guarantees that the ecosystem of tools around the lightweight containers and their usage will continue to
 flourish.
 
-https://hub.docker.com/[Docker Hub] is the original registry for Docker 
-container images and it is being joined by more and more other publicly 
-available registries such as the 
-https://cloud.google.com/container-registry/[Google Container Registry] and 
-others.
+https://hub.docker.com/[Docker Hub] is the original registry for Docker container images and it is being joined by more
+and more other publicly available registries such as the https://cloud.google.com/container-registry/[Google Container
+Registry] and others.
 
-Nexus supports Docker registries as the Docker repository format for hosted and
-proxy repositories as well as exposing them to the client-side tools as a
-repository group.
+Nexus supports Docker registries as the Docker repository format for hosted and proxy repositories. You can then expose
+these repositories to the client-side tools directly or as a repository group, which is a repository that merges and
+exposes the contents of multiple repositories in one convenient URL.
 
-This allows you to reduce time and bandwidth usage for accessing Docker 
-containers in a registry as well as share your containers within your 
-organization in a hosted repository as a completely private Docker registry. 
+This allows you to reduce time and bandwidth usage for accessing Docker containers in a registry as well as share your
+containers within your organization in a hosted repository as a completely private Docker registry.
+
+[[docker-prerequisites]]
+=== Prerequisites
+
+Docker relies on secure connections using SSL to connect to the repositories. You are therefore required to expose Nexus
+to your client tools via HTTPS. This can be configured via an external proxy server or directly with Nexus. Further
+details can be found in <<ssl-inbound>>.
+
+In addition the interaction with the Docker client requires specific ports to be used. This can be configured in
+repository configuration for Docker repositories in the 'Docker Connectors' section. In order for this to work on your
+network you need to ensure that the chosen ports are available in your organization and not used by some other
+application and that no firewall or other network configuration prevents connectivity.
+
+The recommended minimal configuration requires one port for a Docker repository group used for read access to all
+repositories and one port for each hosted Docker repository, that will receive push events from your users.
+
 
 [[docker-proxy]]
 === Docker Proxy Repositories
 
-Docker Hub is the common registry used by all container creators and consumers.
-To reduce duplicate downloads and improve download speeds for your developers
-and CI severs, you should proxy Docker Hub and any other container registry you
-use.
+Docker Hub is the common registry used by all container creators and consumers.  To reduce duplicate downloads and
+improve download speeds for your developers and CI severs, you should proxy Docker Hub and any other container registry
+you use.
 
-To proxy a Docker registry, you simply create a new 'docker (proxy)' as 
-documented in <<admin-repositories>>. The 'Remote Storage' has to be set to the
-URL of the remote registry you want to proxy. 
+To proxy a Docker registry, you simply create a new 'docker (proxy)' as documented in <<admin-repositories>>. The
+'Remote Storage' has to be set to the URL of the remote registry you want to proxy.
 
 The configuration for proxying Docker Hub is partially visible in
 <<fig-docker-hub-proxy>> and uses the URL `https://hub.docker.com/`.
