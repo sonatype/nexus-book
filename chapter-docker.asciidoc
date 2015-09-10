@@ -103,7 +103,7 @@ Minimal configuration steps are:
 - Define 'Name'
 - Select 'Blobstore' for 'Storage'
 
-If you add a 'Docker Connectors' configuration as documented in <<docker-ssl-connetor>> you can `push` images to this
+If you add a 'Docker Connectors' configuration as documented in <<docker-ssl-connector>> you can `push` images to this
 repository, and subsequently access them directly from the hosted repository or ideally from the Docker repository group
 as documented in <<docker-group>>
 
@@ -128,10 +128,83 @@ Using the 'URL' of the repository group can be used in your client tool and will
 in all repositories from the group with one URL. Any new images added as well as any new repositories added to the group
 will automatically be available.
 
+=== Testing Docker Repository Availability
+
+In order to test that a hosted or proxy Docker repository or repository group is up and running you can ping the API
+with. E.g. with the name for a repository group of `docker-all` use
+
+----
+$ curl -X GET -v -k 'https://localhost:8443/repository/docker-all/v1/_ping'
+----
+
+This should return a HTTP OK (200) response:
+
+----
+....
+> GET /repository/docker-all/v1/_ping HTTP/1.1
+> User-Agent: curl/7.41.0
+> Host: localhost:8443
+> Accept: */*
+>
+* SSLv2, Unknown (23):
+< HTTP/1.1 200 OK
+< Date: Thu, 10 Sep 2015 19:57:38 GMT
+< Server: Nexus/3.0.0-b2015090801 (OSS)
+< X-Frame-Options: SAMEORIGIN
+< X-Content-Type-Options: nosniff
+< Content-Type: application/json
+< Content-Length: 0
+...
+----
+
+
 [[docker-access]]
-=== Accessing Docker Container Images from Repositories and Groups
+=== Accessing Docker Container Images
 
 TBD - whats the client side config in Docker to be able to download from Nexus
+
+
+[[docker-search]]
+=== Searching
+
+Searching for Docker images can be performed in the Nexus user interface as described in <<search-components>>. This
+search will find all Docker images that are currently stored in Nexus repositories, either because they have been pushed
+to a hosted repository or they have been proxied from an upstream repository and cached in Nexus.
+
+The more common use case for a Docker user is to search for images on the command line.
+
+----
+$ docker search postgres
+NAME                            DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
+postgres                        The PostgreSQL object-relational database ...   1025      [OK]
+...
+----
+
+By default this search uses Docker Hub as preconfigured in Docker and will only find images available there
+
+A more powerful search is provided by Nexus when searching against a Docker repository group with the syntax
+
+----
+$ docker search <nexus-hostname>:<repository-port>/<search-term>
+----
+
+with
+
+nexus-hostname:: the IP number or hostname of your Nexus server
+repository-port:: the port configured as the Docker connector for the specific repository or repository group
+search-term:: the search term or name of the image to be search
+
+An example looking for a `postgres` image on a Nexus server running on the host `repo.example.com` and exposing a Docker
+repository group with a Docker connector port of 18443 looks looks like this:
+
+----
+$ docker search repo.example.com:18443/
+----
+
+The results include all Docker images found in the repositories that are part of the repository group. This includes any
+private images you have pushed to your hosted repositories. In addition it includes all results returned from the remote
+repositories configured as proxy repositories in the group.
+
 
 [[docker-push]]
 === Pushing Container Images to Docker Hosted Repositories
