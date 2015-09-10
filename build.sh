@@ -23,7 +23,7 @@ echo "...done"
 
 echo "Building multi page html version of book"
 # Build the Chunked HTML
-a2x -k -a promo -fchunked --icons --xsl-file=docbook-xsl/custom-chunked.xsl --xsltproc-opts "--stringparam chunk.section.depth 1 --stringparam toc.section.depth 2" -dbook --dblatex-opts=" -P doc.lot.show=  -P latex.output.revhistory=0 -P doc.publisher.show=0" -D target book-nexus.asciidoc
+a2x -k -a promo -fchunked --icons --xsl-file=docbook-xsl/custom-chunked.xsl --xsltproc-opts "--stringparam chunk.section.depth 0 --stringparam toc.section.depth 2" -dbook --dblatex-opts=" -P doc.lot.show=  -P latex.output.revhistory=0 -P doc.publisher.show=0" -D target book-nexus.asciidoc
 echo "...done"
 
 echo "Building pdf version of eval guide"
