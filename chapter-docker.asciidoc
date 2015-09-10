@@ -52,19 +52,41 @@ Docker Hub is the common registry used by all container creators and consumers. 
 improve download speeds for your developers and CI severs, you should proxy Docker Hub and any other container registry
 you use.
 
-To proxy a Docker registry, you simply create a new 'docker (proxy)' as documented in <<admin-repositories>>. The
-'Remote Storage' has to be set to the URL of the remote registry you want to proxy.
+To proxy a Docker registry, you simply create a new 'docker (proxy)' as documented in <<admin-repositories>> in
+details. 
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Define URL for 'Remote storage'
+- Select correct 'Docker index' and configure it
+- Select 'Blobstore' for 'Storage'
+
+Optionally you can configure 'Docker Connectors' as explained in <<docker-ssl-connector>>, although typically read
+access is done via a repository group and not a proxy repository directly and write access is done against a hosted
+repository.
+
+The 'Remote Storage' has to be set to the URL of the remote registry you want to proxy.
 
 The configuration for proxying Docker Hub uses the URL `https://registry-1.docker.io` for the 'Remote storage' URL.
 
-The 'Proxy' configuration for a Docker proxy repository includes a configuration for the 'Docker Index' to be used for
-searches. The default option 'Use proxy registry (specified above)' will attempt to retrieve any index data by
-interacting with the Docker registry API configured as the 'Remote storage' URL.
+The 'Proxy' configuration for a Docker proxy repository includes a configuration URL to access the 'Docker Index' The
+index is used for requests related to searches, users, docker tokens and other apects. The registry and the index are
+typically co-hosted by the same provider, but can use different URLs. E.g. the index for Docker Hub is exposed at
+`https://index.docker.io/`.
 
-The option to 'Use Docker Hub' fulfills any index related requests by querying Docker Hub. The results potentially do
-not reflect the content of the remote repository (TBD how does that make sense at all?).
+The default option 'Use proxy registry (specified above)' will attempt to retrieve any index data from the same URL
+configured as the 'Remote storage' URL.
+
+The option to 'Use Docker Hub' fulfills any index related requests by querying the Docker Hub index at
+`https://index.docker.io/`. This configuration is desired when the proxy repository is Docker Hub itself or any of its
+mirrors.
 
 The option to use a 'Custom index' allows you to specify the URL of the index for the remote repository.
+
+It is important to configure a correct pair of 'Remote Storage' URL and index. In case of a mismatch e.g., search
+results potentially do not reflect the content of the remote repository and other problems can occur.
+
 
 [[docker-hosted]]
 === Docker Hosted Repositories
