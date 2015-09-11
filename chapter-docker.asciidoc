@@ -128,41 +128,6 @@ Using the 'URL' of the repository group can be used in your client tool and will
 in all repositories from the group with one URL. Any new images added as well as any new repositories added to the group
 will automatically be available.
 
-=== Testing Docker Repository Availability
-
-In order to test that a hosted or proxy Docker repository or repository group is up and running you can ping the API
-with. E.g. with the name for a repository group of `docker-all` use
-
-----
-$ curl -X GET -v -k 'https://localhost:8443/repository/docker-all/v1/_ping'
-----
-
-This should return a HTTP OK (200) response:
-
-----
-....
-> GET /repository/docker-all/v1/_ping HTTP/1.1
-> User-Agent: curl/7.41.0
-> Host: localhost:8443
-> Accept: */*
->
-* SSLv2, Unknown (23):
-< HTTP/1.1 200 OK
-< Date: Thu, 10 Sep 2015 19:57:38 GMT
-< Server: Nexus/3.0.0-b2015090801 (OSS)
-< X-Frame-Options: SAMEORIGIN
-< X-Content-Type-Options: nosniff
-< Content-Type: application/json
-< Content-Length: 0
-...
-----
-
-
-[[docker-access]]
-=== Accessing Docker Container Images
-
-TBD - whats the client side config in Docker to be able to download from Nexus
-
 
 [[docker-search]]
 === Searching
@@ -194,16 +159,39 @@ nexus-hostname:: the IP number or hostname of your Nexus server
 repository-port:: the port configured as the Docker connector for the specific repository or repository group
 search-term:: the search term or name of the image to be search
 
-An example looking for a `postgres` image on a Nexus server running on the host `repo.example.com` and exposing a Docker
-repository group with a Docker connector port of 18443 looks looks like this:
+An example looking for a `postgres` image on a Nexus server running on the host `nexus.example.com` and exposing a Docker
+repository group with a Docker connector port of 18443 looks like this:
 
 ----
-$ docker search repo.example.com:18443/
+$ docker search nexus.example.com:18443/postgres
 ----
 
 The results include all Docker images found in the repositories that are part of the repository group. This includes any
 private images you have pushed to your hosted repositories. In addition it includes all results returned from the remote
 repositories configured as proxy repositories in the group.
+
+
+library added when from official library - is displayed in UI .. maybe file bug
+
+
+
+[[docker-access]]
+=== Accessing Docker Container Images
+
+TBD - whats the client side config in Docker to be able to download from Nexus
+
+----
+docker pull <nexus-hostname>:<repository-port>/<image>
+----
+
+Examples for pulling various imagesfrom a Nexus server running on the host `nexus.example.com` and exposing a Docker
+repository group with a Docker connector port of 18443 looks are:
+
+----
+docker pull nexus.example.com:18443/mysql
+docker pull nexus.example.com:18443/bitnami/node
+docker pull nexus.example.com:18443/bitnam
+----
 
 
 [[docker-push]]
