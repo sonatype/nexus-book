@@ -128,6 +128,11 @@ Using the 'URL' of the repository group can be used in your client tool and will
 in all repositories from the group with one URL. Any new images added as well as any new repositories added to the group
 will automatically be available.
 
+=== Authentication
+
+The first invocation of any command against a Nexus Docker connector and therefore a Docker repository or repository
+group triggers a login request. Provide the Nexus username and password as well as an email address to Docker. This
+authentication is persisted in `~/.docker/config.json` and reused for any subsequent interaction.
 
 [[docker-search]]
 === Searching
@@ -136,7 +141,7 @@ Searching for Docker images can be performed in the Nexus user interface as desc
 search will find all Docker images that are currently stored in Nexus repositories, either because they have been pushed
 to a hosted repository or they have been proxied from an upstream repository and cached in Nexus.
 
-The more common use case for a Docker user is to search for images on the command line.
+The more common use case for a Docker user is to search for images on the command line:
 
 ----
 $ docker search postgres
@@ -145,9 +150,8 @@ postgres                        The PostgreSQL object-relational database ...   
 ...
 ----
 
-By default this search uses Docker Hub as preconfigured in Docker and will only find images available there
-
-A more powerful search is provided by Nexus when searching against a Docker repository group with the syntax
+By default this search uses Docker Hub as preconfigured in Docker and will only find images available there. A more
+powerful search is provided by Nexus when searching against a Docker repository group with the syntax
 
 ----
 $ docker search <nexus-hostname>:<repository-port>/<search-term>
@@ -170,28 +174,30 @@ The results include all Docker images found in the repositories that are part of
 private images you have pushed to your hosted repositories. In addition it includes all results returned from the remote
 repositories configured as proxy repositories in the group.
 
-
-library added when from official library - is displayed in UI .. maybe file bug
-
-
-
 [[docker-access]]
 === Accessing Docker Container Images
 
-TBD - whats the client side config in Docker to be able to download from Nexus
+Downloading Docker images from Nexus can be performed with the `pull` command. The only necessary addition are the
+hostname or IP address of the Nexus server as well as the Docker connector port for the repository or repository group
+to download from:
 
 ----
 docker pull <nexus-hostname>:<repository-port>/<image>
 ----
 
-Examples for pulling various imagesfrom a Nexus server running on the host `nexus.example.com` and exposing a Docker
-repository group with a Docker connector port of 18443 looks are:
+The preferred setup is to use the 
+Examples for pulling various images from a Nexus server running on the host `nexus.example.com` and exposing a Docker
+repository group with a Docker connector port of 18443 are:
 
 ----
-docker pull nexus.example.com:18443/mysql
+docker pull nexus.example.com:18443/ubuntu
 docker pull nexus.example.com:18443/bitnami/node
-docker pull nexus.example.com:18443/bitnam
+docker pull nexus.example.com:18443/postgres:9.4
 ----
+
+These snippets download the official `ubuntu` image, the `node` image from the user `bitnami` and the version 9.4 of the
+`postgres` image. Official images such as `ubuntu` or `postgres` belong to the `library` user on Docker Hub and will
+therefore show up as `library/ubuntu` and `library/postgres` in Nexus.
 
 
 [[docker-push]]
