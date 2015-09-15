@@ -3,9 +3,9 @@
 {in} {oss}, {pro}, {proplus}
 
 https://www.docker.com/[Docker] containers and their usage have revolutionized the way applications and the underlying
-operation system are packaged and deployed to development, testing and production systems.
+operating system are packaged and deployed to development, testing and production systems.
 
-The creation of the http://opencontainers.org/[Open Container Initiative] and the involvement of a large number of
+The creation of the http://opencontainers.org/[Open Container Initiative], and the involvement of a large number of
 stakeholders, guarantees that the ecosystem of tools around the lightweight containers and their usage will continue to
 flourish.
 
@@ -30,10 +30,10 @@ details can be found in <<ssl-inbound>>.
 Interaction of the Docker client with Docker repositories requires specific ports to be used. These can be configured in
 the repository configuration for Docker repositories in the 'Docker Connectors' section. In order for this to work on
 your network you need to ensure that the chosen ports are available in your organization and not used by some other
-application and that no firewall or other network configuration prevents connectivity.
+application, and that no firewall or other network configuration prevents connectivity.
 
 The recommended minimal configuration requires one port for a Docker repository group used for read access to all
-repositories and one port for each hosted Docker repository, that will receive push events from your users. The 'Docker
+repositories and one port for each hosted Docker repository that will receive push events from your users. The 'Docker
 Connector' configuration displayed in <<fig-docker-connectors>> is available in the configuration for proxy and hosted
 Docker repositories as well as Docker repository groups.
 
@@ -53,7 +53,7 @@ improve download speeds for your developers and CI severs, you should proxy Dock
 you use.
 
 To proxy a Docker registry, you simply create a new 'docker (proxy)' as documented in <<admin-repositories>> in
-details. 
+details.
 
 Minimal configuration steps are:
 
@@ -63,7 +63,7 @@ Minimal configuration steps are:
 - Select 'Blobstore' for 'Storage'
 
 Optionally you can configure 'Docker Connectors' as explained in <<docker-ssl-connector>>, although typically read
-access is done via a repository group and not a proxy repository directly and write access is done against a hosted
+access is done via a repository group and not a proxy repository directly, and write access is done against a hosted
 repository.
 
 The 'Remote Storage' has to be set to the URL of the remote registry you want to proxy.
@@ -71,7 +71,7 @@ The 'Remote Storage' has to be set to the URL of the remote registry you want to
 The configuration for proxying Docker Hub uses the URL `https://registry-1.docker.io` for the 'Remote storage' URL.
 
 The 'Proxy' configuration for a Docker proxy repository includes a configuration URL to access the 'Docker Index' The
-index is used for requests related to searches, users, docker tokens and other apects. The registry and the index are
+index is used for requests related to searches, users, docker tokens and other aspects. The registry and the index are
 typically co-hosted by the same provider, but can use different URLs. E.g. the index for Docker Hub is exposed at
 `https://index.docker.io/`.
 
@@ -84,9 +84,11 @@ mirrors.
 
 The option to use a 'Custom index' allows you to specify the URL of the index for the remote repository.
 
-It is important to configure a correct pair of 'Remote Storage' URL and index. In case of a mismatch e.g., search
+It is important to configure a correct pair of 'Remote Storage' URL and index URL. In case of a mismatch, search
 results potentially do not reflect the content of the remote repository and other problems can occur.
 
+TIP: Just to recap, in order to configure a proxy for Docker Hub you should configure the 'Remote Storage' URL to
+https://registry-1.docker.io and for the choice of 'Docker Index' select the 'User Docker Hub' option.
 
 [[docker-hosted]]
 === Docker Hosted Repositories
@@ -111,12 +113,12 @@ as documented in <<docker-group>>
 [[docker-group]]
 === Docker Repository Groups
 
-A repository group is the recommended way to expose all your Docker repositories from Nexus to your users, without
-needing any further client side configuration after the initial setup. A repository group allows you to expose the
-aggregated content of multiple proxy and hosted repositories with one URL to your tools.
+A repository group is the recommended way to expose all your Docker repositories for read access from Nexus to your
+users, without needing any further client side configuration after the initial setup. A repository group allows you to
+expose the aggregated content of multiple proxy and hosted repositories with one URL to your tools.
 
 To create a Docker hosted repository, simply create a new 'docker (group)' repository as documented in
-<<admin-repositories>>. 
+<<admin-repositories>>.
 
 Minimal configuration steps are:
 
@@ -185,7 +187,9 @@ to download from:
 docker pull <nexus-hostname>:<repository-port>/<image>
 ----
 
-The preferred setup is to use the 
+The preferred setup is to proxy a relevant source of public/private images you want to use (Docker Hub being the most
+common choice), configure one or more hosted repositories to contain your own images, and expose these repositories
+through one Docker group repository.
 Examples for pulling various images from a Nexus server running on the host `nexus.example.com` and exposing a Docker
 repository group with a Docker connector port of 18443 are:
 
@@ -206,6 +210,10 @@ After a successful `pull` you can start the container with `run`.
 
 TBD - docker push and so on, what about credentials, ...
 
+NOTE: All commands using the Docker client against Nexus follow a common structure:
+----
+docker <command> <nexus-hostname>:<repository-port>/<optional username>/<image>:<optional tag>
+----
 ////
 /* Local Variables: */
 /* ispell-personal-dictionary: "ispell.dict" */
