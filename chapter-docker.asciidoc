@@ -32,6 +32,11 @@ the repository configuration for Docker repositories in the 'Docker Connectors' 
 your network you need to ensure that the chosen ports are available in your organization and not used by some other
 application, and that no firewall or other network configuration prevents connectivity.
 
+NOTE: The Docker client does not allow a context as part of the path to a registry, as the namespace and image name are
+ embedded in the URLs it uses. This is why requests for Docker repositories on Nexus are served on a specific and separate
+ port from the rest of the application instead of how most other Nexus repositories serve content,
+ i.e. <nexus-hostname>/<repositoryName>/<path to content>
+
 The recommended minimal configuration requires one port for a Docker repository group used for read access to all
 repositories and one port for each hosted Docker repository that will receive push events from your users. The 'Docker
 Connector' configuration displayed in <<fig-docker-connectors>> is available in the configuration for proxy and hosted
@@ -49,7 +54,7 @@ HTTP port.
 === Docker Proxy Repositories
 
 Docker Hub is the common registry used by all container creators and consumers.  To reduce duplicate downloads and
-improve download speeds for your developers and CI severs, you should proxy Docker Hub and any other container registry
+improve download speeds for your developers and CI servers, you should proxy Docker Hub and any other container registry
 you use.
 
 To proxy a Docker registry, you simply create a new 'docker (proxy)' as documented in <<admin-repositories>> in
@@ -70,7 +75,7 @@ The 'Remote Storage' has to be set to the URL of the remote registry you want to
 
 The configuration for proxying Docker Hub uses the URL `https://registry-1.docker.io` for the 'Remote storage' URL.
 
-The 'Proxy' configuration for a Docker proxy repository includes a configuration URL to access the 'Docker Index' The
+The 'Proxy' configuration for a Docker proxy repository includes a configuration URL to access the 'Docker Index'. The
 index is used for requests related to searches, users, docker tokens and other aspects. The registry and the index are
 typically co-hosted by the same provider, but can use different URLs. E.g. the index for Docker Hub is exposed at
 `https://index.docker.io/`.
@@ -124,7 +129,7 @@ Minimal configuration steps are:
 
 - Define 'Name'
 - Select 'Blobstore' for 'Storage'
-- Add Docker repositories to the 'Members' list in the desired order.
+- Add Docker repositories to the 'Members' list in the desired order
 
 Using the 'URL' of the repository group can be used in your client tool and will give you access to the container images
 in all repositories from the group with one URL. Any new images added as well as any new repositories added to the group
@@ -147,8 +152,8 @@ The more common use case for a Docker user is to search for images on the comman
 
 ----
 $ docker search postgres
-NAME                            DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
-postgres                        The PostgreSQL object-relational database ...   1025      [OK]
+NAME      DESCRIPTION                                  STARS  OFFICIAL  AUTOMATED
+postgres  The PostgreSQL object-relational database... 1025   [OK]
 ...
 ----
 
@@ -163,7 +168,7 @@ with
 
 nexus-hostname:: the IP number or hostname of your Nexus server
 repository-port:: the port configured as the Docker connector for the specific repository or repository group
-search-term:: the search term or name of the image to be search
+search-term:: the search term or name of the image to search for
 
 An example looking for a `postgres` image on a Nexus server running on the host `nexus.example.com` and exposing a Docker
 repository group with a Docker connector port of 18443 looks like this:
@@ -212,7 +217,7 @@ TBD - docker push and so on, what about credentials, ...
 
 NOTE: All commands using the Docker client against Nexus follow a common structure:
 ----
-docker <command> <nexus-hostname>:<repository-port>/<optional username>/<image>:<optional tag>
+docker <command> <nexus-hostname>:<repository-port>/<namespace>/<image>:<tag>
 ----
 ////
 /* Local Variables: */
