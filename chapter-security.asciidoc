@@ -1,9 +1,9 @@
 [[security]]
-== Security 
+== Security
 {in} {oss}, {pro}, {proplus}
 
 Nexus uses role-based access control that gives administrators
-very fine-grained control over user rights to 
+very fine-grained control over user rights to
 
 * read from a repository or a subset of repositories,
 * administer the Nexus server or parts of the Nexus configuration,
@@ -14,7 +14,7 @@ The default configuration of Nexus ships with roles and users with a
 standard set of permissions. As your security requirements evolve,
 you will likely need to customize security settings to create protected
 repositories for multiple departments or development groups. Nexus
-provides a security model that can adapt to any scenario. 
+provides a security model that can adapt to any scenario.
 
 This chapter covers all aspects of security with Nexus including
 
@@ -115,8 +115,8 @@ with the user authorization passed to Nexus in a HTTP header field
 with details documented in <<remote-user-token>>.
 
 ////
-The 'User Token Realm' is required for user token support 
-documented in <<config-sect-usertoken>> and 
+The 'User Token Realm' is required for user token support
+documented in <<config-sect-usertoken>> and
 ////
 
 NuGet API-Key Realm:: This realm is required for deployments to
@@ -129,7 +129,7 @@ nuget-format repositories as documented in <<nuget>>.
 You can access the configuration of privileges via the 'Privileges'
 menu item in the 'Security' submenu in the 'Administration' main menu.
 
-Nexus use a number of types of privileges: 
+Nexus use a number of types of privileges:
 
 application:: privileges related to the Nexus user interface and
 related functionality.
@@ -279,7 +279,7 @@ The same functionality is available under the 'Roles' header to
 select among the 'Available' roles and add them to the list of
 'Contained' roles.
 
-Finally press the 'Create Role' button to get the role created. 
+Finally press the 'Create Role' button to get the role created.
 
 An existing role can be inspected and edited by clicking on the row in
 the list. This role-specific view allows you to delete the role with
@@ -303,7 +303,7 @@ In addition to creating a Nexus role, the 'Create role' button allows
 you to create an 'External role mapping' to an external authorization
 system configured in Nexus such as 'LDAP'. This is something you would
 do, if you want to grant every member of an externally managed group
-(such as an LDAP group) a number of privileges and roles in Nexus. 
+(such as an LDAP group) a number of privileges and roles in Nexus.
 
 For example, assume that you have a group in LDAP named +scm+ and you
 want to make sure that everyone in the +scm+ group has Nexus
@@ -584,7 +584,7 @@ to authenticate, otherwise username and pass code is also
 possible. This would be the more secure setting.
 usertoken.userTokenServiceImpl.restrictByUserAgent:: With this value
 set to true (the default), any access to the Nexus content
-with content protection enabled will only be allowed to browser-based 
+with content protection enabled will only be allowed to browser-based
 access even without credentials. Other tools like curl or wget
 or other command-line tools will be blocked. With the more secure
 setting of +false+, any access without correct codes will be
@@ -595,7 +595,7 @@ from the 'usertoken.properties' file.
 ////
 
 ////
-tbd ... do we need to take this out for now? 
+tbd ... do we need to take this out for now?
 ////
 [[remote-user-token]]
 === Authentication via Remote User Token
@@ -651,17 +651,17 @@ for the user.
 Using Secure Socket Layer (SSL) communication within Nexus is an important security feature and a recommended best
 practice. Secure communication can be inbound or outbound.
 
-Outbound client communication may include integration with 
+Outbound client communication may include integration with
 
-* a remote proxy repository over HTTPS, 
+* a remote proxy repository over HTTPS,
 * SSL/TLS secured servers (e.g. for SMTP/email integration),
 * LDAP servers configured to use LDAPS,
 * specialized authentication realms such as the Crowd realm.
 
-Inbound client communication includes 
+Inbound client communication includes
 
 * web browser HTTPS access to the user interface,
-* tool access to repository content, 
+* tool access to repository content,
 * and manual or scripted usage of the REST APIs.
 
 [[ssl-proxy-repo]]
@@ -677,7 +677,7 @@ titled 'Use the Nexus truststore'. It allows you to manage the SSL certificate o
 these problems. It is only displayed, if the remote storage uses a HTTPS URL.
 
 The 'View certificate' button triggers the display of the SSL 'Certificate Details' dialog. An example is shown in
-<<fig-ssl-certificate-details-dialog>>. 
+<<fig-ssl-certificate-details-dialog>>.
 
 [[fig-ssl-certificate-details-dialog]]
 .Certificate Details Dialog to Add an SSL to the Nexus Trust Store
@@ -814,7 +814,7 @@ Providing access to the Nexus user interface and content via HTTPS is a recommen
 
 You have two options:
 
-* Using a separate reverse proxy server in front of Nexus to manage HTTPS 
+* Using a separate reverse proxy server in front of Nexus to manage HTTPS
 * Configure Nexus to serve HTTPS directly
 
 .Using A Reverse Proxy Server
@@ -840,7 +840,7 @@ The second approach is to use the Eclipse Jetty instance that is distributed wit
 TIP: Keep in mind that you will have to repeat this configuration each time you upgrade Nexus, since they are
 modifications to the embedded Jetty instance located in '$NEXUS_HOME'.
 
-To configure Nexus to accept HTTPS connections, first enable the file +jetty-https.xml+ to the Jetty startup
+To configure Nexus to accept HTTPS connections, first enable the file +jetty-https.xml+ for the Jetty startup
 configuration in +custom.properties+ by adding
 
 ----
@@ -850,7 +850,7 @@ ${karaf.base}/etc/jetty-https.xml
 to the `nexus-args` parameter in the Nexus configuration file `org.sonatype.nexus.cfg` as documented in
 <<configure-runtime>>.
 
-Next, define the port you want to use for the HTTPS connection by setting the +application-port-ssl+ property in
+Next, define the port you want to use for the HTTPS connection by adding the +application-port-ssl+ property to
 +etc/org.sonatype.nexus.cfg+.
 
 ----
