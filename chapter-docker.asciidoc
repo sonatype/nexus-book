@@ -182,20 +182,34 @@ private images you have pushed to your hosted repositories. In addition it inclu
 repositories configured as proxy repositories in the group.
 
 [[docker-access]]
-=== Accessing Docker Images
+=== Pulling/Pushing Docker Images
 
-Downloading Docker images from Nexus can be performed with the `pull` command. The only necessary addition are the
-hostname or IP address of the Nexus server as well as the Docker connector port for the repository or repository group
-to download from:
+Downloading Docker images from (pulling), or uploading to (pushing), Nexus can be performed with the Docker `pull` or
+`push` command (respectively). The only necessary addition are the hostname or IP address of the Nexus server as well
+as the Docker connector port for the repository or repository group to download from:
+
+Pull Example::
 
 ----
 docker pull <nexus-hostname>:<repository-port>/<image>
 ----
 
+Push Example::
+
+----
+docker push <nexus-hostname>:<repository-port>/<image>
+----
+
+NOTE: All commands using the Docker client against Nexus follow a common structure:
+----
+docker <command> <nexus-hostname>:<repository-port>/<namespace>/<image>:<tag>
+----
+
 The preferred setup is to proxy a relevant source of public/private images you want to use (Docker Hub being the most
 common choice), configure one or more hosted repositories to contain your own images, and expose these repositories
 through one Docker group repository.
-Examples for pulling various images from a Nexus server running on the host `nexus.example.com` and exposing a Docker
+
+Examples for p various images from a Nexus server running on the host `nexus.example.com` and exposing a Docker
 repository group with a Docker connector port of 18443 are:
 
 ----
@@ -210,15 +224,21 @@ therefore show up as `library/ubuntu` and `library/postgres` in Nexus.
 
 After a successful `pull` you can start the container with `run`.
 
-[[docker-push]]
-=== Pushing Docker Images to Docker Hosted Repositories
+If we made changes to each of these images, and then wanted to push them up to our Nexus repository. It might look
+something like this:
 
-TBD - docker push and so on, what about credentials, ...
+----
+docker push nexus.example.com:18443/ubuntu:my_update
+docker push nexus.example.com:18443/bitnami/node:old
+docker push nexus.example.com:18443/postgres:9.5
+----
 
-NOTE: All commands using the Docker client against Nexus follow a common structure:
-----
-docker <command> <nexus-hostname>:<repository-port>/<namespace>/<image>:<tag>
-----
+Now, these updated images would be ready to be pulled by anyone with access to the repository.
+
+NOTE: Prior to push, and depending on your Nexus configuration, login credentials may be required before a push or pull
+can occur.
+
+
 ////
 /* Local Variables: */
 /* ispell-personal-dictionary: "ispell.dict" */
