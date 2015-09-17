@@ -146,6 +146,36 @@ The first invocation of any command against a Nexus Docker connector and therefo
 group triggers a login request. Provide the Nexus username and password as well as an email address to Docker. This
 authentication is persisted in `~/.docker/config.json` and reused for any subsequent interaction.
 
+=== Accessing Docker Repositories
+
+////
+TBD link to browse chapter once we got it
+////
+
+You can browse Docker repositories in the Nexus user interface inspecting the components and assets and their details.
+
+When using the 'docker' command line client or any other tools using it indirectly the common structure for commands can
+be:
+
+----
+docker <command> <nexus-hostname>:<repository-port>/<namespace>/<image>:<tag>
+docker search <nexus-hostname>:<repository-port>/<search-term>
+
+----
+
+with
+
+command:: a docker command such a 'push' or 'pull'
+nexus-hostname:: the IP number or hostname of your Nexus server
+repository-port:: the port configured as the Docker connector for the specific repository or repository group
+namespace:: the namespace of the specific image reflecting the owner
+image:: the name of the Docker image
+tag:: the optional tag of the image, defaulting to 'latest' when omitted
+search-term:: the search term or name of the image to search for
+
+The most important aspects are to know and use the correct hostname for the Nexus server and the port for the desired
+repository or repository group.
+
 [[docker-search]]
 === Searching
 
@@ -166,7 +196,7 @@ By default this search uses Docker Hub as preconfigured in Docker and will only 
 powerful search is provided by Nexus when searching against a Docker repository group with the syntax
 
 ----
-$ docker search <nexus-hostname>:<repository-port>/<search-term>
+docker search <nexus-hostname>:<repository-port>/<search-term>
 ----
 
 with
@@ -175,44 +205,33 @@ nexus-hostname:: the IP number or hostname of your Nexus server
 repository-port:: the port configured as the Docker connector for the specific repository or repository group
 search-term:: the search term or name of the image to search for
 
-An example looking for a `postgres` image on a Nexus server running on the host `nexus.example.com` and exposing a Docker
-repository group with a Docker connector port of 18443 looks like this:
+
+An example looking for a `postgres` image on a Nexus server running on the host `nexus.example.com` and exposing a
+Docker repository group with a Docker connector port of 18443 looks like this:
 
 ----
-$ docker search nexus.example.com:18443/postgres
+docker search nexus.example.com:18443/postgres
 ----
 
 The results include all Docker images found in the repositories that are part of the repository group. This includes any
 private images you have pushed to your hosted repositories. In addition it includes all results returned from the remote
 repositories configured as proxy repositories in the group.
 
-[[docker-access]]
-=== Pulling and Pushing Docker Images
 
-Downloading Docker images from (pulling), or uploading to (pushing), Nexus can be performed with the Docker `pull`, or
-`push`, command. The only necessary additions are the hostname or IP address of the Nexus server as well
-as the Docker connector port for the repository or repository group to download from:
+[[docker-pull]]
+=== Pulling Docker Images
 
-*Pull Example**
+Downloading Docker images, also known as pulling, from Nexus can be performed with the Docker `pull`.  The only
+necessary additions are the hostname or IP address of the Nexus server as well as the Docker connector port for the
+repository or repository group to download from:
 
 ----
 docker pull <nexus-hostname>:<repository-port>/<image>
 ----
 
-*Push Example*
-
-----
-docker push <nexus-hostname>:<repository-port>/<image>
-----
-
-NOTE: All commands using the Docker client against Nexus follow a common structure:
-----
-docker <command> <nexus-hostname>:<repository-port>/<namespace>/<image>:<tag>
-----
-
-The preferred setup is to proxy a relevant source of public/private images you want to use (Docker Hub being the most
-common choice), configure one or more hosted repositories to contain your own images, and expose these repositories
-through one Docker group repository.
+The preferred setup is to proxy all relevant sources of public/private images you want to use with Docker Hub being the
+most common choice. Then configure one or more hosted repositories to contain your own images, and expose these
+repositories through one Docker group repository.
 
 Examples for various images from a Nexus server running on the host `nexus.example.com` and exposing a Docker
 repository group with a Docker connector port of 18443 are:
@@ -229,24 +248,53 @@ therefore show up as `library/ubuntu` and `library/postgres` in Nexus.
 
 After a successful `pull` you can start the container with `run`.
 
-If we build or modify an image...
+[[docker-push]]
+=== Pushing Docker Images
+
+
+Sharing a Docker image can be achieved, by publishing it to a hosted repository in Nexus. This is completely private and
+requires you to `tag` and `push` the image. To tag an image, the image identifier (imageId) is required.  It is listed
+when showing the list of all images with `docker images`. Syntax and an example are for creating a tag are
 
 ----
-docker tag <imageId> nexus.example.com:18443/ubuntu:my_update
+docker tag <imageId>  <nexus-hostname>:<repository-port>/<image>:<tag>
+docker tag af340544ed62 nexus.example.com:18444/hello-world:mytag
 ----
 
-and then want to push that up to our Nexus repository. It might look
-something like this:
+Once the tag, which can be equivalent to a version, is created successfully, you can confirm its creation with `docker
+images` and issue the push with the syntax:
 
 ----
-docker push nexus.example.com:18443/ubuntu:my_update
+docker push <nexus-hostname>:<repository-port>/<image>:<tag>
 ----
 
-Now, this updated image would be ready to be pulled by anyone with access to the repository.
+IMPORTANT: Note that the repository port needs to be the Docker connector port configured for the *hosted*
+repository to which you want to push to. You can not push to a repository group or a proxy repository.
+
+
+A sample output could look like t
+
+----
+$ docker push nexus.example.com:18444/hello-world:labeltest
+The push refers to a repository [nexus.example.com:18444/hello-world] (len: 1)
+Sending image list
+Pushing repository nexus.example.com:18444/hello-world (1 tags)
+535020c3e8ad: Image successfully pushed
+af340544ed62: Image successfully pushed
+Pushing tag for rev [af340544ed62] on
+{https://nexus.example.com:18444/repository/docker-internal/v1/repositories/hello-world/tags/labeltest}
+----
+
+Now, this updated image is available in Nexus and can be pulled by anyone with access to the repository, or the
+repository group, containing the image. Pulling the image from the repository group exposed at port 18443 can be done
+with:
+
+----
+docker pull nexus.example.com:18443/hello-world:labeltest
+----
 
 NOTE: Prior to push, and depending on your Nexus configuration, Nexus login credentials may be required before a push
 or pull can occur.
-
 
 ////
 /* Local Variables: */
