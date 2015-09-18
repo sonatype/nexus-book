@@ -691,11 +691,14 @@ six, nine or twelve hours or as a daily or weekly execution.
 image::figs/web/automatic-routing-proxy.png[scale=60]
 
 For a proxy repository, the prefix file is either downloaded from
-the remote repository or a generation is attempted by scraping the
-remote repository. This generation is not attempted for remote Nexus
-repository groups, since they are too dynamic in nature and should not
-be proxied directly. Scraping of hosted or proxy repositories as well
-as Subversion-based repositories is supported.
+the remote repository or generation is attempted by scraping the HTML
+directory listing of the remote repository. If a prefix file is
+published by the remote it is always used. The scraping strategy only
+used in cases where Nexus can be sure the remote directory listing
+contains all available artifacts. For example, if the remote is a Nexus
+hosted repository, or a well known format such as a Subversion based
+repository then the directory listing will be used if no prefix file
+is available.
 
 The generation of the prefix file in all the Nexus deployments
 proxying each other greatly improves performance for all Nexus
