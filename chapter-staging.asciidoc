@@ -810,7 +810,9 @@ automatic closing of a staging repository after deployment.
 
 skipNexusStagingDeployMojo:: Set to +false+ by default, this flag will
 cause to skip any execution of the 'deploy' goal of the plugin when
-set to true similar to 'maven.deploy.skip'
+set to true similar to 'maven.deploy.skip'. In multi-module builds the staging of all components is performed in the last
+module based on the reactor order. If this property is set to `true` in the module, all staging will be skipped. You 
+have to ensure that this property evaluates as `true` in the last module of the reactor. If necessary, you can add a dummy module.
 
 skipStaging:: Set to +false+ by default this flag will cause to skip any
 execution of the plugin when set to true.
