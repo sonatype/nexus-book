@@ -38,7 +38,13 @@ out-of-the-box. You can also proxy any other registries you require.
 
 To proxy an external npm registry, you simply create a new 'npm (proxy)' as documented in <<admin-repositories>>. The
 'Remote Storage' has to be set to the URL of the remote repository you want to proxy. The official URL for the main npm
-registry is `https://registry.npmjs.org`
+registry is `https://registry.npmjs.org`.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Define URL for 'Remote storage'
+- Select 'Blobstore' for 'Storage'
 
 [[npm-private-registries]]
 === Private npm Registries
@@ -49,6 +55,11 @@ hosted repositories for these purposes.
 
 To create a hosted repository with npm format, simply create a new 'npm (hosted)' as documented in
 <<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Select 'Blobstore' for 'Storage'
 
 The npm registry information is immediately updated as packages are deployed or deleted from the repository.
 
@@ -67,12 +78,31 @@ without needing any further client side configuration. A repository group allows
 multiple proxy and hosted repositories with one URL to npm and other tools. This is possible for npm repositories by
 creating a new 'npm (group)' as documented in <<admin-repositories>>.
 
+Minimal configuration steps are:
+
+- Define 'Name'
+- Select 'Blobstore' for 'Storage'
+- Add npm repositories to the 'Members' list in the desired order
+
 A typical, useful example would be to group the proxy repository that: proxies the npm registry, a npm, hosted
 repository with internal software packages and another npm, hosted repository with third-party packages. 
 
 Using the 'URL' of the repository group as your npm repository URL in your client tool will give you access to the
 packages in all three repositories with one URL. Any new packages added as well as any new repositories added to the
 group will automatically be available.
+
+
+=== Browsing npm Registries and Searching Modules
+
+////
+TBD link to browse chapter once we got it
+////
+
+You can browse npm repositories in the Nexus user interface inspecting the components and assets and their details.
+
+Searching for npm modules can be performed in the Nexus user interface as described in <<search-components>>. This
+search will find all npm modules images that are currently stored in Nexus repositories, either because they have been pushed
+to a hosted repository or they have been proxied from an upstream repository and cached in Nexus.
 
 [[npm-configuring]]
 === Configuring npm 
@@ -90,15 +120,14 @@ registry = http://localhost:8081/repository/npm-all/
 -----
 
 With this configuration any npm commands will use the new registry from Nexus. The command line output will reference
-the URLs. E.g.
+the URLs:
 
 ----
 $ npm install bower
 npm install bower
-npm http GET http://localhost:8081/nexus/content/groups/npm-all/bower
-npm http 200 http://localhost:8081/nexus/content/groups/npm-all/bower
-npm http GET http://localhost:8081/nexus/content/groups/npm-all/bower-config
-npm http GET http://localhost:8081/nexus/content/groups/npm-all/bower-endpoint-parser
+npm http GET http://localhost:8081/repository/npm-all/bower
+npm http 200 http://localhost:8081/repository/npm-all/bower
+npm http GET http://localhost:8081/repository/npm-all/bower-config
 ...
 ----
 
@@ -119,7 +148,7 @@ Since the +.npmrc+ file usually contains a registry value intended only for gett
 override this value is to provide a registry to the +publish+ command:
 
 ----
-npm publish --registry http://localhost:8081/nexus/content/repositories/npm-internal/ 
+npm publish --registry http://localhost:8081/repository/npm-internal/ 
 ----
 
 Alternately, you can edit your package.json file and add a +publishConfig+ section:
