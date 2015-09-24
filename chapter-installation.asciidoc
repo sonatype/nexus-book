@@ -15,7 +15,7 @@ process is only suitable for evaluation and testing usage.
 
 === Java Prerequisite
 
-{nexus} only has one prerequisite, a Java 7 or Java 8 Runtime
+{nexus} only has one prerequisite, a Java 8 Runtime
 Environment (JRE) from Oracle. Nexus is most often run with the JRE
 that is bundled with a Java Development Kit (JDK) installation. We
 recommend to use the latest version of Java available from the
@@ -25,10 +25,10 @@ website].
 You can confirm the installed Java version with the `java` command:
 
 ----
-$java -version
-java version "1.8.0_45"
-Java SE Runtime Environment (build 1.8.0_45-b14)
-Java HotSpot 64-Bit Server VM (build 25.45-b02, mixed mode)
+$ java -version
+java version "1.8.0_51"
+Java(TM) SE Runtime Environment (build 1.8.0_51-b16)
+Java HotSpot(TM) 64-Bit Server VM (build 25.51-b03, mixed mode)
 ----
 
 When multiple JDK or JRE versions are installed, you need to ensure
@@ -55,10 +55,10 @@ explored in the previous chapter.
 
 ==== Downloading {oss}
 
-To download the latest {oss} distribution, go to 
+To download the latest {oss} distribution, go to
 http://www.sonatype.org/nexus/go[http://www.sonatype.org/nexus/go]
 and choose Nexus (TGZ) or Nexus (ZIP) shown in
-<<fig-installing-open-source-dl>>. This will download a a Gzip TAR (TGZ) 
+<<fig-installing-open-source-dl>>. This will download a a Gzip TAR (TGZ)
 or a ZIP with identical contents. Your download will be file named
 +nexus-2.9.0-02-bundle.zip+ or +nexus-2.9.0-02-bundle.tar.gz+.
 
@@ -103,21 +103,21 @@ hard-coded directories and will run from any directory. If you
 downloaded the {oss} ZIP archive, run:
 
 ----
-$ unzip nexus-3.0.0-b2015061001-bundle.zip
+$ unzip nexus-3.0.0-b2015091801-bundle.zip
 ----
 
 Or, if you downloaded the GZip'd TAR archive, run:
 
 ----
-$ tar xvzf nexus-3.0.0-b2015061001-bundle.tar.gz
+$ tar xvzf nexus-3.0.0-b2015091801-bundle.tar.gz
 ----
 
 ////
-For {pro} the equivalent commands would be 
+For {pro} the equivalent commands would be
 
 ----
-$ unzip nexus-professional-3.0.0-b2015061001-bundle.zip
-$ tar xvzf nexus-professional-3.0.0-b2015061001-bundle.tar.gz
+$ unzip nexus-professional-3.0.0-b2015091801-bundle.zip
+$ tar xvzf nexus-professional-3.0.0-b2015091801-bundle.tar.gz
 ----
 ////
 
@@ -127,14 +127,14 @@ Alternatively you can use your favourite file archiver and extraction tool.
 If you are installing Nexus on a server, you should use a directory
 other than your users home directory. On a Unix machine, we assume
 that Nexus is installed in +/opt+ with a symbolic link +/opt/nexus+ to
-the versioned +/opt/nexus-3.0.0-b2015061001+ directory. The following
+the versioned +/opt/nexus-3.0.0-b2015091801+ directory. The following
 commands can create this setup:
 
 ----
-$ sudo cp nexus-3.0.0-b2015061001-bundle.tar.gz /opt
+$ sudo cp nexus-3.0.0-b2015091801-bundle.tar.gz /opt
 $ cd /opt
-$ sudo tar xvzf nexus-3.0.0-b2015061001-bundle.tar.gz
-$ ln -s nexus-3.0.0-b2015061001 nexus
+$ sudo tar xvzf nexus-3.0.0-b2015091801-bundle.tar.gz
+$ ln -s nexus-3.0.0-b2015091801 nexus
 ----
 ////
 Using a generic symbolic link +nexus+
@@ -149,7 +149,7 @@ to run Nexus as a specific user you could install into the
 +AppData\Local+ directory of that users home directory. Otherwise
 simply use e.g., +C:\nexus+ or something similar.
 
-The Nexus application directory +nexus-3.0.0-b2015061001+ requires
+The Nexus application directory +nexus-3.0.0-b2015091801+ requires
 another directory named +sonatype-work+. This directory contains all
 of the repository and configuration data for Nexus and is stored
 outside of the Nexus installation directory to make it easier to
@@ -159,7 +159,7 @@ By default, this directory is a sibling to the Nexus
 installation directory. If you installed Nexus in the +/opt+
 directory it would also contain a +sonatype-work+ subdirectory with a
 nested +nexus+ directory containing all of the content and
-configuration. 
+configuration.
 
 ////
 The location of the +sonatype-work+ directory can be
@@ -170,12 +170,12 @@ customized by altering the nexus-work property in
 === Upgrading Nexus
 
 Since Nexus separates its configuration and data storage from the
-application, it is easy to upgrade an existing Nexus installation. 
+application, it is easy to upgrade an existing Nexus installation.
 
 To upgrade Nexus, unpack the Nexus archive in the directory that
 contains the existing Nexus installation. Once the archive is
 unpacked, the new Nexus application directory should be a sibling to
-your existing +sonatype-work/+ directory. 
+your existing +sonatype-work/+ directory.
 
 If you have defined a symbolic link for the version of Nexus to use,
 stop the server and change that to point at the new Nexus application
@@ -233,10 +233,11 @@ Nexus is fully started once you see a message like the following in the log:
 
 [subs="attributes"]
 ----
-[jetty-main-1] *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer -
+-------------------------------------------------
 
-Started Sonatype Nexus PRO {version-exact}
+Started Sonatype Nexus OSS {version-exact}
 
+-------------------------------------------------
 ----
 
 At this point, Nexus will be listening on all IP addresses that are
@@ -261,8 +262,8 @@ running Nexus can be stopped with `system:shutdown`.
 When first starting {pro} you are presented with a
 form that allows you to request a trial activation. This page
 displayed in <<fig-installing-trial-form>> contains a link to
-the license activation screen in 
-<<fig-installing-license-activation>>. 
+the license activation screen in
+<<fig-installing-license-activation>>.
 
 [[fig-installing-trial-form]]
 .Nexus Trial Activation Form
@@ -275,20 +276,20 @@ license file, you can use the same screen to upload the file and
 register your license.
 
 [[fig-installing-license-activation]]
-.Nexus License Activation 
+.Nexus License Activation
 image::figs/web/installing-license-activation.png[scale=50]
 
 Once you have agreed to the End User License Agreement you will be
-directed to the Sonatype {pro} Welcome screen displayed in 
+directed to the Sonatype {pro} Welcome screen displayed in
 <<fig-installing-pro-eval-welcome>>.
 
 [[fig-installing-pro-eval-welcome]]
-.Sonatype {pro} Welcome Screen 
+.Sonatype {pro} Welcome Screen
 image::figs/web/installing-pro-eval-welcome.png[scale=50]
 
 Click on the 'Log In' link in the upper
 right-hand corner of the web page, and you should see the login dialog
-displayed in <<fig-installing-nexus-login-dialog>>. 
+displayed in <<fig-installing-nexus-login-dialog>>.
 
 TIP: The default administrator username and password combination is
 +admin+ and +admin123+.
@@ -440,16 +441,16 @@ operating systems.
 ==== Running as a Service on Linux
 
 You can configure Nexus to start automatically by copying the +nexus+
-script to the +/etc/init.d+ directory. On a Linux system 
+script to the +/etc/init.d+ directory. On a Linux system
 perform the following operations as the root user:
 
 . Create a +nexus+ user with sufficient access rights to run the
-service 
+service
 
 . Copy either +$NEXUS_HOME/bin/nexus+  to +/etc/init.d/nexus+ or
 create a symlink
 
-. Make the +/etc/init.d/nexus+ script executable - 
+. Make the +/etc/init.d/nexus+ script executable -
 +
 ----
 chmod 755 /etc/init.d/nexus
@@ -457,7 +458,7 @@ chmod 755 /etc/init.d/nexus
 
 . Edit this script changing the following variables:
 
-.. Change +NEXUS_HOME+ to the absolute folder location (e.g., 
+.. Change +NEXUS_HOME+ to the absolute folder location (e.g.,
 +NEXUS_HOME="/usr/local/nexus"+)
 
 .. Set the +RUN_AS_USER+ to +nexus+ or any other user with restricted
@@ -478,7 +479,7 @@ defaulting to +sonatype-work/nexus+, to the +nexus+ user that will run
 the application.
 
 . If Java is not on the default path for the user running Nexus, add
-a +JAVA_HOME+ variable which points to your local Java installation and 
+a +JAVA_HOME+ variable which points to your local Java installation and
 add a +$JAVA_HOME/bin+ to the +PATH+.
 
 ifdef::promo[]
@@ -539,7 +540,7 @@ Nexus installed in +/opt+ is shown <<ex-nexus-plist>>.
 .A sample com.sonatype.nexus.plist file
 ----
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" 
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
     "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
@@ -568,7 +569,7 @@ sudo chmod 644 /Library/LaunchDaemons/com.sonatype.nexus.plist
 
 TIP: Consider setting up a different user to run Nexus and adapt
 permissions and the RUN_AS_USER setting in the nexus startup script.
- 
+
 With this setup Nexus will start as a service at boot time. To
 manually start it after the configuration you can use
 
@@ -626,16 +627,16 @@ www.somecompany.com virtual host. Include the following to expose
 Nexus via mod_proxy at http://www.somecompany.com/.
 
 ----
-ProxyRequests Off 
-ProxyPreserveHost On 
+ProxyRequests Off
+ProxyPreserveHost On
 
-<VirtualHost *:80> 
-  ServerName www.somecompany.com 
-  ServerAdmin admin@somecompany.com 
+<VirtualHost *:80>
+  ServerName www.somecompany.com
+  ServerAdmin admin@somecompany.com
   ProxyPass / http://localhost:8081/
   ProxyPassReverse / http://localhost:8081/
-  ErrorLog logs/somecompany/nexus/error.log 
-  CustomLog logs/somecompany/nexus/access.log common 
+  ErrorLog logs/somecompany/nexus/error.log
+  CustomLog logs/somecompany/nexus/access.log common
 </VirtualHost>
 ----
 
@@ -657,7 +658,7 @@ has been configured for you will also need to add a ProxyPassReverseCookiePath.
   ProxyPassReverseCookiePath / /nexus
 ----
 
-When your reverse proxy is configured to serve https, but it proxies with plain 
+When your reverse proxy is configured to serve https, but it proxies with plain
 http to your Nexus instance, an additional header is required. This will ensure
 Nexus renders absolute URLs using the correct protocol. When setting this header,
 make sure that in <<fig-config-administration-application-server>> 'Force Base URL'
@@ -691,7 +692,7 @@ click on Upload.
 
 [[fig-installations-licensing]]
 .{pro} Licensing Panel
-image::figs/web/repository-manager_license.png[scale=50] 
+image::figs/web/repository-manager_license.png[scale=50]
 
 Once you have selected a license and uploaded it to Nexus, {pro}
  will display a dialog box with the {pro}
@@ -700,7 +701,7 @@ you agree with the terms and conditions, click on "I Agree".
 
 [[fig-installation-eula]]
 .{pro} End User License Agreement
-image::figs/web/installing_license_eula.png[scale=50] 
+image::figs/web/installing_license_eula.png[scale=50]
 
 Once you have agreed to the terms and conditions contained in the End
 User License Agreement, {pro} will then display a dialog
@@ -735,8 +736,8 @@ will have all functionality disabled except for the ability to install
 a new license file.
 
 
-tbd prior to GA maybe.. 
- 
+tbd prior to GA maybe..
+
 [[install-sect-dirs]]
 === Nexus Directories
 
@@ -755,7 +756,7 @@ custom configuration and repository data in +sonatype-work/+.
 The Sonatype Work directory +sonatype-work+ is created as a sibling to
 the +nexus+ application directory, and the location of this directory
 can be configured via the +nexus.properties+ file which is described in
-<<sect-installing-conf-dir>>. 
+<<sect-installing-conf-dir>>.
 
 
 The Sonatype Work Nexus directory +sonatype-work/nexus/+ contains a
@@ -795,7 +796,7 @@ assembled for problem reporting. Since this feature has been removed
 this folder can be safely deleted.
 
 felix-cache/:: This directory holds the cache for the OSGi framework
-Apache Felix, which is used for the Nexus plugin architecture.  
+Apache Felix, which is used for the Nexus plugin architecture.
 
 health-check/:: Holds cached reports from the Repository Health Check
 plugin.
@@ -825,9 +826,9 @@ installed plugins from third parties as documented in
 proxy/:: Stores data about the files contained in a remote
 repository. Each proxy repository has a subdirectory in the
 +proxy/attributes/+ directory and every file that Nexus has interacted
-with in the remote repository has an XML file that captures the last 
-requested time stamp, the remote URL for a particular file, the length 
-of the file, the digests for a particular file, and others. If you need 
+with in the remote repository has an XML file that captures the last
+requested time stamp, the remote URL for a particular file, the length
+of the file, the digests for a particular file, and others. If you need
 to backup the local cached contents of
 a proxy repository, you should also back up the contents of the proxy
 repository's directory under +proxy/attributes/+
@@ -842,7 +843,7 @@ back-up the contents of a repository, you should back up the contents of
 the storage directory.
 
 support/:: The support zip archive documented in
-<<support-tools>> is created and stored in this folder.  
+<<support-tools>> is created and stored in this folder.
 
 template-store/:: Contains the Maven settings template files
 documented in detail in <<settings>>.
@@ -900,7 +901,7 @@ OSGi Bundle repository plugin in {pro}.
 procurement.xml:: Contains configuration for the {pro}curement
 plugin in {pro}.
 
-security-configuration.xml:: Contains global security configuration. 
+security-configuration.xml:: Contains global security configuration.
 
 security.xml:: Contains security configuration about users and roles.
 
@@ -923,7 +924,7 @@ nexus.properties:: This file contains configuration variables which
 control the behavior of Nexus and the Jetty servlet container. If you
 are customizing the port and host that Nexus will listen to, you would
 change the +application-port+ and +application-host+ properties defined in
-this file. If you wanted to customize the location of the +sonatype-work+ 
+this file. If you wanted to customize the location of the +sonatype-work+
 directory, you would modify the value of the +nexus-work+ property
 in this configuration file. Changing +nexus-webapp-context-path+ allows
 you to configure the server context path Nexus will be available at.
@@ -942,15 +943,15 @@ special properties located in +NEXUS_HOME/bin/jsw/conf/wrapper.conf+.
 +
 ----
 wrapper.app.parameter.1=./conf/jetty.xml
-wrapper.app.parameter.2=./conf/jetty-requestlog.xml 
-# add more indexed app parameters...  
+wrapper.app.parameter.2=./conf/jetty-requestlog.xml
+# add more indexed app parameters...
 ----
 +
 Any of the files located at +NEXUS_HOME/conf/jetty-*.xml+ can be
 specified as part of the +wrapper.app.parameter.n+ property, where n
 is the next highest number not already used. The
 http://wrapper.tanukisoftware.com/doc/english/prop-app-parameter-n.html[Java
-Service Wrapper] 
+Service Wrapper]
 documentation contains more information about this
 property. This setup allows for a simple method to add configuration for
 https, JMX and others by adjusting a few properties.
@@ -965,10 +966,10 @@ as they were intended to be standalone files that could not be merged
 into other files.
 
 
-tbd .. maybe move to other chapter 
+tbd .. maybe move to other chapter
 
 [[monitoring]]
-=== Monitoring Nexus 
+=== Monitoring Nexus
 
 Now that your Nexus instance is up and running, you need to ensure
 that it stays that way. Typically this is done on a number of levels
@@ -990,12 +991,12 @@ potentially be integrated into the usage of the more generic tools for
 monitoring, log capturing and analysis.
 
 A host of information from the operating system, the Java Virtual
-Machine and Nexus itself is available via the 
+Machine and Nexus itself is available via the
 <<support-tools, Support Tools>>, which allow you to inspect the value directly in
 the Nexus user interface.
 
 [[general-logging]]
-==== General Logging 
+==== General Logging
 
 Nexus logs events in the +sonatype-work/nexus/logs/nexus.log+ file. In
 addition a dedicated user interface to configure and inspect the log
@@ -1008,12 +1009,12 @@ is available. Further information about this interface can be found in
 
 Logging all access requests to Nexus allows you to gain a good
 understanding of the Nexus usage in your organization and the sources
-of these requests. 
+of these requests.
 
-For example, you will be able to tell if the main load is due to a CI 
-server  cluster or from your developers, based on the IP numbers of 
-the requests. You can also see the spread or requests and load across 
-different time zones. Also available for review are the URLs , API 
+For example, you will be able to tell if the main load is due to a CI
+server  cluster or from your developers, based on the IP numbers of
+the requests. You can also see the spread or requests and load across
+different time zones. Also available for review are the URLs , API
 calls, and features that are used in Nexus
 
 Requests access logging is enabled by default in Nexus 2.8 or higher
@@ -1027,10 +1028,10 @@ and can be changed to suit your requirements. If you change the file, a
 restart of Nexus is required for these changes to take effect.
 
 If you do not want to run access logging, you can disable it by
-commenting out the line 
+commenting out the line
 
 ----
-wrapper.app.parameter.2=conf/jetty-requestlog.xml 
+wrapper.app.parameter.2=conf/jetty-requestlog.xml
 ----
 
 in +bin/jsw/conf/wrapper.conf+.
