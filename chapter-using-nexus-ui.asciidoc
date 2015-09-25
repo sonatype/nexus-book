@@ -202,7 +202,7 @@ with the 'Group' search criteria and search for
 +org.sonatype.nexus+, but also +org.sonatype.nexus.plugins+ and many
 others.
 
-====  Generic Criteria
+====  Generic Attributes
 
 A number of criteria can be used with any repository format and
 returns results from all components in all repositories:
@@ -294,57 +294,36 @@ the respective path pattern.
 
 ==== Search Results
 
-Once you have provided your search terms in one or multiple criteria
-input fields, like the 'Keywords' criteria in the 'Search' feature
-view, the results become visible in the component list, with an
-example displayed in <<fig-search-results>>. The components are listed
-with their 'Name', 'Group', 'Version', 'Format' and 'Repository' and
-are sorted alphabetically by 'Name'.  Columns and sort order can be
-adjusted like in all other lists in Nexus. The top of the list
-includes a paging navigation with controls for the first, previous,
-next and last pages as well as a numeric page input and a refresh
-button.
+Once you have provided your search terms in one or multiple criteria input fields, like the 'Keywords' criteria in the
+'Search' feature view, the results become visible in the component list, with an example displayed in
+<<fig-search-results>>. The components are listed with their 'Name', 'Group', 'Version', 'Format', 'Repository', 'Age'
+and 'Popularity' information and are sorted alphabetically by 'Name'.  Columns and sort order can be adjusted like in
+all other lists in Nexus.
 
 [[fig-search-results]]
 .Results of an Component Search for +junit+
 image::figs/web/search-results.png[scale=35]
 
+
+The 'Age' column displays the age of the component.  The age of a component is typically calculated from the initial
+release to a repository -- typically a public repository such as the Central Repository. Since most Java components are
+published to the Central Repository when released, this age gives you a good indication of the actual time since the
+release of the component. For other repository formats and related upstream public repositories the availability of data
+may differ.
+
+The 'Popularity' column shows a relative popularity as compared to the other component versions. This can give you a
+good idea on the adoption rate of a new release. For example if a newer version has a high age value, but a low
+popularity compared to an older version, you might want to check the upstream project and see if there is any issues
+stopping other users from upgrading that might affect you as well. Another reason could be that the new version does not
+provide significant improvements to warrant an upgrade for most users.
+
+
 Selecting a component in the list changes to a display of the
-component attributes and the list of files associated to the component
-as shown in <<fig-search-results-component>>.
+component attributes documented in <<>>
 
-[[fig-search-results-component]]
-.Component Attributes and List of Associated Files
-image::figs/web/search-results-component.png[scale=35]
 
-Clicking on a row, representing a specific file switches to a specific
-view for a particular file, which displays further information about
-the file like the 'Name' and the 'Content Type'.
 
 ////
-The component detail view contains an overview with the 'Group' and
-'Name' identifiers.
-
-The 'Most popular version' displays the version that has the most
-downloads by all users accessing the Central Repository. This data can
-help with the selection of an appropriate version to use for a
-particular component version.
-
-Age:: The 'Age' column displays the age of the component version being
-available on the Central Repository. Since most components are
-published to the Central Repository when released, this age gives you
-a good indication of the actual time since the release of the
-component.
-
-Popularity:: The 'Popularity' column shows a relative popularity as
-compared to the other component versions. This can give you a good
-idea on the adoption rate of a new release. For example if a newer
-version has a high age value, but a low popularity compared to an
-older version, you might want to check the upstream project and see if
-there is any issues stopping other users from upgrading that might
-affect you as well. Another reason could be that the new version does
-not provide significant improvements to warrant an upgrade for most
-users.
 
 The 'Security Issues' column shows the number of known security issues
 for the specific component. The 'License Threat' column shows a colored
@@ -353,8 +332,6 @@ red indicating increased license threats. More information about both
 indicators can be seen in the 'Component Info' panel below the list of
 components for the specific component.
 
-The 'Download' column provides download links for all the available
-components.
 ////
 
 ==== Keyword Search
@@ -451,158 +428,64 @@ group for all the supported repository formats.
 
 Click on the Browse button image:figs/web/ui-browse-button-icon.png[scale=50] in the main toolbar to access the main
 menu on the 'Browse' menu and the 'Components' and 'Assets' menu items. The 'Component' as well as the 'Assets' feature
-views allow you to select a repository or repository group to browse.
+views allow you to select a repository or repository group to browse from the list of all repositories as displayed in
+<<fig-browse-components-repos>>.
 
-////
+[[fig-browse-components-repos]]
+.List of Repositories to Access for Component Browsing
+image::figs/web/browse-components-repos.png[scale=50]
 
-[[fig-nexus-browse-repo]]
-.Browsing a Repository Storage
-image::figs/web/repository-manager_browse-repositories.png[scale=50]
+Once you clicked on the row for a specific repository a list of components in the repository is displayed. It uses the
+same columns as the search results documented in <<search-components>>. You can filter the list content, change the rows
+and select ordering.
 
-
-The 'More' button on the top of the panel includes items for actions
-that are context-sensitive to your selection in the list below. E.g.,
-when a repository or a directory in a proxy repository is selected, it
-contains the 'View Remote' item. It will open up the remote repository
-in a new web browser window. On the other hand, when the selection is
-on a directory in a repository, and the current user has sufficient
-privileges, a 'Delete' button is available. 
-
-Once an actual file is selected in the list, the information panel
-appears below. It contains one or more tabs relevant to the
-selected file
-
-NOTE: When browsing a proxy repository you might notice that the tree
-doesn't contain all of the components in a repository. When you browse
-a proxy repository, Nexus is displaying the components that have been
-cached locally from the remote repository. If you don't see an
-component you expected to see through Nexus, it only means that Nexus
-has yet to cache the component locally. If you have enabled remote
-repository index downloads, Nexus will return search results that may
-include components not yet downloaded from the remote
-repository. <<fig-nexus-browse-repo>>, is just an example, and you may
-or may not have the example component available in your
-installation of Nexus.
-
-////
-
-
-////
-tbd revisit later to if this needs adding back in as separate
-section or whatever
-
-[[using-artifact-information]]
-=== Viewing the Component Information
+[[component-information]]
+=== Viewing Component Information
 {in} {oss}, {pro}, {proplus}
 
-Once you located a file by browsing a repository or via a search and
-selected it in the list, the panel below will, at a minimum, show the
-'Info' tab as visible in <<fig-using-artifact-information>>. If a file
-has not yet been locally cached, only the 'Path' in the repository
-will be display. Otherwise the additional information shown includes
-the 'Size' of the file in KB and the user name that triggered the
-download of the component to a proxy repository in the 'Uploaded by'
-field. 'Uploaded Date' as well as 'Last Modified Date' and 'SHA1' and
-'MD5' file checksum values are displayed. In addition the 'Contained
-In' field lists the repositories in which a file can be found.
+Once you located a component by browsing a repository or via a search and selected it in the list, you see the component
+information and a list of associated assets. An example is displayed in <<fig-component-information>>.  
 
-[[fig-using-artifact-information]]
-.Viewing the Component Info of commons-lang-2.6.jar
-image::figs/web/using-artifact-information.png[scale=60]
-////
+The information displayed includes the name and format of the repository that containss the component as well as the
+identifiers 'Group', 'Name' and 'Version'. The 'Most popular version' contains the version number of the same component
+that is most popular in its usage. This popularity data is provided by the Sonatype Data Services based on requests from
+the Central Repository and other data and not available for all components.
 
-////
-tbd add back in once reimplemented
+A list of one or more assets associated with the component is shown below the component information. Click on the row
+with the 'Name' of the asset you want to inspect to view the asset information documented in <<asset-information>>.
 
-[[using-artifact-maven-information]]
-=== Viewing the Maven Information
+[[fig-component-information]]
+.Component Information and List of Associated Assets
+image::figs/web/component-information.png[scale=35]
+
+[[asset-information]]
+=== Viewing Asset Information
 {in} {oss}, {pro}, {proplus}
 
-If the file you are examining is located in a Maven repository and an
-actual component a +.pom+ file or a +.jar+ file, you will see the
-'Maven' tab in the panels. As visible in
-<<fig-using-maven-information>>, the GAV parameters - 'Group',
-'Artifact', 'Version', 'Extension' and optionally 'Classifier' - are
-displayed above an 'XML' snippet identifying the component. You can use
-this snippet to add a dependency to the component file to your Maven
-project by adding it in your +pom.xml+ file.
+Asset information can be accessed by browsing assets directly or from a component information view. The 'Info' section
+for each assets contains a number of attributes about the specific asset.
 
-[[fig-using-maven-information]]
-.Viewing the Maven Information
-image::figs/web/using-maven-information.png[scale=60]
+Path:: the path to the asset in the repository
+Content type:: the MIME type of the asset
+FIle size:: the size of the file in KB
+Last updated:: the date and time when the asset was last updated
+Last accessed:: the date and time when the asset was last accessed
+Locally cached:: set to 'true' if the asset can be found in the Nexus server storage, 'false' indicates that the metadata
+about the asset is available in Nexus, while the asset itself has not been downloaded
+Blob reference:: a unique identifier pointing at the the binary blob representing the asset in the Nexus storage
+
+The 'Attributes' section contains further metadata about the asset related to 'Cache', 'Checksum' and 'Content_attributes'
+
+
+Assets can include format specific attributes displayed in additional sections. For example an asset in a Maven2
+repository has a 'Maven2' section with attributes for 'path', 'extension', 'baseVersion', 'groupId', 'artifactId' and
+'version'.
+
+[[fig-asset-information]]
+.Asset Information
+image::figs/web/asset-information.png[scale=35]
 ////
 
-
-////
-
-[[using-artifact-archive-browser]]
-=== Using the Artifact Archive Browser
-{in} {pro} -  {proplus}
-
-
-For binary components like jar files Nexus displays an 'Archive Browser'
-panel, as visible in <<fig-using-artifact-archive-browser>> that allows
-you to view the contents of the archive. Clicking on individual files
-in the browser will download them and potentially display them in your
-browser. This can be useful for quickly checking out the contents of
-an archive without manually downloading and extracting it.
-
-[[fig-using-artifact-archive-browser]]
-.Using the Archive Browser
-image::figs/web/using-archive-browser.png[scale=60]
-
-IMPORTANT: The archive browser is a feature of {pro}.
-
-
-[[using-sect-dependencies]]
-=== Viewing the Artifact Dependencies
-{in} {pro} -  {proplus}
-
-
-{pro} provides you with the ability to browse an
-component's dependencies. Using the component metadata found in an
-component's POM, Nexus will scan a repository or a repository group and
-attempt to resolve and display an component's dependencies. To view an
-component's dependencies, browse the repository storage or the
-repository index, select an component (or an component's POM), and then
-click on the 'Maven Dependency' tab.
-
-On the 'Maven Dependency' tab, you will see the following form elements:
-
-Repository:: When resolving an component's dependencies, Nexus will
-query an existing repository or repository group. In many cases it
-will make sense to select the same repository group you are
-referencing in your Maven settings. If you encounter any problems
-during the dependency resolution, you need to make sure that you are
-referencing a repository or a group that contains these dependencies.
-
-Mode:: An component's dependencies can be listed as either a tree or a
-list. When dependencies are displayed in a tree, you can inspect
-direct dependencies and transitive dependencies. This can come in
-handy if you are assessing an component, based on the dependencies it is
-going to pull into your project's build. When you list dependencies as
-a list, Nexus is going to perform the same process used by Maven to
-collapse a tree of dependencies into a list of dependencies using
-rules to merge and override dependency versions if there are any
-overlaps or conflicts.
-
-Once you have selected a repository to resolve against and a mode to
-display an component's dependencies, click on 'Resolve' as
-shown in <<fig-using-dependencies>>. Clicking on this button will
-start the process of resolving dependencies, depending on the number
-of components already cached by Nexus, this process can take anywhere
-from a few seconds to a minute. Once the resolution process is finished,
-you should see the component's dependencies, as shown in
-<<fig-using-dependencies>>.
-
-[[fig-using-dependencies]]
-.View an Artifact's Dependencies
-image::figs/web/using_dependencies.png[scale=60]
-
-Once you have resolved a component's dependencies, you can use the
-Filter text input to search for particular component dependencies.  If
-you double-click on a row in the tree or list of dependencies, you can
-navigate to other components within the Nexus interface.
 
 [[component-info]]
 === Viewing Component Security and License Information
@@ -765,95 +648,6 @@ enabling transitive dependency management.
 ////
 
 
-////
-
-tbd... this will be deleted I think 
-[[using-sect-feeds]]
-=== Browsing System Feeds
-
-Nexus provides feeds that expose system events. You can browse these
-feeds by clicking on 'System Feeds' under the 'Views/Repositories'
-menu.  Clicking on 'System Feeds' will show the panel in
-<<fig-repoman-system-feeds>>. You can use this simple interface to
-browse the most recent reports of component deployments, cached
-components, broken components, storage changes and other events that
-have occurred in Nexus.
-
-[[fig-repoman-system-feeds]]
-.Browsing Nexus System Feeds
-image::figs/web/repository-manager_system-feed.png[scale=70]
-
-These feeds can come in handy if you are working at a large
-organization with multiple development teams deploying to the same
-instance of Nexus. In such an arrangement, all developers in an
-organization can subscribe to the RSS feeds for New Deployed Artifacts
-as a way to ensure that everyone is aware when a new release has been
-pushed to Nexus. Exposing these system events as RSS feeds also opens
-the door to other, more creative uses of this information, such as
-connecting Nexus to external, automated testing systems. To access the
-RSS feeds for a specific feed, select the feed in the System Feeds
-view panel and then click on the Subscribe button. Nexus will then
-load the RSS feed in your browse and you can subscribe to the feed in
-your favorite RSS
-
-There are a number of system feeds available in the System Feeds view,
-and each has a URL that resembles the following URL:
-
-----
-http://localhost:8081/nexus/service/local/feeds/recentlyChangedFiles
-----
-
-The URLs can be amended with the parameters +from+ and +count+ to 
-specify the dataset viewed. E.g.  
-
-----
-http://localhost:8081/nexus/service/local/feeds/recentlyDeployedArtifacts?count=100
-----
-
-Where recentChanges would be replaced with the identifier of the feed
-you were attempting to read. Available system feeds include:
-
-- Authentication and Authorization Events
-
-- Broken components in all Nexus repositories
-
-- Broken files in all Nexus repositories
-
-- Error and Warning events
-
-- New components in all Nexus repositories
-
-- New cached components in all Nexus repositories
-
-- New cached files in all Nexus repositories
-
-- New cached release components in all Nexus repositories
-
-- New deployed components in all Nexus repositories
-
-- New deployed files in all Nexus repositories
-
-- New deployed release components in all Nexus repositories
-
-- New files in all Nexus repositories
-
-- New release components in all Nexus repositories
-
-- Recent component storage changes in all Nexus repositories
-
-- Recent file storage changes in all Nexus repositories
-
-- Recent release component storage changes in all Nexus repositories
-
-- Repository Status Changes in Nexus
-
-- System changes in Nexus
-////
-
-
-////
-
-////
 
 [[using-sect-user-profile]]
 === Working with Your User Profile
