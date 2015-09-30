@@ -884,9 +884,14 @@ attempt to locate an component in a remote repository. Nexus will
 periodically retest the remote repository and unblock the repository
 once it becomes available.
 
-Maximum component age:: Tells Nexus what that maximum age of a
-component is, before it retrieves a new version from the remote
-repository.  
+Maximum component age:: When the proxy receives a request for a component, it
+does not request a new version from the remote repository until the existing
+component is older than 'Maximum component age'.
+
+Maximum metadata age:: Nexus retrieves metadata from the remote repository.
+It will only retrieve updates to metadata after the 'Maximum metadata age'
+has been exceeded.  If the metadata is component metadata, it uses the longer
+of this value and 'Maximum component age' before rechecking.
 
 ////
 tbd once fixed..
@@ -972,11 +977,6 @@ connecting to this repository directly.
 Expiration Settings:: Nexus maintains a local cache of components and
 metadata, you can configure expiration parameters for a proxy
 repository. The expiration settings are:
-
-Metadata Max Age;; Nexus retrieves metadata from the remote
-repository. It will only retrieve updates to metadata after the
-'Metadata Max Age' has been exceeded. The default value for this
-setting is 1440 minutes (or 24 hours).
 
 Item Max Age;; Some items in a repository may be neither an artifact
 identified by the Maven GAV coordinates or metadata for such components. This
