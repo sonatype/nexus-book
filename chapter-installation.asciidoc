@@ -149,23 +149,20 @@ to run Nexus as a specific user you could install into the
 +AppData\Local+ directory of that users home directory. Otherwise
 simply use e.g., +C:\nexus+ or something similar.
 
-The Nexus application directory +nexus-3.0.0-b2015061001+ requires
-another directory named +sonatype-work+. This directory contains all
-of the repository and configuration data for Nexus and is stored
-outside of the Nexus installation directory to make it easier to
-upgrade to a newer version of Nexus.
 
-By default, this directory is a sibling to the Nexus
-installation directory. If you installed Nexus in the +/opt+
-directory it would also contain a +sonatype-work+ subdirectory with a
-nested +nexus+ directory containing all of the content and
-configuration. 
+The Nexus application directory +nexus-3.0.0-b2015061001+ includes a directory named +data+. This directory contains all
+of the repository and configuration data for Nexus. By default, this directory is nested within the Nexus-installation
+directory.
+
+If you desire to separate the application files from the actual data you can customize the location of the +data+
+directory. This can be achieved by setting the `nexus-work` property in the configuration file
+`etc/org.sonatype.nexus.cfg` e.g. to an absolute path:
+
+----
+nexus-work=/opt/nexus-data
+----
 
 ////
-The location of the +sonatype-work+ directory can be
-customized by altering the nexus-work property in
-+$NEXUS_HOME/conf/nexus.properties+.
-
 [[install-sect-upgrading]]
 === Upgrading Nexus
 
@@ -420,7 +417,7 @@ jetty-*.xml:: A number of configuration files for Eclipse Jetty
 org.apache.* and org.ops4j.*:: Various Karaf and OSGi related configuration files.
 
 org.sonatype.nexus.cfg:: Main configuration file for the Nexus application allowing you to configure aspects such as ports
-used for HTTP and HTTPS access as well as the context path and host.
+used for HTTP and HTTPS access, location of the data and configuration storage as well as the context path and host.
 
 system.properties:: Configuration parameters used for the JVM and application start up.
 
