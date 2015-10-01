@@ -66,7 +66,7 @@ sections detail:
 * Access information about used <<admin-system-bundles,Bundles>>
 * Advanced configuration of Nexus with <<admin-system-capabilities,Capabilities>>
 * <<admin-system-emailserver,Email/SMTP server configuration>>
-* <<admin-system-http,HTTP/HTTPS proxy server configuration>>
+* <<admin-system-http,HTP/HTTPS proxy server configuration>>
 * Configuration and management of automated maintenance <<admin-system-tasks,Tasks>>
 
 [[admin-system-bundles]]
@@ -258,14 +258,12 @@ serves from Nexus needs to be configured to allow Nexus to reach remote reposito
 .Configuring HTTP Request Settings
 image::figs/web/admin-system-http.png[scale=50]
 
-The HTTP configuration in 'User-agent customization' allows you to append a string to the +User-Agent+ HTTP header
-field. This can be a required customization by your proxy servers.
+User-agent customization:: The HTTP configuration in 'User-agent customization' allows you to append a string to the
++User-Agent+ HTTP header field. This can be a required customization by your proxy servers.
 
-The 'URL parameters' field can be used to add extra parameters to the URL of all +GET+ requests sent by Nexus to remote
-repositories. You can e.g., use this to add identifying information to requests.
-
-The amount of time Nexus will wait for a request to succeed when interacting with an external, remote repository can be
-configured with the 'Timeout' and 'Retry attempts' settings.
+Connection/Socket timeout and attempts:: The amount of time in seconds Nexus will wait for a request to succeed when
+interacting with an external, remote repository as well as the number of retry attempts to make when requests fail can
+be configured with these settings.
 
 If your Nexus instance needs to reach public repositories like the Central Repository via a proxy server, you can
 configure the connection to a proxy server for HTTP and a potentially a different for HTTPS connection. If you do not
@@ -279,12 +277,16 @@ typically secured via a HTTP/HTTPS proxy server for all outgoing internet traffi
 .Configuring HTTP Proxy Settings
 image::figs/web/admin-system-http-proxy.png[scale=50]
 
-You can specify the 'Host' and 'Port' of the HTTP or HTTPS proxy server and, optionally, the authentication details for
-'Username' and 'Password'. If a Windows NT LAN Manager is used to authenticate with the proxy server you can configure
-the needed connections details in 'NT LAN Host' and 'NT LAN Manager Domain'.
+You can specify the 'HTTP proxy host' and the 'HTTP proxy port' of the HTTP or HTTPS proxy server and, optionally, the
+'Authentication' details for 'Username' and 'Password'. If a Windows NT LAN Manager is used to authenticate with the
+proxy server you can configure the needed connections details in 'Windows NTKM hostname' and 'Windows NTLM domain'.
 
-In addition, you can configure a number of hosts that can be reached directly and do not need to go through the proxy in
-the 'Non Proxy Hosts' setting. <<fig-admin-system-http-proxy>> shows the 'HTTP Proxy' administration interface. The
+In addition, you can configure a number of hosts that can be reached directly and request to them do not need to go
+through the proxy in the 'Hosts to exclude from HTTP/HTTPS proxy' setting. You can add a hostname in the input box
+and add it with the `+` button. The `*` character can be used for wildcard matching for numerous host names allowing a
+setting such as `*.example.com`.
+
+<<fig-admin-system-http-proxy>> shows the 'HTTP Proxy' administration interface. The
 HTTPS configuration interface looks the same and is found below the HTTP configuration.
 
 [[admin-system-tasks]]
