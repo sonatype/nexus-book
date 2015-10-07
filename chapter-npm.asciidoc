@@ -205,6 +205,29 @@ on the https://www.npmjs.org/doc/cli/npm-publish.html[npm website].
 Once a package is published to the private registry in Nexus, any other developers or build servers that access Nexus
 via the repository group have instant access to the packages.
 
+[[npm-deprecating-packages]]
+=== Deprecating npm Packages
+
+Once your packages have been pushed to an npm hosted repository, you can mark them as deprecated. This is useful when a
+newer version of the package is available, and you want to warn people that the old package has reached end of life.
+
+The +npm deprecate+ command uses a +registry+ configuration value to inform where the package lives. To deprecate an
+existing package, use a command like the following:
+
+----
+npm deprecate --registry http://localhost:8081/repository/npm-internal/ testproject1@0.0.1 "This package is deprecated"
+----
+
+If you change your mind, you can reverse this action using the same command. To undeprecate a package, pass an empty
+string to the deprecate command:
+
+----
+npm deprecate --registry http://localhost:8081/repository/npm-internal/ testproject1@0.0.1 ""
+----
+
+In the Nexus web UI, to tell if a package is deprecated, open the asset details and look for a +deprecated+ attribute in
+the +packageJson+ section under Attributes.
+
 ////
 /* Local Variables: */
 /* ispell-personal-dictionary: "ispell.dict" */
