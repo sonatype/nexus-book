@@ -4,28 +4,22 @@
 [[concepts-introduction]]
 === Introduction
 
-Using the 'Repository Manager' Sonatype Nexus as well as the tools for
-'Software Supply Chain Automation' from Nexus Lifecycle requires an
-understanding of a few concepts and terms like 'Component',
-'Repository', 'Repository Format' and others. This chapter provides
-you with all the necessary background and knowledge as well as an idea
-of a progression in your usage of Nexus and {lifecycle}.
+Using the 'Repository Manager' Sonatype Nexus as well as the tools for 'Software Supply Chain Automation' from Nexus
+Lifecycle requires an understanding of a few concepts and terms like 'Component', 'Repository', 'Repository Format' and
+others. This chapter provides you with all the necessary background and knowledge as well as an idea of a progression in
+your usage of Nexus and {lifecycle}.
 
 === The Basics - Components, Repositories and Repository Formats
 
-Nexus and Nexus Lifecycle are all about working with components and
-repositories. 
+Nexus and Nexus Lifecycle are all about working with components and repositories.
 
 .So what are components?
 
-A component is a resource like a library or a framework that is used
-as part of your software application at runtime, integration or unit
-test execution time or required as part of your build process. It can
-also be an entire application or a static resource like an image
-without any dynamic behaviour.
+A component is a resource like a library or a framework that is used as part of your software application at runtime,
+integration or unit test execution time or required as part of your build process. It can also be an entire application
+or a static resource like an image without any dynamic behaviour.
 
-Typically these components are archives of a large variety of files
-including
+Typically these components are archives of a large variety of files including
 
 * Java byte code in class files
 * C object files
@@ -37,42 +31,30 @@ The archives are using  numerous formats such as
 
 * Java JAR, WAR, EAR formats
 * plain ZIP or .tar.gz files
-* Other package formats such as NuGet packages, Ruby gems, NPM
-  packages
-* Executable formats such as .exe or .sh files, Android APK files,
-  various installer formats, ...
+* Other package formats such as NuGet packages, Ruby gems, NPM packages
+* Executable formats such as .exe or .sh files, Android APK files, various installer formats, ...
 
-Components can be composed of multiple, nested components
-themselves. E.g., consider a Java web application packaged as a WAR
-component. It contains a number of JAR components and a number of
-JavaScript libraries. All of these are standalone components in other
-contexts and happen to be included as part of the WAR component.
+Components can be composed of multiple, nested components themselves. E.g., consider a Java web application packaged as
+a WAR component. It contains a number of JAR components and a number of JavaScript libraries. All of these are
+standalone components in other contexts and happen to be included as part of the WAR component.
 
-Components provide all the building blocks and features that allow a
-development team to create powerful applications by assembling them
-and adding their own business related components to create a
-full-fledged, powerful application.
+Components provide all the building blocks and features that allow a development team to create powerful applications by
+assembling them and adding their own business related components to create a full-fledged, powerful application.
 
-In different toolchains components are called 'artifact', 'package',
-'bundle', 'archive' and other terms. The concept and idea remains the
-same and 'component' is used as the independent, generic term.
+In different toolchains components are called 'artifact', 'package', 'bundle', 'archive' and other terms. The concept
+and idea remains the same and 'component' is used as the independent, generic term.
 
 .Components in Repositories
 
-A wide variety of components exists and more are continuously created
-by the open source community as well as proprietary vendors. There are
-libraries and frameworks written in various languages on different
-platforms that are used for application development every day.  It has
-become a default pattern to build applications by combining the
-features of multiple components with your own custom components
-containing your application code to create an application for a
-specific domain.
+A wide variety of components exists and more are continuously created by the open source community as well as
+proprietary vendors. There are libraries and frameworks written in various languages on different platforms that are
+used for application development every day.  It has become a default pattern to build applications by combining the
+features of multiple components with your own custom components containing your application code to create an
+application for a specific domain.
 
-In order to ease the consumption and usage of components, they are
-aggregated into collections of components. These are called a
-'repository' and are typically available on the internet as a service. On
-different platforms terms such as 'registry' and others are used for
-the same concept.
+In order to ease the consumption and usage of components, they are aggregated into collections of components. These are
+called a 'repository' and are typically available on the internet as a service. On different platforms terms such as
+'registry' and others are used for the same concept.
 
 Example for such repositories are
 
@@ -81,8 +63,7 @@ Example for such repositories are
 - RubyGems.org
 - npmjs.org
 
-and a number of others. Components in these repositories are accessed by
-numerous tools including
+and a number of others. Components in these repositories are accessed by numerous tools including
 
 * package managers like npm, nuget or gem, 
 * build tools such as Maven, Gradle, rake, grunt...
@@ -92,254 +73,184 @@ and many, many others.
 
 .Repositories have Formats
 
-The different repositories use different technologies to store and
-expose the components in them to client tools. This defines a
-'repository format' and as such is closely related to the tools
-interacting with the repository.
+The different repositories use different technologies to store and expose the components in them to client tools. This
+defines a 'repository format' and as such is closely related to the tools interacting with the repository.
 
-E.g. the Maven repository format relies on a specific directory
-structure defined by the identifiers of the components and a number of
-XML formatted files for metadata. Component interaction is performed
-via plain HTTP commands and some additional custom interaction with
-the XML files.
+E.g. the Maven repository format relies on a specific directory structure defined by the identifiers of the components
+and a number of XML formatted files for metadata. Component interaction is performed via plain HTTP commands and some
+additional custom interaction with the XML files.
 
-Other repository formats use databases for storage and REST API
-interactions, or different directory structures with format specific
-files for the metadata.
+Other repository formats use databases for storage and REST API interactions, or different directory structures with
+format specific files for the metadata.
 
 === An Example - Maven Repository Format
 
-Maven developers are familiar with the concept of a repository, since
-repositories are used by default. The primary type of a binary
-component in a Maven format repository is a JAR file containing Java
-byte-code. This is due to the Java background of Maven and the fact
-that the default component type is a JAR. Practically however, there
-is no limit to what type of component can be stored in a Maven
-repository. For example, you can easily deploy WAR or EAR
-files, source archives, Flash libraries and applications, Android
-archives or applications or Ruby libraries to a Maven repository.
+Maven developers are familiar with the concept of a repository, since repositories are used by default. The primary type
+of a binary component in a Maven format repository is a JAR file containing Java byte-code. This is due to the Java
+background of Maven and the fact that the default component type is a JAR. Practically however, there is no limit to
+what type of component can be stored in a Maven repository. For example, you can easily deploy WAR or EAR files, source
+archives, Flash libraries and applications, Android archives or applications or Ruby libraries to a Maven repository.
 
-Every software component is described by an XML document
-called a 'Project Object Model (POM)'. This POM contains information
-that describes a project and lists a project's dependencies -- the
-binary software components, which a given component depends upon for
-successful compilation or execution. 
+Every software component is described by an XML document called a 'Project Object Model (POM)'. This POM contains
+information that describes a project and lists a project's dependencies -- the binary software components, which a given
+component depends upon for successful compilation or execution.
 
-When Maven downloads a component like a dependency or a plugin from a
-repository, it also downloads that component's POM. Given a
-component's POM, Maven can then download any other components that
-are required by that component. 
+When Maven downloads a component like a dependency or a plugin from a repository, it also downloads that
+component's POM. Given a component's POM, Maven can then download any other components that are required by that
+component.
 
-Maven and other tools, such as Ivy or Gradle, which interact with a
-Maven repository to search for binary software components, model the
-projects they manage and retrieve software components on-demand from a
-repository. 
+Maven and other tools, such as Ivy or Gradle, which interact with a Maven repository to search for binary software
+components, model the projects they manage and retrieve software components on-demand from a repository.
 
 .The Central Repository
 
-When you download and install Maven without any customization, it
-retrieves components from the Central Repository. It serves millions
-of Maven users every single day. It is the default, built-in
-repository using the Maven repository format and is managed by
-Sonatype. Statistics about the size of the Central Repository are
-available at
+When you download and install Maven without any customization, it retrieves components from the Central Repository. It
+serves millions of Maven users every single day. It is the default, built-in repository using the Maven repository
+format and is managed by Sonatype. Statistics about the size of the Central Repository are available at
 http://search.maven.org/#stats[http://search.maven.org/#stats].
 
-The Central Repository is the largest repository for Java-based
-components. It can be easily used from other build tools as well. You
-can look at the Central Repository as an example of how Maven
-repositories operate and how they are assembled. Here are some of the
-properties of release repositories such as the Central Repository:
+The Central Repository is the largest repository for Java-based components. It can be easily used from other build tools
+as well. You can look at the Central Repository as an example of how Maven repositories operate and how they are
+assembled. Here are some of the properties of release repositories such as the Central Repository:
 
-Component Metadata:: All software components added to the Central
-Repository require proper metadata, including a Project Object Model
-(POM) for each component that describes the component itself and any
-dependencies that software component might have.
+Component Metadata:: All software components added to the Central Repository require proper metadata, including a
+Project Object Model (POM) for each component that describes the component itself and any dependencies that software
+component might have.
 
-Release Stability:: Once published to the Central Repository, a
-component and the metadata describing that component never
-change. This property of a 'release repository' like the Central
-Repository guarantees that projects that depend on releases will be
-repeatable and stable over time. While new software components are
-being published every day, once a component is assigned a release
-number on the Central Repository, there is a strict policy against
-modifying the contents of a software component after a release.
+Release Stability:: Once published to the Central Repository, a component and the metadata describing that component
+never change. This property of a 'release repository' like the Central Repository guarantees that projects that depend
+on releases will be repeatable and stable over time. While new software components are being published every day, once a
+component is assigned a release number on the Central Repository, there is a strict policy against modifying the
+contents of a software component after a release.
 
-Component Security:: The Central Repository contains cryptographic
-hashes and PGP signatures that can be used to verify the authenticity
-and integrity of software components served and supports connections
-in a secure manner via HTTPS.
+Component Security:: The Central Repository contains cryptographic hashes and PGP signatures that can be used to verify
+the authenticity and integrity of software components served and supports connections in a secure manner via HTTPS.
 
-Performance:: The Central Repository is exposed to the users globally
-via a high performance content delivery network of servers. 
+Performance:: The Central Repository is exposed to the users globally via a high performance content delivery network of
+servers.
 
-In addition to the Central Repository, there are a number of major
-organizations, such as Red Hat, Oracle or the Apache Software
-foundation, which maintain separate, additional repositories. Best
-practice to facilitate these available repositories is to install
-Nexus and use it to proxy and cache the contents on your own network.
+In addition to the Central Repository, there are a number of major organizations, such as Red Hat, Oracle or the Apache
+Software foundation, which maintain separate, additional repositories. Best practice to facilitate these available
+repositories is to install Nexus and use it to proxy and cache the contents on your own network.
 
 .Component Coordinates and the Repository Format
 
-Component coordinates create a unique identifier for a component.
-Maven coordinates use the following values: 'groupId', 'artifactId', 'version', and
-'packaging'. This set of coordinates is often referred to as a 'GAV'
-coordinate, which is short for 'Group, Artifact, Version
-coordinate'. The GAV coordinate standard is the foundation for Maven's
-ability to manage dependencies. Four elements of this coordinate
-system are described below:
+Component coordinates create a unique identifier for a component.  Maven coordinates use the following values:
+'groupId', 'artifactId', 'version', and 'packaging'. This set of coordinates is often referred to as a 'GAV' coordinate,
+which is short for 'Group, Artifact, Version coordinate'. The GAV coordinate standard is the foundation for Maven's
+ability to manage dependencies. Four elements of this coordinate system are described below:
 
-groupId:: A group identifier groups a set of components into a logical
-group. Groups are often designed to reflect the organization under
-which a particular software component is being produced. For example,
-software components being produced by the Maven project at the Apache
-Software Foundation are available under the groupId `org.apache.maven`.
+groupId:: A group identifier groups a set of components into a logical group. Groups are often designed to reflect the
+organization under which a particular software component is being produced. For example, software components being
+produced by the Maven project at the Apache Software Foundation are available under the groupId `org.apache.maven`.
 
-artifactId:: An 'artifactId' is an identifier for a software component
-and should be a descriptive name. The combination of 'groupId' and
-'artifactId' must be unique for a specific project.
+artifactId:: An 'artifactId' is an identifier for a software component and should be a descriptive name. The combination
+of 'groupId' and 'artifactId' must be unique for a specific project.
 
-version:: The version of a project ideally follows the established convention
-of http://semver.org[semantic versioning]. For example, if your
-simple-library component has a major release version of 1, a minor
-release version of 2, and point release version of 3, your version
-would be 1.2.3. Versions can also have alphanumeric qualifiers which
-are often used to denote release status. An example of such a
-qualifier would be a version like "1.2.3-BETA" where BETA signals a
-stage of testing meaningful to consumers of a software component.
+version:: The version of a project ideally follows the established convention of http://semver.org[semantic
+versioning]. For example, if your simple-library component has a major release version of 1, a minor release version of
+2, and point release version of 3, your version would be 1.2.3. Versions can also have alphanumeric qualifiers which are
+often used to denote release status. An example of such a qualifier would be a version like "1.2.3-BETA" where BETA
+signals a stage of testing meaningful to consumers of a software component.
 
-packaging:: Maven was initially created to handle JAR files, but a
-Maven repository is completely agnostic about the type of component it
-is managing. Packaging can be anything that describes any binary
-software format including `zip`, `nar`, `war`, `ear`, `sar`, `aar` and
-others.
+packaging:: Maven was initially created to handle JAR files, but a Maven repository is completely agnostic about the
+type of component it is managing. Packaging can be anything that describes any binary software format including `zip`,
+`nar`, `war`, `ear`, `sar`, `aar` and others.
 
-Tools designed to interact Maven repositories translate component
-coordinates into a URL which corresponds to a location in a Maven
-repository. If a tool such as Maven is looking for version `1.2.0` of
-the `commons-lang` JAR in the group `org.apache.commons`, this request is
-translated into:
+Tools designed to interact Maven repositories translate component coordinates into a URL which corresponds to a location
+in a Maven repository. If a tool such as Maven is looking for version `1.2.0` of the `commons-lang` JAR in the group
+`org.apache.commons`, this request is translated into:
 
 ----
 <repoURL>/org/apache/commons/commons-lang/1.2.0/commons-lang-1.2.0.jar
 ----
 
-Maven also downloads the corresponding POM for commons-lang
-1.2.0 from:
+Maven also downloads the corresponding POM for commons-lang 1.2.0 from:
 
 ----
 <repoURL>/org/apache/commons/commons-lang/1.2.0/commons-lang-1.2.0.pom
 ----
 
-This POM may contain references to other components, which are then
-retrieved from the same repository using the same URL patterns.
+This POM may contain references to other components, which are then retrieved from the same repository using the same
+URL patterns.
 
 .Release and Snapshot Repositories
 
-A Maven repository stores two types of components: releases and
-snapshots. Release repositories are for stable, static release
-components. Snapshot repositories are frequently updated repositories
-that store binary software components from projects under constant
-development.
+A Maven repository stores two types of components: releases and snapshots. Release repositories are for stable, static
+release components. Snapshot repositories are frequently updated repositories that store binary software components from
+projects under constant development.
 
-While it is possible to create a repository which serves both release
-and snapshot components, repositories are usually segmented into
-release or snapshot repositories serving different consumers and
-maintaining different standards and procedures for deploying
-components.  Much like the difference between a production network and
-a staging network, a release repository is considered a production
-network and a snapshot repository is more like a development or a
-testing network.  While there is a higher level of procedure and
-ceremony associated with deploying to a release repository, snapshot
-components can be deployed and changed frequently without regard for
-stability and repeatability concerns.
+While it is possible to create a repository which serves both release and snapshot components, repositories are usually
+segmented into release or snapshot repositories serving different consumers and maintaining different standards and
+procedures for deploying components.  Much like the difference between a production network and a staging network, a
+release repository is considered a production network and a snapshot repository is more like a development or a testing
+network.  While there is a higher level of procedure and ceremony associated with deploying to a release repository,
+snapshot components can be deployed and changed frequently without regard for stability and repeatability concerns.
 
 The two types of components managed by a repository manager are:
 
-Release:: A release component is a component which was created by a
-specific, versioned release. For example, consider the `1.2.0` release
-of the `commons-lang` library stored in the Central
-Repository. This release component, `commons-lang-1.2.0.jar`, and the
-associated POM, `commons-lang-1.2.0.pom`, are static objects which will
-never change in the Central Repository. Released components are
-considered to be solid, stable, and perpetual in order to guarantee
-that builds which depend upon them are repeatable over time. The
-released JAR component is associated with a PGP signature, an MD5 and
-SHA checksum which can be used to verify both the authenticity and
-integrity of the binary software component.
+Release:: A release component is a component which was created by a specific, versioned release. For example, consider
+the `1.2.0` release of the `commons-lang` library stored in the Central Repository. This release component,
+`commons-lang-1.2.0.jar`, and the associated POM, `commons-lang-1.2.0.pom`, are static objects which will never change
+in the Central Repository. Released components are considered to be solid, stable, and perpetual in order to guarantee
+that builds which depend upon them are repeatable over time. The released JAR component is associated with a PGP
+signature, an MD5 and SHA checksum which can be used to verify both the authenticity and integrity of the binary
+software component.
 
-Snapshot:: Snapshot components are components generated during the
-development of a software project. A Snapshot component has both a
-version number such as `1.3.0` or `1.3` and a timestamp in its
-name. For example, a snapshot component for `commons-lang 1.3.0` might
-have the name `commons-lang-1.3.0-20090314.182342-1.jar` the associated
-POM, MD5 and SHA hashes would also have a similar name.  To facilitate
-collaboration during the development of software components, Maven and
-other clients that know how to consume snapshot components from a
-repository also know how to interrogate the metadata associated with a
-Snapshot component to retrieve the latest version of a Snapshot
-dependency from a repository.
+Snapshot:: Snapshot components are components generated during the development of a software project. A Snapshot
+component has both a version number such as `1.3.0` or `1.3` and a timestamp in its name. For example, a snapshot
+component for `commons-lang 1.3.0` might have the name `commons-lang-1.3.0-20090314.182342-1.jar` the associated POM,
+MD5 and SHA hashes would also have a similar name.  To facilitate collaboration during the development of software
+components, Maven and other clients that know how to consume snapshot components from a repository also know how to
+interrogate the metadata associated with a Snapshot component to retrieve the latest version of a Snapshot dependency
+from a repository.
 
-A project under active development produces snapshot components that
-change over time. A release is comprised of components which will
-remain unchanged over time.
+A project under active development produces snapshot components that change over time. A release is comprised of
+components which will remain unchanged over time.
 
-Looking at the Maven repository format and associated concepts and
-ideas allowed you grasp some of the details and intricacies involved
-with different tools and repository formats, that will help you
-appreciate the need for <<repoman, repository management>>.
+Looking at the Maven repository format and associated concepts and ideas allowed you grasp some of the details and
+intricacies involved with different tools and repository formats, that will help you appreciate the need for <<repoman,
+repository management>>.
 
 [[repoman]]
 === Repository Management
 
-The proliferation of different repository formats and tools accessing
-them as well as the emergence of more publicly available
-repositories has triggered the need to manage access and usage of
-these repositories and the components they contain.
+The proliferation of different repository formats and tools accessing them as well as the emergence of more publicly
+available repositories has triggered the need to manage access and usage of these repositories and the components they
+contain.
 
-In addition, hosting your own private repositories for internal
-components has proven to be a very efficient methodology to exchange
-components during all phases of the software development life
-cycle. It is considered a best practice at this stage.
+In addition, hosting your own private repositories for internal components has proven to be a very efficient methodology
+to exchange components during all phases of the software development life cycle. It is considered a best practice at
+this stage.
 
-The task of managing all the repositories your development teams
-interact with can be supported by the use of a dedicated server
-application - a repository manager.
+The task of managing all the repositories your development teams interact with can be supported by the use of a
+dedicated server application - a repository manager.
 
 Put simply, a repository manager provides two core features:
 
-* the ability to proxy a remote repository and cache components saving
-  both bandwidth and time required to retrieve a software component
-  from a remote repository repeatedly, and
+* the ability to proxy a remote repository and cache components saving both bandwidth and time required to retrieve a
+  software component from a remote repository repeatedly, and
 
-* the ability the host a repository providing an organization with a
-  deployment target for internal software components.
+* the ability the host a repository providing an organization with a deployment target for internal software components.
 
-Just as Source Code Management (SCM) tools are designed to manage
-source code, repository managers have been designed to manage and
-track external dependencies and components generated by your build.
+Just as Source Code Management (SCM) tools are designed to manage source code, repository managers have been designed to
+manage and track external dependencies and components generated by your build.
 
-Repository managers are an essential part of any enterprise or
-open-source software development effort, and they enable greater
-collaboration between developers and wider distribution of software,
-by facilitating the exchange and usage of binary components.
+Repository managers are an essential part of any enterprise or open-source software development effort, and they enable
+greater collaboration between developers and wider distribution of software, by facilitating the exchange and usage of
+binary components.
 
-Once you start to rely on repositories, you realize how easy it is to
-add a dependency on an open source software library available in a
-public repository, and you might start to wonder how you can provide a
-similar level of convenience for your own developers. When you install
-a repository manager, you are bringing the power of a repository like
-the Central Repository into your organization. You can use it to proxy
-the Central Repositories and other repositories, and host your own
-repositories for internal and external use. 
+Once you start to rely on repositories, you realize how easy it is to add a dependency on an open source software
+library available in a public repository, and you might start to wonder how you can provide a similar level of
+convenience for your own developers. When you install a repository manager, you are bringing the power of a repository
+like the Central Repository into your organization. You can use it to proxy the Central Repositories and other
+repositories, and host your own repositories for internal and external use.
 
 .Capabilities of a Repository Manager
 
-In addition to these two core features, a repository manager can
-support the following use cases: 
+In addition to these two core features, a repository manager can support the following use cases:
 
-* allows you to manage binary software components through the software
-development lifecycle, 
+* allows you to manage binary software components through the software development lifecycle,
 * search and catalogue software components, 
 * control component releases with rules and add automated notifications 
 * integrate with external security systems, such as LDAP or Atlassian Crowd
@@ -354,72 +265,54 @@ development lifecycle,
 
 Using a repository manager provides a number of benefits including:
 
-* improved software build performance due to faster component download
-  off the local repository manager
+* improved software build performance due to faster component download off the local repository manager
 * reduced bandwidth usage due to component caching
-* higher predictability and scalability due to limited dependency on
-  external repositories
-* increased understanding of component usage due to centralized
-  storage of all used components
-* simplified developer configuration due to central access
-  configuration to remote repositories and components on the
+* higher predictability and scalability due to limited dependency on external repositories
+* increased understanding of component usage due to centralized storage of all used components
+* simplified developer configuration due to central access configuration to remote repositories and components on the
   repository manager
-* unified method to provide components to consumers reducing
-complexity overheads
-* improved collaboration due the simplified exchange of binary
-  components 
+* unified method to provide components to consumers reducing complexity overheads
+* improved collaboration due the simplified exchange of binary components
 
 [[supply-chain]]
 === Software Supply Chain Automation
 
-Once you adopting a repository manager as a central point of of
-storage and exchange for all component usage, the next step is expand
-its use in your efforts to automate and manage the software supply
-chain throughout your software development lifecycle.
+Once you adopting a repository manager as a central point of of storage and exchange for all component usage, the next
+step is expand its use in your efforts to automate and manage the software supply chain throughout your software
+development lifecycle.
 
-Modern software development practices have shifted dramatically from
-large efforts of writing new code to the usage of components to
-assemble applications. This approach limits the amount of code
-authorship to the business-specific aspects of your software. 
+Modern software development practices have shifted dramatically from large efforts of writing new code to the usage of
+components to assemble applications. This approach limits the amount of code authorship to the business-specific aspects
+of your software.
 
-A large number of open source components in the form of libraries,
-reusable widgets or whole applications, application servers and others
-are now available featuring very high levels of quality and feature
-sets that could not be implemented as a side effect of your business
-application development. For example creating a new web application
-framework and business workflow system just to create a website with a
-publishing workflow would be extremely inefficient.
+A large number of open source components in the form of libraries, reusable widgets or whole applications, application
+servers and others are now available featuring very high levels of quality and feature sets that could not be
+implemented as a side effect of your business application development. For example creating a new web application
+framework and business workflow system just to create a website with a publishing workflow would be extremely
+inefficient.
 
-Development starts with the selection of suitable components for your
-projects based on comprehensive information about the components and
-their characteristics e.g., in terms of licenses used or known
-security vulnerabilities available in {pro}. Besides focusing on being
-a repository manager it includes features, such as the display of
-security vulnerabilities as well as license analysis results within
-search results and the Repository Health Check reports for a proxy
-repository.
+Development starts with the selection of suitable components for your projects based on comprehensive information about
+the components and their characteristics e.g., in terms of licenses used or known security vulnerabilities available in
+{pro}. Besides focusing on being a repository manager it includes features, such as the display of security
+vulnerabilities as well as license analysis results within search results and the Repository Health Check reports for a
+proxy repository.
 
-Software supply chain automation progresses through your daily
-development efforts, your continuous integration builds and your
-release processes all the way to your applications deployed in
-production environments at your clients or your own infrastructure.
+Software supply chain automation progresses through your daily development efforts, your continuous integration builds
+and your release processes all the way to your applications deployed in production environments at your clients or your
+own infrastructure.
 
-{lifecycle} provides a number of tools to improve your component usage
-in your software supply chain allowing you to automate your processes
-to ensure high quality output, while increasing your development speed
-towards continuous deployment procedures. These include:
+{lifecycle} provides a number of tools to improve your component usage in your software supply chain allowing you to
+automate your processes to ensure high quality output, while increasing your development speed towards continuous
+deployment procedures. These include:
 
-- integration with common development environments like the Eclipse
-  IDE
-- plugins for continuous integration servers such as Jenkins, Hudson
-or Eclipse
+- integration with common development environments like the Eclipse IDE
+- plugins for continuous integration servers such as Jenkins, Hudson or Eclipse
 - visualizations in quality assurance tools like SonarQube
 - command line tools for custom integrations
 - notifications to monitor component flows
 
-{lifecycle} enables you to ensure the integrity of the modern software
-supply chain, amplifying the benefits of modern development
-facilitating component usage, while reducing associated risks.
+{lifecycle} enables you to ensure the integrity of the modern software supply chain, amplifying the benefits of modern
+development facilitating component usage, while reducing associated risks.
 
 ////
 /* Local Variables: */
