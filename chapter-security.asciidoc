@@ -5,27 +5,22 @@
 [[security-introduction]]
 === Introduction
 
-Nexus uses role-based access control that gives administrators
-very fine-grained control over user rights to
+Nexus uses role-based access control that gives administrators very fine-grained control over user rights to
 
 * read from a repository or a subset of repositories,
 * administer the Nexus server or parts of the Nexus configuration,
 * access specific parts of the user interface,
 * deploy to repositories or even just specific sections of a repository.
 
-The default configuration of Nexus ships with roles and users with a
-standard set of permissions. As your security requirements evolve,
-you will likely need to customize security settings to create protected
-repositories for multiple departments or development groups. Nexus
-provides a security model that can adapt to any scenario.
+The default configuration of Nexus ships with roles and users with a standard set of permissions. As your security
+requirements evolve, you will likely need to customize security settings to create protected repositories for multiple
+departments or development groups. Nexus provides a security model that can adapt to any scenario.
 
 This chapter covers all aspects of security with Nexus including
 
-* user account and access right management related to Nexus user
-  interface as well as to component access documented in
+* user account and access right management related to Nexus user interface as well as to component access documented in
   <<privileges>>, <<roles>> and <<users>>,
-* selection of security backend systems documented <<realms>>
-  including the built-in system as well as LDAP,
+* selection of security backend systems documented <<realms>> including the built-in system as well as LDAP,
 ////
 , Atlassian Crowd and others
 ////
@@ -35,95 +30,75 @@ This chapter covers all aspects of security with Nexus including
 TBD add more as applicable
 ////
 
-Security-related configuration can be performed with the feature views
-available via the 'Security' section of the 'Administration' main
-menu. Many of the features shown in this section are only available to
-users with the necessary privileges to access them.
+Security-related configuration can be performed with the feature views available via the 'Security' section of the
+'Administration' main menu. Many of the features shown in this section are only available to users with the necessary
+privileges to access them.
 
-Nexus' role-based access control system is backed by different
-authentication and authorizations systems as documented in <<realms>>
-and designed around the following security concepts:
+Nexus' role-based access control system is backed by different authentication and authorizations systems as documented
+in <<realms>> and designed around the following security concepts:
 
-Privileges:: <<privileges, Privileges>> are rights to read, update,
-create, or manage resources and perform operations related to the
-Nexus user interface as well as the components managed by Nexus in the
-various repositories. Nexus ships with a set of core privileges that
-cannot be modified.
+Privileges:: <<privileges, Privileges>> are rights to read, update, create, or manage resources and perform operations
+related to the Nexus user interface as well as the components managed by Nexus in the various repositories. Nexus ships
+with a set of core privileges that cannot be modified.
 ////
- and you can create new privileges to allow for
-fine-grained targeting of role and user permissions for specific
+ and you can create new privileges to allow for fine-grained targeting of role and user permissions for specific
 repositories.
 ////
 
-Roles:: Privileges can be grouped into collections called <<roles,
-roles>> to make it easier to define privileges common to certain
-classes of users. For example, administrative users will all have
-similar sets of permissions. Instead of assigning individual
-privileges to individual users, you use roles to make it easier to
-manage users with similar sets of privileges. A role has one or more
-privileges and/or one or more roles.
+Roles:: Privileges can be grouped into collections called <<roles, roles>> to make it easier to define privileges common
+to certain classes of users. For example, administrative users will all have similar sets of permissions. Instead of
+assigning individual privileges to individual users, you use roles to make it easier to manage users with similar sets
+of privileges. A role has one or more privileges and/or one or more roles.
 
-Users:: <<users, Users>> can be assigned one or more roles, and model the
-individuals who will be logging into Nexus and read, deploy, or
-manage repositories as well as connect from client tools such at
-Apache Maven.
+Users:: <<users, Users>> can be assigned one or more roles, and model the individuals who will be logging into Nexus and
+read, deploy, or manage repositories as well as connect from client tools such at Apache Maven.
 
 ////
-Targets:: Privileges are usually associated with resources or
-targets. In the case of Nexus, a target can be a specific repository
-or a set of repositories grouped in something called a repository
-target. A target can also be a subset of a repository or a specific
-asset classes within a repository. Using a target you can apply a
-specific privilege to a single groupId.
+Targets:: Privileges are usually associated with resources or targets. In the case of Nexus, a target can be a specific
+repository or a set of repositories grouped in something called a repository target. A target can also be a subset of a
+repository or a specific asset classes within a repository. Using a target you can apply a specific privilege to a
+single groupId.
 ////
 
 [[realms]]
 === Realms
 {in} {oss}, {pro}, {proplus}
 
-The feature view for security realms administration displayed in
-<<fig-realms>> allows you to activate and prioritize security realms
-used for authentication and authorization by adding them to the
-'Active' list on the right and placing them higher or lower on the
-list.
+The feature view for security realms administration displayed in <<fig-realms>> allows you to activate and prioritize
+security realms used for authentication and authorization by adding them to the 'Active' list on the right and placing
+them higher or lower on the list.
 
 [[fig-realms]]
 .Security Realms Administration
 image::figs/web/realms.png[scale=60]
 
-Effectively, this configuration determines what authentication realm is
-used to grant a user access and the order the realms are used.
+Effectively, this configuration determines what authentication realm is used to grant a user access and the order the
+realms are used.
 
-Nexus Authenticating Realm and Nexus Authorizing Realm:: These are the
-built-in realms used by default and allow Nexus to manage
-security setup without additional external systems.
+Nexus Authenticating Realm and Nexus Authorizing Realm:: These are the built-in realms used by default and allow Nexus
+to manage security setup without additional external systems.
 
-LDAP Realm:: This realm identifies external storage in an LDAP system
-including e.g., Microsoft ActiveDirectory, ApacheDS, OpenLDAP and many
-others.
+LDAP Realm:: This realm identifies external storage in an LDAP system including e.g., Microsoft ActiveDirectory,
+ApacheDS, OpenLDAP and many others.
 ////
  with details documented in
 <<ldap>>.
 ////
 
 ////
-Crowd Realm:: This realm identifies external storage in an Atlassian
-Crowd system.
+Crowd Realm:: This realm identifies external storage in an Atlassian Crowd system.
 
  with details documented in <<crowd>>.
 ////
 
-Rut Auth Realm:: This realm uses an external authentication in any system
-with the user authorization passed to Nexus in a HTTP header field
-with details documented in <<remote-user-token>>.
+Rut Auth Realm:: This realm uses an external authentication in any system with the user authorization passed to Nexus in
+a HTTP header field with details documented in <<remote-user-token>>.
 
 ////
-The 'User Token Realm' is required for user token support
-documented in <<config-sect-usertoken>> and
+The 'User Token Realm' is required for user token support documented in <<config-sect-usertoken>> and
 ////
 
-NuGet API-Key Realm:: This realm is required for deployments to
-nuget-format repositories as documented in <<nuget>>.
+NuGet API-Key Realm:: This realm is required for deployments to nuget-format repositories as documented in <<nuget>>.
 
 WARNING: Removing all realms from the 'Active' section prevents access to the Nexus application for any user including
 any administrative access.
@@ -133,263 +108,146 @@ any administrative access.
 === Privileges
 {in} {oss}, {pro}, {proplus}
 
-You can access the configuration of privileges via the 'Privileges'
-menu item in the 'Security' submenu in the 'Administration' main menu.
+You can access the configuration of privileges via the 'Privileges' menu item in the 'Security' submenu in the
+'Administration' main menu.
 
 Nexus use a number of types of privileges:
 
-application:: privileges related to the Nexus user interface and
-related functionality.
-repository-admin:: privileges related to the administration and
-configuration of a specific repository separated into access to '*'
+application:: privileges related to the Nexus user interface and related functionality.
+repository-admin:: privileges related to the administration and configuration of a specific repository separated into
+access to '*' (all), 'add', 'browse', 'delete', 'edit' and 'read'.
+repository-view:: privileges controlling access to the content of a specific repository separate into access to '*'
 (all), 'add', 'browse', 'delete', 'edit' and 'read'.
-repository-view:: privileges controlling access to the content of a
-specific repository separate into access to '*' (all), 'add',
-'browse', 'delete', 'edit' and 'read'.
 
-Both 'repository-admin' as well as 'repository-view' privileges are
-automatically created and deleted by Nexus, when repositories are
-created or deleted.
+Both 'repository-admin' as well as 'repository-view' privileges are automatically created and deleted by Nexus, when
+repositories are created or deleted.
 
-The list of privileges displayed in <<fig-privileges-list>> displays
-an icon for the privilege 'type' as the first column and then adds:
+The list of privileges displayed in <<fig-privileges-list>> displays an icon for the privilege 'type' as the first
+column and then adds:
 
 Name:: the Nexus internal identifier for the privilege
 
-Description:: a human readable description of the purpose of the
-privilege
+Description:: a human readable description of the purpose of the privilege
 
 Type:: the aspect of Nexus to which this privilege applies
 
-Permission:: the Nexus internal permission definition as used by the
-embedded security framework
+Permission:: the Nexus internal permission definition as used by the embedded security framework
 
-Further details are available after pressing on a specific row in the
-detail view.
+Further details are available after pressing on a specific row in the detail view.
 
 [[fig-privileges-list]]
 .List of Security Privileges
 image::figs/web/privileges-list.png[scale=60]
 
-////
-To create a new privilege, click on the 'Add...' button in the
-'Privileges' panel and choose 'Repository Target Privilege'. Creating a
-privilege will load the New Repository Target Privilege form shown in
-<<fig-configuring-new-privilege>>. This form takes a privilege name, a
-privilege description, the repository to target, and a repository
-target.
-
-[[fig-configuring-new-privilege]]
-.Creating a New Repository Target Privilege
-image::figs/web/repository-manager_security-privileges-2.png[scale=60]
-
-Once you create a new privilege, it will create four underlying
-privileges: create, delete, read, and update. The four privileges
-created by the form in <<fig-configuring-new-privilege>>
-are shown in <<fig-configuring-new-privileges>>.
-
-[[fig-configuring-new-privileges]]
-.Create, Delete, Read, and Update Privileges Created
-image::figs/web/repository-manager_security-privileges-3.png[scale=60]
-////
-
-
-////
-[[repository-targets]]
-=== Repository Targets
-{in} {oss}, {pro}, {proplus}
-
-A 'Repository Target' is a set of regular expressions to match on the
-path of components in a repository (in the same way as the routing
-rules work). Nexus is preconfigured with a number of repository
-targets and allows you to create additional ones. Access the
-management interface visible in <<fig-config-repo-target-mgt>> via
-the 'Repository Targets' menu item in the left-hand 'Views/Repositories'
-sub menu.
-
-
-[[fig-config-repo-target-mgt]]
-.Managing Repository Targets
-image::figs/web/repository-manager_repository-targets.png[scale=60]
-
-Repository targets allow you to define, for example, a target called
-Apache Maven with a pattern of `^/org/apache/maven/.*`. This would
-match all components with a groupId of 'org.apache.maven' and any
-components within nested groupIds like 'org.apache.maven.plugins'.
-
-A pattern that would capture more components like all components with
-any part of the path containing 'maven' could be `.*maven.*`.
-
-The regular expressions can also be used to exclude components as
-visible with the pattern `(?!.*-sources.*).*` in
-<<fig-config-repo-target-exclude>> where components with the qualifier
-'-sources' are excluded. The syntax used for the expressions is the
-http://docs.oracle.com/javase/tutorial/essential/regex/[Java syntax],
-that is similar but not identical to the Perl syntax.
-
-[[fig-config-repo-target-exclude]]
-.Excluding Source Artifacts from a Repository Targets
-image::figs/web/repository-manager_repository-targets-2.png[scale=60]
-
-By combining multiple patterns in a repository target, you can
-establish a fine-grained control of components included and excluded.
-
-Once you have created a repository target, you can it as part of your
-security setup.  You can add a new privilege that relates to the
-target and controls the CRUD operations for components matching that
-path. The privilege can even span multiple repositories. With this
-setup you can delegate all control of components in 'org.apache.maven'
-to a "Maven" team. In this way, you don't need to create separate
-repositories for each logical division of your components.
-
-Repository targets are also be used for matching components for
-implicit capture in the Staging Suite as documented in <<staging>>.
-////
-
 [[roles]]
 === Roles
 {in} {oss}, {pro}, {proplus}
 
-Roles aggregate privileges into a related context and can, in turn, be
-grouped to create more complex roles.
+Roles aggregate privileges into a related context and can, in turn, be grouped to create more complex roles.
 
-Nexus ships with a predefined 'admin' as well as an
-'anonymous' role. These can be inspected in the 'Roles' feature view
-accessible via the 'Roles' item in the 'Security' section of the
-'Administration' main menu. A simple example is shown in
-<<fig-roles-list>>. The list displays the 'Name' an
-'Description' of the role as well as the 'Source', which displays
-whether the role is internal ('Nexus') or a mapping to an external
-source like LDAP.
+Nexus ships with a predefined 'admin' as well as an 'anonymous' role. These can be inspected in the 'Roles' feature view
+accessible via the 'Roles' item in the 'Security' section of the 'Administration' main menu. A simple example is shown
+in <<fig-roles-list>>. The list displays the 'Name' an 'Description' of the role as well as the 'Source', which displays
+whether the role is internal ('Nexus') or a mapping to an external source like LDAP.
 
 [[fig-roles-list]]
 .Viewing the List of Defined Roles
 image::figs/web/roles-list.png[scale=60]
 
-To create a new role, click on the 'Create role' button, select 'Nexus
-Role' and fill out the Role creation feature view shown in
-<<fig-roles-create>>.
+To create a new role, click on the 'Create role' button, select 'Nexus Role' and fill out the Role creation feature view
+shown in <<fig-roles-create>>.
 
 [[fig-roles-create]]
 .Creating a New Role
 image::figs/web/roles-create.png[scale=60]
 
-When creating a new role, you will need to supply a 'Role ID' and a
-'Name' and optionally a 'Description'. Roles are comprised of other
-roles and individual privileges. To assign a role or privilege to a
-role, drag and drop the desired privileges from the 'Available' list
-to the 'Given' list under the 'Privileges' header. You can use the
-'Filter' input to narrow down the list of displayed privileges and the
-arrow buttons to add or remove privileges.
+When creating a new role, you will need to supply a 'Role ID' and a 'Name' and optionally a 'Description'. Roles are
+comprised of other roles and individual privileges. To assign a role or privilege to a role, drag and drop the desired
+privileges from the 'Available' list to the 'Given' list under the 'Privileges' header. You can use the 'Filter' input
+to narrow down the list of displayed privileges and the arrow buttons to add or remove privileges.
 
-The same functionality is available under the 'Roles' header to
-select among the 'Available' roles and add them to the list of
-'Contained' roles.
+The same functionality is available under the 'Roles' header to select among the 'Available' roles and add them to the
+list of 'Contained' roles.
 
 Finally press the 'Create Role' button to get the role created.
 
-An existing role can be inspected and edited by clicking on the row in
-the list. This role-specific view allows you to delete the role with
-the 'Delete role' button. The built-in roles are managed by Nexus and
-cannot be edited or deleted. The 'Settings' section displays the same
-section as the creation view as displayed in <<fig-roles-create>>. .
+An existing role can be inspected and edited by clicking on the row in the list. This role-specific view allows you to
+delete the role with the 'Delete role' button. The built-in roles are managed by Nexus and cannot be edited or
+deleted. The 'Settings' section displays the same section as the creation view as displayed in <<fig-roles-create>>. .
 
-In addition to creating a Nexus role, the 'Create role' button allows
-you to create an 'External role mapping' to an external authorization
-system configured in Nexus such as 'LDAP'. This is something you would
-do, if you want to grant every member of an externally managed group
-(such as an LDAP group) a number of privileges and roles in Nexus.
+In addition to creating a Nexus role, the 'Create role' button allows you to create an 'External role mapping' to an
+external authorization system configured in Nexus such as 'LDAP'. This is something you would do, if you want to grant
+every member of an externally managed group (such as an LDAP group) a number of privileges and roles in Nexus.
 
-For example, assume that you have a group in LDAP named +scm+ and you
-want to make sure that everyone in the +scm+ group has Nexus
-administrative privileges.
+For example, assume that you have a group in LDAP named +scm+ and you want to make sure that everyone in the +scm+ group
+has Nexus administrative privileges.
 
-Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that
-external realm in a dialog. Pick the desired 'scm' group and confirm
-by pressing 'Create mapping'.
+Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick the
+desired 'scm' group and confirm by pressing 'Create mapping'.
 
-Once the external role has been selected, creates a linked Nexus
-role. You can then assign other roles and privileges to this new
-externally mapped role like you would do for any other role.
+Once the external role has been selected, creates a linked Nexus role. You can then assign other roles and privileges to
+this new externally mapped role like you would do for any other role.
 
-Any user that is part of the 'scm' group in LDAP, receives all the
-privileges defined in the created Nexus role allowing you to adapt
-your generic role in LDAP to the Nexus-specific use cases you want
-these users to be allowed to perform.
+Any user that is part of the 'scm' group in LDAP, receives all the privileges defined in the created Nexus role allowing
+you to adapt your generic role in LDAP to the Nexus-specific use cases you want these users to be allowed to perform.
 
 ////
-TIP: With the Repository Targets, you have fine-grained control over
-every action in the system. For example, you could make a target that
-includes everything except sources `(.*(?!-sources)\.*)` and assign that
-to one role while giving yet another role access to everything. Using
-these different access roles e.g., you can host your public and private
-components in a single repository without giving up control of your
-private components.
+TIP: With the Repository Targets, you have fine-grained control over every action in the system. For example, you could
+make a target that includes everything except sources `(.*(?!-sources)\.*)` and assign that to one role while giving yet
+another role access to everything. Using these different access roles e.g., you can host your public and private
+components in a single repository without giving up control of your private components.
 ////
 
 [[users]]
 === Users
 {in} {oss}, {pro}, {proplus}
 
-Nexus ships with two users: 'admin' and 'anonymous'. The 'admin' user
-has all privileges and the 'anonymous' user has read-only privileges.
+Nexus ships with two users: 'admin' and 'anonymous'. The 'admin' user has all privileges and the 'anonymous' user has
+read-only privileges.
 
-The 'Users' feature view displayed in <<fig-users-list>> can be
-accessed via the 'Users' item in the 'Security' section of the
-'Administration' menu. The list shows the users 'User ID', 'First
-Name', 'Last Name' and 'Email' as well as what security 'Realm' is
-used and if the accounts 'Status' is 'active' or 'disabled'.
+The 'Users' feature view displayed in <<fig-users-list>> can be accessed via the 'Users' item in the 'Security' section
+of the 'Administration' menu. The list shows the users 'User ID', 'First Name', 'Last Name' and 'Email' as well as what
+security 'Realm' is used and if the accounts 'Status' is 'active' or 'disabled'.
 
 [[fig-users-list]]
 .Feature View with List of Users
 image::figs/web/users-list.png[scale=50]
 
-Clicking on a user in the list or clicking on the 'Create user' button
-displays the details view to edit or create the account shown in
-<<fig-users-create>>. The 'ID' can be defined upon initial creation
-and remains fixed thereafter. In addition you can specify the users
-'First Name', 'Last Name' and 'Email' address. The 'Status' allows you
-to set an account to be 'Disabled' or 'Active'.
+Clicking on a user in the list or clicking on the 'Create user' button displays the details view to edit or create the
+account shown in <<fig-users-create>>. The 'ID' can be defined upon initial creation and remains fixed thereafter. In
+addition you can specify the users 'First Name', 'Last Name' and 'Email' address. The 'Status' allows you to set an
+account to be 'Disabled' or 'Active'.
 
-The 'Roles' control allows you to add and remove defined <<roles,
-roles>> to the user and therefore control the
-<<privileges,privileges>> assigned to the user. A user can be assigned
-one or more roles that in turn can include references to other roles
-or to individual privileges.
+The 'Roles' control allows you to add and remove defined <<roles, roles>> to the user and therefore control the
+<<privileges,privileges>> assigned to the user. A user can be assigned one or more roles that in turn can include
+references to other roles or to individual privileges.
 
 [[fig-users-create]]
 .Creating or Editing a User
 image::figs/web/users-create.png[scale=60]
 
-The 'More' button in the allows you to select the 'Change Password'
-item in the drop down. The password can be changed in a dialog,
-provided the user is managed by the built-in security realm.
+The 'More' button in the allows you to select the 'Change Password' item in the drop down. The password can be changed
+in a dialog, provided the user is managed by the built-in security realm.
 
 [[anonymous]]
 === Anonymous Access
 {in} {oss}, {pro}, {proplus}
 
-By default, the Nexus user interface as well as the repositories and
-the contained components are available to unauthenticated users. The
-'Anonymous' feature view is available via the 'Anonymous' item in the
-'Security' section of the 'Administration' main menu and shown in
-<<fig-anonymous>>.
+By default, the Nexus user interface as well as the repositories and the contained components are available to
+unauthenticated users. The 'Anonymous' feature view is available via the 'Anonymous' item in the 'Security' section of
+the 'Administration' main menu and shown in <<fig-anonymous>>.
 
-The privileges available to these users are controlled by the roles
-assigned to the 'anonymous' user from the 'NexusAuthorizingRole'. By
-changing the privileges assigned to this user in the
-<<users, Users feature view>>.
+The privileges available to these users are controlled by the roles assigned to the 'anonymous' user from the
+'NexusAuthorizingRole'. By changing the privileges assigned to this user in the <<users, Users feature view>>.
 
 [[fig-anonymous]]
 .Configuring Anonymous Access
 image::figs/web/anonymous.png[scale=60]
 
-If you want to disable unauthenticated access to Nexus entirely, you
-can uncheck the 'Allow anonymous users to access the server'
-checkbox. The 'Username' and 'Realm' controls allow you to change the
-details for the anonymous user. E.g. you might have a 'guest' account
-defined in your LDAP system and desire to use that user for
-anonymous access.
+If you want to disable unauthenticated access to Nexus entirely, you can uncheck the 'Allow anonymous users to access
+the server' checkbox. The 'Username' and 'Realm' controls allow you to change the details for the anonymous
+user. E.g. you might have a 'guest' account defined in your LDAP system and desire to use that user for anonymous
+access.
 
 ////
 [[user-token]]
@@ -398,186 +256,118 @@ anonymous access.
 
 ==== Introduction
 
-When using Apache Maven with Nexus, the user credentials for accessing
-Nexus have to be stored in clear text in the user's settings.xml
-file. Maven has the ability to encrypt passwords in setting.xml, but
-the need for it to be reversible in order to be used, limits its
-security. In addition, the general setup and use is cumbersome, and the
-potential need for regular changes due to strong security requirements
-e.g., with regular, required password changes triggers the need for a
-simpler and more secure solution.
+When using Apache Maven with Nexus, the user credentials for accessing Nexus have to be stored in clear text in the
+user's settings.xml file. Maven has the ability to encrypt passwords in setting.xml, but the need for it to be
+reversible in order to be used, limits its security. In addition, the general setup and use is cumbersome, and the
+potential need for regular changes due to strong security requirements e.g., with regular, required password changes
+triggers the need for a simpler and more secure solution.
 
-Other build systems use similar approaches and can benefit from the
-usage of User Token as well.
+Other build systems use similar approaches and can benefit from the usage of User Token as well.
 
-The User Token feature of Nexus fills that need for Apache Maven as
-well as other build systems and users. It introduces a two-part token
-for the user, replacing the username and password with a user code and
-a pass code that allows no way of recovering the username and password
-from the user code and pass code values; yet can be used for
-authentication with Nexus from the command line via Maven as well
-as in the UI.
+The User Token feature of Nexus fills that need for Apache Maven as well as other build systems and users. It introduces
+a two-part token for the user, replacing the username and password with a user code and a pass code that allows no way
+of recovering the username and password from the user code and pass code values; yet can be used for authentication with
+Nexus from the command line via Maven as well as in the UI.
 
-This is especially useful for scenarios where single sign-on solutions
-like LDAP are used for authentication against Nexus and other systems
-and the plain text username and password cannot be stored in the
-+settings.xml+ following security policies. In this scenario the
-generated user tokens can be used instead.
+This is especially useful for scenarios where single sign-on solutions like LDAP are used for authentication against
+Nexus and other systems and the plain text username and password cannot be stored in the +settings.xml+ following
+security policies. In this scenario the generated user tokens can be used instead.
 
-User token usage is integrated in the Maven settings template feature of Nexus
-documented in <<settings>> to further simplify its use.
+User token usage is integrated in the Maven settings template feature of Nexus documented in <<settings>> to further
+simplify its use.
 
 ==== Enabling and Resetting User Tokens
 
-The user token-based authentication can be activated by a Nexus
-administrator or user with the role usertoken-admin or
-usertoken-all by accessing the 'User Token' item in the 'Security' submenu on
-the left-hand 'Nexus' menu.
+The user token-based authentication can be activated by a Nexus administrator or user with the role usertoken-admin or
+usertoken-all by accessing the 'User Token' item in the 'Security' submenu on the left-hand 'Nexus' menu.
 
-Once user token is 'Enabled' by activating the checkbox in the
-administration tab displayed in <<fig-config-user-token-main>> and
-pressing 'Save',  the feature is activated and the additional section to
-Reset All User Tokens is available as well.
+Once user token is 'Enabled' by activating the checkbox in the administration tab displayed in
+<<fig-config-user-token-main>> and pressing 'Save', the feature is activated and the additional section to Reset All
+User Tokens is available as well.
 
 [[fig-config-user-token-main]]
 .User Token Administration Tab Panel
 image::figs/web/config-user-token-main.png[scale=60]
 
-Selecting the 'Protect Content' feature configures Nexus to require a
-user token for any access to the content urls of Nexus that includes
-all repositories and groups. This affects read access as well as write
-access e.g., for deployments from a build execution or a manual upload.
+Selecting the 'Protect Content' feature configures Nexus to require a user token for any access to the content urls of
+Nexus that includes all repositories and groups. This affects read access as well as write access e.g., for deployments
+from a build execution or a manual upload.
 
-'Activating User Token' as a feature automatically adds the 'User
-Token Realm' as a 'Selected Realm' in the 'Security Settings' section as
-displayed in <<fig-config-user-token-security-settings>> and available
-in the 'Server' section of the left-hand 'Administration' menu. If
-desired, you can reorder the security realms used, although the
-default settings with the 'User Token Realm' as a first realm is
-probably the desired setup. This realm is not removed when the User
-Token feature is disabled; however, it will cleanly pass through to the
-next realm and with the realm remaining any order changes stay
-persisted in case the feature is reactivated at a later stage.
+'Activating User Token' as a feature automatically adds the 'User Token Realm' as a 'Selected Realm' in the 'Security
+Settings' section as displayed in <<fig-config-user-token-security-settings>> and available in the 'Server' section of
+the left-hand 'Administration' menu. If desired, you can reorder the security realms used, although the default settings
+with the 'User Token Realm' as a first realm is probably the desired setup. This realm is not removed when the User
+Token feature is disabled; however, it will cleanly pass through to the next realm and with the realm remaining any
+order changes stay persisted in case the feature is reactivated at a later stage.
 
 
 [[fig-config-user-token-security-settings]]
 .Selected Realms Server Security Settings with User Token Realm activated
 image::figs/web/config-user-token-security-settings.png[scale=60]
 
-Besides resetting all user tokens, an administrator can reset the token
-of an individual user by selecting the 'User Token' tab in the 'Users'
-administration from the 'Security' menu in the left-hand navigation
-displayed in <<fig-config-user-token-user-reset>>. The password
-requested for this action to proceed is the password for the currently
-logged in administrator resetting the token(s).
+Besides resetting all user tokens, an administrator can reset the token of an individual user by selecting the 'User
+Token' tab in the 'Users' administration from the 'Security' menu in the left-hand navigation displayed in
+<<fig-config-user-token-user-reset>>. The password requested for this action to proceed is the password for the
+currently logged in administrator resetting the token(s).
 
 [in[fig-config-user-token-user-reset]]
 .User Token Reset for Specific User in Security Users Administration
 image::figs/web/config-user-token-user-reset.png[scale=50]
 
-WARNING: Resetting user tokens forces the users to update the
-`settings.xml` with the newly created tokens and potentially breaks any
-command line builds using the tokens until this change is
-carried out. This specifically also applies to continuous integration
-servers using user tokens or any other automated build executions.
+WARNING: Resetting user tokens forces the users to update the `settings.xml` with the newly created tokens and
+potentially breaks any command line builds using the tokens until this change is carried out. This specifically also
+applies to continuous integration servers using user tokens or any other automated build executions.
 
 ==== Accessing and Using Your User Tokens
 
-With user token enabled, any user can access his/her individual tokens via their
-'Profile' panel. To access the panel, select 'Profile' when clicking on the
-user name in the top right-hand corner of the Nexus user
-interface. Then select 'User Token' in the drop-down to get access to the 'User
-Token' screen in the 'Profile panel' displayed in
+With user token enabled, any user can access his/her individual tokens via their 'Profile' panel. To access the panel,
+select 'Profile' when clicking on the user name in the top right-hand corner of the Nexus user interface. Then select
+'User Token' in the drop-down to get access to the 'User Token' screen in the 'Profile panel' displayed in
 <<fig-config-user-token-profile>>.
 
 [[fig-config-user-token-profile]]
 .User Token Panel for the Logged in Users in the Profile Section
 image::figs/web/config-user-token-profile.png[scale=50]
 
-In order to be able to see this 'User Token' panel the user has to have
-the +usertoken-basic+ role or the +usertoken-user+ privilege. To access or
-reset the token you have to press the respective button in the panel
-and then provide your username and password in the dialog.
+In order to be able to see this 'User Token' panel the user has to have the +usertoken-basic+ role or the
++usertoken-user+ privilege. To access or reset the token you have to press the respective button in the panel and then
+provide your username and password in the dialog.
 
-Resetting the token will show and automatically hide a dialog with a
-success message and accessing the token will show the dialog displayed
-in <<fig-config-user-token-access>>.
+Resetting the token will show and automatically hide a dialog with a success message and accessing the token will show
+the dialog displayed in <<fig-config-user-token-access>>.
 
 [[fig-config-user-token-access]]
 .Accessing the User Token Information
 image::figs/web/config-user-token-access.png[scale=40]
 
-The User Token dialog displays the user code and pass code tokens in
-separate fields in the top level section as well as a server section
-ready to be used in a Maven settings.xml file. When using the server
-section you simply have to replace the `${server}` placeholder with
-the repository id that references your Nexus server you want to
-authenticate against with the user token.  The dialog will close
-automatically after one minute or can be closed with the Close button.
+The User Token dialog displays the user code and pass code tokens in separate fields in the top level section as well as
+a server section ready to be used in a Maven settings.xml file. When using the server section you simply have to replace
+the `${server}` placeholder with the repository id that references your Nexus server you want to authenticate against
+with the user token.  The dialog will close automatically after one minute or can be closed with the Close button.
 
-The user code and pass code values can be used as replacements
-for username and password in the login dialog for Nexus. It is also
-possible to use the original username and the pass code to log in to
-Nexus.
+The user code and pass code values can be used as replacements for username and password in the login dialog for
+Nexus. It is also possible to use the original username and the pass code to log in to Nexus.
 
-With content protection enabled, command line access to Nexus will
-require the tokens to be supplied. Access to e.g., the releases
-repository via
+With content protection enabled, command line access to Nexus will require the tokens to be supplied. Access to e.g.,
+the releases repository via
 
 ----
 curl -v --user admin:admin http://localhost:9081/content/repositories/releases/
 ----
 
-has to be replaced with the usage of user code and pass code separated
-by colon in the curl command line like this
+has to be replaced with the usage of user code and pass code separated by colon in the curl command line like this
 
 ----
 curl -v --user HdeHuL4x:Y7ZH6ixZFdOVwNpRhaOV+phBISmipsfwVxPRUH1gkV09 http://localhost:9081/content/repositories/releases/
 ----
 
-User token values can be accessed as part of the Maven settings
-template feature automating updates as documented in <<settings>>.
+User token values can be accessed as part of the Maven settings template feature automating updates as documented in
+<<settings>>.
 
-NOTE: The user tokens are created at first access whether that is by
-using the Nexus user interface or the Nexus Maven Plugin.
+NOTE: The user tokens are created at first access whether that is by using the Nexus user interface or the Nexus Maven
+Plugin.
 
-==== Configuring User Token behaviour
 
-The user token feature is preconfigured with built-in parameters and
-no external configuration file is created by default. It is however
-possible to customize some behaviour by creating a file
-'TBD/nexus/conf/usertoken.properties''.
-
-The following properties can be configured:
-
-According to Jason Dillon this is mostly for testing the underlying
-mechanism and the super edge case when the default strategy incurs too
-many name-code collisions, this is also not well tested so we remove
-it for now (or ever)
-usertoken.encodingStrategyProvider.strategy:: 	Define the
-EncodingStrategy for the token with the default value being
-'6-33-Base64' and '9-30-Base64' as optional alternative strategy.
-similar to above, very advanced and should not be exposed to users at
-this stage according to Jason Dillon
-usertoken.userTokenServiceImpl.maximumUniqueNameCodeAttempts::
-The maximum number of retries to find a unique name code, when
-creating the token. Defaults to 10.
-
-usertoken.userTokenServiceImpl.allowLookupByUserName:: This parameter controls
-if username lookup is allowed when using a pass code. The default is
-set to true. If set to false, user code and pass code have to be used
-to authenticate, otherwise username and pass code is also
-possible. This would be the more secure setting.
-usertoken.userTokenServiceImpl.restrictByUserAgent:: With this value
-set to true (the default), any access to the Nexus content
-with content protection enabled will only be allowed to browser-based
-access even without credentials. Other tools like curl or wget
-or other command-line tools will be blocked. With the more secure
-setting of +false+, any access without correct codes will be
-disallowed.
-
-The 'usertoken.' prefix is optional when the properties are loaded
-from the 'usertoken.properties' file.
 ////
 
 ////
@@ -587,48 +377,33 @@ tbd ... do we need to take this out for now?
 === Authentication via Remote User Token
 {in} {oss}, {pro}, {proplus}
 
-Nexus allows integration with external security systems that can pass
-along authentication of a user via the +Remote_User+ HTTP header field
-for all requests - Remote User Token 'Rut' authentication. This
-typically affects all web application usage in a web browser.
+Nexus allows integration with external security systems that can pass along authentication of a user via the
++Remote_User+ HTTP header field for all requests - Remote User Token 'Rut' authentication. This typically affects all
+web application usage in a web browser.
 
-These are either web-based container or server-level authentication
-systems like http://shibboleth.net/[Shibboleth]. In many cases, this
-is achieved via a server like http://httpd.apache.org/[Apache HTTPD]
-or http://nginx.org/[nginx] proxying Nexus. These servers can in turn
-defer to other authentication storage systems e.g., via the
-http://web.mit.edu/kerberos/[Kerberos] network authentication
-protocol. These systems and setups can be described as Central
-Authentication Systems CAS or Single Sign On SSO.
+These are either web-based container or server-level authentication systems like http://shibboleth.net/[Shibboleth]. In
+many cases, this is achieved via a server like http://httpd.apache.org/[Apache HTTPD] or http://nginx.org/[nginx]
+proxying Nexus. These servers can in turn defer to other authentication storage systems e.g., via the
+http://web.mit.edu/kerberos/[Kerberos] network authentication protocol. These systems and setups can be described as
+Central Authentication Systems CAS or Single Sign On SSO.
 
-From the users perspective, he/she is required to login into the
-environment in a central login page that then propagates the login
-status via HTTP headers. Nexus simply receives the fact that a
-specific user is logged in by receiving the username in a HTTP header
-field.
+From the users perspective, he/she is required to login into the environment in a central login page that then
+propagates the login status via HTTP headers. Nexus simply receives the fact that a specific user is logged in by
+receiving the username in a HTTP header field.
 
-The HTTP header integration can be activated by adding and enabling
-the 'Rut Auth' capability as documented in <<admin-system-capabilities>> and
-setting the 'HTTP Header name' to the header populated by your
-security system. Typically, this value is `REMOTE_USER`, but any
-arbitrary value can be set. An enabled capability automatically causes
-the 'Rut Auth Realm' to be added to the 'Active' realms in the
-'Realms' configuration described in <<realms>>.
+The HTTP header integration can be activated by adding and enabling the 'Rut Auth' capability as documented in
+<<admin-system-capabilities>> and setting the 'HTTP Header name' to the header populated by your security
+system. Typically, this value is `REMOTE_USER`, but any arbitrary value can be set. An enabled capability automatically
+causes the 'Rut Auth Realm' to be added to the 'Active' realms in the 'Realms' configuration described in <<realms>>.
 
-When an external system passes a value through the header,
-authentication will be granted and the value will be used as the user
-name for configured authorization scheme. For example, on a default
-Nexus installation with the Nexus authorization scheme enabled, a
-value of 'admin' would grant the user the access rights in the user
-interface as the 'admin' user.
+When an external system passes a value through the header, authentication will be granted and the value will be used as
+the user name for configured authorization scheme. For example, on a default Nexus installation with the Nexus
+authorization scheme enabled, a value of 'admin' would grant the user the access rights in the user interface as the
+'admin' user.
 
-A seamless integration can be set up for users if the external
-security system is exposed via LDAP and configured in Nexus as LDAP
-authorization realm combined with external role mappings and in
-parallel the sign-on is integrated with the operating system sign-on
-for the user.
-
-
+A seamless integration can be set up for users if the external security system is exposed via LDAP and configured in
+Nexus as LDAP authorization realm combined with external role mappings and in parallel the sign-on is integrated with
+the operating system sign-on for the user.
 
 [[ssl]]
 === Configuring Nexus for SSL
@@ -659,8 +434,8 @@ When the SSL certificate of a remote proxy repository is not trusted, the reposi
 outbound requests fail with a message similar to 'PKIX path building failed'.
 
 The 'Proxy' configuration for each proxy repository documented in <<admin-repository-repositories>> includes a section
-titled 'Use the Nexus truststore'. It allows you to manage the SSL certificate of the remote repository and solves
-these problems. It is only displayed, if the remote storage uses a HTTPS URL.
+titled 'Use the Nexus truststore'. It allows you to manage the SSL certificate of the remote repository and solves these
+problems. It is only displayed, if the remote storage uses a HTTPS URL.
 
 The 'View certificate' button triggers the display of the SSL 'Certificate Details' dialog. An example is shown in
 <<fig-ssl-certificate-details-dialog>>.
@@ -706,8 +481,8 @@ Certificates' menu items in the 'Security' submenu in the 'Administration' main 
 image::figs/web/ssl-certificates-list.png[scale=50]
 
 The list shows any certificates that are already trusted. Clicking on an individual row allows you to inspect the
-certificate.  This detail view shows further information about the certififcate including 'Subject', 'Issuer' and 'Certificate'
-details. The 'Delete certificate' button allows you to remove a certificate from the truststore.
+certificate.  This detail view shows further information about the certififcate including 'Subject', 'Issuer' and
+'Certificate' details. The 'Delete certificate' button allows you to remove a certificate from the truststore.
 
 The button 'Load certificate' above the list of certificates can be used to add a new certificate to the truststore by
 loading it directly from a server or using a PEM file representing the certificate.
@@ -863,7 +638,6 @@ Nexus is now available via HTTPS. If desired you can configure automatic redirec
 achieved by adding usage of `jetty-http-redirect-to-https.xml` as additional app parameters in +custom.properties+. In
 addition you have to update or add the `Base URL` in your Nexus server configuration using the
 <<admin-system-capabilities, Base URL capability>>.
-
 
 ////
 /* Local Variables: */
