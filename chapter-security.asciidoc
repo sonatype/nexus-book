@@ -45,13 +45,13 @@ with a set of core privileges that cannot be modified.
 repositories.
 ////
 
-Roles:: Privileges can be grouped into collections called <<roles, roles>> to make it easier to define privileges common
-to certain classes of users. For example, administrative users will all have similar sets of permissions. Instead of
-assigning individual privileges to individual users, you use roles to make it easier to manage users with similar sets
-of privileges. A role has one or more privileges and/or one or more roles.
+Roles:: Privileges can be grouped into collections called <<roles, roles>> to make it easier to define privileges
+common to certain classes of users. For example, administrative users will all have similar sets of permissions.
+Instead of assigning individual privileges to individual users, you use roles to make it easier to manage users with
+similar sets of privileges. A role has one or more privileges and/or one or more roles.
 
-Users:: <<users, Users>> can be assigned one or more roles, and model the individuals who will be logging into Nexus and
-read, deploy, or manage repositories as well as connect from client tools such at Apache Maven.
+Users:: <<users, Users>> can be assigned one or more roles, and model the individuals who will be logging into Nexus 
+and read, deploy, or manage repositories as well as connect from client tools such at Apache Maven.
 
 ////
 Targets:: Privileges are usually associated with resources or targets. In the case of Nexus, a target can be a specific
@@ -91,8 +91,8 @@ Crowd Realm:: This realm identifies external storage in an Atlassian Crowd syste
  with details documented in <<crowd>>.
 ////
 
-Rut Auth Realm:: This realm uses an external authentication in any system with the user authorization passed to Nexus in
-a HTTP header field with details documented in <<remote-user-token>>.
+Rut Auth Realm:: This realm uses an external authentication in any system with the user authorization passed to Nexus 
+in a HTTP header field with details documented in <<remote-user-token>>.
 
 ////
 The 'User Token Realm' is required for user token support documented in <<config-sect-usertoken>> and
@@ -145,17 +145,17 @@ image::figs/web/privileges-list.png[scale=60]
 
 Roles aggregate privileges into a related context and can, in turn, be grouped to create more complex roles.
 
-Nexus ships with a predefined 'admin' as well as an 'anonymous' role. These can be inspected in the 'Roles' feature view
-accessible via the 'Roles' item in the 'Security' section of the 'Administration' main menu. A simple example is shown
-in <<fig-roles-list>>. The list displays the 'Name' an 'Description' of the role as well as the 'Source', which displays
-whether the role is internal ('Nexus') or a mapping to an external source like LDAP.
+Nexus ships with a predefined 'admin' as well as an 'anonymous' role. These can be inspected in the 'Roles' feature 
+view accessible via the 'Roles' item in the 'Security' section of the 'Administration' main menu. A simple example is 
+shown in <<fig-roles-list>>. The list displays the 'Name' an 'Description' of the role as well as the 'Source', which 
+displays whether the role is internal ('Nexus') or a mapping to an external source like LDAP.
 
 [[fig-roles-list]]
 .Viewing the List of Defined Roles
 image::figs/web/roles-list.png[scale=60]
 
-To create a new role, click on the 'Create role' button, select 'Nexus Role' and fill out the Role creation feature view
-shown in <<fig-roles-create>>.
+To create a new role, click on the 'Create role' button, select 'Nexus Role' and fill out the Role creation feature 
+view shown in <<fig-roles-create>>.
 
 [[fig-roles-create]]
 .Creating a New Role
@@ -179,17 +179,18 @@ In addition to creating a Nexus role, the 'Create role' button allows you to cre
 external authorization system configured in Nexus such as 'LDAP'. This is something you would do, if you want to grant
 every member of an externally managed group (such as an LDAP group) a number of privileges and roles in Nexus.
 
-For example, assume that you have a group in LDAP named +scm+ and you want to make sure that everyone in the +scm+ group
-has Nexus administrative privileges.
+For example, assume that you have a group in LDAP named +scm+ and you want to make sure that everyone in the +scm+ 
+group has Nexus administrative privileges.
 
 Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick the
 desired 'scm' group and confirm by pressing 'Create mapping'.
 
-Once the external role has been selected, creates a linked Nexus role. You can then assign other roles and privileges to
-this new externally mapped role like you would do for any other role.
+Once the external role has been selected, creates a linked Nexus role. You can then assign other roles and privileges 
+to this new externally mapped role like you would do for any other role.
 
-Any user that is part of the 'scm' group in LDAP, receives all the privileges defined in the created Nexus role allowing
-you to adapt your generic role in LDAP to the Nexus-specific use cases you want these users to be allowed to perform.
+Any user that is part of the 'scm' group in LDAP, receives all the privileges defined in the created Nexus role 
+allowing you to adapt your generic role in LDAP to the Nexus-specific use cases you want these users to be allowed to 
+perform.
 
 ////
 TIP: With the Repository Targets, you have fine-grained control over every action in the system. For example, you could
@@ -310,8 +311,8 @@ When the SSL certificate of a remote proxy repository is not trusted, the reposi
 outbound requests fail with a message similar to 'PKIX path building failed'.
 
 The 'Proxy' configuration for each proxy repository documented in <<admin-repository-repositories>> includes a section
-titled 'Use the Nexus truststore'. It allows you to manage the SSL certificate of the remote repository and solves these
-problems. It is only displayed, if the remote storage uses a HTTPS URL.
+titled 'Use the Nexus truststore'. It allows you to manage the SSL certificate of the remote repository and solves 
+these problems. It is only displayed, if the remote storage uses a HTTPS URL.
 
 The 'View certificate' button triggers the display of the SSL 'Certificate Details' dialog. An example is shown in
 <<fig-ssl-certificate-details-dialog>>.
@@ -323,9 +324,9 @@ image::figs/web/ssl-certificate-details-dialog.png[scale=50]
 Use the 'Certificate Details' dialog when the remote certificate is not issued by a well-known public certificate
 authority included in the default Java trust store. This specifically also includes usage of self-signed certificates
 used in your organization. To confirm trust of the remote certificate, click the 'Add certificate to truststore' button
-in the dialog.  This feature is analogous to going to the <<fig-ssl-certificates-list, SSL Certificates>> user interface
-and using the 'Load certificate' button found there as described in <<ssl-certificates>>. If the certificate is already
-added, the button can undo this operation and will read 'Remove certificate from trust store'.
+in the dialog.  This feature is analogous to going to the <<fig-ssl-certificates-list, SSL Certificates>> user 
+interface and using the 'Load certificate' button found there as described in <<ssl-certificates>>. If the certificate 
+is already added, the button can undo this operation and will read 'Remove certificate from trust store'.
 
 The checkbox labelled 'Use certificates stored in Nexus to connect to external systems' is used to confirm that Nexus
 should consult the Nexus-private, internal truststore as well as the JVM truststore when confirming trust of the remote
@@ -337,17 +338,17 @@ result of this merge is used to decide about the trust of the remote server. The
 contains public certificate authority trust certificates. If the remote certificate is signed by one of these
 authorities, then explicitly trusting the remote certificate will not be needed.
 
-WARNING: When removing a remote trusted certificate from the truststore, a Nexus restart is required before a repository
-may become untrusted.
+WARNING: When removing a remote trusted certificate from the truststore, a Nexus restart is required before a 
+repository may become untrusted.
 
 [[ssl-certificates]]
 ==== Outbound SSL - Trusting SSL Certificates Globally
 
 {in} {oss}, {pro}, {proplus}
 
-Nexus allows you to manage trust of all remote SSL certificates in a centralized user interface. Use this interface when
-you wish to examine all the currently trusted certificates for remote repositories, or manage certificates from secure
-remotes that are not repositories.
+Nexus allows you to manage trust of all remote SSL certificates in a centralized user interface. Use this interface 
+when you wish to examine all the currently trusted certificates for remote repositories, or manage certificates from 
+secure remotes that are not repositories.
 
 Access <<fig-ssl-certificates-list, the feature view for SSL Certificates administration>> by selecting the 'SSL
 Certificates' menu items in the 'Security' submenu in the 'Administration' main menu.
@@ -364,11 +365,11 @@ The button 'Load certificate' above the list of certificates can be used to add 
 loading it directly from a server or using a PEM file representing the certificate.
 
 The common approach is to choose 'Load from server' and enter the full +https://+ URL of the remote site, e.g,
-`https://repo1.maven.org`. Nexus will connect using HTTPS and use the HTTP proxy server settings if applicable. When the
-remote is not accessible using +https://+, only enter the host name or IP address, optionally followed by colon and the
-port number. For example: +example.com:8443+ . In this case Nexus will attempt a direct SSL socket connection to the
-remote host at the specified port. This allows you to load certificates from SMTP or LDAP servers, if you use the
-correct port.
+`https://repo1.maven.org`. Nexus will connect using HTTPS and use the HTTP proxy server settings if applicable. When 
+the remote is not accessible using +https://+, only enter the host name or IP address, optionally followed by colon 
+and the port number. For example: +example.com:8443+ . In this case Nexus will attempt a direct SSL socket connection 
+to the remote host at the specified port. This allows you to load certificates from SMTP or LDAP servers, if you use 
+the correct port.
 
 Alternatively you can choose the 'Paste PEM' option to configure trust of a remote certificate. Copy and paste the
 Base64 encoded X.509 DER certificate to trust. This text must be enclosed between lines containing `-----BEGIN
@@ -432,8 +433,8 @@ these steps:
 Some common commands to manually trust remote certificates can be found in our
 https://sonatype.zendesk.com/entries/95353268-SSL-Certificate-Guide#common-keytool-commands[SSL Certificate Guide].
 
-After you have imported your trusted certificates into a truststore file, you can add the JVM parameters configuring the
-truststore file location and password as separate configuration lines into the file `etc/system.properties`.
+After you have imported your trusted certificates into a truststore file, you can add the JVM parameters configuring 
+the truststore file location and password as separate configuration lines into the file `etc/system.properties`.
 ----
 javax.net.ssl.trustStore=<truststore>
 javax.net.ssl.trustStorePassword=<truststore_password>
@@ -478,16 +479,15 @@ TIP: Keep in mind that you will have to repeat this configuration each time you 
 modifications to the embedded Jetty instance located in '$NEXUS_HOME'.
 
 To configure Nexus to accept HTTPS connections, first enable the file +jetty-https.xml+ for the Jetty startup
-configuration in +custom.properties+ by adding
+configuration in +etc/org.sonatype.nexus.cfg+ by adding
 
 ----
 ${karaf.base}/etc/jetty-https.xml
 ----
 
-to the `nexus-args`. For a more detailed example, see <<configure-runtime>>.
+to the `nexus-args` field.
 
-Next, define the port you want to use for the HTTPS connection by adding the +application-port-ssl+ property to
-+etc/org.sonatype.nexus.cfg+.
+Next, still in +etc/org.sonatype.nexus.cfg+, define the port you want to use for the HTTPS connection by adding the +application-port-ssl+ property like
 
 ----
 application-port-ssl=8443
@@ -520,7 +520,3 @@ addition you have to update or add the `Base URL` in your Nexus server configura
 /* ispell-personal-dictionary: "ispell.dict" */
 /* End:             */
 ////
-
-
-
-
