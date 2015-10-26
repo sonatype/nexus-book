@@ -473,7 +473,8 @@ TBD - add link to reverse proxy setup doc once its done
 
 .Nexus Serving SSL Directly
 
-The second approach is to use the Eclipse Jetty instance that is distributed with Nexus to accept HTTPS connections.
+The second approach is to use the Eclipse Jetty instance that is distributed with Nexus to accept HTTPS 
+connections.
 
 TIP: Keep in mind that you will have to repeat this configuration each time you upgrade Nexus, since they are
 modifications to the embedded Jetty instance located in '$NEXUS_HOME'.
@@ -482,38 +483,40 @@ To configure Nexus to accept HTTPS connections, first enable the file +jetty-htt
 configuration in +etc/org.sonatype.nexus.cfg+ by adding
 
 ----
-${karaf.base}/etc/jetty-https.xml
+${karaf.etc}/jetty-https.xml
 ----
 
 to the `nexus-args` field.
 
-Next, still in +etc/org.sonatype.nexus.cfg+, define the port you want to use for the HTTPS connection by adding the +application-port-ssl+ property like
+Next, still in +etc/org.sonatype.nexus.cfg+, define the port you want to use for the HTTPS connection by adding 
+the +application-port-ssl+ property like
 
 ----
 application-port-ssl=8443
 ----
 
-Create a keystore file containing a single certificate that Jetty will use for the HTTPS connections. Instructions are
-available on the http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html[Eclipse Jetty documentation
-site].
+Create a keystore file containing a single certificate that Jetty will use for the HTTPS connections.  
+Instructions are available on the http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html[Eclipse 
+Jetty documentation site].
 
-Adjust the values in the +jetty-https.xml+ file to reflect your keystore settings. The default configuration in that
-file suggests to create a subdirectory +$NEXUS_HOME/etc/ssl+ and copy the +keystore+ file in there and rename it to
-+keystore.jks+. You can either do that or choose a different location or filename for your keystore file and update the
-paths for the +keystore+ and +truststore+ in the +jetty-https.xml+ file.  Remember to remove the property pointing to
-the Nexus installation directory (`<Property name="nexus-base"/>`), if you want to refer to an absolute path.
+Adjust the values in the +jetty-https.xml+ file to reflect your keystore settings. The default configuration in 
+that file suggests to create a subdirectory +$NEXUS_HOME/etc/ssl+ and copy the +keystore+ file in there and
+rename it to +keystore.jks+. You can either do that or choose a different location or filename for your keystore 
+file and update the paths for the +keystore+ and +truststore+ in the +jetty-https.xml+ file.  Remember to remove 
+the property pointing to the Nexus installation directory (`<Property name="nexus-base"/>`), if you want to refer 
+to an absolute path.
 
 Once this is all in place you can start up Nexus and access the user interface at e.g., +https://localhost:8443/nexus+.
 If you have just created a self-signed certificate, web browsers may warn you about the certificate and you will
-have to acknowledge the fact that the certificate is self-signed. To avoid this behavior, you have to get a certificate
-signed by a signing authority or reconfigure the web browser.
+have to acknowledge the fact that the certificate is self-signed. To avoid this behavior, you have to get a 
+certificate signed by a signing authority or reconfigure the web browser.
 
 TIP: This configuration process is available link:https://www.youtube.com/watch?v=YzcvU802Az8[as a video demonstration].
 
-Nexus is now available via HTTPS. If desired you can configure automatic redirection from HTTP to HTTPS. This can be
-achieved by adding usage of `jetty-http-redirect-to-https.xml` as additional app parameters in +custom.properties+. In
-addition you have to update or add the `Base URL` in your Nexus server configuration using the
-<<admin-system-capabilities, Base URL capability>>.
+Nexus is now available via HTTPS. If desired you can configure automatic redirection from HTTP to HTTPS. This can 
+be achieved by adding usage of `jetty-http-redirect-to-https.xml` as additional app parameters in 
++custom.properties+. In addition you have to update or add the `Base URL` in your Nexus server configuration
+using the <<admin-system-capabilities, Base URL capability>>.
 
 ////
 /* Local Variables: */
