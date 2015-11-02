@@ -88,10 +88,11 @@
             half-measures and compromises such as storing them in
             source control. 
           </p>
-          <p>Stop developing in the Dark Ages, read
-            this documentation, and start using a repository manager.  Trust
-            us, once you start using Sonatype Nexus, you will wonder 
-            how you ever functioned without it.
+          <p>
+            Stop developing in the Dark Ages, read this documentation,
+            and start using a repository manager.  Trust us, once you
+            start using Nexus Repository Manager, you will wonder how
+            you ever functioned without it.
           </p>
         </div>
         <div class="{name(.)}">
