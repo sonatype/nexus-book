@@ -141,8 +141,20 @@ authentication details as documented in <<npm-deploying-packages>>.
 Publishing your own packages to a npm hosted repository allows you to share packages across your organization or with
 external partners.
 
-The +npm publish+ command uses a +registry+ configuration value to know where to publish your package. There are several
-ways to change the registry value to point at your Nexus hosted npm repository.
+Publishing requires authentication. It can be configured for your Nexus user account using +npm login+ on the
+command line.  Provide your Nexus username and password when prompted.  Upon successful completion, a line for
+authentication of this combination is automatically added to your +.npmrc+ configuration file.  Nexus supports
+specifically targeted registries and scoped packages using +npm login+ as well, otherwise the authentication will
+be used for all registries and packages unless further authentication definitions are configured.  Details on +npm
+login+ can be seen on the https://docs.npmjs.com/cli/adduser[npm website].
+
+Using authentication to publish further requires the +npm Bearer Token Realm+. Add the realm to the active realms
+in the +Realms+ feature of the +Security+ menu from the +Administration+ menu to activate it.
+
+With authentication configured you can publish your packages with the +npm publish+ command. 
+
+The +npm publish+ command uses a +registry+ configuration value to know where to publish your package. There are
+several ways to change the registry value to point at your Nexus hosted npm repository.
 
 Since the +.npmrc+ file usually contains a registry value intended only for getting new packages, a simple way to
 override this value is to provide a registry to the +publish+ command:
@@ -159,25 +171,14 @@ Alternately, you can edit your package.json file and add a +publishConfig+ secti
   },
 ----
 
-Publishing requires authentication. It can be configured on a per account basis by using +npm login+ at the 
-command line.  This will prompt you for a username and password which need to match a Nexus user.  Upon entry, a 
-line for authentication of this combination will be automatically added to your +.npmrc+.  Nexus supports 
-specifically targeted registries and scoped packages using +npm login+ as well, otherwise the authentication will 
-be used for all registries and packages unless further authentication definitions are configured.  Details on 
-+npm login+ can be seen on the https://docs.npmjs.com/cli/adduser[npm website].
+Detailed information about package creation can be found on the https://docs.npmjs.com/cli/publish[npm website].
 
-Using authentication to publish further requires the +npm Bearer Token Realm+ to be activated within your Nexus 
-instance. To do this, simply add the realm to the active realms in the +Realms+ feature of the +Security+ menu 
-from the +Administration+ menu in Nexus.
-
-With authentication configured you can run +npm publish+ on your packages now acting as the account you 
-authenticated. More information about package creation can be found on the https://docs.npmjs.com/cli/publish[npm website].  
 If your package requires the use of +npm scope+, Nexus supports this functionality. Packages published to Nexus
-with a defined scope are reflected with the scope value populating the Nexus group field in Browse and Search.  
+with a defined scope are reflected with the scope value populating the Nexus group field in Browse and Search.
 Details on scoping are available on the https://docs.npmjs.com/misc/scope[npm website] also.
 
 Once a package is published to the private registry in Nexus, any other developers or build servers that access Nexus
-via the repository group have instant access to the packages.
+via the repository group have instant access it.
 
 [[npm-deprecating-packages]]
 === Deprecating npm Packages
