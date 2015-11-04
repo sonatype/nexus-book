@@ -17,7 +17,7 @@ WARNING: Currently Nexus 3 is a pre-release application and running it for produ
 === Downloading Nexus
 
 Nexus can be downloaded from https://support.sonatype.com/forums/23079216[Sonatype]. Bundles are available for the
-64bit versions for Apple OSX, Microsoft Windows and Unix/Linux. They contain all necessary resources to install and run
+64-bit versions for Apple OSX, Microsoft Windows and Unix/Linux. They contain all necessary resources to install and run
 Nexus. You can download a plain archive file or an installer for your operating system of a specific release
 version of Nexus.
 
@@ -42,7 +42,7 @@ nexus-{version-exact}-unix.sh
 nexus-{version-exact}-win64.exe
 ----
 
-Next steps after a successful download, depend on the bundle you downloaded and the operating system and are
+Next steps, after a successful download, depend on the bundle you downloaded and the operating system and are
 documented in <<installation-archive>> and <<installation-installer>>.
 
 
@@ -63,8 +63,9 @@ Java(TM) SE Runtime Environment (build 1.8.0_60-b27)
 Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
 ----
 
-When multiple JDK or JRE versions are installed, you need to ensure the correct version by running the above
-command as the operating system user, that is used to run Nexus.
+When multiple JDK or JRE versions are installed, you need to ensure the correct version is configured by running
+the above command as the operating system user, that is used to run Nexus. Potentially you need to update the
+configuration to specify a specific JRE installation path.
 
 TIP: OpenJDK or other Java distributions or older Java versions are not supported.
 
@@ -150,8 +151,7 @@ The installer application guides you through multiple steps to get Nexus install
 
 Welcome:: Press 'Next' after reading the instructions to proceed.
 
-Installation Type:: Select the edition of Nexus you want to install. Currently only {oss} is available. Proceed
-with 'Next'.
+Installation Type:: Select the edition of Nexus you want to install.
 
 Destination Directory:: Configure the directory into which the Nexus application will be installed. The user
 running the installer and the user that will run the Nexus application have to have full access to the specified
@@ -184,10 +184,11 @@ If you selected to start the application, your web-browser will be started and t
 [[access]]
 === Accessing the Nexus User Interface
 
-Once the repository manager is started, the application is listening on all IP addresses that are configured
-for the current host on port 8081.  To access the Nexus web application, fire up a web browser and type in the URL
-http://localhost:8081/[http://localhost:8081/]. If Nexus started up successfully, the user interface looks similar
-to <<fig-nexus-ui-initial>>.
+Once the repository manager is started, the application is listening on the configured IP address range and
+port. By default any IP address and port 8081 are used. To access the Nexus web application, fire up a web browser
+and type in the URL http://serveripaddress:port[http://serveripaddress:port]
+e.g. http://localhost:8081/[http://localhost:8081/]. If Nexus started up successfully and network settings allow
+you to connect to the server, the user interface looks similar to <<fig-nexus-ui-initial>>.
 
 [[fig-nexus-ui-initial]]
 .Initial Nexus User Interface
@@ -224,15 +225,15 @@ system
 archive bundle install, this directory is nested within the Nexus-installation directory. If you desire to
 separate the application files from the actual data you can customize the location of the +data+ directory. This
 can be achieved by setting the `nexus-work` property in the configuration file `etc/org.sonatype.nexus.cfg`
-e.g. to an absolute path `nexus-work=/opt/nexus-data`.
+to an absolute path e.g. `nexus-work=/opt/nexus-data`.
 //// 
 TBD... should this be documented or is it needed or should it be removed from the product
 `deploy`:: is empty. 
 ////
-`etc` :: contains configuration files. 
-`lib` :: contains binary libraries related to Apache Karaf
-`public`:: contains public resources of the Nexus application
-`system`:: contains all components and plugins that constitute the Nexus application
+`etc` :: contains configuration files.
+`lib` :: contains binary libraries related to Apache Karaf.
+`public`:: contains public resources of the Nexus application.
+`system`:: contains all components and plugins that constitute the Nexus application.
 
 
 [[configure-runtime]]
