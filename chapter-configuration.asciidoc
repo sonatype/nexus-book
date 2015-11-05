@@ -301,6 +301,13 @@ Task-type specific configuration is displayed below the notification email input
 
 The following task types are available to perform specific maintenance:
 
+Purge Incomplete Docker Uploads:: Docker uploads to a repository can be hundreds of MB in size. It is possible to
+have incomplete uploads or orphaned files remain in temporary storage as a result of incomplete or interrupted
+uploads. The temporary storage consumed by these incomplete or orphaned uploads can be cleaned up with this
+task. You can configure the minimum age of incomplete uploads to be purged and have them deleted by the task
+execution. In addition, any incomplete Docker uploads that have been orphaned by a Nexus restart will be cleaned
+up whenever the task executes.
+
 Purge Unused Components and Assets:: This task can be used to remove components and assets in Docker proxy
 repositories. Any component that has not been requested in a configured amount of days, will be purged.
 
@@ -617,7 +624,7 @@ Item Max Age;; Some items in a repository may be neither an artifact identified 
 for such components. This cache value determines the maximum age for these items before updates are retrieved.
 ////
 
-===== Additional Configuration for Repositories Using the Maven2 Format
+===== Configuration for Maven2 Format
 
 Version policy:: A Maven repository can either host release components or development components. The 'Version policy'
 allows you to set 'Snapshot' for development components that end up with '-SNAPSHOT' in the version string. This allows
@@ -629,7 +636,7 @@ from multiple repositories.
 Strict Content Type Validation:: Maven repositories can be configured to validate any new components to see if the
 MIME-type corresponds to the content of the file by enabling this setting. Any files with a mismatch are rejected.
 
-===== Additional Configuration for Repositories Using the NuGet Format
+===== Configuration for NuGet Format
 	
 The NuGet repository format uses http://www.odata.org/[OData] queries for communication between the client and the
 repository. These queries include metadata information about available packages and other data.
@@ -642,6 +649,12 @@ metadata if the same query is received again before the cache expires.
 
 The parameters 'Query cache size' and 'Query cache age' can be used to configure the size of this cache in terms of how
 many queries are cached as well as the rate at which queries expire and are subsequently re-run.
+
+===== Configuration for Docker Format
+
+The Docker repository format adds configuration for 'Docker Connectors' and 'Docker Registry API Support'. More
+details can be found in <<docker>>.
+
 
 ===== Repository Groups
 
