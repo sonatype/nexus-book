@@ -54,7 +54,7 @@ If you have configured Nexus to use HTTPS directly, you have to configure a HTTP
 server translates incoming HTTPS requests to HTTP and forwards the request to Nexus via HTTP you have to configure the
 respective HTTP port.
 
-TIP: A configured context-path for the Nexus user interface does not affect the Docker connector URLs. E.g. if you
+TIP: A configured context-path for the Nexus user interface does not affect the Docker connector URLs. E.g. if your
 Nexus instance is configured to be available at http://localhost:8081/nexus instead of the default root context
 http://localhost:8081/, the URLs for your Docker repositories will still only use the configured port for the
 repository and omit the context path in the URL. This is a side-effect of the the fact that Docker does not
@@ -66,16 +66,16 @@ support context paths in the registry API.
 
 The Docker client tools interact with a repository via the registry API. It is available in version 1 (V1) and
 version 2 (V2). The newer V2 will completely replace the old V1 in the future. Currently DockerHub and other
-registries as well as other tools use V 2, but in many cases fall back to V1. E.g., search is currently only
+registries as well as other tools use V2, but in many cases fall back to V1. E.g., search is currently only
 implemented in V1.
 
-The Nexus repository managers support version 1 as well as version 2 of the API. All Docker repository
+The Nexus repository managers support V1 as well as V2 of the API. All Docker repository
 configurations contain a section to configure 'Docker Registry API Support'. If you activate 'Enable Docker V1
 API' for a repository it is enabled to use V1 as a fallback from V2. Without this option any V1 requests result in
 errors from the client tool.
 
 TIP: We suggest to *only* activate V1 support for repository groups that will be used for command line-based
-searches and when any client side tools in use require V1.
+searches, when any client side tools in use require V1 or when a upstream proxy repository requires V1.
 
 [[docker-proxy]]
 === Docker Proxy Repository
@@ -91,6 +91,7 @@ Minimal configuration steps are:
 
 - Define 'Name'
 - Define URL for 'Remote storage'
+- 'Enable Docker V1 API' support, if required by the remote repository
 - Select correct 'Docker index' and configure it
 - Select 'Blobstore' for 'Storage'
 
@@ -119,7 +120,8 @@ It is important to configure a correct pair of 'Remote Storage' URL and 'Docker 
 search results potentially do not reflect the content of the remote repository and other problems can occur.
 
 TIP: Just to recap, in order to configure a proxy for Docker Hub you configure the 'Remote Storage' URL to
-https://registry-1.docker.io and for the choice of 'Docker Index' select the 'User Docker Hub' option.
+https://registry-1.docker.io, enable Docker V1 API support and for the choice of 'Docker Index' select the 'User
+Docker Hub' option.
 
 [[docker-hosted]]
 === Docker Hosted Repository (Private Docker Registry)
@@ -326,7 +328,7 @@ or pull can occur.
 TIP: Searching, Browsing, Pushing and Pulling are all showcased in link:https://www.youtube.com/watch?v=Z2jH9LgeeI8[this video].
 
 Pushing large Docker images can result in failures due to network interruptions and other issues. These partial
-upload result in temporary storage for these transfers in the repository manager filling up. The task 'Purge
+uploads result in temporary storage for these transfers in the repository manager filling up. The task 'Purge
 Incomplete Docker Uploads' can be configured to delete these files. Further documentation can be found in
 <<admin-system-tasks>>.
 
