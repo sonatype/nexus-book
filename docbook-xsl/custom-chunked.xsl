@@ -91,7 +91,7 @@
           <p>
             Stop developing in the Dark Ages, read this documentation,
             and start using a repository manager.  Trust us, once you
-            start using {base}, you will wonder how you ever
+            start using Nexus Repository Manager, you will wonder how you ever
             functioned without it.
           </p>
         </div>
