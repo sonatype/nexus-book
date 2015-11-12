@@ -339,7 +339,39 @@ to expose more components to your users.
 Nexus supports proxy repositories, hosted repositories and repository groups using a number of different repository
 formats.
 
-To manage Nexus repositories select the 'Repositories' item in the 'Repository' sub menu of the 'Administration' menu.
+The binary parts of a repository are stored in blob stores, which can be configured by selecting 'Blob stores' from
+the 'Repository' sub menu of the 'Administration' menu. 
+
+To manage Nexus repositories select the 'Repositories' item in the 'Repository' sub menu of the 'Administration'
+menu.
+
+[[admin-repository-blobstores]]
+==== Blob Stores
+
+A blob store is a storage mechanism for the binary parts of the components and their assets. Each blob
+blobstorestore an be used by one or multiple repositories and repository groups. A 'default' blob store that is
+based on a file system storage within the `data` directory configured during the installation is automatically
+configured.
+
+The 'Blob stores' feature view available via the 'Blob stores' item in the 'Repository' sub menu of the
+'Administration' menu displays a list of all configured blob stores. The columns provide some detail about each
+blob store:
+
+Name:: the name of the blob store as displayed in the repository administration
+Type:: the type of the blob store backend, currently only 'File' is available representing a file system-based storage
+Blob count:: the number of blobs currently stored
+Total size:: the size of the blob store in MB
+Available space:: the overal space available for the blob store
+
+Click on a specific row to inspect further details of the selected blob store. The details view displays 'Type' and
+'Name' and the absolute 'Path' to the file system storage.
+
+The 'Create blob store' button allows you to add further blob stores. You can configure the 'Type' and 'Name' for
+the blob store. The 'Path' parameter should be an absolute path to the desired file system location. It has to be
+fully accessible by the operating system user account running the Nexus repository manager.
+
+Once a blob store has been created it can no longer be modified and any blob store used by a repository or
+repository group can not be deleted.
 
 [[proxy-repository]]
 ==== Proxy Repository
@@ -491,8 +523,9 @@ related aspects and include:
 
 ===== Storage
 
-Every repository needs to have a 'Blobstore' configured to determine where components are stored. The drop-down
-allows you to select from all the configured blobstores.
+Every repository needs to have a 'Blob store' configured to determine where components are stored. The drop-down
+allows you to select from all the configured blob stores. Documentation about creating blob stores can be found in
+<<admin-repository-blobstores>>.
 
 The 'Strict Content Type Validation' allows you to activate a validation that checks the MIME type of all files
 published into a repository to conform to the allowed types for the specific repository format.
