@@ -1,39 +1,34 @@
 [[confignx]]
-== Configuring Nexus
+== Configuring {pro}
 
-Many of the configuration screens shown in this section are only
-available to administrative users. Nexus allows the admin user to
-customize the list of repositories, create repository groups,
-customize server settings, and create routes or "rules" that Maven
-will use to include or exclude components from a repository.
+Many of the configuration screens shown in this section are only available to administrative users. {pro} allows
+the admin user to customize the list of repositories, create repository groups, customize server settings, and
+create routes or "rules" that Maven will use to include or exclude components from a repository.
 
 [[configxn-sect-customizing-server]]
 === Customizing Server Configuration
 
-You can access global Nexus configuration by clicking on 'Server'
-under 'Administration' in the left-hand Nexus menu. The server
-configuration screens' subsections are documented in the following
-sections..
+You can access global configuration by clicking on 'Server' under 'Administration' in the left-hand main menu. The
+server configuration screens' subsections are documented in the following sections..
 
 [[config-sect-smtp]]
 ==== SMTP Settings
 
-Nexus sends email to users who need to recover user names and
+{pro} sends email to users who need to recover user names and
 passwords, notifications for staging and a number of other uses. In
 order for these notifications to work, configure the SMTP server
 settings in this dialog.
 
 You can configure the 'Hostname' and 'Port' of the SMTP server to use as well as
 'Username' and 'Password'. The 'Connection' configuration allows you
-to configure Nexus to use plain or secure SMTP to connect to the
+to configure {pro} to use plain or secure SMTP to connect to the
 server or to use STARTTLS for the connection, which would upgrade the
 initially established, plain connection to be encrypted. In all cases
 you will need to ensure that the correct port is used.
 
-The 'System Email' parameter defines the email address used in the
-+From:+ header of an email sent by Nexus. Typically, this would be
-configured as a "Do-Not-Reply" email address or a mailbox or mailing
-list monitored by the administrators of the Nexus server.
+The 'System Email' parameter defines the email address used in the +From:+ header of an email sent by the
+repository manager. Typically, this would be configured as a "Do-Not-Reply" email address or a mailbox or mailing
+list monitored by the administrators of the server.
 
 Once you have configured the parameters you can use the 'Test SMTP
 settings' button to confirm the configured parameters and the
@@ -47,18 +42,16 @@ image::figs/web/config-administration-smtp.png[scale=60]
 
 ==== HTTP Request Settings
 
-The HTTP Request Settings allow you to configure the identifier that
-Nexus uses when it is making an HTTP request. You may want to change
-this if Nexus needs to use an HTTP Proxy, and the Proxy will only work
-if the User Agent is set to a specific value.
+The HTTP Request Settings allow you to configure the identifier that the repository manager uses when it is making
+an HTTP request. You may want to change this if it needs to use an HTTP Proxy, and the Proxy will only work if the
+User Agent is set to a specific value.
 
 You can also add extra parameters to place on a GET request to a
 remote repository. You could use this to add identifying information
 to requests.
 
-The amount of time Nexus will wait for a request to succeed when
-interacting with an external, remote repository can be configured with
-the Request Timeout and Request Retry Attempts settings.
+The amount of time the repository manager will wait for a request to succeed when interacting with an external,
+remote repository can be configured with the Request Timeout and Request Retry Attempts settings.
 
 [[fig-config-administration-http]]
 .Administration HTTP Request Settings
@@ -79,9 +72,8 @@ image::figs/web/config-administration-security.png[scale=60]
 Effectively, this configuration determines what authentication realm is
 used to grant a user access and the order the realms are used.
 
-Xml Authenticating and Xml Authorizing Realm:: These identify the
-Nexus internal storage uses XML files for storing the security
-details.
+Xml Authenticating and Xml Authorizing Realm:: These identify the internal storage of the repository manager. It
+is using XML files for storing the security details.
 
 (Enterprise) LDAP Authentication Realm:: This realm identifies
 external storage in an LDAP system with details documented in
@@ -90,56 +82,46 @@ external storage in an LDAP system with details documented in
 Crowd Realm:: This realm identifies external storage in an Atlassian
 Crowd system with details documented in <<crowd>>.
 
-Rut Auth Realm:: This realm is external authentication in any system
-with the user authorization passed to Nexus in a HTTP header field
-with details documented in <<rutauth>>.
+Rut Auth Realm:: This realm is external authentication in any system with the user authorization passed to the
+repository manager in a HTTP header field with details documented in <<rutauth>>.
 
 The 'User Token Realm' is required for user token support documented
 in <<usertoken>> and the 'NuGet API-Key Realm' is needed
 for NuGet support documented in <<nuget>>.
 
-In addition, you can enable or disable anonymous access and set the
-username and password for anonymous access. The anonymous username and
-password are used to integrate with other realms that may need a
-special username for anonymous access.  In other words, the username
-and password here are what we attempt to authorize when someone makes
-an anonymous request. You would change the anonymous username to
-+guest+ if you wanted to integrate Nexus with Microsoft's Active
-Directory.
+In addition, you can enable or disable anonymous access and set the username and password for anonymous
+access. The anonymous username and password are used to integrate with other realms that may need a special
+username for anonymous access.  In other words, the username and password here are what we attempt to authorize
+when someone makes an anonymous request. You would change the anonymous username to +guest+ if you wanted to
+integrate the repository manager with Microsoft's Active Directory.
 
 ==== Application Server Settings
 
-You can change the 'Base URL' for your Nexus installation, which is
-used when generating links in emails and RSS feeds. For example, the
-Nexus instance for Sonatype development is at
-https://repository.sonatype.org, and it makes use of this 'Base URL'
-field to ensure that links in emails and RSS feeds point back to the
-correct public URL. Internally Nexus is running on a different port and
-context than the public port 80 and root context.
+You can change the 'Base URL' for your repositor manager installation, which is used when generating links in
+emails and RSS feeds. For example, the {pro} instance for Sonatype development is at
+https://repository.sonatype.org, and it makes use of this 'Base URL' field to ensure that links in emails and RSS
+feeds point back to the correct public URL. Internally {pro} is running on a different port and context than the
+public port 80 and root context.
 
-If you are hosting Nexus behind a proxy server and you want to make
-sure that Nexus always uses the specified Base URL, check the 'Force
-Base URL' checkbox. If the Force Base URL is not checked, Nexus will
-craft URLs in HTTP responses based on the request URL, but it will use
-the Base URL when it is generating emails.
+If you are hosting the repository manager behind a proxy server and you want to make sure that it always uses the
+specified Base URL, check the 'Force Base URL' checkbox. If the Force Base URL is not checked, the repository
+manager will craft URLs in HTTP responses based on the request URL, but it will use the Base URL when it is
+generating emails.
 
 [[fig-config-administration-application-server]]
 .Administration Application Server Settings
 image::figs/web/config-administration-application-server.png[scale=70]
 
-TIP: These settings are especially important if Nexus is proxied by an
-external proxy server using a different protocol like HTTPS rather
-than plain HTTP known to Nexus or a different hostname like
-repository.somecompany.com instead of an IP number only.
+TIP: These settings are especially important if the repository manager is proxied by an external proxy server
+using a different protocol like HTTPS rather than plain HTTP known to it or a different hostname like
+`repository.somecompany.com` instead of an IP number only.
 
 [[config-default-http-proxy]]
 ==== Default HTTP and HTTPS Proxy Settings
 
-If your Nexus instance needs to reach public repositories like the
-Central Repository via a proxy server, you can configure the
-connection to a proxy server for HTTP and a potentially a different
-for HTTPS connection. If you do not configure a proxy for HTTPS, the
-HTTP proxy server settings will be used.
+If your repository manager instance needs to reach public repositories like the Central Repository via a proxy
+server, you can configure the connection to a proxy server for HTTP and a potentially a different for HTTPS
+connection. If you do not configure a proxy for HTTPS, the HTTP proxy server settings will be used.
 
 You can specify 'Proxy Host' and 'Proxy Port' and, optionally, the
 authentication details for username, password, NT LAN Host and NT LAN
@@ -154,18 +136,15 @@ configuration.
 .Administration Default HTTP Proxy Settings
 image::figs/web/config-administration-http-proxy.png[scale=70]
 
-TIP: This is a critical initial step for many Enterprise deployments
-of Nexus deployment, since these environments are typically secured
-via a HTTP/HTTPS proxy server for all outgoing internet traffic.
+TIP: This is a critical initial step for many Enterprise deployments of a repository manager, since these
+environments are typically secured via a HTTP/HTTPS proxy server for all outgoing internet traffic.
 
 
 ==== System Notification Settings
 
-When you proxy remote repositories that are not available all the
-time, Nexus will automatically  block and unblock them during
-downtimes. The 'System Notification Settings' allows you define 'Email
-Adresses' and roles for Nexus users that should receive notifications
-messages for these blocking and unblocking events.
+When you proxy remote repositories that are not available all the time, the repository manager will automatically
+block and unblock them during downtimes. The 'System Notification Settings' allows you define 'Email Adresses' and
+roles for users that should receive notifications messages for these blocking and unblocking events.
 
 [[fig-config-administration-system-notification]]
 .Administration System Notification Settings
@@ -187,9 +166,9 @@ image::figs/web/config-administration-pgp-key-server.png[scale=60]
 
 ==== New Version Availability
 
-Nexus can notify you of new versions of Nexus via the Nexus
+{pro} can notify you about the availability of new versions  via the user
 interface. To enable this feature, check the Enable checkbox in the
-'New Version Availability' section of the Nexus server settings as
+'New Version Availability' section of the server settings as
 shown in <<fig-config-administration-new-version>>.
 
 [[fig-config-administration-new-version]]
@@ -200,18 +179,17 @@ image::figs/web/config-administration-new-version.png[scale=60]
 [[confignx-sect-manage-repo]]
 === Managing Repositories
 
-To manage Nexus repositories, log in as the administrative user and
-click on 'Repositories' in the 'Views/Repositories' menu in the
-left-hand Nexus menu.
+To manage repositories, log in as the administrative user and click on 'Repositories' in the 'Views/Repositories'
+menu in the left-hand main menu.
 
-Nexus provides for three different kinds of repositories: 'Proxy'
-Repositories, 'Hosted' repositories, and 'Virtual' repositories.
+{pro} provides for three different kinds of repositories: 'Proxy' Repositories, 'Hosted' repositories, and
+'Virtual' repositories.
 
 [[proxy-repository]]
 ==== Proxy Repository
 
-A 'Proxy Repository' is a proxy of a remote repository.  By default,
-Nexus ships with the following configured proxy repositories:
+A 'Proxy Repository' is a proxy of a remote repository.  By default, {pro} ships with the following configured
+proxy repositories:
 
 Apache Snapshots:: This repository contains snapshot releases from the
 Apache Software Foundation.
@@ -219,18 +197,15 @@ Apache Software Foundation.
 Codehaus Snapshots:: This repository contains snapshot releases from
 Codehaus.
 
-Central:: This is the 'Central Repository' containing release
-components. Formerly known as 'Maven Central', it is the default
-built-in repository for Apache Maven and directly supported in other
-build tools like Gradle, SBT or Ant/Ivy. Nexus connects to the 
-Central Repository via HTTPS using the URL
-`https://repo1.maven.org/maven2/`.
+Central:: This is the 'Central Repository' containing release components. Formerly known as 'Maven Central', it is
+the default built-in repository for Apache Maven and directly supported in other build tools like Gradle, SBT or
+Ant/Ivy. {pro} connects to the Central Repository via HTTPS using the URL `https://repo1.maven.org/maven2/`.
 
 [[hosted-repository]]
 ==== Hosted Repository
 
-A 'Hosted Repository' is a repository that is hosted by Nexus. Nexus
-ships with the following configured hosted repositories:
+A 'Hosted Repository' is a repository that is hosted by the repository manager. {pro} ships with the following
+configured hosted repositories:
 
 3rd Party:: This hosted repository should be used for third-party
 dependencies not available in the public Maven repositories. Examples
@@ -246,15 +221,12 @@ publish internal snapshots.
 [[virtual-repository]]
 ==== Virtual Repository
 
-A 'Virtual Repository' serves as an adaptor to and from different types of
-repositories. Currently, Nexus supports conversion to and from Maven 1
-repositories and Maven 2 repositories. In addition, you can expose any
-repository format as a NuGet or OBR repository. For example, a Maven 2
-repository can contain OSGi Bundles, which can be exposed as a OSGi
-Bundle repository with the virtual repository Provider set to OBR.
+A 'Virtual Repository' serves as an adaptor to and from different types of repositories. Currently, {pro} supports
+conversion to and from Maven 1 repositories and Maven 2 repositories. In addition, you can expose any repository
+format as a NuGet or OBR repository. For example, a Maven 2 repository can contain OSGi Bundles, which can be
+exposed as a OSGi Bundle repository with the virtual repository Provider set to OBR.
 
-By default it ships with a Central M1 shadow repository that exposes
-the Central repository in Maven 1 format.
+By default it ships with a Central M1 shadow repository that exposes the Central repository in Maven 1 format.
 
 ifdef::promo[]
 ++++
@@ -265,19 +237,15 @@ endif::[]
 
 ==== Configuring Repositories
 
-The 'Repositories' window displayed in <<fig-repo-config>> allows you to
-create, update and delete different repositories with the 'Add', 'Delete'
-and 'Trash' button. Use the 'Refresh' button to update the displayed list
-of repositories and repository groups. The 'Trash' button allows you to
-empy the trash folder into which deleted components are copied, when
-any delete operations are performed from the Nexus user interface. 
+The 'Repositories' window displayed in <<fig-repo-config>> allows you to create, update and delete different
+repositories with the 'Add', 'Delete' and 'Trash' button. Use the 'Refresh' button to update the displayed list of
+repositories and repository groups. The 'Trash' button allows you to empy the trash folder into which deleted
+components are copied, when any delete operations are performed from the user interface.
 
-By default, the list of repositories displays the repositories
-configured and managed by the administrator. The drop down on the
-right of the 'Trash' button allows you to switch the list of
-repositories and view the repositories managed by Nexus. There are
-staging repositories as documented in <<staging>> or procurement
-repositories as documented in <<procure>>.
+By default, the list of repositories displays the repositories configured and managed by the administrator. The
+drop down on the right of the 'Trash' button allows you to switch the list of repositories and view the
+repositories managed by the repository manager. There are staging repositories as documented in <<staging>> or
+procurement repositories as documented in <<procure>>.
 
 [[fig-repo-config]]
 .Repository Configuration Screen for a Proxy Repository
@@ -311,7 +279,7 @@ a currently disabled proxy repository
 
 Repository Path:: the direct URL path that exposes the repository via
 HTTP access and potentially allows access and directory browsing
-outside of the Nexus interface
+outside of the user interface
 
 Clicking on a colum header allows you to sort the list in ascending or
 descending order based on the column data.
@@ -343,18 +311,13 @@ image::figs/web/repository-manager_repository-config-2.png[scale=50]
 .Repository Configuration Access Settings for a Hosted Repository
 image::figs/web/repository-manager_repository-config-3.png[scale=50]
 
-<<fig-repo-config>> and <<fig-repo-config-2>> show the repository
-configuration screen for a proxy repository in Nexus. From this
-screen, you can manage the settings for proxying an external
-repository:
+<<fig-repo-config>> and <<fig-repo-config-2>> show the repository configuration screen for a proxy repository in
+the repository manager. From this screen, you can manage the settings for proxying an external repository:
 
-Repository ID:: The repository ID is the identifier that will be used
-in the Nexus URL. For example, the proxy repository for the Central
-Repository has an ID of +central+, this means that Maven and other
-tools can access the repository directly at
-+http://localhost:8081/nexus/content/repositories/central+. The
-'Repository ID' must be unique in a given Nexus installation and is
-required.
+Repository ID:: The repository ID is the identifier that will be used in the URL. For example, the proxy
+repository for the Central Repository has an ID of +central+, this means that Maven and other tools can access the
+repository directly at +http://localhost:8081/nexus/content/repositories/central+. The 'Repository ID' must be
+unique in a given repository manager installation and is required.
 
 Repository Name:: The display name for a repository is required.
 
@@ -362,11 +325,9 @@ Repository Type:: The type of repository (proxy, hosted, or
 virtual). You can't change the type of a repository as it is selected
 when you create a repository.
 
-Provider and Format:: 'Provider' and 'Format' define in what format Nexus
-exposes the repository to external tools. Supported formats depend on
-the installed plugins. {oss} includes support for Maven 1,
-Maven 2 and Site repositories. {pro} adds support for
-NuGet and OBR and additional plugins can add support for P2 and P2
+Provider and Format:: 'Provider' and 'Format' define in what format the repository manager exposes the repository
+to external tools. Supported formats depend on the installed plugins. {oss} includes support for Maven 1, Maven 2
+and Site repositories. {pro} adds support for NuGet and OBR and additional plugins can add support for P2 and P2
 Update Site and other formats.
 
 Repository Policy:: If a proxy repository has a policy of release, then
@@ -383,46 +344,35 @@ location for a specific repository. You would do this if you were
 concerned about storage and wanted to put the contents of a specific
 repository (such as central) in a different location.
 
-Remote Repository Access:: This section configures proxy repositories
-and how Nexus interacts with the remote repository, that is being
-proxied.
+Remote Repository Access:: This section configures proxy repositories and how the repository manager interacts
+with the remote repository, that is being proxied.
 
-Remote Storage Location;; The 'Remote Storage Location' needs to be
-configured with the URL of the remote repository, that needs to be
-proxied. When selecting the URL to proxy it is beneficial to avoid
-proxying remote repository groups. Proxying repository groups prevents
-some performance optimization in terms of accessing and retrieving the
-content of the remote repository. If you require components from the
-group that are found in different hosted repositories on the remote
-repository server it is better to create multiple proxy repositories
-that proxy the different hosted repositories from the remote server on
-your Nexus server instead of simply proxying the group.
+Remote Storage Location;; The 'Remote Storage Location' needs to be configured with the URL of the remote
+repository, that needs to be proxied. When selecting the URL to proxy it is beneficial to avoid proxying remote
+repository groups. Proxying repository groups prevents some performance optimization in terms of accessing and
+retrieving the content of the remote repository. If you require components from the group that are found in
+different hosted repositories on the remote repository server it is better to create multiple proxy repositories
+that proxy the different hosted repositories from the remote server on your repository manager instead of simply
+proxying the group.
 
-Download Remote Indexes;; Download the index of a remote repository
-can be configured with this setting. If enabled, Nexus will download
-the index, if it exists, and use that for its searches as well as
-serve that up to any clients that ask for the index (like
-m2eclipse). The default for new proxy repositories is enabled, but all
-of the default repositories included in Nexus have this option
-disabled. To change this setting for one of the proxy repositories
-that ship with Nexus, change the option, save the repository, and then
-re-index the repository. Once this is done, component search will
-return every component available on the Maven Central repository.
+Download Remote Indexes;; Download the index of a remote repository can be configured with this setting. If
+enabled, the repository manager will download the index, if it exists, and use that for its searches as well as
+serve that up to any clients that ask for the index (like m2eclipse). The default for new proxy repositories is
+enabled, but all of the default repositories included have this option disabled. To change this setting for one of
+the proxy repositories that ship with the repository manager, change the option, save the repository, and then
+re-index the repository. Once this is done, component search will return every component available on the Maven
+Central repository.
 
-Auto Blocking Enabled;; If Auto blocking active is set to true, Nexus
-will automatically block a proxy repository if the remote repository
-becomes unavailable. While a proxy repository is blocked, components
-will still be served to clients from a local cache, but Nexus will not
-attempt to locate a component in a remote repository. Nexus will
-periodically retest the remote repository and unblock the repository
-once it becomes available.
+Auto Blocking Enabled;; If Auto blocking active is set to true, the repository manager will automatically block a
+proxy repository if the remote repository becomes unavailable. While a proxy repository is blocked, components
+will still be served to clients from a local cache, but the repository manager will not attempt to locate a
+component in a remote repository. The repository manager will periodically retest the remote repository and
+unblock the repository once it becomes available.
 
-File Content Validation;; If set to true, Nexus will perform a
-lightweight check on the content of downloaded files. This will
-prevent invalid content to be stored and proxied by Nexus that
-otherwise can happen in cases where the remote repository (or some
-proxy between Nexus and the remote repository) returns a HTML page
-instead of the requested file.
+File Content Validation;; If set to true, the repository manager will perform a lightweight check on the content
+of downloaded files. This will prevent invalid content to be stored and proxied by the repository manager that
+otherwise can happen in cases where the remote repository (or some proxy between the repository manager and the
+remote repository) returns a HTML page instead of the requested file.
 
 Checksum Policy;; Sets the checksum policy for a remote
 repository. This option is set to 'Warn' by
@@ -458,9 +408,8 @@ shown in <<fig-repo-config-hosted>>.
 Allow File Browsing;; When set to true, users can browse the contents
 of the repository with a web browser.
 
-Include in Search;; When set to true, this repository is included when
-you perform a search in Nexus. If this setting is false, the contents
-of the repository are excluded from a search.
+Include in Search;; When set to true, this repository is included when you perform a search in the repository
+manager. If this setting is false, the contents of the repository are excluded from a search.
 
 Publish URL;; If this property is set to false, the repository will
 not be published on a URL, and you will not be able to access
@@ -468,45 +417,36 @@ this repository remotely. You would set this configuration
 property to false if you want to prevent clients for
 connecting to this repository directly.
 
-Expiration Settings:: Nexus maintains a local cache of components and
-metadata, you can configure expiration parameters for a proxy
-repository. The expiration settings are:
+Expiration Settings:: The repository manager maintains a local cache of components and metadata, you can configure
+expiration parameters for a proxy repository. The expiration settings are:
 
-Not Found Cache TTL;; If Nexus fails to locate a component, it will
-cache this result for a given number of minutes. In other words, if
-Nexus can't find a component in a remote repository, it will not
-perform repeated attempts to resolve this component until the 'Not
-Found Cache TTL' time has been exceeded. The default for this setting
-is 1440 minutes (or 24 hours).
+Not Found Cache TTL;; If the repository manager fails to locate a component, it will cache this result for a given
+number of minutes. In other words, if the repository manager can't find a component in a remote repository, it
+will not perform repeated attempts to resolve this component until the 'Not Found Cache TTL' time has been
+exceeded. The default for this setting is 1440 minutes (or 24 hours).
 
-Artifact Max Age;; Tells Nexus what that maximum age of a component
-is, before it retrieves a new version from the remote repository.  The
-default for this setting is -1 for a repository with a release policy
-and 1440 for a repository with snapshot policy.
+Artifact Max Age;; Tells the repository manager what that maximum age of a component is, before it retrieves a new
+version from the remote repository.  The default for this setting is -1 for a repository with a release policy and
+1440 for a repository with snapshot policy.
 
-Metadata Max Age;; Nexus retrieves metadata from the remote
-repository. It will only retrieve updates to metadata after the
-'Metadata Max Age' has been exceeded. The default value for this
-setting is 1440 minutes (or 24 hours).
+Metadata Max Age;; The repository manager retrieves metadata from the remote repository. It will only retrieve
+updates to metadata after the 'Metadata Max Age' has been exceeded. The default value for this setting is 1440
+minutes (or 24 hours).
 
 Item Max Age;; Some items in a repository may be neither a component
 identified by the Maven GAV coordinates or metadata for such components. This
 cache value determines the maximum age for these items before
 updates are retrieved. 
 
-HTTP Request Settings:: In the 'HTTP Request Settings' you can change
-the properties of the HTTP request to the remote repository. You can
-also configure the 'User Agent' of the request, add parameters to a
-request, and set the timeout and retry behavior. The HTTP request
-configured is the request made from Nexus to the remote repository
-being proxied.
+HTTP Request Settings:: In the 'HTTP Request Settings' you can change the properties of the HTTP request to the
+remote repository. You can also configure the 'User Agent' of the request, add parameters to a request, and set
+the timeout and retry behavior. The HTTP request configured is the request made from the repository manager to the
+remote repository being proxied.
 
-Beyond these configurations in the user interface Nexus supports the 
-usage of cookies for remote repositories authentication. Together 
-with the feature to enable circular redirects, this enables proxying 
-repositories like the Oracle Maven repository. The following 
-configuration can be added to +nexus.properties+ and allows a functioning 
-proxy repository to the URL +https://maven.oracle.com+.
+Beyond these configurations in the user interface, {oss} supports the usage of cookies for remote repositories
+authentication. Together with the feature to enable circular redirects, this enables proxying repositories like
+the Oracle Maven repository. The following configuration can be added to +nexus.properties+ and allows a
+functioning proxy repository to the URL +https://maven.oracle.com+.
 
 ----
 # Comma separated list of hostnames that needs to accept circular redirections
@@ -549,15 +489,12 @@ image::figs/web/repository-manager_summary-virtual.png[scale=60]
 
 ==== Auto Block/Unblock of Remote Repositories
 
-What happens when Nexus is unable to reach a remote repository? If
-you've defined a proxy repository and the remote repository is
-unavailable, Nexus will now automatically block the remote repository.
-Once a repository has been auto-blocked, Nexus will then periodically
-retest the remote repository and unblock the repository once it
-becomes available. You can control this behavior by changing the 'Auto
-Blocking Enabled' setting under the 'Remote Repository Access' section
-of the proxy repository configuration as shown in the following figure
-to 'True':
+What happens when the repository manager is unable to reach a remote repository? If you've defined a proxy
+repository and the remote repository is unavailable, the repository manager will now automatically block the
+remote repository.  Once a repository has been auto-blocked, the repository manager will then periodically retest
+the remote repository and unblock the repository once it becomes available. You can control this behavior by
+changing the 'Auto Blocking Enabled' setting under the 'Remote Repository Access' section of the proxy repository
+configuration as shown in the following figure to 'True':
 
 .Configuring Remote Repository Auto Block/Unblock
 image::figs/web/configuring_auto-block.png[scale=75]
@@ -565,14 +502,14 @@ image::figs/web/configuring_auto-block.png[scale=75]
 [[repository-groups]]
 === Managing Repository Groups
 
-Repository groups are a powerful feature of Nexus. They allow you to combine
+Repository groups are a powerful feature of {pro}. They allow you to combine
 multiple repositories and other repository groups of the same
 repository format in a single repository group. This single group and
 the associated URL can then be used as a single access point to all
 components in a specific format sourced from an number of repositories.
 
 This eases the configuration for the users and at the same time allows
-the Nexus adminstrators to add more repositories and therefore
+the adminstrators to add more repositories and therefore
 components without requiring changes on the client computers.
 
 Use the left-hand panel 'Repositories' menu item in the 'Views/Repositories'
@@ -591,45 +528,35 @@ repositories to the repository group, drag them to the 'Ordered Group
 Repositories' or use the arrows between the two lists. 
 
 [[fig-group-config]]
-.Group Configuration Screen in Nexus
+.Group Configuration Screen
 image::figs/web/repository-manager_add-to-group.png[scale=50]
 
-Note that the order of the repositories listed in 'Ordered Group
-Repositories' is important. When Nexus searches for a component in a
-group, it will return the first match. To reorder a repository in this
-list, click and the drag the repositories and groups in the 'Ordered
-Group Repositories' selection list.
+Note that the order of the repositories listed in 'Ordered Group Repositories' is important. When the repository
+manager searches for a component in a group, it will return the first match. To reorder a repository in this list,
+click and the drag the repositories and groups in the 'Ordered Group Repositories' selection list.
 
-The order of repositories or other groups in a group can be used to
-influence the effective metadata that will be retrieved from
-a repository group. We recommend placing hosted repositories
-higher in the list than proxy repositories within the list. For proxy
-repositories Nexus needs to periodically check the remote for updates, 
-which will incur more overhead than a hosted repository lookup.
+The order of repositories or other groups in a group can be used to influence the effective metadata that will be
+retrieved from a repository group. We recommend placing hosted repositories higher in the list than proxy
+repositories within the list. For proxy repositories the repository manager needs to periodically check the remote
+for updates, which will incur more overhead than a hosted repository lookup.
 
-We also recommend placing repositories with a higher probability of
-matching the majority of components higher in this list. If most of
-your components are going to be retrieved from the Central
-Repository, putting 'Central' higher in this list than a smaller, more
-focused repository is going to be better for performance, as Nexus is
-not going to interrogate the smaller remote repository for as many
-missing components.
+We also recommend placing repositories with a higher probability of matching the majority of components higher in
+this list. If most of your components are going to be retrieved from the Central Repository, putting 'Central'
+higher in this list than a smaller, more focused repository is going to be better for performance, as the
+repository manager is not going to interrogate the smaller remote repository for as many missing components.
 
 Once a repository group is configured it can be used from the client
 as discussed in e.g. <<config-maven>>, <<npm-configuring>>,
 <<rubygems-configuring>> or <<nuget-configuring>> and further
 repositories can be added easily.
 
-Nexus ships with one group: +public+. The Public Repositories group
-uses the Maven 2 repository format and combines the important external
-Central Repository with the hosted repositories: 3rd Party, Releases,
-and Snapshots. 
+{pro} ships with one group: +public+. The Public Repositories group uses the Maven 2 repository format and
+combines the important external Central Repository with the hosted repositories: 3rd Party, Releases, and
+Snapshots.
 
-In <<config-maven>> we configured Maven via the
-settings.xml to look for components in the public group managed by
-Nexus. <<fig-group-config>> shows the group configuration screen in
-Nexus. In this figure you can see the contents of the 'Public
-Repositories' group.
+In <<config-maven>> we configured Maven via the settings.xml to look for components in the public group managed by
+the repository manager. <<fig-group-config>> shows the group configuration screen in the user interface. In this
+figure you can see the contents of the 'Public Repositories' group.
 
 [[confignx-sect-managing-routes]]
 === Managing Routing
@@ -1385,8 +1312,8 @@ If you select a row in the list of loggers, you can delete the
 highlighted logger by pressing the 'Remove' button above the list. The
 'Add' button beside it can be used to create new loggers in a
 dialog. You will need to know the logger you want to
-configure. Depending on your needs you can inspect the source of Nexus
-OSS and the plugins as well as the source of your own plugins to
+configure. Depending on your needs you can inspect the source of {oss}
+and the plugins as well as the source of your own plugins to
 determine the related loggers or contact Sonatype support for detailed
 help. In addition, it is important to keep in mind that some loggers
 will change between Nexus and plugin versions used.
