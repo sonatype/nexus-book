@@ -570,44 +570,35 @@ figure you can see the contents of the 'Public Repositories' group.
 
 {inall}
 
-Routing can be considered the internal activities Nexus performs in
-order to determine where to look for a specific component in a
-repository. The routing information has an impact on the performance
-of component retrieval as well as determining the availability of
-components.
+Routing can be considered the internal activities the repository manager performs in order to determine where to
+look for a specific component in a repository. The routing information has an impact on the performance of
+component retrieval as well as determining the availability of components.
 
-A large portion of the performance gains achievable with correct and
-optimized routing information is configured by Nexus itself with
-automatic routing, documented in <<automatic-routing>>. Fine grained
-control and further customizations in terms of access provision can be
-achieved with some manual routing configuration documented in
-<<manual-routing>>.
+A large portion of the performance gains achievable with correct and optimized routing information is configured
+by the repository manager itself with automatic routing, documented in <<automatic-routing>>. Fine grained control
+and further customizations in terms of access provision can be achieved with some manual routing configuration
+documented in <<manual-routing>>.
 
 [[automatic-routing]]
 ==== Automatic Routing
 
-Automatic routing is handled by Nexus on a per repository
+Automatic routing is handled on a per repository
 basis. You can access the configuration and further details in the
 Routing tab after selecting a repository in the list accessible via the
 'Repositories' item in the the 'Views/Repositories' left-hand menu.
 
-The routing information consists of the top two levels of the
-directory structure of the repository and is stored in a prefixes.txt
-file. It allows Nexus to automatically route only component requests
-with the corresponding groupId values to a repository, as found in the
-text file. This, in turns, avoids unnecessary index or even remote
-repository access and therefore greatly improves performance.
+The routing information consists of the top two levels of the directory structure of the repository and is stored
+in a prefixes.txt file. It allows the repository manager to automatically route only component requests with the
+corresponding `groupId` values to a repository, as found in the text file. This, in turns, avoids unnecessary index
+or even remote repository access and therefore greatly improves performance.
 
-Nexus generates the prefixes.txt file for a hosted repository and
-makes it available for remote downloads. Each deployment of a new
-component will trigger an update of the file for the hosted repository
-as well as the prefix files for any repository groups that contain
-the hosted repository. You can access it in the 'Routing' tab of a
-hosted repository as displayed in <<fig-automatic-routing-hosted>> by
-clicking on the 'Show prefix file' link on the right. In addition, the
-'Publishing' section shows the 'Status' of the routing information, a
-'Message' with further details, and the date and time of the last
-update in the 'Published On' field.
+The repository manager generates the prefixes.txt file for a hosted repository and makes it available for remote
+downloads. Each deployment of a new component will trigger an update of the file for the hosted repository as well
+as the prefix files for any repository groups that contain the hosted repository. You can access it in the
+'Routing' tab of a hosted repository as displayed in <<fig-automatic-routing-hosted>> by clicking on the 'Show
+prefix file' link on the right. In addition, the 'Publishing' section shows the 'Status' of the routing
+information, a 'Message' with further details, and the date and time of the last update in the 'Published On'
+field.
 
 [[fig-automatic-routing-hosted]]
 .Automatic Routing for a Hosted Repository
@@ -626,45 +617,37 @@ six, nine or twelve hours or as a daily or weekly execution.
 .Automatic Routing for a Proxy Repository
 image::figs/web/automatic-routing-proxy.png[scale=60]
 
-For a proxy repository, the prefix file is either downloaded from
-the remote repository or generation is attempted by scraping the HTML
-directory listing of the remote repository. If a prefix file is
-published by the remote it is always used. The scraping strategy only
-used in cases where Nexus can be sure the remote directory listing
-contains all available artifacts. For example, if the remote is a Nexus
-hosted repository, or a well known format such as a Subversion based
-repository then the directory listing will be used if no prefix file
-is available.
+For a proxy repository, the prefix file is either downloaded from the remote repository or generation is attempted
+by scraping the HTML directory listing of the remote repository. If a prefix file is published by the remote it is
+always used. The scraping strategy only used in cases where the repository manager can be sure the remote
+directory listing contains all available artifacts. For example, if the remote is hosted repository on a {pro}, or
+a well known format such as a Subversion based repository then the directory listing will be used if no prefix
+file is available.
 
-The generation of the prefix file in all the Nexus deployments
-proxying each other greatly improves performance for all Nexus
-instances. It lowers network traffic and load on the servers, since
-failing requests and serving the respective HTTP error pages for a
-component that is not found is avoided for each component. Instead,
-the regularly light weight download of the prefix file establishes a
-good high-level knowledge of components available.
+The generation of the prefix file in all the repository managers deployments proxying each other greatly improves
+performance for all repository manager instances. It lowers network traffic and load on the servers, since failing
+requests and serving the respective HTTP error pages for a component that is not found is avoided for each
+component. Instead, the regularly light weight download of the prefix file establishes a good high-level knowledge
+of components available.
 
-Automatic Routing is configured by Nexus automatically brings
-significant performance benefits to all Nexus instances proxying each
-other in a network and on the wider internet. It does not need to be
-changed apart from tweaking the update interval. To exercise even
-finer control than provided by Automatic Routing use Routing as
+Automatic Routing is configured automatically brings significant performance benefits to all {pro} and {oss}
+instances proxying each other in a network and on the wider internet. It does not need to be changed apart from
+tweaking the update interval. To exercise even finer control than provided by Automatic Routing use Routing as
 documented in <<manual-routing>>.
 
 [[manual-routing]]
 ==== Manual Routing Configuration
 
-Nexus routes are like filters you can apply to groups in terms
+Routes are like filters you can apply to groups in terms
 of security access and general component retrieval, and can reduce the
 number of repositories within a group accessed in order to retrieve an
 component. The administration interface for routes can be accessed via
 the 'Routing' menu item in the 'View/Repositories' menu in the left-hand
 navigation panel.
 
-Routes allow you to configure Nexus to include or exclude specific
-repository content paths from a particular component search when Nexus
-is trying to locate a component in a repository group. There are a
-number of different scenarios in which you might configure a route.
+Routes allow you to configure the repository manager to include or exclude specific repository content paths from
+a particular component search when the repository manager is trying to locate a component in a repository
+group. There are a number of different scenarios in which you might configure a route.
 
 The most commonly configured scenario is when you want to make sure
 that you are retrieving components in a particular group ID from a
@@ -672,13 +655,12 @@ particular repository. This is especially useful when you want your
 own organization's components from the hosted Release and Snapshot
 repositories only.
 
-Routes are applicable when you are trying to resolve a component from
-a repository group. Using routes allows you to modify the repositories
-Nexus will consult when it tries to resolve a component from a group
-of repositories.
+Routes are applicable when you are trying to resolve a component from a repository group. Using routes allows you
+to modify the repositories the repository manager consults when it tries to resolve a component from a group of
+repositories.
 
 [[fig-route-config]]
-.Routing Configuration Screen in Nexus
+.Routing Configuration Screen
 image::figs/web/repository-manager_route-config.png[scale=60]
 
 <<fig-route-config>> shows the 'Routing' configuration
@@ -686,12 +668,9 @@ screen. Clicking on a route will bring up a screen that will allow
 you to configure the properties of a route. The configuration options
 available for a route are:
 
-URL Pattern::
-    Nexus uses the 'URL Pattern' will use to match a request to
-    Nexus. If the regular expression in this pattern is matched, Nexus
-    will either include or exclude the listed repositories from a
-    particular component query. In <<fig-route-config>>
-    the two patterns are:
+URL Pattern:: The repository manager uses the 'URL Pattern' will use to match a request. If the regular expression
+    in this pattern is matched, the repository manager will either include or exclude the listed repositories from
+    a particular component query. In <<fig-route-config>> the two patterns are:
 
     `^/(com|org)/somecompany/.*`;; This pattern would match all
     paths that start with either `/com/somecompany/` or
@@ -701,12 +680,10 @@ URL Pattern::
     organization's components and map these requests to the hosted
     Releases and Snapshots repositories.
 
-    `^/org/some-oss/.*`;; This pattern is used in an exclusive
-    route. It matches every path that starts with `/org/some-oss/`. This
-    particular exclusive route excludes the local hosted Releases and
-    Snapshots directory for all components that match this path.  When
-    Nexus tries to resolve components that match this path, it will
-    exclude the Releases and Snapshots repositories.
+    `^/org/some-oss/.*`;; This pattern is used in an exclusive route. It matches every path that starts with
+    `/org/some-oss/`. This particular exclusive route excludes the local hosted Releases and Snapshots directory
+    for all components that match this path.  When the repository manager tries to resolve components that match
+    this path, it will exclude the Releases and Snapshots repositories.
 
     `(?!/org/some-oss/.*).*`;; Using this pattern in an
     exclusive route allows you to exclude everything, except the
@@ -720,72 +697,52 @@ for a particular component. A blocking rule will completely remove
 accessibility to the components under the specific pattern in a
 specified repository group.
 
-Ordered Route Repositories:: Nexus searches an ordered list of
-repositories to locate a particular component.  This order only affects
-the order of routes used and not the order of the repositories
-searched. That order is set by the order of the repositories in the
-group repository's configuration.
+Ordered Route Repositories:: The repository manager searches an ordered list of repositories to locate a
+particular component.  This order only affects the order of routes used and not the order of the repositories
+searched. That order is set by the order of the repositories in the group repository's configuration.
 
-In <<fig-route-config>> you can see the two dummy routes that Nexus
-has configured as default routes. The first route is an inclusive
-route, and it is provided as an example of a custom route an
-organization might use to make sure that internally generated
-components are resolved from the Releases and Snapshots repositories
-only. If your organization's group IDs all start with
-+com.somecompany+, and if you deploy internally generated components to
-the Releases and Snapshots repositories, this Route will make sure
-that Nexus doesn't waste time trying to resolve these components from
-public repositories like the Central Repository or the Apache
-Snapshots repository.
+In <<fig-route-config>> you can see the two dummy routes that are configured as default routes. The first route is
+an inclusive route, and it is provided as an example of a custom route an organization might use to make sure that
+internally generated components are resolved from the Releases and Snapshots repositories only. If your
+organization's group IDs all start with +com.somecompany+, and if you deploy internally generated components to
+the Releases and Snapshots repositories, this Route will make sure that the repository manager doesn't waste time
+trying to resolve these components from public repositories like the Central Repository or the Apache Snapshots
+repository.
 
-The second dummy route is an exclusive route. This route excludes the
-Releases and Snapshots repositories when the request path contains
-+/org/some-oss+. This example might make more sense if we replaced
-+some-oss+ with +apache+ or +codehaus+. If the pattern was
-+/org/apache+, this rule is telling Nexus to exclude the internal
-Releases and Snapshots repositories when it is trying to resolve these
-dependencies. In other words, don't bother looking for an Apache
-dependency in your organization's internal repositories.
+The second dummy route is an exclusive route. This route excludes the Releases and Snapshots repositories when the
+request path contains +/org/some-oss+. This example might make more sense if we replaced +some-oss+ with +apache+
+or +codehaus+. If the pattern was +/org/apache+, this rule is telling the repository manager to exclude the
+internal Releases and Snapshots repositories when it is trying to resolve these dependencies. In other words,
+don't bother looking for an Apache dependency in your organization's internal repositories.
 
 TIP: Exclusive rules will positively impact performance, since the
 number of repositories that qualify for locating the component, and
 therefore the search effort is reduced.
 
-What if there is a conflict between two routes? Nexus will process
-inclusive routes before it will process the exclusive routes.
-Remember that routes only affect Nexus' resolution of components when
-it is searching a Group. When Nexus starts to resolve a component from
-a repository group it will start with the list of repositories in a
-group. If there are matching inclusive routes, Nexus will then take
-the intersection of the repositories in the group and the repositories
-in the inclusive route. The order as defined in the group will not be
-affected by the inclusive route. Nexus will then take the result of
-applying the inclusive route and apply the exclusive route to that
-list of repositories. The resulting list is then searched for a
-matching component.
+What if there is a conflict between two routes? The repository manager will process inclusive routes before it
+will process the exclusive routes.  Remember that routes only affect the repository managers resolution of
+components when it is searching a Group. When it starts to resolve a component from a repository group it will
+start with the list of repositories in a group. If there are matching inclusive routes, the repository manager
+will then take the intersection of the repositories in the group and the repositories in the inclusive route. The
+order as defined in the group will not be affected by the inclusive route. The repository manager will then take
+the result of applying the inclusive route and apply the exclusive route to that list of repositories. The
+resulting list is then searched for a matching component.
 
-One straightforward use of routes is to create a route that excludes
-the Central Repository from all searches for your own organization's
-hosted components. If you are deploying your own components to Nexus
-under a groupId of +org.mycompany+, and if you are not deploying these
-components to a public repository, you can create a rule that tells
-Nexus not to interrogate Central for your own organization's
-components. This will improve performance because Nexus will not need
-to communicate with a remote repository when it serves your own
-organization's components. In addition to the performance benefits,
-excluding the Central Repository from searches for your own components
-will reduce needless queries to the public repositories.
+One straightforward use of routes is to create a route that excludes the Central Repository from all searches for
+your own organization's hosted components. If you are deploying your own components to the repository manager
+under a groupId of +org.mycompany+, and if you are not deploying these components to a public repository, you can
+create a rule that tells the repository manager not to interrogate Central for your own organization's
+components. This will improve performance because the repository manager will not need to communicate with a
+remote repository when it serves your own organization's components. In addition to the performance benefits,
+excluding the Central Repository from searches for your own components will reduce needless queries to the public
+repositories.
 
-TIP: This practice of defining an inclusive route for your internal
-components to only hit internal repositories is a crucial best practice
-of implementing a secure component management in your
-organization and a recommended step for initial Nexus
-configuration. Without this configuration, requests for internal
-components will be broadcasted to all configured external proxy
-repositories. This could lead to an information leak, where e.g., your
-internet traffic reveals that your organization works on a component
-with the component coordinates of
-+com.yourcompany.website:new-super-secret-feature:1.0-SNAPSHOT+.
+TIP: This practice of defining an inclusive route for your internal components to only hit internal repositories
+is a crucial best practice of implementing a secure component management in your organization and a recommended
+step for initial configuration of the repository manager. Without this configuration, requests for internal
+components will be broadcasted to all configured external proxy repositories. This could lead to an information
+leak, where e.g., your internet traffic reveals that your organization works on a component with the component
+coordinates of +com.yourcompany.website:new-super-secret-feature:1.0-SNAPSHOT+.
 
 
 In addition to defining inclusive and exclusive routes, you can define
@@ -799,26 +756,22 @@ TIP: Check out <<procure>> for fine-grained control of component
 availability and use blocking routes sparingly.
 
 
-To summarize, there are creative possibilities with routes that the
-designers of Nexus may not have anticipated, but we advise you to
-proceed with caution if you start relying on conflicting or
-overlapping routes.  Use routes sparingly, and use coarse URL
-patterns. Remember that routes are only applied to groups and are
-not used when a component is requested from a specific repository.
+To summarize, there are creative possibilities with routes that the designers of {pro} may not have anticipated,
+but we advise you to proceed with caution if you start relying on conflicting or overlapping routes.  Use routes
+sparingly, and use coarse URL patterns. Remember that routes are only applied to groups and are not used when a
+component is requested from a specific repository.
 
 [[scheduled-tasks]]
 === Managing Scheduled Tasks
 
 {inall}
 
-Nexus allows you to schedule tasks that will be applied to all
-repositories or to specific repositories on a configurable
-schedule. Use the 'Scheduled Tasks' menu item in the 'Administration'
-menu to access the screen, shown in <<fig-repomap-scheduled>>, that
-allows you to manage your Scheduled Tasks.
+The repository managerss allows you to schedule tasks that will be applied to all repositories or to specific
+repositories on a configurable schedule. Use the 'Scheduled Tasks' menu item in the 'Administration' menu to
+access the screen, shown in <<fig-repomap-scheduled>>, that allows you to manage your Scheduled Tasks.
 
 [[fig-repomap-scheduled]]
-.Managing Nexus Scheduled Tasks
+.Managing Scheduled Tasks
 image::figs/web/repository-manager_schedule-service.png[scale=50]
 
 The list interface allows you to 'Add' new tasks and 'Run', 'Cancel', and
@@ -857,7 +810,7 @@ schedules.
 
 The following kinds of scheduled task types are available:
 
-Backup All Nexus Configuration Files:: This scheduled task will
+Backup All Configuration Files:: This scheduled task will
 archive the contents of the +sonatype-work/nexus/conf+ directory.
 Once a backup has been run, the contents of the backup will be
 available in +sonatype-work/nexus/backup+ in a series of ZIP archives
@@ -872,22 +825,19 @@ in case the npm metadata database got corrupted.
 Delete npm metadata:: This task allows you to completely delete the npm metadata 
 of a npm repository and should be only run manually upon advice from Sonatype support.
 
-Download Indexes:: This scheduled task will cause Nexus to download
-indexes from remote repositories for proxied repositories. The
-Download Remote Indexes configuration also needs to be enabled on the
-proxy repository.
+Download Indexes:: This scheduled task causes the repository manager to download indexes from remote repositories
+for proxied repositories. The Download Remote Indexes configuration also needs to be enabled on the proxy
+repository.
 
-Download NuGet Feed:: This task allowed you to download the feed for a
-NuGet proxy repository. It should not be used any longer, since it has
-negative impacts on the performance of your Nexus server as well as
-Nuget.org. With Nexus 2.11.3+ it has been changed to perform no operation
-at all to avoid this problem. It is safe to remove any executions of
-this task.
+Download NuGet Feed:: This task allowed you to download the feed for a NuGet proxy repository. It should not be
+used any longer, since it has negative impacts on the performance of your {pro} or {oss} as well as
+Nuget.org. With {pro} 2.11.3+ it has been changed to perform no operation at all to avoid this problem. It is safe
+to remove any executions of this task.
 
 Drop Inactive Staging Repositories:: Staging repositories can be
 dropped by user interaction or automated systems using the Nexus
 Staging Maven Plugin or Ant Task or a REST API call. Heavy users of
-the Nexus staging features observe that some staging and build
+the repository manager staging features observe that some staging and build
 promotion repositories are inevitably left behind. This scheduled
 task can be used to drop all these repositories.  You can configure
 the duration of inactivity to include the days after the repositories
@@ -901,59 +851,47 @@ inactivity and therefore potentially drop them with this task. This
 will allow you to avoid accumulating a large number of stale staging
 repositories.
 
-Empty Trash:: The Evict and Purge actions do not delete data from the
-Nexus working directory. They simply move data to be cleared or
-evicted to a trash directory under the Nexus work directory. This
-task deletes the data in this trash directory older than the number of
-days specified in the task setting 'Purge items older than (days)'.
+Empty Trash:: The Evict and Purge actions do not delete data from the repository manager working directory. They
+simply move data to be cleared or evicted to a trash directory under the work directory. This task deletes the
+data in this trash directory older than the number of days specified in the task setting 'Purge items older than
+(days)'.
 
-Evict Unused Proxied Items From Repository Caches:: This scheduled
-task tells Nexus to delete all proxied items that haven't been "used"
-(referenced or retrieved by a client) in a number of days as specified
-in 'Evict items older than (days)'. This can be a good job to run if you
-are trying to conserve storage space and do not need all of the
-components in the future e.g., to reproduce old builds without renewed
-retrieval. This is particularly useful for a personal Nexus deployment
-with a large change rate of components combined with limited diskspace.
+Evict Unused Proxied Items From Repository Caches:: This scheduled task tells the repository manager to delete all
+proxied items that haven't been "used" (referenced or retrieved by a client) in a number of days as specified in
+'Evict items older than (days)'. This can be a good job to run if you are trying to conserve storage space and do
+not need all of the components in the future e.g., to reproduce old builds without renewed retrieval. This is
+particularly useful for a personal repository manager deployment with a large change rate of components combined
+with limited diskspace.
 
-Expire Repository Caches:: Repositories have several caches to improve
-performance. This task expires the caches causing Nexus to recheck the
-remote repository for a proxy repository or the file system for a
-hosted repository. You can configure the repository or group to be
-affected with the task setting 'Repository/Group'. Additionally you can
-provide a Repository Path to configure the content that should be
+Expire Repository Caches:: Repositories have several caches to improve performance. This task expires the caches
+causing the repository manager to recheck the remote repository for a proxy repository or the file system for a
+hosted repository. You can configure the repository or group to be affected with the task setting
+'Repository/Group'. Additionally you can provide a Repository Path to configure the content that should be
 expired.
 
 Mirror Eclipse Update Site:: The P2 plugin
 allows you to mirror Eclipse update sites. This task can be used to
 force updates of repositories that went out of sync.
 
-Optimize Repository Index:: To speed up searches in Nexus, this task
-tells the internal search engine to optimize its index files. This has
-no affect on the indexes published by Nexus. Typically, this task does
-not have to run more than once a week.
+Optimize Repository Index:: To speed up searches in the repository manager, this task tells the internal search
+engine to optimize its index files. This has no affect on the indexes published by the repository
+manager. Typically, this task does not have to run more than once a week.
 
-Publish Indexes:: Just as Maven downloads an index from a remote
-repository, Nexus can publish an index in the same format. This will
-make it easier for people using m2eclipse or Nexus to interact with
-your repositories.
+Publish Indexes:: Just as Maven downloads an index from a remote repository, the repository manager can publish an
+index in the same format. This will make it easier for people using m2eclipse or Nexus to interact with your
+repositories.
 
-Purge Nexus Timeline:: Nexus maintains a lot of data that relates to
-the interaction between itself, proxied remote repositories, and
-clients on Nexus.  While this information can be important for
-purposes of auditing, it can also take up storage space. Using this
-scheduled task you can tell Nexus to periodically purge this
-information. The setting "Purge Items older than (days)" controls the
-age of the data to be deleted.
+Purge Nexus Timeline:: The repository manager maintains a lot of data that relates to the interaction between
+itself, proxied remote repositories, and clients.  While this information can be important for purposes of
+auditing, it can also take up storage space. Using this scheduled task you can tell the repository manager to
+periodically purge this information. The setting "Purge Items older than (days)" controls the age of the data to
+be deleted.
 
-Purge Orphaned API Keys:: This scheduled tasks will delete old, unused
-API keys generated and used by various plugins. For example, it should
-be scheduled when using the User Token feature or NuGet
-repositories. It will purge orphaned API keys e.g., after users reset
-their token and should be scheduled to run regularly, specifically
-when internal security policies for password resets and you are using
-an external security provider like LDAP with this requirement for
-resets to access Nexus.
+Purge Orphaned API Keys:: This scheduled tasks will delete old, unused API keys generated and used by various
+plugins. For example, it should be scheduled when using the User Token feature or NuGet repositories. It will
+purge orphaned API keys e.g., after users reset their token and should be scheduled to run regularly, specifically
+when internal security policies for password resets and you are using an external security provider like LDAP with
+this requirement for resets to access the repository manager.
 
 Rebuild Maven Metadata Files:: This task will rebuild the
 maven-metadata.xml files with the correct information and will also
@@ -1024,11 +962,9 @@ are not deleted by the 'Remove Snapshots' job. They are only moved into
 the trash folder.  When you create a scheduled task to remove
 snapshots, you can specify the 'Repository/Group' to affect as well as:
 +
-'Minimum snapshot count';; This configuration option allows you to
-specify a minimum number of snapshots to preserve per component.  For
-example, if you configured this option with a value of 2, Nexus will
-always preserve at least two snapshot components. A value of -1
-indicates that all snapshots should be preserved.
+'Minimum snapshot count';; This configuration option allows you to specify a minimum number of snapshots to
+preserve per component.  For example, if you configured this option with a value of 2, the repository manager will
+always preserve at least two snapshot components. A value of -1 indicates that all snapshots should be preserved.
 +
 'Snapshot retention (days)';; This configuration option allows you to
 specify the number of days to retain snapshot components.  For example,
@@ -1057,15 +993,12 @@ Remove Unused Snapshots From Repository:: This task allows you to
 have SNAPSHOT versions deleted from a Maven repository after they have 
 not been requested for a specified number of days.
 
-Repair Repositories Index:: In certain cases it might be required to
-remove the internal index as well as the published ones of a
-repository.  This task does that and then rebuilds the internal index
-by first trying to download remote indexes (if a proxy repository),
-then scanning the local storage and updating the internal index
-accordingly. Lastly, the index is published for the repository as
-well. There should be no need to schedule this task. But when
-upgrading Nexus, the upgrade instructions may sometimes include a
-manual step of executing this task.
+Repair Repositories Index:: In certain cases it might be required to remove the internal index as well as the
+published ones of a repository.  This task does that and then rebuilds the internal index by first trying to
+download remote indexes (if a proxy repository), then scanning the local storage and updating the internal index
+accordingly. Lastly, the index is published for the repository as well. There should be no need to schedule this
+task. But when upgrading the repository manager, the upgrade instructions may sometimes include a manual step of
+executing this task.
 
 Rubygems: Purge Broken Files on Proxy:: This task allows you to delete 
 the broken metadata of a proxy gem repository. 
@@ -1083,14 +1016,12 @@ virtual) repository with its master repository. This task is only
 needed when external changes affected a source repository of a virtual
 repository you are using.
 
-Update Repositories Index:: If files are deployed directly to a
-repository's local storage (not deployed through Nexus), you will need
-to instruct Nexus to update its index. When executing this task, Nexus
-will update its index by first downloading remote indexes (if a proxy
-repository) and then scan the local storage to index the new files.
-Lastly, the index is published for the repository as well. Normally,
-there should be no need to schedule this task. One possible exception
-would be if files are deployed directly to the local storage regularly.
+Update Repositories Index:: If files are deployed directly to a repository's local storage (not deployed through
+the user interface or client tools), you will need to instruct Nexus to update its index. When executing this
+task, the repository manager will update its index by first downloading remote indexes (if a proxy repository) and
+then scan the local storage to index the new files.  Lastly, the index is published for the repository as
+well. Normally, there should be no need to schedule this task. One possible exception would be if files are
+deployed directly to the local storage regularly.
  
 Yum: Generate Metadata:: The metadata for a yum repository is created
 and maintained by the http://createrepo.baseurl.org/[createrepo]
@@ -1100,35 +1031,29 @@ repository and optionally configure the output directory.
 Beyond these tasks any plugin can provide additional scheduled tasks,
 which will appear in the drop-down once you have installed the plugin.
 
-The Evict and Purge actions do not delete data from the Nexus
-working directory. They simply move data to be cleared or evicted to a
-trash directory under the Nexus work directory. If you want to reclaim
-disk space, you need to clear the Trash on the Browse Repositories
-screen. If something goes wrong with a evict or clear service, you can
-move the data back to the appropriate storage location from the trash.
-You can also schedule the Empty Trash service to clear this directory
-on a periodic basis.
+The Evict and Purge actions do not delete data from the repository manager working directory. They simply move
+data to be cleared or evicted to a trash directory under the work directory. If you want to reclaim disk
+space, you need to clear the Trash on the Browse Repositories screen. If something goes wrong with a evict or
+clear service, you can move the data back to the appropriate storage location from the trash.  You can also
+schedule the Empty Trash service to clear this directory on a periodic basis.
 
 TIP: In order to keep the heap usage in check it is recommended that
 you schedule an "optimize indexes" task to run weekly. A number of
 other maintenance tasks should also be scheduled for production
 deployments.
 
-Setting up scheduled tasks adapted to your usage of Nexus is an
-important first step when setting up a Nexus instance. Go through the
-list of task types and consider your usage patterns of Nexus. Also
-update your scheduled tasks when changing your usage. E.g., if you
-start to regularly deploy snapshots by introducing continuous
-integration server builds with deployment.
+Setting up scheduled tasks adapted to your usage of the repository manager is an important first step when setting
+up a Nexus instance. Go through the list of task types and consider your usage patterns of the repository
+manager. Also update your scheduled tasks when changing your usage. E.g., if you start to regularly deploy
+snapshots by introducing continuous integration server builds with deployment.
 
 [[capabilities]]
 === Accessing and Configuring Capabilities
 
 {inall}
 
-Capabilities are features of Nexus and Nexus plugins that can be
-configured by a user in the generic administration view accessible in
-the left-hand navigation menu 'Administration' under 'Capabilities'.
+Capabilities are features of the repository manager and plugins that can be configured by a user in the generic
+administration view accessible in the left-hand navigation menu 'Administration' under 'Capabilities'.
 
 WARNING: In many cases you will not need to configure anything in
 'Capabilities' unless explicitly instructed to do so by the Sonatype
@@ -1192,12 +1117,10 @@ information about the specific parameter. Once you have completed the
 configuration, press the 'Save' button. The 'Discard' link can be used 
 to reset any changes in the tab.
 
-The 'Status' tab displays a text message that details the status of
-the capability and any potential problems with the configuration.
-Depending on the capability, the reasons can vary widely. For example,
-the 'Secure Central' capability requires Nexus to run on a JVM with
-specific security features. If the JVM is not suitable, an error
-message with further details is displayed in the 'Status' column.
+The 'Status' tab displays a text message that details the status of the capability and any potential problems with
+the configuration.  Depending on the capability, the reasons can vary widely. For example, the 'Secure Central'
+capability requires the repository manager to run on a JVM with specific security features. If the JVM is not
+suitable, an error message with further details is displayed in the 'Status' column.
 
 The 'About' tab displays a descriptive text about the purpose of the
 capability. 
@@ -1211,46 +1134,34 @@ should be enabled with the 'Enabled' checkbox. Once you have completed
 the configuration, press 'Add' and the capability will be saved and
 appear in the list.
 
-Many of the built-in capabilities and plugins can be configured in the
-'Capabilities' administration section but also in other more user
-friendly, targeted user interface sections, e.g., the user token
-feature administrated by using the interface available via the 'User
-Token' menu item in the 'Security' left-hand menu as well as by
-editing the user token capability. Other capabilities are internal to
-Nexus functionality and sometimes managed automatically by the
-responsible plugin. Some optional configuration like the branding
-plugin is only done in the capabilities administration. The branding
-plugin allows the customization of the icon in the top left-hand
-corner of the user interface header and is described in
-<<nexus-branding>>.
+Many of the built-in capabilities and plugins can be configured in the 'Capabilities' administration section but
+also in other more user friendly, targeted user interface sections, e.g., the user token feature administrated by
+using the interface available via the 'User Token' menu item in the 'Security' left-hand menu as well as by
+editing the user token capability. Other capabilities are internal to repository manager functionality and
+sometimes managed automatically by the responsible plugin. Some optional configuration like the branding plugin is
+only done in the capabilities administration. The branding plugin allows the customization of the icon in the top
+left-hand corner of the user interface header and is described in <<nexus-branding>>.
 
 
 [[nexus-branding]]
-=== Customizing the Nexus Application with Branding
+=== Customizing the User Interface with Branding
 
 {inrmonly}
 
-The branding plugin is part of {pro} and allows you to customize
-your Nexus instance by replacing the default {pro} logo in the top
-left-hand corner of the header with an image of your choice.
+The branding plugin is part of {pro} and allows you to customize your repository manager instance by replacing the
+default {pro} logo in the top left-hand corner of the header with an image of your choice.
 
-You can configure it by adding the 'Branding' capabililty as
-documented in <<capabilities>> and enabling it. By default, the
-branding plugin will look for the new logo in a file called
-+branding.png+ in your Nexus data directory's +conf+ folder. By
-default, the location is therefore
-+sonatype-work/nexus/conf/branding.png+. The new logo needs to be a
-PNG image. To blend in well in the UI, it is recommended that it is of
-60 pixels height and has a transparent background.
+You can configure it by adding the 'Branding' capabililty as documented in <<capabilities>> and enabling it. By
+default, the branding plugin will look for the new logo in a file called +branding.png+ in your data directory's
++conf+ folder. By default, the location is therefore +sonatype-work/nexus/conf/branding.png+. The new logo needs
+to be a PNG image. To blend in well in the UI, it is recommended that it is of 60 pixels height and has a
+transparent background.
 
-If it fails to find a new logo, the plugin will fall back to using
-the default Sonatype Nexus logo.
+If it fails to find a new logo, the plugin will fall back to using the default logo.
 
-Prior to Nexus 2.7, the branding plugin was an optional plugin of {pro}
-and needed to be installed following the documentation in 
-<<install-additional-plugins>>. In this case you needed to add a
-branding.image.path property to the 'nexus.properties' file in 
-'$NEXUS_HOME/conf/':
+Prior to {pro} 2.7, the branding plugin was an optional plugin of {pro} and needed to be installed following the
+documentation in <<install-additional-plugins>>. In this case you needed to add a branding.image.path property to
+the 'nexus.properties' file in '$NEXUS_HOME/conf/':
 
 ----
 branding.image.path=/data/images/nexus_logo.png
@@ -1261,34 +1172,28 @@ branding.image.path=/data/images/nexus_logo.png
 
 {inall}
 
-The Nexus Outreach Plugin is installed and enabled by default in 
-{oss} and {pro}. It allocates space underneath the
-search feature on the 'Welcome' tab for linking to further
-documentation and support resources. This data is retrieved from
-Sonatype servers.
+The Outreach Plugin is installed and enabled by default in {oss} and {pro}. It allocates space underneath the
+search feature on the 'Welcome' tab for linking to further documentation and support resources. This data is
+retrieved from Sonatype servers.
 
-In a case where this outgoing traffic from your Nexus instance or the
-resulting documentation and links are not desired, the plugin can be
-disabled. The plugin can be disabled in the settings for the 
+In a case where this outgoing traffic from your repository manager instance or the resulting documentation and
+links are not desired, the plugin can be disabled. The plugin can be disabled in the settings for the
 'Outreach:Management' capability as documented in <<capabilities>>.
 
-You can safely remove the plugin as well without any other negative
-side effects. To do so, simply remove the 'nexus-outreach-plugin-X.Y.Z'
-folder in '$NEXUS_HOME/nexus/WEB-INF/plugin-repository/' and restart
-your Nexus instance.
+You can safely remove the plugin as well without any other negative side effects. To do so, simply remove the
+'nexus-outreach-plugin-X.Y.Z' folder in '$NEXUS_HOME/nexus/WEB-INF/plugin-repository/' and restart your repository
+manager instance.
 
 [[confignx-sect-network]]
 === Network Configuration
 
 {inall}
 
-By default, Nexus listens on port 8081. You can change this port, by
-changing the value in the +$NEXUS_HOME/conf/nexus.properties+ file
-shown in <<fig-conf-nexus-properties>>. To change the port, stop
-Nexus, change the value of applicationPort in this file, and then
-restart Nexus. Once you do this, you should see a log statement in
-+$NEXUS_HOME/logs/wrapper.log+ telling you that Nexus is listening on
-the altered port.
+By default, the repository manager listens on port 8081. You can change this port, by changing the value in the
++$NEXUS_HOME/conf/nexus.properties+ file shown in <<fig-conf-nexus-properties>>. To change the port, stop the
+repository manager, change the value of applicationPort in this file, and then restart it. Once you do this, you
+should see a log statement in +$NEXUS_HOME/logs/wrapper.log+ telling you that the repository manager is listening
+on the altered port.
 
 [[fig-conf-nexus-properties]]
 .Contents of conf/nexus.properties
