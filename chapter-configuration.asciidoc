@@ -878,7 +878,7 @@ engine to optimize its index files. This has no affect on the indexes published 
 manager. Typically, this task does not have to run more than once a week.
 
 Publish Indexes:: Just as Maven downloads an index from a remote repository, the repository manager can publish an
-index in the same format. This will make it easier for people using m2eclipse or Nexus to interact with your
+index in the same format. This will make it easier for people using m2eclipse or {pro} to interact with your
 repositories.
 
 Purge Nexus Timeline:: The repository manager maintains a lot of data that relates to the interaction between
@@ -1017,11 +1017,11 @@ needed when external changes affected a source repository of a virtual
 repository you are using.
 
 Update Repositories Index:: If files are deployed directly to a repository's local storage (not deployed through
-the user interface or client tools), you will need to instruct Nexus to update its index. When executing this
-task, the repository manager will update its index by first downloading remote indexes (if a proxy repository) and
-then scan the local storage to index the new files.  Lastly, the index is published for the repository as
-well. Normally, there should be no need to schedule this task. One possible exception would be if files are
-deployed directly to the local storage regularly.
+the user interface or client tools), you will need to instruct the repository manager to update its index. When
+executing this task, the repository manager will update its index by first downloading remote indexes (if a proxy
+repository) and then scan the local storage to index the new files.  Lastly, the index is published for the
+repository as well. Normally, there should be no need to schedule this task. One possible exception would be if
+files are deployed directly to the local storage regularly.
  
 Yum: Generate Metadata:: The metadata for a yum repository is created
 and maintained by the http://createrepo.baseurl.org/[createrepo]
@@ -1042,10 +1042,10 @@ you schedule an "optimize indexes" task to run weekly. A number of
 other maintenance tasks should also be scheduled for production
 deployments.
 
-Setting up scheduled tasks adapted to your usage of the repository manager is an important first step when setting
-up a Nexus instance. Go through the list of task types and consider your usage patterns of the repository
-manager. Also update your scheduled tasks when changing your usage. E.g., if you start to regularly deploy
-snapshots by introducing continuous integration server builds with deployment.
+Setting up scheduled tasks adapted to your usage of the repository manager is an important first step. Go through
+the list of task types and consider your usage patterns of the repository manager. Also update your scheduled
+tasks when changing your usage. E.g., if you start to regularly deploy snapshots by introducing continuous
+integration server builds with deployment.
 
 [[capabilities]]
 === Accessing and Configuring Capabilities
@@ -1218,11 +1218,10 @@ runtime=${bundleBasedir}/nexus/WEB-INF
 
 {inall}
 
-You can configure the level of logging for Nexus and all plugins as
-well as inspect the current log using the Nexus user interface. Access
-the 'Logging' panel by clicking on the 'Logging' menu item in the
-'Administration' submenu in the 'Nexus' menu. Clicking on this link
-will display the panel shown in <<fig-configuring-log-config>>.
+You can configure the level of logging for the repository manager and all plugins as well as inspect the current
+log using the user interface. Access the 'Logging' panel by clicking on the 'Logging' menu item in the
+'Administration' submenu in the main menu. Clicking on this link will display the panel shown in
+<<fig-configuring-log-config>>.
 
 [[fig-configuring-log-config]]
 .The Logging Panel with the Loggers Configuration
@@ -1234,42 +1233,34 @@ modify the log level for a configured logger by clicking on the
 'Level' value e.g., +INFO+. It will change into a drop-down of the
 valid levels including +OFF+, +DEFAULT+, +INFO+ and others.  
 
-If you select a row in the list of loggers, you can delete the
-highlighted logger by pressing the 'Remove' button above the list. The
-'Add' button beside it can be used to create new loggers in a
-dialog. You will need to know the logger you want to
-configure. Depending on your needs you can inspect the source of {oss}
-and the plugins as well as the source of your own plugins to
-determine the related loggers or contact Sonatype support for detailed
-help. In addition, it is important to keep in mind that some loggers
-will change between Nexus and plugin versions used.
+If you select a row in the list of loggers, you can delete the highlighted logger by pressing the 'Remove' button
+above the list. The 'Add' button beside it can be used to create new loggers in a dialog. You will need to know
+the logger you want to configure. Depending on your needs you can inspect the source of {oss} and the plugins as
+well as the source of your own plugins to determine the related loggers or contact Sonatype support for detailed
+help. In addition, it is important to keep in mind that some loggers will change between repository manager and
+plugin versions used.
 
-The 'Reset' button allows you to remove all your custom loggers and
-get back to the setup shipped with Nexus.
+The 'Reset' button allows you to remove all your custom loggers and get back to the setup shipped with the
+repository manager.
 
-The loggers configured in the user interface are persisted into
-+sonatype-work/nexus/conf/logback-overrides.xml+ and override any
-logging levels configured in the main Nexus log file
-+logback-nexus.xml+ as well as the other +logback-*+ files. If you
-need to edit a logging level in those files, we suggest to edit the
-overrides file. This will give you access to edit the configuration in
-the user interface at a later stage and also ensure that the values
-you configure take precedence.
+The loggers configured in the user interface are persisted into +sonatype-work/nexus/conf/logback-overrides.xml+
+and override any logging levels configured in the main log file +logback-nexus.xml+ as well as the other
++logback-*+ files. If you need to edit a logging level in those files, we suggest to edit the overrides file. This
+will give you access to edit the configuration in the user interface at a later stage and also ensure that the
+values you configure take precedence.
 
-The 'ROOT' logger level controls how verbose the Nexus logging is in
-general. If set to +DEBUG+, Nexus will be very verbose printing all log
-messages including debugging statements. If set to +ERROR+, Nexus will be
-far less verbose, only printing out a log statement if Nexus encounters
-an error. +INFO+ represents an intermediate amount of logging. 
+The 'ROOT' logger level controls how verbose the logging is in general. If set to +DEBUG+, logging will be very
+verbose printing all log messages including debugging statements. If set to +ERROR+, logging will be far less
+verbose, only printing out a log statement if the system encounters an error. +INFO+ represents an intermediate
+amount of logging.
 
 TIP: When configuring logging, keep in mind that heavy logging can
 have a significant performance impact on an application and any
 changes in the user interface trigger the change to the logging
 immediately.
 
-In Nexus releases prior to 2.7, logging configuration needed to be done
-by editing the +logback-nexus.xml+ file found in
-+sonatype-work/nexus/conf+.
+In {pro} releases prior to 2.7, logging configuration needed to be done by editing the +logback-nexus.xml+ file
+found in +sonatype-work/nexus/conf+.
 
 Once logging is configured as desired, you can inspect the impact of
 your configuration on the 'Log' tab. It allows you to copy the log
@@ -1280,7 +1271,7 @@ the file. It will insert the text you entered surrounded by +*+
 symbols as visible in <<fig-configuring-log-view>>.
 
 [[fig-configuring-log-view]]
-.Viewing the Nexus Log with a Mark
+.Viewing the Log with a Mark
 image::figs/web/repository-manager_log-view.png[scale=60]
 
 The 'Refresh' button on the left triggers an immediate update of
@@ -1290,21 +1281,19 @@ drop-down beside it allows you to control the size of the log snippet
 displayed in the user interface.
 
 [[confignx-sect-plugins]]
-=== Nexus Plugins and the REST API
+===  Plugins and the REST API
 
 {inall}
 
-As documented in <<install-additional-plugins>>, Nexus is built as a
-collection of plugins supported by a core architecture and additional
-plugins can be installed.
+As documented in <<install-additional-plugins>>, {pro} and {oss} are built as a collection of plugins supported by
+a core architecture and additional plugins can be installed.
 
-You can use the Nexus Plugin Console to list all installed Nexus
-plugins and browse REST services made available by the installed
-plugins. To open the Nexus Plugin Console, click on the 'Plugin Console'
-link in the 'Administration' menu in the left-hand Nexus menu.
+You can use the Plugin Console to list all installed plugins and browse REST services made available by the
+installed plugins. To open the Plugin Console, click on the 'Plugin Console' link in the 'Administration' menu in
+the left-hand main menu.
 
 Once you open the Plugin Console, you will see a list of plugins
-installed in your Nexus installation. Clicking on a plugin in this
+installed in your repository manager installation. Clicking on a plugin in this
 list will display information about the plugin including name,
 version, status, a description, SCM information about the plugin, and
 the URL of the plugin's project web site and links to the plugin
@@ -1314,24 +1303,18 @@ documentation.
 .Plugin Console
 image::figs/web/config-plugin-console.png[scale=50]
 
-All the functionality in the Nexus user interface is accessing the
-REST API's provided by the different plugins.  An example for the
-plugin documentation is the main documentation for the core Nexus API
-linked off the Nexus Restlet 1.x Plugin from
-<<fig-config-plugin-console>> and displayed in
-<<fig-config-plugin-core-api-site>>
+All the functionality in the user interface is accessing the REST API's provided by the different plugins.  An
+example for the plugin documentation is the main documentation for the core Nexus API linked off the Nexus Restlet
+1.x Plugin from <<fig-config-plugin-console>> and displayed in <<fig-config-plugin-core-api-site>>
 
 [[fig-config-plugin-core-api-site]]
 .Documentation Website for the Core REST API
 image::figs/web/config-plugin-core-api-site.png[scale=50]
 
-You can use the Nexus REST API to integrate Nexus in your external
-systems. 
+You can use the REST API to integrate the repository manager with your external systems.
 
-If your external integration uses Java, or is otherwise JVM based, then 
-you can use the Nexus client using the dependency from 
-<<fig-client-core-dependency>> with the version corresponding to your 
-Nexus server version.
+If your external integration uses Java, or is otherwise JVM based, then you can use the {pro} client using the
+dependency from <<fig-client-core-dependency>> with the version corresponding to your repository manager version.
 
 
 [[fig-client-core-dependency]]
@@ -1353,7 +1336,7 @@ languages. A simple example of using the +curl+ command in a shell
 script is displayed in <<fig-curl-rest-api-call>>.
 
 [[fig-curl-rest-api-call]]
-.A +curl+ Invocation Loading the List of Users from Nexus
+.A +curl+ Invocation Loading the List of Users from the repository manager
 ----
 curl -X GET -u admin:admin123 http://localhost:8081/nexus/service/local/users
 ----
@@ -1363,7 +1346,7 @@ curl -X GET -u admin:admin123 http://localhost:8081/nexus/service/local/users
 
 {inall}
 
-Nexus has role-based access control (RBAC) that gives administrators
+{pro} and {oss} use a role-based access control (RBAC) system that gives administrators
 very fine-grained control over who can read from a repository (or a
 subset of repositories), who can administer the server, and who can
 deploy to repositories. The security model in Nexus is also so
