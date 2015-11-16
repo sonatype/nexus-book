@@ -6,13 +6,12 @@
 [[prerequisites]]
 === {pro} Prerequisites
 
-{pro} only has one prerequisite, a Java Runtime Environment (JRE)
-compatible with Java 7 or Java 8. Nexus is most often run with the JRE
-that is bundled with a Java Development Kit (JDK) installation. The
-main supported Java distribution is the Oracle version.
+{pro} only has one prerequisite, a Java Runtime Environment (JRE) compatible with Java 7 or Java 8. {pro} and
+{oss} is most often run with the JRE that is bundled with a Java Development Kit (JDK) installation. The main
+supported Java distribution is the Oracle version.
 
-To download the Oracle JDK, go to http://www.oracle.com/technetwork/java/javase/downloads/index.html . At a minimum Java
-7u2 is required, but we recommend to use the latest available version.
+To download the Oracle JDK, go to http://www.oracle.com/technetwork/java/javase/downloads/index.html . At a
+minimum Java 7u2 is required, but we recommend to use the latest available version.
 
 [[downloading]]
 === Downloading {pro}
@@ -30,7 +29,7 @@ differences are explored in <<intro>>.
 ==== Downloading {oss}
 
 To download the latest {oss} distribution, go to http://www.sonatype.org/nexus/go[http://www.sonatype.org/nexus/go]
-and choose Nexus (TGZ) or Nexus (ZIP) shown in <<fig-installing-open-source-dl>>. This will download a a Gzip TAR (TGZ)
+and choose 'Nexus (TGZ)' or 'Nexus (ZIP)' shown in <<fig-installing-open-source-dl>>. This will download a a Gzip TAR (TGZ)
 or a ZIP with identical contents. Your download will be file named +nexus-{version-exact}-bundle.zip+ or
 +nexus-{version-exact}-bundle.tar.gz+.
 
@@ -60,16 +59,14 @@ version] for an evaluation.
 [[installing]]
 ===  Installing {pro}
 
-The following instructions are for installing {oss} or
-{pro} as a stand-alone server. Nexus comes bundled with a
-Jetty instance that listens to all configured IP addresses on a host
-(0.0.0.0) and runs on port 8081 by default.
+The following instructions are for installing {oss} or {pro} as a stand-alone server. {pro} and {oss} are bundled
+with a Jetty instance that listens to all configured IP addresses on a host (0.0.0.0) and runs on port 8081 by
+default.
 
-Installing the repository is straightforward. Unpack the web
-application archive in a directory. If you are installing Nexus on a
-local workstation to give it a test run, you can install it in your
-home directory or wherever you like. Nexus doesn't have any hard coded
-directories. It will run from any directory. If you downloaded the ZIP
+Installing the repository is straightforward. Unpack the web application archive in a directory. If you are
+installing the repository manager on a local workstation to give it a test run, you can install it in your home
+directory or wherever you like. {pro} and {oss} do not have any hard coded directories. It will run from any
+directory. If you downloaded the ZIP
 
 [subs="attributes"]
 ----
@@ -91,15 +88,14 @@ $ unzip nexus-professional-{version-exact}-bundle.zip
 $ tar xvzf nexus-professional-{version-exact}-bundle.tar.gz
 ----
 
-CAUTION: There are some known incompatibilities with the version of the tar
-command provided by Solaris and the GZip TAR format. If you are installing
-Nexus on Solaris, you must use the GNU tar application, or you will
-end up with corrupted files.
+CAUTION: There are some known incompatibilities with the version of the tar command provided by Solaris and the
+GZip TAR format. If you are installing {pro} on Solaris, you must use the GNU tar application, or you will end up
+with corrupted files.
 
-NOTE: If you are installing Nexus on a server, you might want to use a directory other than your home directory. On a
-Unix machine, this book assumes that Nexus is installed in +/usr/local/nexus-{version-exact}+ with a symbolic link
-+/usr/local/nexus+ to the +nexus+ directory. Using a generic symbolic link +nexus+ to a specific version is a common
-practice which makes it easier to upgrade when a newer version of Nexus is made available.
+NOTE: If you are installing the repository manager on a server, you might want to use a directory other than your
+home directory. On a Unix machine, this book assumes that it is installed in +/usr/local/nexus-{version-exact}+
+with a symbolic link +/usr/local/nexus+ to the +nexus+ directory. Using a generic symbolic link +nexus+ to a
+specific version is a common practice which makes it easier to upgrade when a newer version is made available.
 
 [subs="attributes"]
 ----
@@ -109,97 +105,74 @@ $ sudo tar xvzf nexus-{version-exact}-bundle.tar.gz
 $ sudo ln -s nexus-{version-exact} nexus
 ----
 
-Although it isn't required for Nexus to run, you may want to set an
-environment variable NEXUS_HOME in your environment that
-points to the installation directory of Nexus. This chapter will refer
-to this location as +$NEXUS_HOME+.
+Although it isn't required to run, you may want to set an environment variable NEXUS_HOME in your environment that
+points to the installation directory. This chapter will refer to this location as +$NEXUS_HOME+.
 
-NOTE: On Windows you should install Nexus outside +Program Files+ to
-avoid problems with Windows file registry virtualization. If you plan
-to run Nexus as a specific user you could install into the
-+AppData\Local+ directory of that users home directory. Otherwise
-simply go with e.g., +C:\nexus+ or something similar.
+NOTE: On Windows you should install the repository manager outside +Program Files+ to avoid problems with Windows
+file registry virtualization. If you plan to run the repository manager as a specific user you could install into
+the +AppData\Local+ directory of that users home directory. Otherwise simply go with e.g., +C:\nexus+ or something
+similar.
 
-The Nexus installation directory +nexus-{version-exact}+ or +nexus-professional-{version-exact}+ has a sibling directory
-named +sonatype-work+. This directory contains all of the repository and configuration data for Nexus and is stored
-outside of the Nexus installation directory to make it easier to upgrade to a newer version of Nexus.
+The installation directory +nexus-{version-exact}+ or +nexus-professional-{version-exact}+ has a sibling directory
+named +sonatype-work+. This directory contains all of the repository and configuration data and is stored outside
+of the installation directory to make it easier to upgrade to a newer version.
 
-By default, this directory is always a sibling to the Nexus
-installation directory. If you installed Nexus in the +/usr/local+
-directory it would also contain a +sonatype-work+ subdirectory with a
-nested +nexus+ directory containing all of the content and
-configuration. The location of the +sonatype-work+ directory can be
-customized by altering the nexus-work property in
-+$NEXUS_HOME/conf/nexus.properties+.
+By default, this directory is always a sibling to the installation directory. If you installed the repository
+manager in the +/usr/local+ directory it would also contain a +sonatype-work+ subdirectory with a nested +nexus+
+directory containing all of the content and configuration. The location of the +sonatype-work+ directory can be
+customized by altering the nexus-work property in +$NEXUS_HOME/conf/nexus.properties+.
 
 [[upgrading]]
 === Upgrading
 
-Since Nexus separates its configuration and data storage from the
-application, it is easy to upgrade an existing Nexus installation. 
+Since the repository manager separates its configuration and data storage from the application, it is easy to
+upgrade an existing installation.
 
-To upgrade Nexus, unpack the Nexus archive in the directory that
-contains the existing Nexus installation. Once the archive is
-unpacked, the new Nexus application directory should be a sibling to
-your existing +sonatype-work/+ directory. 
+To upgrade the repository manager, unpack the archive in the directory that contains the existing
+installation. Once the archive is unpacked, the new application directory should be a sibling to your existing
++sonatype-work/+ directory.
 
-If you have defined a symbolic link for the version of Nexus to use,
-stop the server and change that to point at the new Nexus application
-directory. When you start the new instance of Nexus it will read the
-existing repository configuration from the +sonatype-work+ directory.
-Depending on the version you upgrade from and to, some maintenance
-tasks like rebuilding the internal indices can be necessary. Please
-refer to the
-http://links.sonatype.com/products/nexus/oss/upgrading[upgrade
-notes] of the new release for more information on this. In addition, a
-review of the
-http://links.sonatype.com/products/nexus/oss/release-notes[release
-notes] can be very useful to get a better understanding of potential,
-additional steps required.
+If you have defined a symbolic link for the version of the repository manager to use, stop the server and change
+that to point at the new application directory. When you start the new instance it will read the existing
+repository configuration from the +sonatype-work+ directory.  Depending on the version you upgrade from and to,
+some maintenance tasks like rebuilding the internal indices can be necessary. Please refer to the
+http://links.sonatype.com/products/nexus/oss/upgrading[upgrade notes] of the new release for more information on
+this. In addition, a review of the http://links.sonatype.com/products/nexus/oss/release-notes[release notes] can
+be very useful to get a better understanding of potential, additional steps required.
 
-If you are using any additional plugins supplied by Sonatype, the new
-version of Nexus you downloaded will contain a newer version of the
-plugin. Be sure to copy the new version from the +optional-plugins+
-folder to the +plugin-repository+ folder, as documented in
-<<install-additional-plugins>>, and restart Nexus.
+If you are using any additional plugins supplied by Sonatype, the new version you downloaded will contain a newer
+version of the plugin. Be sure to copy the new version from the +optional-plugins+ folder to the
++plugin-repository+ folder, as documented in <<install-additional-plugins>>, and restart the repository manager.
 
-Externally supplied plugins are updated by simply replacing the folder
-with the plugin with the new version.
+Externally supplied plugins are updated by simply replacing the folder with the plugin with the new version.
 
-This automatic upgrade of Nexus works for nearly all update
-ranges. All 2.x versions can directly upgrade to the latest
-version. All 1.x version can upgrade to 2.7.x maximum. If you need to
-upgrade from 1.x to a newer version, you need to perform an
-intermediate upgrade step to a 2.x version.
+This automatic upgrade of the repository manager works for nearly all update ranges. All 2.x versions can directly
+upgrade to the latest version. All 1.x version can upgrade to 2.7.x maximum. If you need to upgrade from 1.x to a
+newer version, you need to perform an intermediate upgrade step to a 2.x version.
 
-NOTE: The same upgrade process can be used to change from the open
-source to the professional version of Nexus.
+NOTE: The same upgrade process can be used to change from {oss} to {pro}.
 
 [[running]]
-=== Running Nexus
+=== Running {pro}
 
-When you start Nexus, you are starting a web server on the default
-port +0.0.0.0:8081+. Nexus runs within a servlet container called
-Eclipse Jetty, and it is started with a native service wrapper called the
-http://wrapper.tanukisoftware.org/doc/english/introduction.html[Tanuki
-Java Service Wrapper]. This service wrapper can be configured to run
-Nexus as a Windows service or a Unix daemon. Nexus ships with generic
-startup scripts for Unix-like platforms called +nexus+ and for
-Windows platforms called +nexus.bat+ in the +$NEXUS_HOME/bin+
-folder. To start Nexus on a Unix-like platform like Linux, MacOSX or
-Solaris use
+When you start the repository manager, you are starting a web server on the default port +0.0.0.0:8081+. It runs
+within a servlet container called Eclipse Jetty, and it is started with a native service wrapper called the
+http://wrapper.tanukisoftware.org/doc/english/introduction.html[Tanuki Java Service Wrapper]. This service wrapper
+can be configured to run the repository manager as a Windows service or a Unix daemon. {pro} and {oss} ship with
+generic startup scripts for Unix-like platforms called +nexus+ and for Windows platforms called +nexus.bat+ in the
++$NEXUS_HOME/bin+ folder. To start the repository manager on a Unix-like platform like Linux, MacOSX or Solaris
+use
 
 ----
 cd /usr/local/nexus
 ./bin/nexus console
 ----
 
-Similarly, starting on Windows can be done with the +nexus.bat+
-file. Starting Nexus with the console command will leave Nexus running
-in the current shell and display the log output.
+Similarly, starting on Windows can be done with the +nexus.bat+ file. Starting the repository manager with the
+`console` command will leave it running in the current shell and display the log output.
 
-On Unix systems, you can start Nexus detached from the starting shell
-with the start command even when not yet installed as a service.
+On Unix systems, you can start the repository manager detached from the starting shell with the start command even
+when not yet installed as a service.
 
 ----
 ./bin/nexus start
@@ -215,15 +188,13 @@ Started {pro}.
 $ tail -f logs/wrapper.log 
 ----
 
-At this point, Nexus will be running and listening on all IP addresses
-(0.0.0.0) that are configured for the current host on port 8081. To
-use Nexus, fire up a web browser and type in the URL
-http://localhost:8081/nexus[http://localhost:8081/nexus]. You should see 
-the Nexus user interface as displayed in <<fig-installing-nexus-default-screen>>.
+At this point, the repository manager will be running and listening on all IP addresses (0.0.0.0) that are
+configured for the current host on port 8081. To use the user interface, fire up a web browser and type in the URL
+http://localhost:8081/nexus[http://localhost:8081/nexus]. You should see the user interface as displayed in
+<<fig-installing-nexus-default-screen>>.
 
-While we use +localhost+ throughout this book, you may need to use the
-IP Loopback Address of +127.0.0.1+, the IP address or the DNS hostname 
-assigned to the machine running Nexus. 
+While we use +localhost+ throughout this book, you may need to use the IP Loopback Address of +127.0.0.1+, the IP
+address or the DNS hostname assigned to the machine running the repository manager.
 
 ifdef::promo[]
 ++++
@@ -231,14 +202,12 @@ ifdef::promo[]
 ++++
 endif::[]
 
-When first starting {pro} you are presented with a
-form that allows you to request a trial activation. This page
-displayed in <<fig-installing-trial-form>> contains a link to
-the license activation screen in 
-<<fig-installing-license-activation>>. 
+When first starting {pro} you are presented with a form that allows you to request a trial activation. This page
+displayed in <<fig-installing-trial-form>> contains a link to the license activation screen in
+<<fig-installing-license-activation>>.
 
 [[fig-installing-trial-form]]
-.Nexus Trial Activation Form
+.Trial Activation Form
 image::figs/web/installing-trial-form.png[scale=50]
 
 After submitting the form for your trial activation, you will receive a
@@ -248,7 +217,7 @@ license file, you can use the same screen to upload the file and
 register your license.
 
 [[fig-installing-license-activation]]
-.Nexus License Activation 
+.License Activation 
 image::figs/web/installing-license-activation.png[scale=50]
 
 Once you have agreed to the End User License Agreement you will be
@@ -267,7 +236,7 @@ TIP: The default administrator username and password combination is
 +admin+ and +admin123+.
 
 [[fig-installing-nexus-login-dialog]]
-.Nexus Log In Dialog (default login/password is admin/admin123)
+.Log In Dialog (default login/password is admin/admin123)
 image::figs/web/installing-nexus-login-dialog.png[scale=50]
 
 When you are logged into your evaluation version of {pro},
@@ -275,15 +244,14 @@ you will see some helpful links to the {pro} Evaluation Guide,
 Sample Projects and the Knowledgebase below the search input on the
 Welcome screen.
 
-With a full license for Nexus these links will be removed and you will
-get the Nexus Application Window displayed in <<fig-installing-nexus-default-screen>>.
+With a full license for {pro} these links will be removed and you will get the application window displayed in
+<<fig-installing-nexus-default-screen>>.
 
-{oss} will not need to be activated with a license key and
-will display a number of links to resources and support on the Welcome
-screen to logged in users.
+{oss} will not need to be activated with a license key and will display a number of links to resources and support
+on the Welcome screen to logged in users.
 
 [[fig-installing-nexus-default-screen]]
-.Nexus Application Window
+.Application Window
 image::figs/web/installing-nexus-default-screen.png[scale=60]
 
 
@@ -317,15 +285,13 @@ windows-x86-32
 windows-x86-64
 ----
 
-The +wrapper.conf+ file is the central configuration file for the
-startup of the Jetty servlet container running Nexus on a Java virtual
-machine and therefore includes configuration for things such as the
-java command to use, Java memory configuration, logging configuration
-and other settings documented in the configuration file.
+The +wrapper.conf+ file is the central configuration file for the startup of the Jetty servlet container running
+the repository manager on a Java virtual machine and therefore includes configuration for things such as the java
+command to use, Java memory configuration, logging configuration and other settings documented in the
+configuration file.
 
-Typical modifications include adapting the maximum memory size to your
-server hardware and usage requirements e.g. 2000 MB up from the
-default 768 and other JVM related configurations.
+Typical modifications include adapting the maximum memory size to your server hardware and usage requirements
+e.g. 2000 MB up from the default 768 and other JVM related configurations.
 
 ----
 wrapper.java.maxmemory=2000
@@ -344,9 +310,8 @@ A typical use case is using a custom installation of the Oracle JDK
 instead of OpenJDK that is preinstalled as part of the Linux 
 distribution. 
 
-Additional configuration in the +wrapper.conf+ file includes
-activation of further Jetty configuration file for monitoring Nexus
-via <<jmx, JMX>> or using <<ssl-sect-ssl-direct,HTTPS>>.
+Additional configuration in the +wrapper.conf+ file includes activation of further Jetty configuration file for
+monitoring the repository manager via <<jmx, JMX>> or using <<ssl-sect-ssl-direct,HTTPS>>.
 
 
 TIP: The startup script +nexus+ supports the common service
@@ -356,89 +321,72 @@ commands +start+, +stop+, +restart+, +status+,
 [[install-sect-repoman-post-install]]
 === Post-Install Checklist
 
-Nexus ships with some default passwords and settings for repository
-indexing that need to be changed for your installation to be useful
-(and secure). After installing and running Nexus, you need to make
+{pro} and {oss} ship with some default passwords and settings for repository indexing that need to be changed for
+your installation to be useful (and secure). After installing and running the repository manager, you need to make
 sure that you complete the following tasks:
 
 ==== Step 1: Change the Administrative Password and Email Address
 
-The administrative password defaults to 'admin123'. The first thing you
-should do to your new Nexus installation is change this password. To
-change the administrative password, login as 'admin' with the password
-'admin123', and click on 'Change Password' under the 'Security' menu in
-the left-hand side of the browser window. For more detailed
-instructions, see <<using-sect-user-profile>>.
+The administrative password defaults to 'admin123'. The first thing you should do to your new installation is
+change this password. To change the administrative password, login as 'admin' with the password 'admin123', and
+click on 'Change Password' under the 'Security' menu in the left-hand side of the browser window. For more
+detailed instructions, see <<using-sect-user-profile>>.
 
 ==== Step 2: Configure the SMTP Settings
 
-Nexus can send username and password recovery emails. To enable this
-feature, you will need to configure Nexus with a SMTP Host and Port as
-well as any necessary authentication parameters that Nexus needs to
-connect to the mail server. To configure the SMTP settings, follow
-the instructions in <<config-sect-smtp>>.
+The repository manager can send username and password recovery emails. To enable this feature, you will need to
+configure a SMTP Host and Port as well as any necessary authentication parameters that the repository manager
+needs to connect to the mail server. To configure the SMTP settings, follow the instructions in
+<<config-sect-smtp>>.
 
 ==== Step 3: Configure Default HTTP and HTTPS Proxy Settings
 
-In many deployments the internet, and therefore any remote
-repositories that Nexus needs to proxy, can only be reached via a HTTP
-and HTTPS proxy server internal to the deployment company. In these
-cases the connection details to that proxy server need to be
-configured in Nexus, as documented in <<config-default-http-proxy>> in
-order for Nexus to be able to proxy remote repositories at all.
+In many deployments the internet, and therefore any remote repositories that the repository manager needs to
+proxy, can only be reached via a HTTP and HTTPS proxy server internal to the deployment company. In these cases
+the connection details to that proxy server need to be configured, as documented in <<config-default-http-proxy>>
+in order for the repository manager to be able to proxy remote repositories at all.
 
 ==== Step 4: Enable Remote Index Downloads
 
-Nexus ships with three important proxy repositories for the Maven
-Central repository, Apache Snapshot repository, and the Codehaus
-Snapshot repository. Each of these repositories contains thousands (or
-tens of thousands) of components and it would be impractical to
-download the entire contents of each. To that end, most repositories
-maintain an index which catalogues the entire contents and provides
-for fast and efficient searching. Nexus uses these remote indexes to
-search for components, but we've disabled the index download as a
-default setting. To download remote indexes:
+{pro} and {oss} ship with three important proxy repositories for the Maven Central repository, Apache Snapshot
+repository, and the Codehaus Snapshot repository. Each of these repositories contains thousands (or tens of
+thousands) of components and it would be impractical to download the entire contents of each. To that end, most
+repositories maintain an index which catalogues the entire contents and provides for fast and efficient
+searching. The repository manager uses these remote indexes to search for components, but we've disabled the index
+download as a default setting. To download remote indexes:
 
-. Click on 'Repositories' under the 'Views/Repositories' menu in the
-  left-hand side of the browser window.
+. Click on 'Repositories' under the 'Views/Repositories' menu in the left-hand side of the browser window.
 
 . Select each of the three proxy repositories and change 'Download
   Remote Indexes' to 'true' in the 'Configuration' tab. You'll need to load
   the dialog shown in <<fig-repo-config>> for each of
   the three repositories.
 
-This will trigger Nexus to re-index these repositories, during which
-the remote index files will be downloaded. It might take Nexus a few
-minutes to download the entire index, but once you have it, you'll be
-able to search the entire contents of the Maven repository.
+This will trigger the repository manager to re-index these repositories, during which the remote index files will
+be downloaded. It might take a few minutes to download the entire index, but once you have it, you'll be able to
+search the entire contents of the Maven repository.
 
-Once you've enabled remote index downloads, you still will not be able
-to browse the complete contents of a remote repository. Downloading
-the remote index allows you to search for components in a repository,
-but until you download those components from the remote repository they
-will not show in the repository tree when you are browsing a
-repository. When browsing a repository, you will only be shown
-components which have been downloaded from the remote repository.
+Once you've enabled remote index downloads, you still will not be able to browse the complete contents of a remote
+repository. Downloading the remote index allows you to search for components in a repository, but until you
+download those components from the remote repository they will not show in the repository tree when you are
+browsing a repository. When browsing a repository, you will only be shown components which have been downloaded
+from the remote repository.
 
 ==== Step 5: Change the Deployment Password
 
-The deployment user's password defaults to 'deployment123'. Change this
-password to make sure that only authorized developers can deploy
-components to your Nexus installation. To change the deployment password, 
-log in as an administrator. Click on 'Security' to expand the security menu. 
-When the menu appears, click on 'Users'.  A list of users will appear. 
-At that point, right-click on the user named 'Deployment' and select 'Set Password'.
+The deployment user's password defaults to 'deployment123'. Change this password to make sure that only authorized
+developers can deploy components to your installation. To change the deployment password, log in as an
+administrator. Click on 'Security' to expand the security menu.  When the menu appears, click on 'Users'.  A list
+of users will appear.  At that point, right-click on the user named 'Deployment' and select 'Set Password'.
 
 
 ==== Step 6: If Necessary, Set the LANG Environment Variable
 
-If your Nexus instance needs to store configuration and data using an
-international character set, you should set the +LANG+ environment
-variable. The Java Runtime will adapt to the value of the +LANG+
-environment variable and ensure that configuration data is saved using
-the appropriate character type. If you are starting Nexus as a
-service, place this environment variable in the startup script found
-in +/etc/init.d/nexus+. 
+If your repository manager needs to store configuration and data using an international character set, you should
+set the +LANG+ environment variable. The Java Runtime will adapt to the value of the +LANG+ environment variable
+and ensure that configuration data is saved using the appropriate character type. If you are starting the
+repository manager as a service, place this environment variable in the startup script found in
++/etc/init.d/nexus+.
 
 ==== Step 7: Configure Routes
 
@@ -450,30 +398,25 @@ requests for internal components do not leak to external repositories.
 
 
 [[install-sect-service]]
-=== Configuring Nexus as a Service
+=== Configuring {pro} as a Service
 
 {inall}
 
-When installing Nexus for production usage you should configure Nexus
-as a service, so it starts back up after server reboots. It is good
-practice to run that service or daemon as a specific user that has
-only the required access righs. The following sections provide
-instructions for configuring Nexus as a service or daemon on various
-operating systems.
+When installing {pro} or {oss} for production usage you should configure it to run as a service, so it starts back
+up after server reboots. It is good practice to run that service or daemon as a specific user that has only the
+required access righs. The following sections provide instructions for configuring the repository manager as a
+service or daemon on various operating systems.
 
 ==== Running as a Service on Linux
 
-You can configure Nexus to start automatically by copying the +nexus+
-script to the +/etc/init.d+ directory. On a Linux system 
-perform the following operations as the root user:
+You can configure the repository manager to start automatically by copying the +nexus+ script to the +/etc/init.d+
+directory. On a Linux system perform the following operations as the root user:
 
-. Create a +nexus+ user with sufficient access rights to run the
-service 
+. Create a +nexus+ user with sufficient access rights to run the service
 
 . Copy +$NEXUS_HOME/bin/nexus+ to +/etc/init.d/nexus+
 
-. Make the +/etc/init.d/nexus+ script executable and owned by the root 
-user - 
+. Make the +/etc/init.d/nexus+ script executable and owned by the root user -
 +
 ----
 chmod 755 /etc/init.d/nexus
@@ -489,7 +432,7 @@ chown root /etc/init.d/nexus
 
 .. Set the +RUN_AS_USER+ to +nexus+ or any other user with restricted
   rights that you want to use to run the service. You should not be
-  running Nexus as root.
+  running the repository manager as `root`.
 
 .. Change +PIDDIR+ to a directory where this user has read/write
 permissions. In most Linux distributions, +/var/run+ is only writable by
@@ -499,14 +442,11 @@ property and how it would be configured in wrapper.conf, see:
 http://wrapper.tanukisoftware.com/doc/english/properties.html[http://wrapper.tanukisoftware.com/doc/english/properties.html].
 
 
-. Change the owner and group of your Nexus-related directories,
-including +nexus-work+ configured in +nexus.properties+
-defaulting to +sonatype-work/nexus+, to the +nexus+ user that will run
-the application.
+. Change the owner and group of the directories used by the repository manager, including +nexus-work+ configured
+in +nexus.properties+ defaulting to +sonatype-work/nexus+, to the +nexus+ user that will run the application.
 
-. If Java is not on the default path for the user running Nexus, add
-a +JAVA_HOME+ variable which points to your local Java installation and 
-add a +$JAVA_HOME/bin+ to the +PATH+.
+. If Java is not on the default path for the user running the repository manager, add a +JAVA_HOME+ variable which
+points to your local Java installation and add a +$JAVA_HOME/bin+ to the +PATH+.
 
 ifdef::promo[]
 ++++
@@ -515,16 +455,15 @@ ifdef::promo[]
 endif::[]
 
 [[nonrootuser]]
-WARNING: We recommend to avoid running Nexus as the root user or a
-similar privileged user, as this practice poses serious security risks
-to the host operating system unnecessarily. Instead we suggest to
-follow system administration best practice and use a service specific
-user with the minimum required access rights only.
+WARNING: We recommend to avoid running the repository manager as the `root` user or a similar privileged user, as
+this practice poses serious security risks to the host operating system unnecessarily. Instead we suggest to
+follow system administration best practice and use a service specific user with the minimum required access rights
+only.
 
-===== Add Nexus as a Service on Red Hat, Fedora, and CentOS
+===== Run as a Service on Red Hat, Fedora, and CentOS
 
-This script has the appropriate chkconfig directives, so all you need
-to do to add Nexus as a service is run the following commands:
+This script has the appropriate `chkconfig` directives, so all you need to do is to add the repository manager as
+a service is run the following commands:
 
 [subs="attributes"]
 ----
@@ -536,22 +475,18 @@ Starting {pro}...
 $ tail -f /usr/local/nexus/logs/wrapper.log
 ----
 
-The second command adds +nexus+ as a service to be started and stopped
-with the +service+ command. +chkconfig+ manages the
-symbolic links in +/etc/rc[0-6].d+ which control the services to be
-started and stopped when the operating system restarts or transitions
-between run-levels. The third command adds nexus to run-levels 3, 4,
-and 5. The service command starts Nexus, and the last command tails
-the wrapper.log to verify that Nexus has been started successfully. If
-Nexus has started successfully, you should see a message notifying you
-that Nexus is listening for HTTP.
+The second command adds +nexus+ as a service to be started and stopped with the +service+ command. +chkconfig+
+manages the symbolic links in +/etc/rc[0-6].d+ which control the services to be started and stopped when the
+operating system restarts or transitions between run-levels. The third command adds nexus to run-levels 3, 4,
+and 5. The service command starts the repository manager, and the last command tails the wrapper.log to verify
+that it has been started successfully. If the repository manager has started successfully, you should see a
+message notifying you that it is listening for HTTP.
 
-===== Add Nexus as a Service on Ubuntu and Debian
+===== Runs as a Service on Ubuntu and Debian
 
-The process for setting up Nexus as a service on Ubuntu differs
-slightly from the process used on a Red Hat variant. Instead of running
-+chkconfig+, you should run the following sequence of commands once
-you've configured the startup script in +/etc/init.d+.
+The process for setting up the repository manager as a service on Ubuntu differs slightly from the process used on
+a Red Hat variant. Instead of running +chkconfig+, you should run the following sequence of commands once you've
+configured the startup script in +/etc/init.d+.
 
 [subs="attributes"]
 ----
@@ -564,9 +499,8 @@ $ tail -f /usr/local/nexus/logs/wrapper.log
 
 ====  Running as a Service on Mac OS X
 
-The standard way to run a service on Mac OS X is by using +launchd+,
-which uses plist files for configuration. An example plist file for
-Nexus installed in +/opt+ is shown <<ex-nexus-plist>>.
+The standard way to run a service on Mac OS X is by using +launchd+, which uses plist files for configuration. An
+example plist file for the repository manager installed in +/opt+ is shown <<ex-nexus-plist>>.
 
 [[ex-nexus-plist]]
 .A sample com.sonatype.nexus.plist file
@@ -599,10 +533,10 @@ sudo chmod 644 /Library/LaunchDaemons/com.sonatype.nexus.plist
 ----
 
 
-TIP: Consider setting up a different user to run Nexus and adapt
-permissions and the RUN_AS_USER setting in the nexus startup script.
+TIP: Consider setting up a different user to run the repository manager and adapt
+permissions and the RUN_AS_USER setting in the `nexus` startup script.
  
-With this setup Nexus will start as a service at boot time. To
+With this setup the repository managers, starts as a service at boot time. To
 manually start it after the configuration you can use
 
 ----
@@ -611,27 +545,22 @@ sudo launchctl load /Library/LaunchDaemons/com.sonatype.nexus.plist
 
 ==== Running as a Service on Windows
 
-The startup script for Nexus on Windows platforms is
-+bin/nexus.bat+. Besides the standard commands for starting and
-stopping the service, it has the additional commands +install+ and
-+uninstall+. Running these commands with elevated privileges will set
-up the service for you or remove it as desired. Once installed as a
-service with the +install+ command, the batch file can be used to start
-and stop the service. In addition, the service will be available in the
-usual Windows service management console as a service named 'nexus'.
+The startup script for the repository manager on Windows platforms is +bin/nexus.bat+. Besides the standard
+commands for starting and stopping the service, it has the additional commands +install+ and +uninstall+. Running
+these commands with elevated privileges will set up the service for you or remove it as desired. Once installed as
+a service with the +install+ command, the batch file can be used to start and stop the service. In addition, the
+service will be available in the usual Windows service management console as a service named 'nexus'.
 
 [[install-sect-proxy]]
-=== Running Nexus Behind a Reverse Proxy
+=== Running  {pro} Behind a Reverse Proxy
 
 {inall}
 
-Nexus is a sophisticated web application, answering HTTP requests
-using the high-performance servlet container http://eclipse.org/jetty[Eclipse
-Jetty].
+{pro} is a sophisticated server application with a web-application user interface, answering HTTP requests using
+the high-performance servlet container http://eclipse.org/jetty[Eclipse Jetty].
 
-Organizations are sometimes required to run applications like Nexus behind a
-https://en.wikipedia.org/wiki/Reverse_proxy[reverse proxy]. Reasoning can
-include:
+Organizations are sometimes required to run applications like {pro} or {oss} behind a
+https://en.wikipedia.org/wiki/Reverse_proxy[reverse proxy]. Reasoning can include:
 
 * security and auditing concerns
 * network administrator familiarity
@@ -641,45 +570,40 @@ include:
 * exposing applications on restricted ports
 * SSL termination
 
-We provide some general guidance on how to configure common reverse proxy
-servers to work with Nexus. Always consult your reverse proxy administrator
-to ensure you configuration is secure.
+We provide some general guidance on how to configure common reverse proxy servers to work with {pro} and
+{oss}. Always consult your reverse proxy administrator to ensure you configuration is secure.
 
-There are two main settings of Nexus which can affect how reverse proxies
-interact.
+There are two main settings of the repository manager, which can affect how reverse proxies interact.
 
 [[nexus_webapp_context_path]]
-==== Nexus Webapp Context Path
+==== Webapp Context Path
 
-Nexus webapp context path is +/nexus+ by default. This means every URL path used
-to access Nexus must begin with +/nexus+.
+The repository manager webapp context path is +/nexus+ by default. This means every URL path used to access the
+repository manager must begin with +/nexus+.
 
-In cases where Nexus needs to be accessed at a different base path, through your
-reverse proxy or directly, you must change the default path by editing a
-property value.
+In cases where the repository manager needs to be accessed at a different base path, through your reverse proxy or
+directly, you must change the default path by editing a property value.
 
-For example, to expose Nexus at path slash ( +/+ ) instead of +/nexus/+:
+For example, to expose the repository manager in the root context ( +/+ ) instead of +/nexus/+:
 
 . Edit +$NEXUS_HOME/conf/nexus.properties+. Change
   +nexus-webapp-context-path=/nexus+ to +nexus-webapp-context-path=/+
 
-. Restart Nexus and verify that it is available on +http://localhost:8081/+ and
-  no longer available at +http://localhost:8081/nexus/+.
+. Restart the repository manager and verify that it is available on +http://localhost:8081/+ and no longer
+  available at +http://localhost:8081/nexus/+.
 
-. Emails triggered by your Nexus instance may include absolute links back to the
-  originating Nexus server. As a matter of courtesy, set the Base URL in
-  Nexus as shown in <<fig-config-administration-application-server>> under
-  'Application Server Settings' to the URL that will be externally available
-  to your users e.g. +http://repo.example.com/+.
+. Emails triggered by your repository manager may include absolute links back to the originating server. As a
+  matter of courtesy, set the Base URL as shown in <<fig-config-administration-application-server>> under
+  'Application Server Settings' to the URL that will be externally available to your users
+  e.g. +http://repo.example.com/+.
 
 ==== Do Not Force Base URL
 
-At _Administration_ -> _Server_ -> _Application Server Settings_ Nexus has a
-deprecated _Force Base URL_ feature. The original use case for forcing base URL
-is no longer valid.
+The _Administration_ -> _Server_ -> _Application Server Settings_ configuration to 'Force Base URL' feature. The
+original use case for forcing base URL is no longer valid.
 
-When enabled, the incoming request host and base path is ignored and Nexus acts
-like it is being accessed at the value of base URL.
+When enabled, the incoming request host and base path is ignored and the repository manager acts like it is being
+accessed at the value of base URL.
 
 WARNING: Do not enable the <<fig-config-administration-application-server>>
 'Force Base URL' unless explicitly advised by Sonatype - enabling this will most
