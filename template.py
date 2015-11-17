@@ -37,7 +37,7 @@ for infile in glob.glob( os.path.join(path, '*.html') ):
   if infile.endswith( 'search.html'):
     t = airspeed.Template(open("site/search.html", "r").read())
     print( "  search.html replacements" )
-    body = body.replace(bookTitle, title)
+    #body = body.replace(bookTitle, title)
   else:
     t = airspeed.Template(open("site/book-template.html", "r").read())
     title = body[ body.index( "<title>" ) + 7 : body.rindex("</title>") ]
