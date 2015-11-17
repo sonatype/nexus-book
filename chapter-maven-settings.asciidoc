@@ -6,43 +6,34 @@
 [[settings-sect-intro]]
 === Introduction
 
-When you move an organization to a repository manager such as Nexus,
-one of the constant challenges is keeping everyone's Maven settings
-synchronized to ensure the Nexus server is used and any further
-configuration in the settings file is consistent.  In addition,
-different users or use cases require different settings files. You can
-find out more about the Maven settings file in <<config>>. {pro}
-allows you to define templates for Maven settings stored
-on the server and provide them to users via the user interface or
-automated download.
+When you move an organization to a repository manager such as {pro} or {oss}, one of the constant challenges is
+keeping everyone's Maven settings synchronized to ensure the repository manager server is used and any further
+configuration in the settings file is consistent.  In addition, different users or use cases require different
+settings files. You can find out more about the Maven settings file in <<config>>. {pro} allows you to define
+templates for Maven settings stored on the server and provide them to users via the user interface or automated
+download.
 
-If a Nexus administrator makes a change that requires every developer
-to modify his or her +~/.m2/settings.xml+ file, this feature can be
-used to manage the distribution of Maven settings changes to the
-entire organization. Once you have defined a Maven settings template
-in {pro}, developers can then use the Nexus M2Settings
-Maven Plugin to retrieve the new Maven settings file directly from
-{pro}.
+If an administrator makes a change that requires every developer to modify his or her +~/.m2/settings.xml+ file,
+this feature can be used to manage the distribution of Maven settings changes to the entire organization. Once you
+have defined a Maven settings template in {pro}, developers can then use the Nexus M2Settings Maven Plugin to
+retrieve the new Maven settings file directly from {pro}.
 
 
 [[settings-sect-install]]
 === Manage Maven Settings Templates
 
-To manage Maven settings templates, click on 'Maven Settings' in the
-'Enterprise' section of the Nexus menu on the left side of the Nexus
-UI. This will load the panel shown in <<fig-settings-maven-settings>>.
+To manage Maven settings templates, click on 'Maven Settings' in the 'Enterprise' section of the main menu on the
+left side of the user interface. This will load the panel shown in <<fig-settings-maven-settings>>.
 
 [[fig-settings-maven-settings]]
 .The Maven Settings Panel
 image::figs/web/maven-settings-template.png[scale=60]
 
-The Maven Settings panel allows you to add, delete, and edit Maven
-Settings templates. The default template has an ID of +default+ and
-can not be changed. It contains the recommended settings for a
-standard Nexus installation. To create a new Maven settings template,
-click on the 'Add...' button and select 'Settings Template'. Once the
-new template is created, assign a name to the template in the
-'Template ID' text input and click the 'Save' button.
+The Maven Settings panel allows you to add, delete, and edit Maven Settings templates. The default template has an
+ID of +default+ and can not be changed. It contains the recommended settings for a standard repository manager
+installation. To create a new Maven settings template, click on the 'Add...' button and select 'Settings
+Template'. Once the new template is created, assign a name to the template in the 'Template ID' text input and
+click the 'Save' button.
 
 To edit a template, click on a template that has a 'User Managed' value
 of +true+ in the list and edit the template in the tab below the
@@ -51,7 +42,7 @@ the template. When editing the template you can insert some property
 references that will be replaced on the server with their values at
 request time:
 
-baseurl:: The base URL of the Nexus installation.
+baseurl:: The base URL of the repository manager installation.
 
 userId:: The user id of the user that is generating a Maven Settings
 file from this template.
@@ -71,12 +62,10 @@ be referenced in the settings file using the the syntax +$\{property\}+:
 ...
 ----
 
-To preview a Maven settings template, click on the 'Template URL' in
-the list. Clicking on this URL loads a dialog window that contains
-the Maven Settings file generated from this template. This rendered
-view of the Maven Settings template has all variable references
-replaced using the current context of the user. This is the result of
-running the property replacement on the Nexus server.
+To preview a Maven settings template, click on the 'Template URL' in the list. Clicking on this URL loads a dialog
+window that contains the Maven Settings file generated from this template. This rendered view of the Maven
+Settings template has all variable references replaced using the current context of the user. This is the result
+of running the property replacement on the repository manager.
 
 The Nexus M2Settings Maven Plugin supports the more powerful and
 feature-rich, client-side replacement of properties using a
@@ -85,7 +74,7 @@ feature-rich, client-side replacement of properties using a
 Client-side properties supported by the Nexus M2Settings Maven Plugin
 are
 
-baseurl:: The base URL of the Nexus installation.
+baseurl:: The base URL of the repository manager installation.
 
 userId or username:: The username of the user that is requesting a
 Maven Settings file from this template.
@@ -191,14 +180,11 @@ file:
   ...
 ----
 
-An initial invocation of the download goal will update your settings
-file with a template from {pro}. The default template in
-{pro} adds the +org.sonatype.plugins+ group to the
-+pluginGroups+, so you will not have to do this manually. It is
-essential that you make sure that any new, custom templates also
-include this plugin group definition. Otherwise, there is a chance
-that a developer could update his or her Maven Settings and lose the
-ability to use the Nexus Maven plugin with the short identifier.
+An initial invocation of the download goal will update your settings file with a template from {pro}. The default
+template in {pro} adds the +org.sonatype.plugins+ group to the +pluginGroups+, so you will not have to do this
+manually. It is essential that you make sure that any new, custom templates also include this plugin group
+definition. Otherwise, there is a chance that a developer could update his or her Maven settings and lose the
+ability to use the Nexus M2Settings Maven Plugin with the short identifier.
 
 TIP: This practice of adding pluginGroups to the settings file is
 useful for your own Maven plugins or other plugins that do not use the
@@ -219,37 +205,33 @@ been replaced with the Nexus M2Settings Maven Plugin.
 ==== Configuring Nexus M2Settings Maven Plugin
 
 The download goal of the Nexus M2Settings Maven plugin prompts the
-user for all required parameters, which include the Nexus server URL,
+user for all required parameters, which include the server URL,
 the username and password, and the template identifier. 
 
-NOTE: For security reasons, the settings download requires an HTTPS
- connection to your Nexus instance. If you are running Nexus via plain
- HTTP you will have to set the +secure+ parameter to +false+.
+NOTE: For security reasons, the settings download requires an HTTPS connection to your repository manager
+ instance. If you are running the repository manager via plain HTTP you will have to set the +secure+ parameter to
+ +false+.
 
 The required configuration parameters can either be supplied
 as invocation parameters or when prompted by the plugin and are:
 
-nexusUrl:: Points to the Nexus server installation's base URL. If you
-have installed Nexus on your local machine, this would be
-http://localhost:8081/nexus/. Access via HTTP only works with the
-+secure+ configuration parameter set to +false+.
+nexusUrl:: Points to the repository manager installation's base URL. If you have installed the repository manager
+on your local machine, this would be http://localhost:8081/nexus/. Access via HTTP only works with the +secure+
+configuration parameter set to +false+.
 
-username:: The username to use for authenticating to Nexus. Default
-value is the the Java System property +user.name+.
+username:: The username to use for authenticating to the repository manager. Default value is the the Java System
+property +user.name+.
 
-password:: The password to use for authenticating to Nexus.f
+password:: The password to use for authenticating to the repository manager.
 
-templateId:: The Template ID for the settings template as defined in
-the Nexus user interface. 
+templateId:: The Template ID for the settings template as defined in the user interface.
 
 Additional general configuration parameters are related to the
 security of the transfer and the output file:
 
-secure:: By default set to +true+, this parameter forces a Nexus URL
-access with HTTPS. Overriding this parameter and setting it to +false+
-allows you to download a settings file via HTTP. When using this
-override it is important to keep in mind that the username and
-password transfered via HTTP can be intercepted.
+secure:: By default set to +true+, this parameter forces a URL access with HTTPS. Overriding this parameter and
+setting it to +false+ allows you to download a settings file via HTTP. When using this override it is important to
+keep in mind that the username and password transfered via HTTP can be intercepted.
 
 outputFile:: Defines the filename and location of the downloaded file
 and defaults to the standard +~/.m2/settings.xml+.
@@ -315,15 +297,14 @@ Select Template: 0
 [INFO] -----------------------------------------
 ----
 
-If your Nexus server is hosted internally and does not use HTTPS you can
-download a settings file with
+If your repository manager is hosted internally and does not use HTTPS you can download a settings file with
 ----
 $ mvn org.sonatype.plugins:nexus-m2settings-maven-plugin:download -Dsecure=false
 ----
 
 As displayed, the plugin will query for all parameters and display a
 list of the available templates. Alternatively, you can specify the
-username, password, Nexus URL, and template identifier on the command
+username, password, URL, and template identifier on the command
 line.
 
 ----
@@ -354,36 +335,31 @@ Proxy Password: ******
 [INFO] Proxy enabled: proxy@https:myproxy.example.com:9000
 ----
 
-In some scenarios you have to get an initial settings file installed
-on a computer that does not have internet access and, therefore, cannot
-use the Maven plugin. For this first initial configuration that
-connects the computer to Nexus for following Maven invocations, a
-simple HTTP GET command to retrieve an unmodified settings file can be
-used:
+In some scenarios you have to get an initial settings file installed on a computer that does not have internet
+access and, therefore, cannot use the Maven plugin. For this first initial configuration that connects the
+computer to the repository manager for following Maven invocations, a simple HTTP GET command to retrieve an
+unmodified settings file can be used:
 
 ----
 curl -u admin:admin123 -X GET "http://localhost:8081/nexus/service/local/templates/settings/default/content" > ~/.m2/settings.xml
 ----
 
-Modify the commandline above by changing the username:password
-supplied after -u and adapting the url to Template URL visible in the
-Nexus user interface. This invocation will however not replace parameters 
-on the client side, so you will have to manually change
-any username or password configuration, if applicable.
+Modify the commandline above by changing the username:password supplied after -u and adapting the URL to the URL
+visible in the user interface. This invocation will however not replace parameters on the client side, so you will
+have to manually change any username or password configuration, if applicable.
 
 === Summary
 
-Overall the Maven Settings integration in Nexus allows you to maintain
-multiple settings template files on the central Nexus server. You can
-configure settings files for different use cases like e.g., 
+Overall the Maven Settings integration in {pro} allows you to maintain multiple settings template files on the
+central repository manager. You can configure settings files for different use cases like e.g.,
 
-* referencing a repository group containing only approved components in the mirror
-section for your release or QA builds, 
-* providing an open public group mirror reference to all of your developers
-for experimentation with other components.
+* referencing a repository group containing only approved components in the mirror section for your release or QA
+builds,
+* providing an open public group mirror reference to all of your developers for experimentation with other
+components.
 
-By using the Nexus M2Settings Maven Plugin you can completely automate
-initial provisioning and updates of these settings files to your users.
+By using the Nexus M2Settings Maven Plugin you can completely automate initial provisioning and updates of these
+settings files to your users.
 
 ////
 /* Local Variables: */
