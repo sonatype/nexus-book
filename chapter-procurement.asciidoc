@@ -6,19 +6,14 @@
 [[procure-sect-intro]]
 === Introduction
 
-{pro}curement Suite provides an organization with control over
-what components are allowed into a repository from an external, proxied
-repository such as the Central Repository. Such control can be a
-prerequisite for organizations unwilling or unable to trust the entire
-contents of an external public repository. If an organization is
-developing mission critical code, they will likely want to subject
-every third party dependency to intense scrutiny and testing before
-making the component available to build a release or support a team of
-developers. In most Enterprise development environments, a developer
-can't just decide to add in a new dependency to Hibernate or to the
-Spring Framework on a whim; the decision to add dependencies to
-third-party libraries will need to be funnelled through an oversight
-process that relies on an architect or an administrator to promote
+The Procurement Suite of {pro} provides an organization with control over what components are allowed into a
+repository from an external, proxied repository such as the Central Repository. Such control can be a prerequisite
+for organizations unwilling or unable to trust the entire contents of an external public repository. If an
+organization is developing mission critical code, they will likely want to subject every third party dependency to
+intense scrutiny and testing before making the component available to build a release or support a team of
+developers. In most Enterprise development environments, a developer can't just decide to add in a new dependency
+to Hibernate or to the Spring Framework on a whim; the decision to add dependencies to third-party libraries will
+need to be funnelled through an oversight process that relies on an architect or an administrator to promote
 components to a certified release repository.
 
 Another more common experience is an organization that needs to
@@ -78,46 +73,34 @@ detail.
 [[procure-sect-cert]] 
 ==== Procured Release Repository
 
-The Procurement Suite can be used in two different ways.  In the
-"Procured Release" mode, developers work with a proxied third-party
-repository exactly as they would without the Procurement Suite.  When
-a developer needs to add a dependency on a new component, Nexus will
-retrieve the component from the third-party repository (like Central or
-Apache Snapshots) and this component will be served to Maven via a
-proxied Nexus repository. When a QA or Release engineer needs to build
-a release or staging component, the Release or QA build would be
-configured to execute against a procured repository or repository
-group with only approved and procured repositories. A procured
-repository is one that only serves the components that have been
-explicitly approved using the Procurement Suite.
+The Procurement Suite can be used in two different ways.  In the "Procured Release" mode, developers work with a
+proxied third-party repository exactly as they would without the Procurement Suite.  When a developer needs to add
+a dependency on a new component, the repository manager will retrieve the component from the third-party
+repository (like Central or Apache Snapshots) and this component will be served to Maven via a proxied
+repository. When a QA or Release engineer needs to build a release or staging component, the Release or QA build
+would be configured to execute against a procured repository or repository group with only approved and procured
+repositories. A procured repository is one that only serves the components that have been explicitly approved
+using the Procurement Suite.
 
 .Procurement to a Certified Release Repository
 image::figs/web/procurement_release-procurement.png[scale=60]
 
-In this model, developers can add as many third-party dependencies as
-they want, and it is the responsibility of the QA and release
-engineers to approve (or procure) components from the development
-Repository to the QA/Release repository. Developers can move forward,
-adding dependencies freely from a third-party, proxied repository, but
-once it is time to populate a release repository, a Nexus
-administrator can audit the required components, create a hosted
-repository, turn on procurement, populate the repository, and then
-deactivate procurement. This has the effect of "locking down" the
-components that are involved in a production release.
+In this model, developers can add as many third-party dependencies as they want, and it is the responsibility of
+the QA and release engineers to approve (or procure) components from the development Repository to the QA/Release
+repository. Developers can move forward, adding dependencies freely from a third-party, proxied repository, but
+once it is time to populate a release repository, an administrator can audit the required components, create a
+hosted repository, turn on procurement, populate the repository, and then deactivate procurement. This has the
+effect of "locking down" the components that are involved in a production release.
 
 [[procure-sect-dev]]
 ==== Procured Development Repository
 
-There are some development environments that require even more
-control over which components can be used and referenced by
-developers. In these situations, it might make sense to only allow
-developers to work with a procured repository. In this mode, a
-developer must ask a Nexus administrator for permission to add a
-dependency on a particular third-party component. A procurement manager
-would then have to approve the component or group of components so
-that they would be made available to the developers. This is the
-"ask-first" model for organizations that want to control which
-components make it into the development cycle.
+There are some development environments that require even more control over which components can be used and
+referenced by developers. In these situations, it might make sense to only allow developers to work with a
+procured repository. In this mode, a developer must ask an administrator for permission to add a dependency on a
+particular third-party component. A procurement manager would then have to approve the component or group of
+components so that they would be made available to the developers. This is the "ask-first" model for organizations
+that want to control which components make it into the development cycle.
 
 .Procurement to a Certified Development Repository
 image::figs/web/procurement_ask-first-procurement.png[scale=60]
@@ -131,10 +114,9 @@ what components can be referenced by a large development team.
 
 ==== Providing Access with a Repository Group
 
-In a typical usage a software build relies on approved components that
-have successfully passed procurement and additional components that have 
-been authored internally in the organization and
-are available on Nexus as well. 
+In a typical usage a software build relies on approved components that have successfully passed procurement and
+additional components that have been authored internally in the organization and are available on the repository
+manager as well.
 
 In order to use a combination of such components together with the
 procured component, you should set up a a repository group that
@@ -158,9 +140,8 @@ before a build or to run the build against a project specific local repository.
 [[procure-sect-configure]]
 === Setting up a Procured Repository
 
-If you installed {pro}, the {pro}curement Suite is
-already installed and available via the 'Artifact Procurement' option in
-the 'Enterprise' menu of the Nexus interface.
+If you installed {pro}, the {pro}curement Suite is already installed and available via the 'Artifact Procurement'
+option in the 'Enterprise' menu of the user interface.
 
 This section will walk through the process of creating and configuring
 a hosted repository named 'Approved From Central' which will be procured
@@ -189,42 +170,33 @@ the already populated repository tree shown in <<procure-sect-config-rule>>.
 [[procure-sect-enabled-remote]]
 ==== Enable Remote Index Downloads
 
-When you configure procurement rules for a hosted repository, the
-administrative interface displays the repository as a tree view using
-the Maven repository format of the of groups and components using
-populated from remote repository's index. Nexus ships with a set of
-proxy repositories, but remote index downloading is disabled by
+When you configure procurement rules for a hosted repository, the administrative interface displays the repository
+as a tree view using the Maven repository format of the of groups and components using populated from remote
+repository's index. {pro} ships with a set of proxy repositories, but remote index downloading is disabled by
 default.
 
-To use procurement effectively, you will need to tell Nexus to
-download the remote indexes for a proxy repository. Click on
-'Repositories' under 'Views/Repositories' in the 'Nexus' menu, then
-click on the 'Central Repository' in the list of repositories. Click
-on the 'Configuration' tab, locate 'Download Remote Indexes', and
-switch this option to 'True' as shown in
-<<fig-procure-enabling-remote>>.
+To use procurement effectively, you will need to tell {pro} to download the remote indexes for a proxy
+repository. Click on 'Repositories' under 'Views/Repositories' in the main menu, then click on the 'Central
+Repository' in the list of repositories. Click on the 'Configuration' tab, locate 'Download Remote Indexes', and
+switch this option to 'True' as shown in <<fig-procure-enabling-remote>>.
 
 [[fig-procure-enabling-remote]]
 .Enabling Remote Index Downloads for a Proxy Repository
 image::figs/web/procure_central-download-remote-index.png[scale=60]
 
-Click on the 'Save' button in the dialog shown in
-<<fig-procure-enabling-remote>>. Right-click on the repository row in
-the Repositories list and select 'Update Index'. Nexus will then
-download the remote repository index and recreate the index for any
-repository groups that contain this proxied repository.
+Click on the 'Save' button in the dialog shown in <<fig-procure-enabling-remote>>. Right-click on the repository
+row in the Repositories list and select 'Update Index'. The repository manager will then download the remote
+repository index and recreate the index for any repository groups that contain this proxied repository.
 
-Nexus may take a few minutes to download the remote index for a large
-repository. Depending on your connection to the Internet, this process
-can take anywhere from under a minute to a few minutes. The size of
-the remote index for the Central Repository currently exceeds 50MB and
-is growing in parallel to the size of the repository itself.
+The repository manager may take a few minutes to download the remote index for a large repository. Depending on
+your connection to the Internet, this process can take anywhere from under a minute to a few minutes. The size of
+the remote index for the Central Repository currently exceeds 50MB and is growing in parallel to the size of the
+repository itself.
 
-To check on the status of the remote index download, click on 'System
-Feeds' under 'Views/Repositories' in the 'Nexus' menu. Click on the last 
-feed to see a list of 'System Changes in Nexus'. If you see a log entry 
-like the one highlighted in <<fig-procure-system-feed>>, Nexus has successfully
-completd the download of the remote index from the Central Repository.
+To check on the status of the remote index download, click on 'System Feeds' under 'Views/Repositories' in the
+main menu. Click on the last feed to see a list of 'System Changes in Nexus'. If you see a log entry like the one
+highlighted in <<fig-procure-system-feed>>, the repository manager has successfully completd the download of the
+remote index from the Central Repository.
 
 [[fig-procure-system-feed]]
 .Verification that the Remote Index has been Downloaded
@@ -233,13 +205,11 @@ image::figs/web/procure_reindex-system-feed.png[scale=50]
 [[procure-sect-create-hosted]]
 ==== Create a Hosted Repository
 
-When you configure procurement you are establishing a relationship
-between a proxy repository and a hosted repository. The hosted
-repository will be the static container for the components, while the
-proxy repository acts as the component source. To create a hosted
-repository, select 'Repositories' from the 'Views/Repositories' section of
-the 'Nexus' menu, and click on the 'Add' button selecting 'Hosted
-Repository' as shown in <<fig-procure-add-hosted>>.
+When you configure procurement you are establishing a relationship between a proxy repository and a hosted
+repository. The hosted repository will be the static container for the components, while the proxy repository acts
+as the component source. To create a hosted repository, select 'Repositories' from the 'Views/Repositories'
+section of the main menu, and click on the 'Add' button selecting 'Hosted Repository' as shown in
+<<fig-procure-add-hosted>>.
 
 [[fig-procure-add-hosted]]
 .Adding the "Approved From Central" Hosted Repository
@@ -279,28 +249,22 @@ repositories.
 .Configuring Procurement for a Hosted Repository
 image::figs/web/procure_configure-procurement-confirm.png[scale=50] 
 
-Procurement is now configured and started. If you are using an
-instance of Nexus installed on localhost port 8081, you can configure
-your clients to reference the new repository at
+Procurement is now configured and started. If you are using an instance of {pro} installed on localhost port 8081,
+you can configure your clients to reference the new repository at
 +http://localhost:8081/nexus/content/repositories/approved-from-central+.
 
 By default, all components are denied and without further customization
 of the procurement rules no components will be available in the new
 repository.
 
-One interesting thing to note about the procured repository is that
-the repository type changed once procurement was started. When
-procurement is activated for a hosted repository, the repository will
-not show up in the repositories list as a 'User Managed
-Repository'. Instead it will show up as a proxy repository in the list
-of 'Nexus Managed Repositories'. Use the drop-down for 'User
-Managed/Nexus Managed Repositories' in the Repositories list. Click
-Refresh in the Repositories list, and look at the 'Approved From
-Central' repository in the list of Nexus Managed Repositories.  You
-will see that the repository type column contains +proxy+ as shown in
-<<fig-procure-hosted-now-proxy>>.  When procurement is started for a
-hosted repository, it is effectively a proxy repository, and when it is
-stopped it will revert back to being a normal hosted repository.
+One interesting thing to note about the procured repository is that the repository type changed once procurement
+was started. When procurement is activated for a hosted repository, the repository will not show up in the
+repositories list as a 'User Managed Repository'. Instead it will show up as a proxy repository in the list of
+'Nexus Managed Repositories'. Use the drop-down for 'User Managed/Nexus Managed Repositories' in the Repositories
+list. Click Refresh in the Repositories list, and look at the 'Approved From Central' repository in the list of
+Nexus Managed Repositories.  You will see that the repository type column contains +proxy+ as shown in
+<<fig-procure-hosted-now-proxy>>.  When procurement is started for a hosted repository, it is effectively a proxy
+repository, and when it is stopped it will revert back to being a normal hosted repository.
 
 [[fig-procure-hosted-now-proxy]]
 .Hosted Repository is a Nexus Managed Proxy Repository while Procurement is Active
@@ -317,14 +281,11 @@ procured repository and which components are denied. You can also start
 and stop procurement. This section details some of the administration
 panels and features that are available for a procured repository.
 
-A procurement rule is a rule to allow or deny the procurement of a
-group, component, or a collection of groups or components. You load the
-Artifact Procurement interface by selecting Artifact Procurement in
-the Enterprise menu of the Nexus left-hand navigation. Clicking on
-this link will load a list of procured repositories.  Clicking on the
-repository will display the proxied source repository and the current
-content of the procured repository in a tree as shown in
-<<fig-procure-repository-view>>.
+A procurement rule is a rule to allow or deny the procurement of a group, component, or a collection of groups or
+components. You load the Artifact Procurement interface by selecting Artifact Procurement in the Enterprise menu
+of the left-hand navigation. Clicking on this link will load a list of procured repositories.  Clicking on the
+repository will display the proxied source repository and the current content of the procured repository in a tree
+as shown in <<fig-procure-repository-view>>.
 
 This section will illustrate the steps required for blocking access to
 a specific component and then selectively allowing access to a
@@ -468,7 +429,7 @@ repository.
 
 To stop procurement, go to the procurement management
 interface by clicking on 'Artifact Procurement' under the 'Enterprise'
-section of the 'Nexus' menu. Right-click on the repository and choose
+section of the menu. Right-click on the repository and choose
 'Stop Procurement' as shown in <<fig-procure-stopping>>.
 
 [[fig-procure-stopping]]
