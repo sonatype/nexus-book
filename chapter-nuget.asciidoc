@@ -19,44 +19,34 @@ source NuGet packages. With the NuGet Gallery a repository of open
 source libraries and tools is available and the need for repository
 management arises.
 
-IMPORTANT: With the release of Nexus 2.9, NuGet support is available
-in {pro} and {oss}.
+IMPORTANT: With the release of version 2.9, NuGet support is available in {pro} and {oss}.
 
-Nexus supports the NuGet repository format for hosted and proxy
-repositories. Nexus also supports aggregation of NuGet repositories
-and conversion of other repositories containing +.nupkg+ components
-to the NuGet format. This allows you to improve collaboration and
-control, while speeding up .NET development, facilitating open source
-libraries and sharing of internal component across teams. When you
-standardize on a single repository for all your development and use it
-for internal components as well, you will get all the benefits of Nexus
-when working in the .NET architecture.
+{pro} and {oss} support the NuGet repository format for hosted and proxy repositories. They also supports
+aggregation of NuGet repositories and conversion of other repositories containing +.nupkg+ components to the NuGet
+format. This allows you to improve collaboration and control, while speeding up .NET development, facilitating
+open source libraries and sharing of internal component across teams. When you standardize on a single repository
+for all your development and use it for internal components as well, you will get all the benefits of using a
+repository manager when working in the .NET architecture.
 
-To share a library or tool with NuGet, you create a NuGet package and
-store it in the Nexus-based NuGet repository. Similarly, you can use
-packages others have created and made available in their NuGet
-repositories by proxying them or downloading the packages and installing
-them in your own hosted repository for third party packages.
+To share a library or tool with NuGet, you create a NuGet package and store it in the repository manager-based
+NuGet repository. Similarly, you can use packages others have created and made available in their NuGet
+repositories by proxying them or downloading the packages and installing them in your own hosted repository for
+third party packages.
 
-The NuGet Visual Studio extension allows you to download the package
-from the repository and install it in your Visual Studio project or
-solution. NuGet copies everything and makes any required changes to
-your project setup and configuration files. Removing a package will
-clean up any changes as required.
+The NuGet Visual Studio extension allows you to download the package from the repository and install it in your
+Visual Studio project or solution. NuGet copies everything and makes any required changes to your project setup
+and configuration files. Removing a package will clean up any changes as required.
 
-TIP: Using NuGet repositories benefits from a larger memory
-size available to Nexus. This memory allocation can be configured in
-+wrapper.conf+ as documented in <<running>>.
+TIP: Using NuGet repositories benefits from a larger memory size available to the repository manager. This memory
+allocation can be configured in +wrapper.conf+ as documented in <<running>>.
 
 
 [[nuget-nuget_proxy_repositories]]
 === NuGet Proxy Repositories
 
-The NuGet Gallery is the central repository used by all package authors
-and consumers. To reduce duplicate downloads and improve download
-speeds for your developers and CI servers, you should proxy the NuGet
-Gallery with Nexus. If you use other external repositories, you should
-also proxy these. 
+The NuGet Gallery is the central repository used by all package authors and consumers. To reduce duplicate
+downloads and improve download speeds for your developers and CI servers, you should proxy the NuGet Gallery with
+the repository manager. If you use other external repositories, you should also proxy these.
 
 To proxy an external NuGet repository, you simply create a new 'Proxy
 Repository' as documented in <<confignx-sect-manage-repo>>. The
@@ -84,11 +74,9 @@ URL that is URL where the repository is available as a NuGet repository.
 .NuGet Gallery with Package Source URL
 image::figs/web/nuget-gallery-package-source.png[scale=50]
 
-By default, searches in NuGet repositories in Nexus will be passed
-through to the remote repositories, and the search results are merged
-with internal search results and included in an internally managed
-index. This merging has to make some assumptions to generate component
-counts.
+By default, searches in NuGet repositories in the repository manager are passed through to the remote
+repositories, and the search results are merged with internal search results and included in an internally managed
+index. This merging has to make some assumptions to generate component counts.
 
 [[nuget-nuget_hosted_repositories]]
 === NuGet Hosted Repositories
@@ -142,13 +130,10 @@ virtual NuGet repository, you can manually schedule a
 [[nuget-nuget_group_repositories]]
 === NuGet Group Repositories
 
-A repository group is the recommended way to expose all your NuGet
-repositories from Nexus to your users, without needing any further
-client side configuration. A repository group allows you to expose the
-aggregated content of multiple proxy and hosted repositories with one
-URL to your tools. This is possible for NuGet repositories by creating
-a new 'Repository Group' with the 'Provider' set to +NuGet+ as
-documented in <<repository-groups>>.
+A repository group is the recommended way to expose all your NuGet repositories to your users, without needing any
+further client side configuration. A repository group allows you to expose the aggregated content of multiple
+proxy and hosted repositories with one URL to your tools. This is possible for NuGet repositories by creating a
+new 'Repository Group' with the 'Provider' set to +NuGet+ as documented in <<repository-groups>>.
 
 A typical, useful example would be to group the proxy repository that
 proxies the NuGet Gallery, a NuGet, hosted repository with internal
@@ -179,20 +164,16 @@ to access and add it to +nuget+ on the command line with e.g.:
 nuget sources add -name NuGetNexus -source http://localhost:8081/nexus/service/local/nuget/nuget-public
 ----
 
-Replace +localhost+ with the public hostname or URL of your Nexus server
-and +nuget-public+ with the name of the repository you want to
-proxy. Ideally, this will be your NuGet group.
+Replace +localhost+ with the public hostname or URL of your repository manager and +nuget-public+ with the name of
+the repository you want to proxy. Ideally, this will be your NuGet group.
 
 After this source was added, you can list the available packages with 
 the command +nuget list+.
 
-Access to the packages is not restricted by default. If access
-restrictions are desired, you can
-<<security,configure Nexus security>> directly
-or via <<ldap,LDAP/Active Directory external role mappings>> combined with
-<<repository-targets,repository targets>> for fine
-grained control. Authentication from NuGet is then handled via NuGet
-API keys as documented in <<nuget-deploying_packages_to_nuget_hosted_repositories>>.
+Access to the packages is not restricted by default. If access restrictions are desired, you can
+<<security,configure security>> directly or via <<ldap,LDAP/Active Directory external role mappings>> combined
+with <<repository-targets,repository targets>> for fine grained control. Authentication from NuGet is then handled
+via NuGet API keys as documented in <<nuget-deploying_packages_to_nuget_hosted_repositories>>.
 
 
 [[nuget-deploying_packages_to_nuget_hosted_repositories]]
@@ -206,19 +187,17 @@ for that user are invalid.
 
 ==== Creating a NuGet API-Key
 
-For usage with Nexus, NuGet API keys are only needed when packages are
-going to be deployed; therefore, API key generation is by default not
-exposed in the user interface to normal users. Only users with at least
-the 'Deployment' role have access to the API keys.
+For usage with the repository manager, NuGet API keys are only needed when packages are going to be deployed;
+therefore, API key generation is by default not exposed in the user interface to normal users. Only users with at
+least the 'Deployment' role have access to the API keys.
 
 Other users that should be able to access and create an API key have
 to be given the 'Nexus API-Key Access' role in the 'Users' security
 administration.
 
-In addition, the 'NuGet API-Key Realm' has to be activated. To do this,
-simply add the realm to the selected realms in the 'Security Settings'
-section of the 'Server' configuration available in the
-'Administration' submenu of the left-hand navigation 'Nexus' panel.
+In addition, the 'NuGet API-Key Realm' has to be activated. To do this, simply add the realm to the selected
+realms in the 'Security Settings' section of the 'Server' configuration available in the 'Administration' submenu
+of the left-hand navigation panel.
 
 Once this is set up, you can view as well as reset the current
 'Personal API Key' in the 'NuGet' tab of any NuGet proxy or hosted
@@ -259,21 +238,18 @@ http://docs.nuget.org/docs/reference/command-line-reference[on-line
 help].
 
 [[nuget-integration_of_nexus_nuget_repositories_in_visual_studio]]
-=== Integration of Nexus NuGet Repositories in Visual Studio
+=== Integration of NuGet Repositories in Visual Studio
 
-In order to access a Nexus NuGet repository or preferably all Nexus
-NuGet repositories exposed in a group, you provide the 'Name' and 'Source'
-to the Visual Studio configuration for the 'Package Sources' of the
-'NuGet Package Manager' as displayed in
-<<fig-nuget-visualstudio-packageoptions>>.
+In order to access a NuGet repository or preferably all NuGet repositories exposed in a group from the repository
+manager, you provide the 'Name' and 'Source' to the Visual Studio configuration for the 'Package Sources' of the
+'NuGet Package Manager' as displayed in <<fig-nuget-visualstudio-packageoptions>>.
 
 [[fig-nuget-visualstudio-packageoptions]]
 .Package Source Configuration for the NuGet Package Manager in Visual Studio
 image::figs/web/nuget-visualstudio-packageoptions.png[scale=60]
 
-With this configuration in place, all packages available in your Nexus
-NuGet repository will be available in the 'NuGet Package Manager' in Visual
-Studio.
+With this configuration in place, all packages available in your NuGet repository will be available in the 'NuGet
+Package Manager' in Visual Studio.
 
 ////
 /* Local Variables: */
