@@ -6,32 +6,27 @@
 [[config-sect-intro]]
 === Introduction
 
-Historically Nexus started as a repository manager supporting the
-Maven repository format. While it supports many other repository
-formats now, the Maven repository format is still the most common and
-well supported format for build and provisioning tools running on the
-JVM and beyond. 
+Historically {pro} and {oss} started as a repository manager supporting the Maven repository format. While it
+supports many other repository formats now, the Maven repository format is still the most common and well
+supported format for build and provisioning tools running on the JVM and beyond.
 
-This chapter shows example configurations for using Nexus with Maven
-and a number of other tools. The setups take advantage of Nexus merging
-many repositories and exposing them via a repository group. Setting
-this up is documented in the chapter in addition to the configuration
-used by specific tools.
+This chapter shows example configurations for using the repository manager with Apache Maven and a number of other
+tools. The setups take advantage of merging many repositories and exposing them via a repository group. Setting
+this up is documented in the chapter in addition to the configuration used by specific tools.
 
 
 [[config-maven]]
 === Apache Maven
 
-To use Nexus with http://maven.apache.org/[Apache Maven], we configure
-Maven to check Nexus instead of the default, built-in connection to the
-Central Repository.
+To use {pro} and {oss} with http://maven.apache.org/[Apache Maven], we configure Maven to check the repository
+manager instead of the default, built-in connection to the Central Repository.
 
 To do this, you add a +mirror+ configuration and override the default
 configuration for the +central+ repository in your +~/.m2/settings.xml+
 as shown in <<ex-maven-nexus-simple>>.
 
 [[ex-maven-nexus-simple]]
-.Configuring Maven to Use a Single Nexus Group
+.Configuring Maven to Use a Single Repository Group
 ----
 <settings>
   <mirrors>
@@ -72,16 +67,12 @@ as shown in <<ex-maven-nexus-simple>>.
 </settings>
 ----
 
-In <<ex-maven-nexus-simple>>, we have defined a single profile called 
-+nexus+. It configures a +repository+ and a +pluginRepository+ with the
-id +central+ that overrides the same repositories in the
-super pom. The super pom is internal to every Apache Maven install and
-establishes default values. These overrides are important since they
-change the repositories by enabling snapshots and replacing the URL
-with a bogus URL. This URL is overridden by the +mirror+ setting in
-the same settings.xml file to point to the URL of your single Nexus
-group. This Nexus group can, therefore, contain release as well as
-snapshot components and Maven will pick them up.
+In <<ex-maven-nexus-simple>>, we have defined a single profile called +nexus+. It configures a +repository+ and a
++pluginRepository+ with the id +central+ that overrides the same repositories in the super pom. The super pom is
+internal to every Apache Maven install and establishes default values. These overrides are important since they
+change the repositories by enabling snapshots and replacing the URL with a bogus URL. This URL is overridden by
+the +mirror+ setting in the same settings.xml file to point to the URL of your single repository group. This group
+can, therefore, contain release as well as snapshot components and Maven will pick them up.
 
 The +mirrorOf+ pattern of +*+ causes any repository request to be
 redirected to this mirror and to your single repository group, which
@@ -104,10 +95,9 @@ profile in the +activeProfiles+ element.
 [[config-sect-custom]]  
 === Adding Repositories for Missing Dependencies
 
-If you've configured your Maven +settings.xml+ or other build tool
-configuration to use the Nexus +public+ repository group as a mirror
-for all repositories, you might encounter projects that are unable to
-retrieve components from your local Nexus installation.
+If you've configured your Maven +settings.xml+ or other build tool configuration to use the +public+ repository
+group as a mirror for all repositories, you might encounter projects that are unable to retrieve components from
+your local repository manager installation.
 
 This usually happens because you are trying to build a project that
 has defined a custom set of repositories and snapshot repositories or
@@ -115,7 +105,7 @@ relies on the content of other publically available repositories in
 its configuration. When you encounter such a project all you have to
 do is 
 
-* add this repository to Nexus as a new proxy repository 
+* add this repository to your repository manager as a new proxy repository 
 * and then add the new proxy repository to the public group.
 
 The advantage of this approach is that no configuration change on the
@@ -124,19 +114,14 @@ build tool side is necessary at all.
 [[config-sect-new-repo]]
 === Adding a New Repository
 
-To add a repository, log into Nexus as an administrator, and click on
-the 'Repositories' link in the left-hand navigation menu in the
-'Views/Repositories' section as displayed in
-<<fig-repository-manager-add-repository-dropdown>>.
+To add a repository, log in as an administrator, and click on the 'Repositories' link in the left-hand navigation
+menu in the 'Views/Repositories' section as displayed in <<fig-repository-manager-add-repository-dropdown>>.
 
-Clicking on this link should bring up a window that lists all of the
-repositories that Nexus knows about. You'll then want to create a new
-proxy repository. To do this, click on the 'Add' link that is directly
-above the list of repositories. When you click the 'Add' button, click
-the down arrow directly to the right of the word 'Add', this will show a
-drop-down which has the options: 'Hosted Repository', 'Proxy Repository',
-'Virtual Repository', and 'Repository Group'. Since you are creating a
-proxy repository, click on 'Proxy Repository'.
+Clicking on this link should bring up a window that lists all the configured repositories. You'll then want to
+create a new proxy repository. To do this, click on the 'Add' link that is directly above the list of
+repositories. When you click the 'Add' button, click the down arrow directly to the right of the word 'Add', this
+will show a drop-down which has the options: 'Hosted Repository', 'Proxy Repository', 'Virtual Repository', and
+'Repository Group'. Since you are creating a proxy repository, click on 'Proxy Repository'.
 
 [[fig-repository-manager-add-repository-dropdown]]
 .Creating a New Proxy Repository
@@ -156,11 +141,9 @@ repository you want to proxy.
 .Configuring a Proxy Repository
 image::figs/web/repository-manager_add-repository.png[scale=50]
 
-Once you've filled out this screen, click on the 'Save'
-button. Nexus will then be configured to proxy the repository. If the
-remote repository contains snapshots as well as release components,
-you will need to repeat the process creating a second proxy repository
-and setting the policy to 'Snapshots'.
+Once you've filled out this screen, click on the 'Save' button. The repository manager is now configured to proxy
+the repository. If the remote repository contains snapshots as well as release components, you will need to repeat
+the process creating a second proxy repository and setting the policy to 'Snapshots'.
 
 ifdef::promo[]
 ++++
@@ -171,17 +154,14 @@ endif::[]
 [[config-sect-repo-group]]  
 === Adding a Repository to a Group
 
-Next you will need to add the new repositories to the 'Public
-Repositories' Nexus repository group. To do this, click on the
-'Repositories' link in the left-hand Nexus menu in the
-'Views/Repositories' section. Nexus lists Groups and Repositories in
-the same list so click on the public group.  After clicking on the
-'Public Repositories' group, you should see the 'Browse' and
-'Configuration' tabs in the lower half of the Nexus window.
+Next you will need to add the new repositories to the 'Public Repositories' repository group. To do this, click on
+the 'Repositories' link in the left-hand main menu in the 'Views/Repositories' section. The repository manager
+lists Groups and Repositories in the same list so click on the public group.  After clicking on the 'Public
+Repositories' group, you should see the 'Browse' and 'Configuration' tabs in the lower half of the user interface.
 
 NOTE: If you click on a repository or a group in the 'Repositories' list
-and you do not see the 'Configuration' tab, this is because your Nexus
-user does not have administrative privileges. To perform the
+and you do not see the 'Configuration' tab, this is because your 
+user account does not have administrative privileges. To perform the
 configuration tasks outlined in this chapter, you will need to be
 logged in as a user with administrative privileges.
 
@@ -189,7 +169,7 @@ Clicking on the 'Configuration' tab will bring up a screen which looks
 like <<fig-add-to-group>>.
 
 [[fig-add-to-group]]
-.Adding New Repositories to a Nexus Group
+.Adding New Repositories to a Repository Group
 image::figs/web/repository-manager_add-to-group.png[scale=50]
 
 To add the new repository to the public group, find the repository in
@@ -200,40 +180,31 @@ Repositories' list you can click and drag the repository within that
 list to alter the order in which a repository will be searched for a
 matching component.
 
-NOTE: Nexus makes use of the Javascript widget library
- http://extjs.com/[ExtJS]. ExtJS provides for a number of UI widgets
- that allow for rich interaction like the drag-drop UI for adding
- repositories to a group and reordering the contents of a group.
+NOTE: The repository manager user interface makes use of the Javascript widget library
+ http://extjs.com/[ExtJS]. ExtJS provides for a number of UI widgets that allow for rich interaction like the
+ drag-drop UI for adding repositories to a group and reordering the contents of a group.
 
 In the last few sections, you learned how to add a new custom
 repositories to a build in order to download components that are not
 available in the Central Repository.
 
-If you were not using a repository manager, you would have added these
-repositories to the repository element of your project's POM, or you
-would have asked all of your developers to modify +~/.m2/settings.xml+
-to reference two new repositories. Instead, you used the Nexus
-repository manager to add the two repositories to the public group. If
-all of the developers are configured to point to the public group in
-Nexus, you can freely swap in new repositories without asking your
-developers to change local configuration, and you've gained a certain
-amount of control over which repositories are made available to your
-development team. In addition the performance of the component
-resolving across multiple repositories will be handled by Nexus and
-therefore be much faster than client side resolution done by Maven
-each time.
+If you were not using a repository manager, you would have added these repositories to the repository element of
+your project's POM, or you would have asked all of your developers to modify +~/.m2/settings.xml+ to reference two
+new repositories. Instead, you used the repository manager to add the two repositories to the public group. If all
+of the developers are configured to point to the public repository group, you can freely swap in new repositories
+without asking your developers to change local configuration, and you've gained a certain amount of control over
+which repositories are made available to your development team. In addition the performance of the component
+resolving across multiple repositories will be handled by repository manager and therefore be much faster than
+client side resolution done by Maven each time.
 
 
 [[ant-ivy]]
 === Apache Ant and Apache Ivy
 
-http://ant.apache.org/ivy/[Apache Ivy] is a dependency manager often
-used in Apache Ant builds. It supports the Maven repository format and
-can be configured to download dependencies that can be declared in the
-+ivy.xml+ file. This configuration can be contained in the
-+ivysettings.xml+. A minimal example for resolving dependencies from a
-Nexus server running on +localhost+ is shown in
-<<ivysettings-minimal>>.
+http://ant.apache.org/ivy/[Apache Ivy] is a dependency manager often used in Apache Ant builds. It supports the
+Maven repository format and can be configured to download dependencies that can be declared in the +ivy.xml+
+file. This configuration can be contained in the +ivysettings.xml+. A minimal example for resolving dependencies
+from a repository manager running on +localhost+ is shown in <<ivysettings-minimal>>.
 
 [[ivysettings-minimal]]
 .Minimal Apache Ivy Settings
@@ -251,24 +222,21 @@ Nexus server running on +localhost+ is shown in
 These minimal settings allow the +ivy:retrieve+ task to download the declared
 dependencies.
 
-To deploy build outputs to a Nexus repository with the
-+ivy:publish+ task, user credentials and the URL of the target
-repository have to be added to +ivysettings.xml+ and the makepom and
-publish tasks have to be configured and invoked. 
+To deploy build outputs to a repository with the +ivy:publish+ task, user credentials and the URL of the target
+repository have to be added to +ivysettings.xml+ and the makepom and publish tasks have to be configured and
+invoked.
 
 Full example projects can be found in the +ant-ivy+ folder of the
-https://github.com/sonatype/nexus-book-examples[Nexus book examples
-project]. A full build of the +simple-project+, including downloading
-the declared dependencies and uploading the build output to Nexus can
-be invoked with
+https://github.com/sonatype/nexus-book-examples[documentation examples project]. A full build of the
++simple-project+, including downloading the declared dependencies and uploading the build output to the repository
+manager can be invoked with
 
 ----
 cd ant-ivy/simple-project
 ant deploy
 ----
 
-Further details about using these example projects can be found in
-<<eval>>.
+Further details about using these example projects can be found in <<eval>>.
 
 
 [[ant-aether]]
@@ -279,10 +247,8 @@ management component used in Apache Maven 3+. The project provides Ant
 tasks that can be configured to download dependencies that can be
 declared in +pom.xml+ file or in the Ant build file directly.
 
-This configuration can be contained in your Ant +build.xml+ or a
-separate file that is imported. A minimal
-example for resolving dependencies from a Nexus server running on
-+localhost+ is shown in <<aether-minimal>>.
+This configuration can be contained in your Ant +build.xml+ or a separate file that is imported. A minimal example
+for resolving dependencies from a repository manager running on +localhost+ is shown in <<aether-minimal>>.
 
 [[aether-minimal]]
 .Minimal Setup for Aether Ant Tasks
@@ -303,18 +269,15 @@ example for resolving dependencies from a Nexus server running on
 ----
 
 
-These minimal settings allow the +aether:resolve+ task to download the declared
-dependencies.
+These minimal settings allow the +aether:resolve+ task to download the declared dependencies.
 
-To deploy build outputs to a Nexus repository with the +aether:deploy+
-task, user authentication and details about the target repositories have
-to be added .
+To deploy build outputs to a repository with the +aether:deploy+ task, user authentication and details about the
+target repositories have to be added .
 
 Full example projects can be found in the +ant-aether+ folder of the
-https://github.com/sonatype/nexus-book-examples[Nexus book examples
-project]. A full build of the +simple-project+, including downloading
-the declared dependencies and uploading the build output to Nexus can
-be invoked with
+https://github.com/sonatype/nexus-book-examples[documentation examples project]. A full build of the
++simple-project+, including downloading the declared dependencies and uploading the build output to Nexus can be
+invoked with
 
 ----
 cd ant-aether/simple-project
@@ -346,10 +309,9 @@ repositories {
 These minimal settings allow Gradle to download the declared
 dependencies.
 
-The above setup is specific to each project. Alternatively an
-+init.gradle+ file placed e.g., in +~/.gradle+ can establish Nexus the
-source for dependencies in all projects. A simple implementation could
-look like
+The above setup is specific to each project. Alternatively an +init.gradle+ file placed e.g., in +~/.gradle+ can
+establish the repository as the the source for dependencies in all projects. A simple implementation could look
+like
 
 ----
 allprojects {
@@ -361,12 +323,11 @@ allprojects {
   repositories RepoConfigurator
 ----
 
-Other setup could be an expansion of the following example allowing
-file system based repostories:
+Other setup could be an expansion of the following example allowing file system based repostories:
 
 ----
 /**
- * init.gradle file for development using Nexus as proxy repository
+ * init.gradle file for development using the Nexus Repository Manager as proxy repository
  * 
  * @author Manfred Moser <manfred@simpligility.com
  */
@@ -424,7 +385,7 @@ explained with more examples in the
 http://gradle.org/docs/current/userguide/init_scripts.html[official
 Gradle documentation].
 
-To deploy build outputs to a Nexus repository with the +uploadArchives+
+To deploy build outputs to a repository with the +uploadArchives+
 task, user authentication can be declared in e.g.,
 +gradle.properties+:
 
@@ -455,13 +416,10 @@ uploadArchives {
 ----
 
 
-
-
 Full example projects can be found in the +gradle+ folder of the
-https://github.com/sonatype/nexus-book-examples[Nexus book examples
-project]. A full build of the +simple-project+, including downloading
-the declared dependencies and uploading the build output to Nexus can
-be invoked with
+https://github.com/sonatype/nexus-book-examples[documentation examples project]. A full build of the
++simple-project+, including downloading the declared dependencies and uploading the build output to repository
+manager can be invoked with
 
 ----
 cd gradle/simple-project
