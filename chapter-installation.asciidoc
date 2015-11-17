@@ -605,19 +605,18 @@ original use case for forcing base URL is no longer valid.
 When enabled, the incoming request host and base path is ignored and the repository manager acts like it is being
 accessed at the value of base URL.
 
-WARNING: Do not enable the <<fig-config-administration-application-server>>
-'Force Base URL' unless explicitly advised by Sonatype - enabling this will most
-likely cause Nexus to not work properly through a reverse proxy.
+WARNING: Do not enable the <<fig-config-administration-application-server>> 'Force Base URL' unless explicitly
+advised by Sonatype - enabling this will most likely cause your repository manager to not work properly through a
+reverse proxy.
 
 ==== Example: Reverse Proxy On Restricted Ports
 
 .Scenario:
 
-You need to expose Nexus on restricted port 80. <<nonrootuser,Nexus should not
-be run with the root user>>. Instead run your reverse proxy on the restricted
-port +80+ and Nexus on the default port +8081+. End users will access Nexus
-using the virtual host URL +http://www.example.com/nexus+ instead of
-+http://localhost:8081/nexus+.
+You need to expose the repository manager on restricted port 80. <<nonrootuser,The repository manager should not
+be run with the root user>>. Instead run your reverse proxy on the restricted port +80+ and the repository manager
+on the default port +8081+. End users will access the repository manager using the virtual host URL
++http://www.example.com/nexus+ instead of +http://localhost:8081/nexus+.
 
 Ensure your external host name ( +www.example.com+ ) routes to your reverse
 proxy server.
@@ -673,12 +672,11 @@ http {
 
 .Scenario:
 
-You need to expose Nexus using a custom host name of +repo.example.com+ on a
-restricted port at a base path of slash ( +/+ ).
+You need to expose the repository manager using a custom host name of +repo.example.com+ on a restricted port at a
+base path of slash ( +/+ ).
 
-Ensure your external host name ( +repo.example.com+ ) routes to your reverse
-proxy server and <<nexus_webapp_context_path,edit the Nexus webapp
-path to be slash ( +/+ )>>.
+Ensure your external host name ( +repo.example.com+ ) routes to your reverse proxy server and
+<<nexus_webapp_context_path,edit the webapp path to be slash ( +/+ )>>.
 
 .Apache httpd
 
@@ -731,14 +729,12 @@ http {
 
 .Scenario:
 
-Your organization has standardized on a reverse proxy to handle SSL certificates
-and termination. The reverse proxy virtual host will accept HTTPS requests on
-the standard port +443+ and serve content from Nexus running on the default
-non-restricted HTTP port +8081+ transparently to end users.
+Your organization has standardized on a reverse proxy to handle SSL certificates and termination. The reverse
+proxy virtual host will accept HTTPS requests on the standard port +443+ and serve content from the repository
+manager running on the default non-restricted HTTP port +8081+ transparently to end users.
 
-Ensure your external host name ( +repo.example.com+ ) routes to your reverse
-proxy server and <<nexus_webapp_context_path,edit the Nexus webapp
-path to be slash ( +/+ )>>.
+Ensure your external host name ( +repo.example.com+ ) routes to your reverse proxy server and
+<<nexus_webapp_context_path,edit the webapp path to be slash ( +/+ )>>.
 
 To test your configuration, we offer a
 https://support.sonatype.com/entries/95353268-SSL-Self-Signed-Certificate-Guide[quick reference on how to generate self-signed SSL certificates]
@@ -834,10 +830,9 @@ click on Upload.
 .{pro} Licensing Panel
 image::figs/web/repository-manager_license.png[scale=50] 
 
-Once you have selected a license and uploaded it to Nexus, {pro}
-will display a dialog box with the {pro}
-End User License Agreement as shown in <<fig-installation-eula>>. If
-you agree with the terms and conditions, click on "I Agree".
+Once you have selected a license and uploaded it to the repository manager, {pro} will display a dialog box with
+the {pro} End User License Agreement as shown in <<fig-installation-eula>>. If you agree with the terms and
+conditions, click on "I Agree".
 
 [[fig-installation-eula]]
 .{pro} End User License Agreement
@@ -869,28 +864,24 @@ license has been successfully uninstalled.
 .License Uninstall Completed Dialog
 image::figs/web/installing_uninstall_completed.png[scale=50]
 
-Clicking on the 'Active Users Report' button shows a list of 
-IP numbers that connected to Nexus in the last 7 days.
+Clicking on the 'Active Users Report' button shows a list of IP numbers that connected to the repository manager
+in the last 7 days.
 
 ==== License Expiration
 
-When a {pro} license expires, the Nexus user interface
-will have all functionality disabled except for the ability to install
-a new license file.
+When a {pro} license expires, the user interface will have all functionality disabled except for the ability to
+install a new license file.
  
 [[install-sect-dirs]]
-=== Nexus Directories
+===  Directories
 
 {inall}
 
-The following sections describe the various directories that are a
-part of any Nexus installation. When you install {oss} or
-{pro}, you are creating two directories: a directory
-containing the Nexus runtime and application often symlinked as
-+nexus+ and a directory containing your own configuration and data -
-+sonatype-work/nexus+. When you upgrade to a newer version of Nexus, you
-replace the Nexus application directory and retain all of your own
-custom configuration and repository data in +sonatype-work/+.
+The following sections describe the various directories that are a part of any {pro} and {oss} installation. When
+you install {oss} or {pro}, you are creating two directories: a directory containing the runtime and application
+often symlinked as +nexus+ and a directory containing your own configuration and data -
++sonatype-work/nexus+. When you upgrade to a newer version of {pro}, you replace the application directory and
+retain all of your own custom configuration and repository data in +sonatype-work/+.
 
 [[sect-installing-work-dir]]
 ==== Sonatype Work Directory
@@ -901,34 +892,30 @@ can be configured via the +nexus.properties+ file which is described in
 <<nexus-home-conf>>. 
 
 
-The Sonatype Work Nexus directory +sonatype-work/nexus/+ contains a
+The Sonatype Work directory +sonatype-work/nexus/+ contains a
 number of subdirectories. Depending on the plugins installed and used,
 some directories may or may be not present in your installation:
 
-access/:: This directory contains a log of all IP addresses accessing
-Nexus. The data can be viewed by clicking on Active Users Report in
-the Administration - Licensing tab in the Nexus user interface.
+access/:: This directory contains a log of all IP addresses accessing the repository manager. The data can be
+viewed by clicking on Active Users Report in the Administration - Licensing tab in the user interface.
 
 aether-local-repository/ or maven2-local-repository:: This holds
 temporary files created when running Maven dependency queries in the
 user interface.
 
-backup/:: If you have configured a scheduled job to back up Nexus
-configuration, this directory is going to contain a number of ZIP
-archives that contain snapshots of Nexus configuration.  Each ZIP file
-contains the contents of the conf/ directory. (Automated backups are a
-feature of {pro}.)
+backup/:: If you have configured a scheduled job to back up configuration, this directory is going to contain a
+number of ZIP archives that contain snapshots of the configuration.  Each ZIP file contains the contents of the
+conf/ directory. (Automated backups are a feature of {pro}.)
 
 broker/:: The broker directory and its subdirectories contains the
 storage backend for the Smart Proxy messaging component.
 
-conf/:: This directory contains the Nexus configuration.  Settings
-that define the list of Nexus repositories, the logging configuration,
-the staging and procurement configuration, and the security settings
-are all captured in this directory.
+conf/:: This directory contains the configuration.  Settings that define the list of repositories, the logging
+configuration, the staging and procurement configuration, and the security settings are all captured in this
+directory.
 
-conf/keystore/:: Contains the automatically generated key used to
-identify this Nexus instance for Smart Proxy usage
+conf/keystore/:: Contains the automatically generated key used to identify this repository manager for Smart Proxy
+usage
 
 db/:: Contains the database storing the User Token information, if
 that feature is enabled.
@@ -937,25 +924,21 @@ error-report-bundles/:: Used to contain the bundled archives of data
 assembled for problem reporting. Since this feature has been removed
 this folder can be safely deleted.
 
-felix-cache/:: This directory holds the cache for the OSGi framework
-Apache Felix, which is used for the Nexus plugin architecture.  
+felix-cache/:: This directory holds the cache for the OSGi framework Apache Felix, which is used for the
+repository manager plugin architecture.
 
-health-check/:: Holds cached reports from the Repository Health Check
-plugin.
+health-check/:: Holds cached reports from the Repository Health Check plugin.
 
-indexer/ and indexer-pro/:: Contains a Nexus index for all repositories and repository
-groups managed by Nexus. A Nexus index is a Lucene index which is the
-standard for indexing and searching a Maven repository. Nexus
-maintains a local index for all repositories, and can also download a
-Nexus index from remote repositories.
+indexer/ and indexer-pro/:: Contains an index for all repositories and repository groups managed by repository
+manager. An index is a Lucene index which is the standard for indexing and searching a Maven repository. The
+repository manager maintains a local index for all repositories, and can also download an index from remote
+repositories.
 
-logs/:: The nexus.log file that contains information about a running
-instance of Nexus. This directory also contains archived copies of
-Nexus log files. Nexus log files are rotated every day. To reclaim
-disk space, you can delete old log files from the logs directory.
+logs/:: The nexus.log file that contains information about a running instance of the repository manager. This
+directory also contains archived copies of log files. Log files are rotated every day. To reclaim disk space, you
+can delete old log files from the logs directory.
 
-nuget/:: Contains the database supporting queries against NuGet
-repositories used for .NET package support in Nexus.
+nuget/:: Contains the database supporting queries against NuGet repositories used for .NET package support.
 
 p2/:: If you are using the P2 repository management features of {pro}, 
 this directory contains a local cache of P2 repository components.
@@ -964,17 +947,14 @@ plugin-repository/:: This directory contains any additionally
 installed plugins from third parties as documented in
 <<install-additional-plugins>>.
 
-proxy/:: Stores data about the files contained in a remote
-repository. Each proxy repository has a subdirectory in the
-+proxy/attributes/+ directory and every file that Nexus has interacted
-with in the remote repository has an XML file that captures the last 
-requested time stamp, the remote URL for a particular file, the length 
-of the file, the digests for a particular file, and others. If you need 
-to backup the local cached contents of
-a proxy repository, you should also back up the contents of the proxy
-repository's directory under +proxy/attributes/+
+proxy/:: Stores data about the files contained in a remote repository. Each proxy repository has a subdirectory in
+the +proxy/attributes/+ directory and every file that the repository manager has interacted with in the remote
+repository has an XML file that captures the last requested time stamp, the remote URL for a particular file, the
+length of the file, the digests for a particular file, and others. If you need to backup the local cached contents
+of a proxy repository, you should also back up the contents of the proxy repository's directory under
++proxy/attributes/+
 
-storage/:: Stores components and metadata for Nexus repositories. Each
+storage/:: Stores components and metadata repositories. Each
 repository is a subdirectory that contains the components in a
 repository. If the repository is a proxy repository, the storage
 directory will contain locally cached components from the remote
@@ -989,26 +969,20 @@ support/:: The support zip archive documented in
 template-store/:: Contains the Maven settings template files
 documented in detail in <<maven-settings>>.
 
-timeline/:: Contains an index which Nexus uses to store events and
-other information to support internal operations. Nexus uses this
-index to store feeds and history.
+timeline/:: Contains an index that the repository manager uses to store events and other information to support
+internal operations. The user interface exposes this data with the system feeds.
 
 tmp/:: Folder used for temporary storage.
 
-trash/:: If you have configured scheduled jobs to remove snapshot
-components or to delete other information from repositories, the
-deleted data will be stored in this directory.  To empty this trash
-folder, view a list of Nexus repositories, and then click on the Trash
-icon in the Nexus user interface.
+trash/:: If you have configured scheduled jobs to remove snapshot components or to delete other information from
+repositories, the deleted data will be stored in this directory.  To empty this trash folder, view a list of
+repositories, and then click on the Trash icon in the user interface.
 
-The +conf/+ directory contains a number of files which allow for
-configuration and customization of Nexus. All of the files contained
-in this directory are altered by the Nexus administrative user
-interface. While you can change the configuration settings contained
-in these files with a text editor, Sonatype recommends that you modify
-the contents of these files using the Nexus administrative user
-interface. Depending on your Nexus version and the installed plugins,
-the complete list of files may differ slightly.
+The +conf/+ directory contains a number of files which allow for configuration and customization of the repository
+manager. All of the files contained in this directory are altered by the administrative user interface. While you
+can change the configuration settings contained in these files with a text editor, Sonatype recommends that you
+modify the contents of these files using the administrative user interface. Depending on your version of the
+repository manager and the installed plugins, the complete list of files may differ slightly.
 
 broker.groovy:: A groovy script for configuring low-level properties
 for Smart Proxy.
@@ -1025,57 +999,47 @@ configuration file as desired. If you find log4j.properties files as
 well, you can safely remove them since they are remnants from an old
 version and are not used anymore.
 
-lvo-plugin.xml:: Contains configuration for the latest version
-plugin. This XML file contains the location of the properties file
-that Nexus queries to check for a newer version of Nexus.
+lvo-plugin.xml:: Contains configuration for the latest version plugin. This XML file contains the location of the
+properties file that the repository manager queries to check for a newer version.
 
-nexus.xml:: The bulk of the configuration of Nexus is contained in
-this file. This file maintains a list of repositories and all
-server-wide configuration like the SMTP settings, security realms,
-repository groups, targets, path mappings and others.
+nexus.xml:: The bulk of the configuration is contained in this file. This file maintains a list of repositories
+and all server-wide configuration like the SMTP settings, security realms, repository groups, targets, path
+mappings and others.
 
 pgp.xml:: Contains PGP key server configuration.
 
-nexus-obr-plugin.properties:: Contains configuration for the Nexus
-OSGi Bundle repository plugin in {pro}.
+nexus-obr-plugin.properties:: Contains configuration for the Nexus OSGi Bundle repository plugin in {pro}.
 
-procurement.xml:: Contains configuration for the {pro}curement
-plugin in {pro}.
+procurement.xml:: Contains configuration for the procurement plugin in {pro}.
 
 security-configuration.xml:: Contains global security configuration. 
 
 security.xml:: Contains security configuration about users and roles.
 
-staging.xml:: Contains configuration for the Nexus Staging Plugin in
-{pro}.
+staging.xml:: Contains configuration for the Nexus Staging Plugin in {pro}.
 
 [[nexus-home-conf]]
-==== Nexus Configuration Directory
+==== Configuration Directory
 
-After installing Nexus and creating the +nexus+ symlink as described
-earlier, your fnexus folder contains another conf directory. This
-directory contains configuration for the Jetty servlet container. You
-will only need to modify the files in this directory if you are
-customizing the configuration of Jetty servlet container or the
-behavior of the scripts that start Nexus.
+After installing the repository manager and creating the +nexus+ symlink as described earlier, your fnexus folder
+contains another conf directory. This directory contains configuration for the Jetty servlet container. You will
+only need to modify the files in this directory if you are customizing the configuration of Jetty servlet
+container or the behavior of the scripts that start the repository manager.
 
 The files and folders contained in this directory are:
 
-nexus.properties:: This file contains configuration variables which
-control the behavior of Nexus and the Jetty servlet container. If you
-are customizing the port and host that Nexus will listen to, you would
-change the +application-port+ and +application-host+ properties defined in
-this file. If you wanted to customize the location of the +sonatype-work+ 
-directory, you would modify the value of the +nexus-work+ property
-in this configuration file. Changing +nexus-webapp-context-path+ allows
-you to configure the server context path Nexus will be available at.
+nexus.properties:: This file contains configuration variables which control the behavior of the repository manager
+and the Jetty servlet container. If you are customizing the port and host that the repository manager listens to,
+you change the +application-port+ and +application-host+ properties defined in this file. If you want to customize
+the location of the +sonatype-work+ directory, you modify the value of the +nexus-work+ property in this
+configuration file. Changing +nexus-webapp-context-path+ allows you to configure the server context path the
+repository manager will be available at.
 
 [[jetty-xml]]
-jetty.xml and jetty-*.xml:: Configuration files for the Eclipse Jetty
-servlet container running Nexus. Jetty users are used to providing a
-list of jetty XML config files which are merged to form the final
-configuration. As an advanced configuration option, Nexus supports
-this merging concept in its launcher code as of Nexus 2.8.
+jetty.xml and jetty-*.xml:: Configuration files for the Eclipse Jetty servlet container running the repository
+manager. Jetty users are used to providing a list of jetty XML config files which are merged to form the final
+configuration. As an advanced configuration option, the repository manager supports this merging concept in its
+launcher code as of version 2.8.
 +
 You can specify additional jetty XML
 configuration files to load to form the final configuration.  For the
@@ -1098,23 +1062,19 @@ property. This setup allows for a simple method to add configuration for
 https, JMX and others by adjusting a few properties.
 
 
-WARNING: Nexus version prior to 2.8 loaded all of the Jetty
-configuration from one jetty.xml file, typically found at
-+NEXUS_HOME/conf/jetty.xml+ and required modifications to this file
-for configuration changes. Examples were available in
-+NEXUS_HOME/conf/examples+. These files cannot be used in Nexus 2.8 or higher,
-as they were intended to be standalone files that could not be merged
-into other files.
+WARNING: Versions of {pro} and {oss} prior to 2.8 loaded all of the Jetty configuration from one jetty.xml file,
+typically found at +NEXUS_HOME/conf/jetty.xml+ and required modifications to this file for configuration
+changes. Examples were available in +NEXUS_HOME/conf/examples+. These files cannot be used in version 2.8 or higher,
+as they were intended to be standalone files that could not be merged into other files.
 
 [[monitoring]]
-=== Monitoring Nexus 
+=== Monitoring 
 
 {inall}
 
-Now that your Nexus instance is up and running, you need to ensure
-that it stays that way. Typically this is done on a number of levels
-and each organization and system administration team has its own
-preferences and tools.
+Now that your repository manager instance is up and running, you need to ensure that it stays that way. Typically
+this is done on a number of levels and each organization and system administration team has its own preferences
+and tools.
 
 In general you can monitor:
 
@@ -1126,47 +1086,39 @@ In general you can monitor:
 For the hardware and operating system values, a large number of
 dedicated tools exist. Many of these tools can be configured to work
 with application-specific logs and other events. The following section
-discusses some of the available information in Nexus. It can
+discusses some of the available information in the repositiory manager. It can
 potentially be integrated into the usage of the more generic tools for
 monitoring, log capturing and analysis.
 
-A host of information from the operating system, the Java Virtual
-Machine and Nexus itself is available via the 
-<<support-tools, Support Tools>>, which allow you to inspect the value directly in
-the Nexus user interface.
+A host of information from the operating system, the Java Virtual Machine and the application itself is available
+via the <<support-tools, Support Tools>>, which allow you to inspect the value directly in the user interface.
 
 [[general-logging]]
 ==== General Logging 
 
-Nexus logs events in the +sonatype-work/nexus/logs/nexus.log+ file. In
-addition a dedicated user interface to configure and inspect the log
-is available. Further information about this interface can be found in
+The repository manager logs events in the +sonatype-work/nexus/logs/nexus.log+ file. In addition a dedicated user
+interface to configure and inspect the log is available. Further information about this interface can be found in
 <<logging>>.
 
 
 [[request-access-logging]]
 ==== Request Access Logging
 
-Logging all access requests to Nexus allows you to gain a good
-understanding of the Nexus usage in your organization and the sources
-of these requests. 
+Logging all access requests to the repository manager allows you to gain a good understanding of the usage in your
+organization and the sources of these requests.
 
-For example, you will be able to tell if the main load is due to a CI 
-server  cluster or from your developers, based on the IP numbers of 
-the requests. You can also see the spread or requests and load across 
-different time zones. Also available for review are the URLs , API 
-calls, and features that are used in Nexus
+For example, you will be able to tell if the main load is due to a CI server cluster or from your developers,
+based on the IP numbers of the requests. You can also see the spread or requests and load across different time
+zones. Also available for review are the URLs , API calls, and features that are used in the repository manager.
 
-Requests access logging is enabled by default in Nexus 2.8 or higher
-and uses a performant and flexible LogBack implementation with
-built-in log rotation already configured for 90 days of log file
-retention. The log is written to the file
-+sonatype-work/nexus/logs/request.log+ and contains all requests and 
-the username for authenticated requests.
+Requests access logging is enabled by default in version 2.8 or higher and uses a performant and flexible LogBack
+implementation with built-in log rotation already configured for 90 days of log file retention. The log is written
+to the file +sonatype-work/nexus/logs/request.log+ and contains all requests and the username for authenticated
+requests.
 
-The configuration is located in +NEXUS_HOME/conf/logback-access.xml+
-and can be changed to suit your requirements. If you change the file, a
-restart of Nexus is required for these changes to take effect.
+The configuration is located in +NEXUS_HOME/conf/logback-access.xml+ and can be changed to suit your
+requirements. If you change the file, a restart of the repository manager is required for these changes to take
+effect.
 
 If you do not want to run access logging, you can disable it by
 commenting out the line 
@@ -1177,10 +1129,9 @@ wrapper.app.parameter.2=conf/jetty-requestlog.xml
 
 in +bin/jsw/conf/wrapper.conf+.
 
-WARNING: Older versions of Nexus require different customization of the Jetty
-configuration files. Instructions for these customizations can be
-found on the https://support.sonatype.com/entries/21902551[support
-site].
+WARNING: Older versions of {pro} and {oss} require different customization of the Jetty configuration
+files. Instructions for these customizations can be found on the
+https://support.sonatype.com/entries/21902551[support site].
 
 [[jmx]]
 ==== Using Java Management Extension JMX
@@ -1190,7 +1141,7 @@ with client software like the free http://visualvm.java.net/[VisualVM]
 and many others available. It can be performed locally on the server
 as well as remotely.
 
-Nexus can be configured to support JMX by adding
+The repository manager can be configured to support JMX by adding
 
 ----
 wrapper.app.parameter.3=./conf/jetty-jmx.xml
@@ -1205,27 +1156,23 @@ jmx-host=192.168.10.12
 jmx-port=1099
 ----
 
-+jmx-host+ is the host name, or commonly the IP address, to remotely
-access Nexus using JMX from another host and +jmx-port+ is the network
-port used for the connection. It is important to ensure that the port
-is not blocked by any network setup, when connecting remotely. The
-value of 1099 is the default port used for JMX, but any other
-available port can be used as well.
++jmx-host+ is the host name, or commonly the IP address, to remotely monitor the application using JMX from
+another host and +jmx-port+ is the network port used for the connection. It is important to ensure that the port
+is not blocked by any network setup, when connecting remotely. The value of 1099 is the default port used for JMX,
+but any other available port can be used as well.
 
-WARNING: Nexus versions older than 2.8 require different procedures,
-depending on the specific version.
+WARNING: Versions older than 2.8 require different procedures, depending on the specific version.
 
-Once Nexus is restarted with JMX enabled you can inspect the running
-JVM in detail. <<monitoring-jmx-visualvm-overview>> and
-<<monitoring-jmx-visualvm-charts>> show some example screenshots of
-VisualVM connected to a Nexus instance running on localhost.
+Once the repository manager is restarted with JMX enabled you can inspect the running JVM in
+detail. <<monitoring-jmx-visualvm-overview>> and <<monitoring-jmx-visualvm-charts>> show some example screenshots
+of VisualVM connected to a repository manager instance running on localhost.
 
 [[monitoring-jmx-visualvm-overview]]
-.Overview of Nexus Monitored via JMX in VisualVM
+.Overview of {pro} Monitored via JMX in VisualVM
 image::figs/web/monitoring-jmx-visualvm-overview.png[scale=50]
 
 [[monitoring-jmx-visualvm-charts]]
-.CPU, Memory and Other Visualizations of Nexus Monitored via JMX in VisualVM
+.CPU, Memory and Other Visualizations of {pro} Monitored via JMX in VisualVM
 image::figs/web/monitoring-jmx-visualvm-charts.png[scale=50]
 
 Depending on the tool used to connect, a number of monitoring, analysis
@@ -1235,24 +1182,20 @@ documentation about your specific tool for more information.
 [[analytics]]
 ==== Analytics
 
-The analytics integration of Nexus allows you to gather a good
-understanding of your Nexus usage, since it enables the collection of
-event data in Nexus. It collects non-sensitive information about how
-you are using Nexus. It is useful to you from a compatibility
-perspective, since it gathers answers to questions such as what
-features are most important, where are users having difficulties, and
-what integrations/APIs are actively in use. 
+The analytics integration of {pro} allows you to gather a good understanding of your usage, since it enables the
+collection of event data in the repository manager. It collects non-sensitive information about how you are using
+the repository manager. It is useful to you from a compatibility perspective, since it gathers answers to
+questions such as what features are most important, where are users having difficulties, and what
+integrations/APIs are actively in use.
 
-The collected information is limited to the use of the Nexus user
-interface and the Nexus REST API, the primary interaction
-points between your environment and Nexus. Only the user interface
-navigation flows and REST endpoints being called are recorded. None of
-the request specific data (e.g., credentials or otherwise sensitive
+The collected information is limited to the use of the user interface and the REST API, the primary interaction
+points between your environment and the repository manager. Only the user interface navigation flows and REST
+endpoints being called are recorded. None of the request specific data (e.g., credentials or otherwise sensitive
 information) is ever captured.
 
 You can enable the event logging in the 'Settings' section of the
 'Analytics' tab available via 'Analytics' menu item in the
-'Administration' menu in the left side 'Nexus' navigation. Select the
+'Administration' menu in the left side navigation. Select the
 checkbox beside 'Enable analytics event collection' and press the
 'Save' button.
 
@@ -1269,17 +1212,13 @@ the 'Analytics' section displayed in <<fig-analytics-events>>.
 .List of Events in the Analytics Tab
 image::figs/web/analytics-events.png[scale=50]
 
-The list of events shows the 'Type' and the 'Timestamp' of the event
-as well as the 'User' that triggered it and any 'Attributes'. Each row
-has a '+' symbol in the first column that allows you to expand the row
-vertically. Each attribute will be expanded into a separate line
-allowing you to inspect all the information that is potentially
-submitted to Sonatype. The 'User' value is replaced by a salted hash
-so that no username information is transmitted. The 'Anonymization
-Salt' is automatically randomly generated by Nexus and can optionally be
-configured in the 'Analytics: Collection' capability manually. This
-administration area can additionally be used to change the random
-identifier for the Nexus instance.
+The list of events shows the 'Type' and the 'Timestamp' of the event as well as the 'User' that triggered it and
+any 'Attributes'. Each row has a '+' symbol in the first column that allows you to expand the row vertically. Each
+attribute will be expanded into a separate line allowing you to inspect all the information that is potentially
+submitted to Sonatype. The 'User' value is replaced by a salted hash so that no username information is
+transmitted. The 'Anonymization Salt' is automatically randomly generated by the repository manager and can
+optionally be configured in the 'Analytics: Collection' capability manually. This administration area can
+additionally be used to change the random identifier for the repository manager instance.
 
 TIP: More information about capabilities can be found in <<capabilities>>.
 
