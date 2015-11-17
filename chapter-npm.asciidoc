@@ -5,44 +5,33 @@
 
 === Introduction
 
-The command line tool +npm+ is a package management solution for
-Javascript-based development. It is used to create and use 'node
-packaged modules' and is built into the popular Javascript platform
-http://www.nodejs.org/[Node.js], which is mostly used for server-side
-application development.
+The command line tool +npm+ is a package management solution for Javascript-based development. It is used to
+create and use 'node packaged modules' and is built into the popular Javascript platform
+http://www.nodejs.org/[Node.js], which is mostly used for server-side application development.
 
-The npm registry at https://www.npmjs.org/[https://www.npmjs.org/] is
-the default package registry, from which components can be retrieved.
-It contains a large number of open source packages for Node.js
-based server-side application development, build tools like 'bower' or
-'grunt' and many other packages for a variety of use cases.
+The npm registry at https://www.npmjs.org/[https://www.npmjs.org/] is the default package registry, from which
+components can be retrieved.  It contains a large number of open source packages for Node.js based server-side
+application development, build tools like 'bower' or 'grunt' and many other packages for a variety of use cases.
 
-Nexus supports the npm registry format for proxy repositories. This
-allows you to take advantage of the packages in the npm registry and
-other public registries without incurring repeated downloads of
-packages, since the will be proxied in Nexus.
+{pro} and {oss} support the npm registry format for proxy repositories. This allows you to take advantage of the
+packages in the npm registry and other public registries without incurring repeated downloads of packages, since
+the will be proxied.
 
-In addition, Nexus supports running your own private registry - also
-known as a hosted repository using the +npm+ format. You can share
-internally developed, proprietary packages within your organization
-via these private registries allowing you to collaborate efficiently
-across development teams with a central package exchange and storage
-location.
+In addition, {pro} and {oss} support running your own private registry - also known as a hosted repository using
+the +npm+ format. You can share internally developed, proprietary packages within your organization via these
+private registries allowing you to collaborate efficiently across development teams with a central package
+exchange and storage location.
 
-To simplify configuration Nexus supports aggregation of npm
-registries. This allows you to expose all the external package from
-the npm registry and other public registries as well as the private
-registries as one registry, which greatly simplifies client
-configuration.
+To simplify configuration {pro} and {oss} support aggregation of npm registries. This allows you to expose all the
+external package from the npm registry and other public registries as well as the private registries as one
+registry, which greatly simplifies client configuration.
 
-To share a package or tool with npm, you create a npm package and
-store it in the Nexus-based npm registry. Similarly, you can use
-packages others have created and made available in their NPM
-repositories by proxying them or downloading the packages and
-installing them in your own private registry for third party packages.
+To share a package or tool with npm, you create a npm package and store it in the repository manager-based npm
+registry. Similarly, you can use packages others have created and made available in their NPM repositories by
+proxying them or downloading the packages and installing them in your own private registry for third party
+packages.
 
-IMPORTANT: npm support is a feature of Nexus 2.10 and higher and is
-available in {pro} and {oss} and requires npm
+IMPORTANT: npm support is a feature of version 2.10 and higher and is available in {pro} and {oss} and requires npm
 version 1.4 and above.
 
 [[npm-proxying-registries]]
@@ -71,17 +60,15 @@ A complete configuration for proxying the default npm registry is visible in
 .Proxy Repository Configuration for the npm Registry
 image::figs/web/npm-proxy.png[scale=50]
 
-WARNING: Browsing the registry storage or the remote registry and
-searching for packages in Nexus is not supported
+WARNING: Browsing the registry storage or the remote registry and searching for packages in the repository manager
+is not supported
 
 [[npm-private-registries]]
 === Private npm Registries
 
-A private npm registry can be used to upload your own packages as well
-as third-party packages. You can create a private npm registry by
-setting up a hosted repository with the npm format in Nexus.It is good
-practice to create two separate hosted repositories for these
-purposes.
+A private npm registry can be used to upload your own packages as well as third-party packages. You can create a
+private npm registry by setting up a hosted repository with the npm format in the repository manager.It is good
+practice to create two separate hosted repositories for these purposes.
 
 To create a hosted repository with npm format, simply create a new 'Hosted
 Repository' and set the 'Provider' to +npm+ as documented in
@@ -95,8 +82,7 @@ image::figs/web/npm-hosted.png[scale=50]
 The npm registry information is immediately updated as packages are
 deployed or deleted from the repository.
 
-WARNING: Browsing the registry storage or searching for packages in
-Nexus not yet supported.
+WARNING: Browsing the registry storage or searching for packages is not supported.
 
 The scheduled tasks to recreate the npm metadata database based on the
 components in a hosted repository and to back up the database are
@@ -106,7 +92,7 @@ documented in <<scheduled-tasks>>.
 === Grouping npm Registries
 
 A repository group is the recommended way to expose all your npm
-registries repositories from Nexus to your users, without needing any
+registries repositories to your users, without needing any
 further client side configuration. A repository group allows you to
 expose the aggregated content of multiple proxy and hosted
 repositories with one URL to npm and other tools. This is possible for
@@ -147,8 +133,8 @@ repository in the repository list in the 'Repository Path' column.
 registry = http://localhost:8081/nexus/content/groups/npm-all/
 -----
 
-With this configuration any npm commands will use the new registry
-from Nexus. The command line output will reference the URLs. E.g. 
+With this configuration any npm commands will use the new registry from the repository manager. The command line
+output will reference the URLs. E.g.
 
 ----
 $ npm install bower
@@ -160,11 +146,9 @@ npm http GET http://localhost:8081/nexus/content/groups/npm-all/bower-endpoint-p
 ...
 ----
 
-By default any anonymous user has read access to the repositories and
-repository groups. If desired, Nexus can be configured to require
-authentication by adding +always-auth=true+ to the +.npmrc+ file and
-adding the encoded authentication details as documented in
-<<npm-deploying-packages>>.
+By default any anonymous user has read access to the repositories and repository groups. If desired, the
+repository manager can be configured to require authentication by adding +always-auth=true+ to the +.npmrc+ file
+and adding the encoded authentication details as documented in <<npm-deploying-packages>>.
 
 [[npm-deploying-packages]]
 === Publishing npm Packages
@@ -172,9 +156,8 @@ adding the encoded authentication details as documented in
 Publishing your own packages to a npm hosted repository allows you to share
 packages across your organization or with external partners. 
 
-The npm publish command uses a +registry+ configuration value to know where
-to publish your package. There are several ways to change the registry value 
-to point at your Nexus hosted npm repository.
+The npm publish command uses a +registry+ configuration value to know where to publish your package. There are
+several ways to change the registry value to point at your hosted npm repository.
 
 Since the +.npmrc+ file usually contains a registry value intended only for getting new packages,
 a simple way to override this value is to provide a registry to the +publish+ command:
@@ -191,10 +174,9 @@ Alternately, you can edit your package.json file and add a +publishConfig+ secti
   },
 ----
 
-Publishing requires authentication. It can be configured by adding an +_auth+ value to
-+.npmrc+. The value has to be generated by base64-encoding the string
-of +username:password+.  You can create this encoded string with the
-command line call +openssl+ e.g.: for the default +admin+ user of Nexus:
+Publishing requires authentication. It can be configured by adding an +_auth+ value to +.npmrc+. The value has to
+be generated by base64-encoding the string of +username:password+.  You can create this encoded string with the
+command line call +openssl+ e.g.: for the default +admin+ user:
 
 ----
 echo -n 'admin:admin123' | openssl base64
@@ -245,9 +227,8 @@ With this configuration you can run +npm publish+ for your
 package. More information about package creation can be found on the
 https://www.npmjs.org/doc/cli/npm-publish.html[npm website].
 
-Once a package is published to the private registry in Nexus, any
-other developers or build servers, that access Nexus via the
-repository group have instant access to the packages.
+Once a package is published to the private registry in the repository manager, any other developers or build
+servers, that access it via the repository group have instant access to the packages.
 
 ////
 /* Local Variables: */
