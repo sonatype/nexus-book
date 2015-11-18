@@ -1,5 +1,5 @@
 [[smartproxy]]
-== Nexus Smart Proxy 
+== Smart Proxy 
 
 {inrmonly}
 
@@ -7,29 +7,21 @@
 
 *Default is Polling*
 
-Typically an organization runs a single Nexus instance to proxy
-external components as well as host internally produced
-components. When a build is running against this Nexus instance, it
-will look for any new components in the proxied remote
-repositories. This adds additional network traffic that in many cases
-will just be a response from the remote server indicating that there
-are no changes.
+Typically an organization runs a single {pro} instance to proxy external components as well as host internally
+produced components. When a build is running against this instance, it will look for any new components in the
+proxied remote repositories. This adds additional network traffic that in many cases will just be a response from
+the remote server indicating that there are no changes.
 
-This polling approach is fine for smaller deployments. It will 
-not result in immediately updated components as soon as they become
-available upstream. In distributed teams with multiple Nexus
-instances, this delay can result in build failures and delays. The
-only way you are going to achieve that everything is up to
-date is by setting expiration times to zero and constantly
-polling.
+This polling approach is fine for smaller deployments. It will not result in immediately updated components as
+soon as they become available upstream. In distributed teams with multiple {pro} instances, this delay can result
+in build failures and delays. The only way you are going to achieve that everything is up to date is by setting
+expiration times to zero and constantly polling.
 
 *Smart Proxy Introduces Publish-Subscribe*
 
-Increasingly, Nexus is used in globally distributed teams or used by
-projects that span multiple organizations. In many cases, it is
-advisable for each physical location to host its own Nexus
-instance. This local instance hosts its own components and proxies the
-other servers.
+Increasingly, {pro} is used in globally distributed teams or used by projects that span multiple organizations. In
+many cases, it is advisable for each physical location to host its own {pro} instance. This local instance hosts
+its own components and proxies the other servers.
 
 An example deployment scenario is displayed in
 <<fig-smart-proxy-scenario>>. Using the traditional polling
@@ -37,26 +29,21 @@ approach, specifically when used with snapshot repositories, can
 result in significant traffic and a performance hit for all involved
 servers.
 
-The 'Smart Proxy' feature replaces this constant polling approach with a
-'Publish/Subscribe'-based messaging approach between Nexus instances
-sharing a mutual trust. Once a component is published to a repository
-a message is sent to all subscribing in the smart proxy message queue
-that details the availability of new component. The subscribers
-are therefore immediately aware of any new deployment and can provide
-these components without having to poll the publishing server.
+The 'Smart Proxy' feature replaces this constant polling approach with a 'Publish/Subscribe'-based messaging
+approach between repository manager instances sharing a mutual trust. Once a component is published to a
+repository a message is sent to all subscribing in the smart proxy message queue that details the availability of
+new component. The subscribers are therefore immediately aware of any new deployment and can provide these
+components without having to poll the publishing server.
 
-The result is a significantly improved performance due to nearly
-immediate availability of upstream component information directly in
-the downstream Nexus instances.
+The result is a significantly improved performance due to nearly immediate availability of upstream component
+information directly in the downstream repository managerinstances.
 
 [[smartproxy-enabling_smart_proxy_publishing]]
 === Enabling Smart Proxy Publishing
 
-In order to enable the smart proxy feature on your Nexus instance, you
-need to navigate to the global 'Smart Proxy' configuration screen. It is
-available in the left-hand navigation in the 'Enterprise'
-section. Selecting 'Smart Proxy' will show you the configuration screen
-displayed in <<fig-smart-proxy-global-config>>.
+In order to enable the smart proxy feature on your {pro} instance, you need to navigate to the global 'Smart
+Proxy' configuration screen. It is available in the left-hand navigation in the 'Enterprise' section. Selecting
+'Smart Proxy' will show you the configuration screen displayed in <<fig-smart-proxy-global-config>>.
  
 [[fig-smart-proxy-global-config]]
 .Global Configuration for Smart Proxy
@@ -80,9 +67,8 @@ clients enabling, e.g., usage of a publicly available fully qualified
 hostname, including the domain or also just the usage of an externally
 reachable IP number.
 
-IMPORTANT: It is important to configure the ports in Nexus and any
-firewall between the servers to allow the direct socket connection
-between the servers and to avoid using random ports.
+IMPORTANT: It is important to configure the ports in the repository manager and any firewall between the servers
+to allow the direct socket connection between the servers and to avoid using random ports.
 
 The 'Status' field below the form will show the current status of the
 smart proxy including the full address and port.
@@ -92,12 +78,10 @@ instance. It is automatically populated with the certificate associated
 with the public/private key pair that is generated when the server is
 first run.
 
-TIP: The key is stored in +sonatype-work/nexus/conf/keystore/private.ks+
-and identifies this server. If you copy the sonatype work folder from
-one server to another as part of a migration or a move from testing to
-staging or production you will need to ensure that keys are not
-identical between multiple servers. To get a new key generated, simply
-remove the keystore file and restart Nexus.
+TIP: The key is stored in +sonatype-work/nexus/conf/keystore/private.ks+ and identifies this server. If you copy
+the sonatype work folder from one server to another as part of a migration or a move from testing to staging or
+production you will need to ensure that keys are not identical between multiple servers. To get a new key
+generated, simply remove the keystore file and restart the repository manager.
 
 [[smartproxy-establishing_trust]]
 === Establishing Trust
@@ -107,11 +91,9 @@ themselves with their public key. This key has to be registered with
 the other servers in the 'Trusted Certificates' section of the 'Smart
 Proxy' configuration screen.
 
-To configure two Nexus repository servers as trusted smart proxies,
-you copy the public key from the certificate of the other server
-in the 'Trusted Certificates' configuration section by adding a new
-trusted certificate with a meaningful description as displayed in
-<<fig-smart-proxy-copy-certificate>> and
+To configure two repository managers as trusted smart proxies, you copy the public key from the certificate of the
+other server in the 'Trusted Certificates' configuration section by adding a new trusted certificate with a
+meaningful description as displayed in <<fig-smart-proxy-copy-certificate>> and
 <<fig-smart-proxy-add-certificate>>.
 
 [[fig-smart-proxy-copy-certificate]]
@@ -122,9 +104,8 @@ image::figs/web/smart-proxy-copy-certificate.png[scale=70]
 .Adding a Trusted Certificate
 image::figs/web/smart-proxy-add-certificate.png[scale=70]
 
-All of the key generation and certificates related to the trust
-management is handled by Nexus, itself and no external configuration
-or usage of external keys is necessary.
+All of the key generation and certificates related to the trust management is handled by the repository manager
+itself. No external configuration or usage of external keys is necessary.
 
 [[smartproxy-repository_specific_smart_proxy_configuration]]
 === Repository Specific Smart Proxy Configuration
@@ -136,7 +117,7 @@ administration interface in a separate configuration tab titled 'Smart
 Proxy', which allows you to configure repository-specific details as
 compared to server wide details described above.
 
-On the publishing Nexus server you have to enable smart proxy on the
+On the publishing repository manager you have to enable smart proxy on the
 desired hosted, virtual or proxy repositories in the repository
 configuration. This is accomplished by selecting the 'Publish Updates'
 checkbox in the 'Publish' section of the 'Smart Proxy' configuration
@@ -147,14 +128,12 @@ for a specific repository as displayed in
 .Smart Proxy Settings for a Hosted Repository
 image::figs/web/smart-proxy-repo-list-hosted.png[scale=65]
 
-On the Nexus instance subscribing to the publishing server you have to
-create a new proxy repository to expose the proxied components. The
-smart proxy configuration for this repository displayed in
-<<fig-smart-proxy-repo-list-proxy>> allows you to activate the
-'Receive Updates' checkbox in the 'Subscribe' configuration section.
-With a working trust established between the publishing and
-subscribing Nexus servers the Smart Proxy configuration of the proxy
-repository on the subscribing Nexus will display connection status. 
+On the repository manager subscribing to the publishing server you have to create a new proxy repository to expose
+the proxied components. The smart proxy configuration for this repository displayed in
+<<fig-smart-proxy-repo-list-proxy>> allows you to activate the 'Receive Updates' checkbox in the 'Subscribe'
+configuration section.  With a working trust established between the publishing and subscribing servers the Smart
+Proxy configuration of the proxy repository on the subscribing repository manager will display connection status.
+
 [[fig-smart-proxy-repo-list-proxy]]
 .Smart Proxy Settings for a Proxy Repository
 image::figs/web/smart-proxy-repo-list-proxy.png[scale=65]
@@ -184,13 +163,10 @@ subscription will be stopped.
 [[smartproxy-example_setup]]
 === Example Setup
 
-The deployment scenario displayed in <<fig-smart-proxy-scenario>> is a
-typical use case for Smart Proxy. Component development is spread out
-across four distributed teams located in New York, London, Bangalore
-and San Jose. Each of the teams has a Nexus instance deployed in their
-local network to provide the best performance for each developer team
-and any locally running continuous integration server and other
-integrations
+The deployment scenario displayed in <<fig-smart-proxy-scenario>> is a typical use case for Smart Proxy. Component
+development is spread out across four distributed teams located in New York, London, Bangalore and San Jose. Each
+of the teams has a repository manager instance deployed in their local network to provide the best performance for
+each developer team and any locally running continuous integration server and other integrations
 
 [[fig-smart-proxy-scenario]]
 .Deployment Scenario for a Smart Proxy Use Case
@@ -198,58 +174,48 @@ image::figs/web/smart-proxy-scenario.png[scale=50]
 
 When the development team in New York does a commit to their component
 build, a continuous integration server deploys a new component
-snapshot version to the Nexus 1 instance.
+snapshot version to the 'Nexus 1' instance.
 
-With smart proxy enabled, this deployment is immediately followed by
-notifications, sent to the trusted smart proxy subscribers in Nexus 2,
-Nexus 3 and Nexus 4. These are collocated with the developers in
-London, Bangalore, and San Jose and can be configured to immediately
-fetch the new components available. At a minimum they will know about
-the availability of new component versions without the need to poll
-Nexus 1 repeatedly, therefore, keeping performance high for everyone. 
+With smart proxy enabled, this deployment is immediately followed by notifications, sent to the trusted smart
+proxy subscribers in 'Nexus 2', 'Nexus 3', and 'Nexus 4'. These are collocated with the developers in London,
+Bangalore, and San Jose and can be configured to immediately fetch the new components available. At a minimum they
+will know about the availability of new component versions without the need to poll 'Nexus 1' repeatedly,
+therefore, keeping performance high for everyone.
 
-When a user of Nexus 2, 3 or 4 build a component that depends on a
-snapshot version of the component from Nexus 1, smart proxy guarantees
-that the latest version published to Nexus 1 is used. 
+When a user of 'Nexus 2', 3 or 4 build a component that depends on a snapshot version of the component from 'Nexus
+1', smart proxy guarantees that the latest version published to 'Nexus 1' is used.
 
-To configure smart proxy between these servers for the snapshots
-repository you have to 
+To configure smart proxy between these servers for the snapshots repository you have to
 
-. add the public key of Nexus 1 as trusted certificate to Nexus 2, 3
-  and 4
+. add the public key of 'Nexus 1' as trusted certificate to 'Nexus 2', 3 and 4
 
-. add the public keys of Nexus 2, 3 and 4 as trusted certificate to Nexus 1
+. add the public keys of 'Nexus 2', 3 and 4 as trusted certificate to 'Nexus 1'
 
-. enable smart proxy publishing on the snapshot repository on Nexus 1
+. enable smart proxy publishing on the snapshot repository on 'Nexus 1'
 
-. set up new proxy repositories to proxy the Nexus 1 snapshot
-  repository on Nexus 2, 3 and 4
+. set up new proxy repositories to proxy the 'Nexus 1' snapshot repository on 'Nexus 2', 3 and 4
 
 . enable smart proxy subscription on the new proxy repositories
 
 . optionally enable prefetching of components
 
-. add the new proxy repositories to the public group on Nexus 2, 3 and
-  4
+. add the new proxy repositories to the public group on 'Nexus 2', 3 and 4
 
-With this setup, any snapshot deployment from the New York team on
-Nexus 1 is immediately available to the development team in London,
-Bangalore, and San Jose.
+With this setup, any snapshot deployment from the New York team on 'Nexus 1' is immediately available to the
+development team in London, Bangalore, and San Jose.
 
 
 [[smartproxy-advanced]]
 === Advanced Configuration
 
-Typically smart proxy is configured in the dedicated user interfaces
-provided and described earlier in this chapter. More fine grained and
-advanced configuration is exposed in the capabilities administration
-of Nexus documented in <<capabilities>>.
+Typically smart proxy is configured in the dedicated user interfaces provided and described earlier in this
+chapter. More fine grained and advanced configuration is exposed in the capabilities administration documented in
+<<capabilities>>.
 
 Specficically the following capabilities for the core smart proxy
 features are automatically created and maintained.
 
-Smart Proxy: Identity:: Provides the unique identity for the Nexus
-server.
+Smart Proxy: Identity:: Provides the unique identity for the repository manager.
 
 Smart Proxy: Messaging:: Provides the core messaging facilities for
 smart proxy.
@@ -276,7 +242,7 @@ repository prior to any component requests received by it. The default
 behaviour with preemptive fetch disabled only publishes the fact that
 new components are available from the publishing repository.
 
-
+TIP: A series of videos demonstrating Smart Proxy is available http://www.sonatype.org/nexus/members-only/video-gallery-2/free-training-nexus-professional-and-smart-proxy/[on the Nexus community site].
 ////
 /* Local Variables: */
 /* ispell-personal-dictionary: "ispell.dict" */
