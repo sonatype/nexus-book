@@ -1,5 +1,5 @@
 [[plugins]]
-== Nexus Plugins
+== {pro} Plugins
 
 {inall}
 
@@ -9,15 +9,13 @@ plugins. You can install plugins available from the open source
 community, other vendors, or created by yourself in addition to the
 default plugins.
 
-Nexus plugins can provide further functionality for the backend
-such as support for new repository formats, specific behavior for
-components, new scheduled tasks, new staging rules, and any other
-additional functionality as well as new user interface components and
-modifications. They can also group a number of these features
-together in one plugin.
+Plugins can provide further functionality for the backend such as support for new repository formats, specific
+behavior for components, new scheduled tasks, new staging rules, and any other additional functionality as well as
+new user interface components and modifications. They can also group a number of these features together in one
+plugin.
  
 [[install-additional-plugins]]
-=== Managing Nexus Plugins
+=== Managing Plugins
 
 All plugins supplied by Sonatype are installed as part of the default
 configuration and can be found in
@@ -30,55 +28,43 @@ and otherwise configured in the capability administration. The
 branding plugin or the outreach plugin are examples of plugins
 exposing capabilities.
 
-NOTE: Prior to Nexus 2.7 optional plugins, supplied by Sonatype, can be
-found in the directory
-+$NEXUS_HOME/nexus/WEB-INF/optional-plugins+. To install any of these,
-simply copy the folder containing the desired plugin into
-+$NEXUS_HOME/nexus/WEB-INF/plugin-repository+.  When updating Nexus,
-redo the install of any optional plugins using the newest version
-shipping with the download of the new Nexus version. Any configuration
-of the plugin will be preserved from one version to the other.
+NOTE: Prior to version 2.7 optional plugins, supplied by Sonatype, can be found in the directory
++$NEXUS_HOME/nexus/WEB-INF/optional-plugins+. To install any of these, simply copy the folder containing the
+desired plugin into +$NEXUS_HOME/nexus/WEB-INF/plugin-repository+.  When updating the repository manager, redo the
+install of any optional plugins using the newest version shipping with the download of the new version. Any
+configuration of the plugin will be preserved from one version to the other.
 
 Plugins supplied by third parties or ones that you authored are
 installed by copying the folder with the plugin code into
 +sonatype-work/nexus/plugin-repository+ or extracting the plugin
 bundle zip file in that folder.
 
-After a restart of Nexus, the new plugins will be active and ready
-to use. Upgrades are done by shutting down Nexus, copying the newer
-plugin into the folder, removing the older one, and restarting Nexus.
+After a restart of the repository manager, the new plugins will be active and ready to use. Upgrades are done by
+shutting down the repository manager, copying the newer plugin into the folder, removing the older one, and
+restarting it.
 
-Capability-based plugins can be disabled in the capability
-administration. Otherwise, plugins can be removed by deleting the
-respective folder in the +plugin-repository+ and restarting Nexus.
+Capability-based plugins can be disabled in the capability administration. Otherwise, plugins can be removed by
+deleting the respective folder in the +plugin-repository+ and restarting.
 
 [[plugdev]]
-=== Developing Nexus Plugins
+=== Developing Plugins
 
-Developing Nexus plugins allow you to customize and further enhance
-Nexus beyond the features and capabilities offered. This section provides 
-you with the information to begin developing your own plugins.
+Developing plugins allow you to customize and further enhance the repository manager beyond the features and
+capabilities offered. This section provides you with the information to begin developing your own plugins.
 
-The preferred way to write Nexus plugins is to use Java as the
-implementation language and Apache Maven as the build system. The
-https://github.com/sonatype/nexus-example-plugins[Nexus Example
-Plugins] project demonstrates a number of plugin examples for {oss}
-and {pro}. Further examples are the
-https://github.com/sonatype/nexus-oss/tree/master/plugins[plugins of
-{oss}].
+The preferred way to write plugins is to use Java as the implementation language and Apache Maven as the build
+system. The https://github.com/sonatype/nexus-example-plugins[Nexus Example Plugins] project demonstrates a number
+of plugin examples for {oss} and {pro}. Further examples are the
+https://github.com/sonatype/nexus-oss/tree/master/plugins[plugins of {oss}].
 
-The easiest way to create a new Nexus plugin project is to replicate a
-plugin with a similar functionality from these projects. The existing
-plugins and codebase should be used as examples for your own
-functionality. Inspect the source code of plugins with similar
-functionality, and read the JavaDoc documentation for the involved
-classes.
+The easiest way to create a new plugin project is to replicate a plugin with a similar functionality from these
+projects. The existing plugins and codebase should be used as examples for your own functionality. Inspect the
+source code of plugins with similar functionality, and read the JavaDoc documentation for the involved classes.
 
 NOTE: The Maven archetype nexus-archetype-quickstart is deprecated.
 
-To gain access to all the components needed for your Nexus plugin
-development, you have to proxy the Sonatype grid repository with the
-URL below:
+To gain access to all the components needed for your plugin development, you have to proxy the Sonatype grid
+repository with the URL below:
 
 ----
 https://repository.sonatype.org/content/groups/sonatype-public-grid/
@@ -88,9 +74,8 @@ For some {pro} specific plugins, you might need access to
 the private grid. We suggest that you work with the support team in this
 situation.
 
-Set up your project to include inheriting from the parent of all the
-{oss} plugins with the version of Nexus you are targeting
-as displayed in <<fig-nexus-plugins-parent>>.
+Set up your project to include inheriting from the parent of all the {oss} plugins with the version you are
+targeting as displayed in <<fig-nexus-plugins-parent>>.
 
 [[fig-nexus-plugins-parent]]
 .Inheriting from the nexus-plugins Parent
@@ -102,13 +87,11 @@ as displayed in <<fig-nexus-plugins-parent>>.
  </parent>
 ---- 
 
-WARNING: It is best to use the identical version of the parent as the
-Nexus instance no which you want to run your plugin. When developing a
-plugin you are using large parts of Nexus internals, which are subject
-to change from one version of Nexus to another. This same logic
-applies to any dependencies as well.
+WARNING: It is best to use the identical version of the parent as the {pro} instance no which you want to run your
+plugin. When developing a plugin you are using large parts of internals, which are subject to change from one
+version to another. This same logic applies to any dependencies as well.
 
-A Nexus plugin Maven project creates a custom build output file in the
+A plugin Maven project creates a custom build output file in the
 form of a zip file that contains all dependencies, in addition to your
 class files and resources from your plugin and some metadata. Enable 
 this by changing the packaging and adding the bundle plugin listed 
@@ -157,18 +140,14 @@ support.
   </dependencies>
 ----
 
-These dependencies pull in a large number of transitive dependencies
-that expose Nexus functionality and other libraries to your project.
-Depending on the type of plugin and functionality you aim to create,
-additional dependencies and other details can be added to this minimal
-project setup.  A large number of further classes is available and can
-be used as part of your plugin development. Some of these classes are
-contained in other plugins of Nexus. If you want to use these, you
-have to add a dependency to this plugin to your plugin's pom.xml.
+These dependencies pull in a large number of transitive dependencies that expose {pro} functionality and other
+libraries to your project.  Depending on the type of plugin and functionality you aim to create, additional
+dependencies and other details can be added to this minimal project setup.  A large number of further classes is
+available and can be used as part of your plugin development. Some of these classes are contained in other
+plugins. If you want to use these, you have to add a dependency to this plugin to your plugin's pom.xml.
 
-An example is a plugin you create that exposes a REST API for further
-integrations with tools outside of Nexus similar to how all other
-Nexus plugins expose a REST API. The dependency to add is displayed in
+An example is a plugin you create that exposes a REST API for further integrations with tools outside of the
+repository manager similar to how all other plugins expose a REST API. The dependency to add is displayed in
 <<fig-staging-dependency>>.
 
 [[fig-staging-dependency]]
@@ -182,12 +161,10 @@ Nexus plugins expose a REST API. The dependency to add is displayed in
 </dependency>
 ----
 
-Nexus and Nexus plugins use JSR-330 annotations like
-+@javax.inject.Inject+ and the Google Guice dependency injection
-framework. Typical classes are +@Named+ and are often a
-+@Singleton+ . Other components are typically injected via
-constructor injection as displayed in the example from the +virusscan+
-example plugin in <<fig-constructor-injection>>.  
+{pro}, {oss} and plugins use JSR-330 annotations like +@javax.inject.Inject+ and the Google Guice dependency
+injection framework. Typical classes are +@Named+ and are often a +@Singleton+ . Other components are typically
+injected via constructor injection as displayed in the example from the +virusscan+ example plugin in
+<<fig-constructor-injection>>.
 
 [[fig-constructor-injection]]
 .Constructor Injection
@@ -213,19 +190,16 @@ build the plugin with
 mvn clean install
 ----
 
-A successful build includes the creation of a +*-bundle.zip+ file in
-the +target+ folder. To install your plugin into Nexus you can extract
-it into the +plugin-repository+ directory as described in
+A successful build includes the creation of a +*-bundle.zip+ file in the +target+ folder. To install your plugin
+into the repository manager you can extract it into the +plugin-repository+ directory as described in
 <<install-additional-plugins>>.
 
 
 === Summary
 
-The Nexus architecture is largely based on plugins including the
-differentiation of {oss} and {pro}. By
-inspecting the example plugins and the {oss} project, you
-can create additional Nexus functionality for yourself as well as
-potentially share it with the Nexus user community.
+The {pro} architecture is largely based on plugins including the differentiation of {oss} and {pro}. By inspecting
+the example plugins and the {oss} project, you can create additional functionality for yourself as well as
+potentially share it with the user community.
 
 ////
 /* Local Variables: */
