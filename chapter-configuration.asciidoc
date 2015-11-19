@@ -501,9 +501,26 @@ example for the 'maven-central' repository is partially displayed in <<fig-admin
 .Partial Repository Configuration for a Proxy Repository
 image::figs/web/admin-repository-repositories-central.png[scale=50]
 
+The repository administration feature view has buttons to perform various actions on a repository. The buttons
+displayed depend on the repository format and type. The following buttons can be found:
 
-The 'Delete repository' button allows you to delete this repository and all related configuration and components, after
-confirming the operation in a dialog.
+Delete repository:: The 'Delete repository' button allows you to delete the repository and all related
+configuration and components, after confirming the operation in a dialog.
+
+Invalidate cache:: The 'Invalidate cache' button invalidates the caches for this repository. The exact behavior
+depends on the repository type:
+
+Proxy repositories;; Invalidating the cache on a proxy repository clears the proxy cache such that any items
+cached as available will be checked again for any changes the next time they are requested. This also clears the
+negative cache for the proxy repository such that any items that were not found within the defined cache period
+will be checked again the next time they are requested.
+
+Repository groups;; Invalidating the cache of a repository group, clears the group cache such that any items
+fetched and held in the group cache, such as Maven metadata, will be cleared. This action also invalidates the
+caches of any proxy and group repositories that are members of this group.
+
+Rebuild Index:: The 'Rebuild Index' button allows you to drop and recreate the search index for the proxy
+repository, synchronizing the contents with search index. This button is only available for proxy repositories.
 
 The following properties can be viewed for all repositories and can not be edited after the initial creation of the
 repository.
@@ -560,18 +577,6 @@ If the policy is set to 'Allow redeploy', clients can deploy components to this 
 component in subsequent deployments.
 
 ===== Proxy
-
-In addition to the 'Delete repository' button, a proxy repository has several buttons that can be used to perform actions
-upon that specific proxy repository without having to setup a reoccuring task.  These include:
-
-Rebuild Index:: This drops and recreates the search index for the proxy repository, syncronizing the contents with Nexus'
-search.
-
-Invalidate proxy cache:: This clears the proxy cache such that any items cached as available will be checked again for any
-changes the next time they are requested.
-
-Invalidate negative cache:: This clears the negative cache for the proxy repository such that any items that were not
-found within the defined cache period will be checked again the next time they are requested.
 
 The configuration for proxy repositories in the 'Proxy' section also contains the following parameters:
 
