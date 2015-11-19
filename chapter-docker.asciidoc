@@ -173,9 +173,26 @@ TIP: Check out this repository configuration demonstrated in link:https://www.yo
 
 === Authentication
 
-The first invocation of any command against a Nexus Docker connector and therefore a Docker repository or repository
-group triggers a login request. Provide the Nexus username and password as well as an email address to Docker. This
-authentication is persisted in `~/.docker/config.json` and reused for any subsequent interaction.
+If access to a repository requires the user to be authenticated, `docker` queries the user for the username,
+password and email address and persists it in `~/.docker/config.json`.  Typically this is required when
+<<anonymous, anonymous access>> to the repository manager is disabled or the operation requires authentication. An
+example is a `push` operation that publishes an image to the repository.
+
+The authentication can be configured in a separate step using the `docker login` command for the desired
+repository or repository group:
+
+----
+docker login <nexus-hostname>:<repository-port>
+----
+
+Provide your repository manager credentials of username and password as well as an email address. This
+authentication is persisted in `~/.docker/config.json` and reused for any subsequent interactions against that
+repository.  Individual login operations must be performed for each repository and repository group you want to
+access in an authenticated manner.
+
+TIP: Specifically when planning to push to a repository a pre-emptive login operation is advisable as it removes
+the need for use interaction and is therefore suitable for continuous integration server setups and the
+automations scenarios.
 
 === Accessing Docker Repositories
 
