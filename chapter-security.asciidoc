@@ -5,20 +5,22 @@
 [[security-introduction]]
 === Introduction
 
-Nexus uses role-based access control that gives administrators very fine-grained control over user rights to
+{pro} and {oss} uses role-based access control that gives administrators very fine-grained control over user
+rights to
 
 * read from a repository or a subset of repositories,
-* administer the Nexus server or parts of the Nexus configuration,
+* administer the repository manager or specific parts of the configuration,
 * access specific parts of the user interface,
 * deploy to repositories or even just specific sections of a repository.
 
-The default configuration of Nexus ships with roles and users with a standard set of permissions. As your security
-requirements evolve, you will likely need to customize security settings to create protected repositories for multiple
-departments or development groups. Nexus provides a security model that can adapt to any scenario.
+The default configuration ships with roles and users with a standard set of permissions. As your security
+requirements evolve, you will likely need to customize security settings to create protected repositories for
+multiple departments or development groups. {pro} and {oss} provides a security model that can adapt to any
+scenario.
 
-This chapter covers all aspects of security with Nexus including
+This chapter covers all aspects of security of the repository manager including
 
-* user account and access right management related to Nexus user interface as well as to component access documented in
+* user account and access right management related to user interface as well as to component access documented in
   <<privileges>>, <<roles>> and <<users>>,
 * selection of security backend systems documented <<realms>> including the built-in system as well as LDAP,
 ////
@@ -31,15 +33,15 @@ TBD add more as applicable
 ////
 
 Security-related configuration can be performed with the feature views available via the 'Security' section of the
-'Administration' main menu. Many of the features shown in this section are only available to users with the necessary
-privileges to access them.
+'Administration' main menu. Many of the features shown in this section are only available to users with the
+necessary privileges to access them.
 
-Nexus' role-based access control system is backed by different authentication and authorizations systems as documented
-in <<realms>> and designed around the following security concepts:
+The role-based access control system is backed by different authentication and authorizations systems as
+documented in <<realms>> and designed around the following security concepts:
 
-Privileges:: <<privileges, Privileges>> are rights to read, update, create, or manage resources and perform operations
-related to the Nexus user interface as well as the components managed by Nexus in the various repositories. Nexus ships
-with a set of core privileges that cannot be modified.
+Privileges:: <<privileges, Privileges>> are rights to read, update, create, or manage resources and perform
+operations related to the user interface as well as the components managed by the repository manager in the
+various repositories. The repository manager ships with a set of core privileges that cannot be modified.
 ////
  and you can create new privileges to allow for fine-grained targeting of role and user permissions for specific
 repositories.
@@ -47,18 +49,11 @@ repositories.
 
 Roles:: Privileges can be grouped into collections called <<roles, roles>> to make it easier to define privileges
 common to certain classes of users. For example, administrative users will all have similar sets of permissions.
-Instead of assigning individual privileges to individual users, you use roles to make it easier to manage users with
-similar sets of privileges. A role has one or more privileges and/or one or more roles.
+Instead of assigning individual privileges to individual users, you use roles to make it easier to manage users
+with similar sets of privileges. A role has one or more privileges and/or one or more roles.
 
-Users:: <<users, Users>> can be assigned one or more roles, and model the individuals who will be logging into Nexus 
-and read, deploy, or manage repositories as well as connect from client tools such at Apache Maven.
-
-////
-Targets:: Privileges are usually associated with resources or targets. In the case of Nexus, a target can be a specific
-repository or a set of repositories grouped in something called a repository target. A target can also be a subset of a
-repository or a specific asset classes within a repository. Using a target you can apply a specific privilege to a
-single groupId.
-////
+Users:: <<users, Users>> can be assigned one or more roles, and model the individuals who will be logging into the
+user interface and read, deploy, or manage repositories as well as connect from client tools such at Apache Maven.
 
 [[realms]]
 === Realms
@@ -75,8 +70,8 @@ image::figs/web/realms.png[scale=60]
 Effectively, this configuration determines what authentication realm is used to grant a user access and the order the
 realms are used.
 
-Nexus Authenticating Realm and Nexus Authorizing Realm:: These are the built-in realms used by default and allow Nexus
-to manage security setup without additional external systems.
+Nexus Authenticating Realm and Nexus Authorizing Realm:: These are the built-in realms used by default. They allow
+the repository manager to manage security setup without additional external systems.
 
 LDAP Realm:: This realm identifies external storage in an LDAP system including e.g., Microsoft ActiveDirectory,
 ApacheDS, OpenLDAP and many others.
@@ -91,8 +86,8 @@ Crowd Realm:: This realm identifies external storage in an Atlassian Crowd syste
  with details documented in <<crowd>>.
 ////
 
-Rut Auth Realm:: This realm uses an external authentication in any system with the user authorization passed to Nexus 
-in a HTTP header field with details documented in <<remote-user-token>>.
+Rut Auth Realm:: This realm uses an external authentication in any system with the user authorization passed to
+the repository manager in a HTTP header field with details documented in <<remote-user-token>>.
 
 ////
 The 'User Token Realm' is required for user token support documented in <<config-sect-usertoken>> and
@@ -100,8 +95,8 @@ The 'User Token Realm' is required for user token support documented in <<config
 
 NuGet API-Key Realm:: This realm is required for deployments to nuget-format repositories as documented in <<nuget>>.
 
-WARNING: Removing all realms from the 'Active' section prevents access to the Nexus application for any user including
-any administrative access.
+WARNING: Removing all realms from the 'Active' section prevents access to the repository manager for any user
+including any administrative access and has to be avoided.
 
 
 [[privileges]]
@@ -111,27 +106,27 @@ any administrative access.
 You can access the configuration of privileges via the 'Privileges' menu item in the 'Security' submenu in the
 'Administration' main menu.
 
-Nexus use a number of types of privileges:
+The repository manager use a number of types of privileges:
 
-application:: privileges related to the Nexus user interface and related functionality.
-repository-admin:: privileges related to the administration and configuration of a specific repository separated into
-access to '*' (all), 'add', 'browse', 'delete', 'edit' and 'read'.
-repository-view:: privileges controlling access to the content of a specific repository separate into access to '*'
-(all), 'add', 'browse', 'delete', 'edit' and 'read'.
+application:: privileges related to the user interface and related functionality.
+repository-admin:: privileges related to the administration and configuration of a specific repository separated
+into access to '*' (all), 'add', 'browse', 'delete', 'edit' and 'read'.
+repository-view:: privileges controlling access to the content of a specific repository separate into access to
+'*' (all), 'add', 'browse', 'delete', 'edit' and 'read'.
 
-Both 'repository-admin' as well as 'repository-view' privileges are automatically created and deleted by Nexus, when
-repositories are created or deleted.
+Both 'repository-admin' as well as 'repository-view' privileges are automatically created and deleted by the
+repository manager, when repositories are created or deleted.
 
 The list of privileges displayed in <<fig-privileges-list>> displays an icon for the privilege 'type' as the first
 column and then adds:
 
-Name:: the Nexus internal identifier for the privilege
+Name:: the internal identifier for the privilege
 
 Description:: a human readable description of the purpose of the privilege
 
-Type:: the aspect of Nexus to which this privilege applies
+Type:: the aspect of the repository manager to which this privilege applies
 
-Permission:: the Nexus internal permission definition as used by the embedded security framework
+Permission:: the internal permission definition as used by the embedded security framework
 
 Further details are available after pressing on a specific row in the detail view.
 
@@ -145,10 +140,11 @@ image::figs/web/privileges-list.png[scale=60]
 
 Roles aggregate privileges into a related context and can, in turn, be grouped to create more complex roles.
 
-Nexus ships with a predefined 'admin' as well as an 'anonymous' role. These can be inspected in the 'Roles' feature 
-view accessible via the 'Roles' item in the 'Security' section of the 'Administration' main menu. A simple example is 
-shown in <<fig-roles-list>>. The list displays the 'Name' an 'Description' of the role as well as the 'Source', which 
-displays whether the role is internal ('Nexus') or a mapping to an external source like LDAP.
+The repository manager ships with a predefined 'admin' as well as an 'anonymous' role. These can be inspected in
+the 'Roles' feature view accessible via the 'Roles' item in the 'Security' section of the 'Administration' main
+menu. A simple example is shown in <<fig-roles-list>>. The list displays the 'Name' an 'Description' of the role
+as well as the 'Source', which displays whether the role is internal ('Nexus') or a mapping to an external source
+like LDAP.
 
 [[fig-roles-list]]
 .Viewing the List of Defined Roles
@@ -171,40 +167,35 @@ list of 'Contained' roles.
 
 Finally press the 'Create Role' button to get the role created.
 
-An existing role can be inspected and edited by clicking on the row in the list. This role-specific view allows you to
-delete the role with the 'Delete role' button. The built-in roles are managed by Nexus and cannot be edited or
-deleted. The 'Settings' section displays the same section as the creation view as displayed in <<fig-roles-create>>. .
+An existing role can be inspected and edited by clicking on the row in the list. This role-specific view allows
+you to delete the role with the 'Delete role' button. The built-in roles are managed by the repository manager and
+cannot be edited or deleted. The 'Settings' section displays the same section as the creation view as displayed in
+<<fig-roles-create>>. .
 
-In addition to creating a Nexus role, the 'Create role' button allows you to create an 'External role mapping' to an
-external authorization system configured in Nexus such as 'LDAP'. This is something you would do, if you want to grant
-every member of an externally managed group (such as an LDAP group) a number of privileges and roles in Nexus.
+In addition to creating an internal role, the 'Create role' button allows you to create an 'External role mapping'
+to an external authorization system configured in the repository manager such as 'LDAP'. This is something you
+would do, if you want to grant every member of an externally managed group (such as an LDAP group) a number of
+privileges and roles in the repository manager.
 
-For example, assume that you have a group in LDAP named +scm+ and you want to make sure that everyone in the +scm+ 
-group has Nexus administrative privileges.
+For example, assume that you have a group in LDAP named +scm+ and you want to make sure that everyone in the +scm+
+group has administrative privileges.
 
 Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick the
 desired 'scm' group and confirm by pressing 'Create mapping'.
 
-Once the external role has been selected, creates a linked Nexus role. You can then assign other roles and privileges 
+Once the external role has been selected, creates a linked  role. You can then assign other roles and privileges 
 to this new externally mapped role like you would do for any other role.
 
-Any user that is part of the 'scm' group in LDAP, receives all the privileges defined in the created Nexus role 
-allowing you to adapt your generic role in LDAP to the Nexus-specific use cases you want these users to be allowed to 
-perform.
-
-////
-TIP: With the Repository Targets, you have fine-grained control over every action in the system. For example, you could
-make a target that includes everything except sources `(.*(?!-sources)\.*)` and assign that to one role while giving yet
-another role access to everything. Using these different access roles e.g., you can host your public and private
-components in a single repository without giving up control of your private components.
-////
+Any user that is part of the 'scm' group in LDAP, receives all the privileges defined in the created role allowing
+you to adapt your generic role in LDAP to the repository manager-specific use cases you want these users to be
+allowed to perform.
 
 [[users]]
 === Users
 {inall}
 
-Nexus ships with two users: 'admin' and 'anonymous'. The 'admin' user has all privileges and the 'anonymous' user has
-read-only privileges.
+The repository manager ships with two users: 'admin' and 'anonymous'. The 'admin' user has all privileges and the
+'anonymous' user has read-only privileges.
 
 The 'Users' feature view displayed in <<fig-users-list>> can be accessed via the 'Users' item in the 'Security' section
 of the 'Administration' menu. The list shows the users 'User ID', 'First Name', 'Last Name' and 'Email' as well as what
@@ -234,9 +225,9 @@ in a dialog, provided the user is managed by the built-in security realm.
 === Anonymous Access
 {inall}
 
-By default, the Nexus user interface as well as the repositories and the contained components are available to
-unauthenticated users. The 'Anonymous' feature view is available via the 'Anonymous' item in the 'Security' section of
-the 'Administration' main menu and shown in <<fig-anonymous>>.
+By default, the user interface as well as the repositories and the contained components are available to
+unauthenticated users for read access. The 'Anonymous' feature view is available via the 'Anonymous' item in the
+'Security' section of the 'Administration' main menu and shown in <<fig-anonymous>>.
 
 The privileges available to these users are controlled by the roles assigned to the 'anonymous' user from the
 'NexusAuthorizingRole'. By changing the privileges assigned to this user in the <<users, Users feature view>>.
@@ -245,49 +236,50 @@ The privileges available to these users are controlled by the roles assigned to 
 .Configuring Anonymous Access
 image::figs/web/anonymous.png[scale=60]
 
-If you want to disable unauthenticated access to Nexus entirely, you can uncheck the 'Allow anonymous users to access
-the server' checkbox. The 'Username' and 'Realm' controls allow you to change the details for the anonymous
-user. E.g. you might have a 'guest' account defined in your LDAP system and desire to use that user for anonymous
-access.
+If you want to disable unauthenticated access to the repository manager entirely, you can uncheck the 'Allow
+anonymous users to access the server' checkbox. The 'Username' and 'Realm' controls allow you to change the
+details for the anonymous user. E.g. you might have a 'guest' account defined in your LDAP system and desire to
+use that user for anonymous access.
 
 [[remote-user-token]]
 === Authentication via Remote User Token
 {inall}
 
-Nexus allows integration with external security systems that can pass along authentication of a user via the
-+Remote_User+ HTTP header field for all requests - Remote User Token 'Rut' authentication. This typically affects all
-web application usage in a web browser.
+The repository manager allows integration with external security systems that can pass along authentication of a
+user via the +Remote_User+ HTTP header field for all requests - Remote User Token 'Rut' authentication. This
+typically affects all web application usage in a web browser.
 
-These are either web-based container or server-level authentication systems like http://shibboleth.net/[Shibboleth]. In
-many cases, this is achieved via a server like http://httpd.apache.org/[Apache HTTPD] or http://nginx.org/[nginx]
-proxying Nexus. These servers can in turn defer to other authentication storage systems e.g., via the
-http://web.mit.edu/kerberos/[Kerberos] network authentication protocol. These systems and setups can be described as
-Central Authentication Systems CAS or Single Sign On SSO.
+These are either web-based container or server-level authentication systems like
+http://shibboleth.net/[Shibboleth]. In many cases, this is achieved via a server like
+http://httpd.apache.org/[Apache HTTPD] or http://nginx.org/[nginx] proxying the repository manager. These servers
+can in turn defer to other authentication storage systems e.g., via the http://web.mit.edu/kerberos/[Kerberos]
+network authentication protocol. These systems and setups can be described as Central Authentication Systems CAS
+or Single Sign On SSO.
 
 From the users perspective, he/she is required to login into the environment in a central login page that then
-propagates the login status via HTTP headers. Nexus simply receives the fact that a specific user is logged in by
-receiving the username in a HTTP header field.
+propagates the login status via HTTP headers. the repository manager simply receives the fact that a specific user
+is logged in by receiving the username in a HTTP header field.
 
 The HTTP header integration can be activated by adding and enabling the 'Rut Auth' capability as documented in
 <<admin-system-capabilities>> and setting the 'HTTP Header name' to the header populated by your security
 system. Typically, this value is `REMOTE_USER`, but any arbitrary value can be set. An enabled capability automatically
 causes the 'Rut Auth Realm' to be added to the 'Active' realms in the 'Realms' configuration described in <<realms>>.
 
-When an external system passes a value through the header, authentication will be granted and the value will be used as
-the user name for configured authorization scheme. For example, on a default Nexus installation with the Nexus
-authorization scheme enabled, a value of 'admin' would grant the user the access rights in the user interface as the
-'admin' user.
+When an external system passes a value through the header, authentication will be granted and the value will be
+used as the user name for configured authorization scheme. For example, on a default installation with the
+internal authorization scheme enabled, a value of 'admin' would grant the user the access rights in the user
+interface as the 'admin' user.
 
-A seamless integration can be set up for users if the external security system is exposed via LDAP and configured in
-Nexus as LDAP authorization realm combined with external role mappings and in parallel the sign-on is integrated with
-the operating system sign-on for the user.
+A seamless integration can be set up for users if the external security system is exposed via LDAP and configured
+in the repository manager as LDAP authorization realm combined with external role mappings and in parallel the
+sign-on is integrated with the operating system sign-on for the user.
 
 [[ssl]]
-=== Configuring Nexus for SSL
+=== Configuring SSL
 
 
-Using Secure Socket Layer (SSL) communication within Nexus is an important security feature and a recommended best
-practice. Secure communication can be inbound or outbound.
+Using Secure Socket Layer (SSL) communication with the repository manager is an important security feature and a
+recommended best practice. Secure communication can be inbound or outbound.
 
 Outbound client communication may include integration with
 
@@ -318,7 +310,7 @@ The 'View certificate' button triggers the display of the SSL 'Certificate Detai
 <<fig-ssl-certificate-details-dialog>>.
 
 [[fig-ssl-certificate-details-dialog]]
-.Certificate Details Dialog to Add an SSL to the Nexus Trust Store
+.Certificate Details Dialog to Add an SSL to the Nexus Truststore
 image::figs/web/ssl-certificate-details-dialog.png[scale=50]
 
 Use the 'Certificate Details' dialog when the remote certificate is not issued by a well-known public certificate
@@ -328,27 +320,27 @@ in the dialog.  This feature is analogous to going to the <<fig-ssl-certificates
 interface and using the 'Load certificate' button found there as described in <<ssl-certificates>>. If the certificate 
 is already added, the button can undo this operation and will read 'Remove certificate from trust store'.
 
-The checkbox labelled 'Use certificates stored in Nexus to connect to external systems' is used to confirm that Nexus
-should consult the Nexus-private, internal truststore as well as the JVM truststore when confirming trust of the remote
-repository certificate. Without adding the certificate to the private truststore and enabling the checkbox, the
-repository will not trust the remote.
+The checkbox labelled 'Use certificates stored in Nexus to connect to external systems' is used to confirm that
+the repository manager should consult the internal truststore as well as the JVM truststore when confirming trust
+of the remote repository certificate. Without adding the certificate to the private truststore and enabling the
+checkbox, the repository will not trust the remote.
 
-The default JVM truststore of the JVM installation used to run Nexus and the private Nexus truststores are merged. The
-result of this merge is used to decide about the trust of the remote server. The default Java truststore already
-contains public certificate authority trust certificates. If the remote certificate is signed by one of these
-authorities, then explicitly trusting the remote certificate will not be needed.
+The default JVM truststore of the JVM installation used to run the repository manager and the private truststores
+are merged. The result of this merge is used to decide about the trust of the remote server. The default Java
+truststore already contains public certificate authority trust certificates. If the remote certificate is signed
+by one of these authorities, then explicitly trusting the remote certificate will not be needed.
 
-WARNING: When removing a remote trusted certificate from the truststore, a Nexus restart is required before a 
-repository may become untrusted.
+WARNING: When removing a remote trusted certificate from the truststore, a repository manager restart is required
+before a repository may become untrusted.
 
 [[ssl-certificates]]
 ==== Outbound SSL - Trusting SSL Certificates Globally
 
 {inall}
 
-Nexus allows you to manage trust of all remote SSL certificates in a centralized user interface. Use this interface 
-when you wish to examine all the currently trusted certificates for remote repositories, or manage certificates from 
-secure remotes that are not repositories.
+The repository manager allows you to manage trust of all remote SSL certificates in a centralized user
+interface. Use this interface when you wish to examine all the currently trusted certificates for remote
+repositories, or manage certificates from secure remotes that are not repositories.
 
 Access <<fig-ssl-certificates-list, the feature view for SSL Certificates administration>> by selecting the 'SSL
 Certificates' menu items in the 'Security' submenu in the 'Administration' main menu.
@@ -365,11 +357,11 @@ The button 'Load certificate' above the list of certificates can be used to add 
 loading it directly from a server or using a PEM file representing the certificate.
 
 The common approach is to choose 'Load from server' and enter the full +https://+ URL of the remote site, e.g,
-`https://repo1.maven.org`. Nexus will connect using HTTPS and use the HTTP proxy server settings if applicable. When 
-the remote is not accessible using +https://+, only enter the host name or IP address, optionally followed by colon 
-and the port number. For example: +example.com:8443+ . In this case Nexus will attempt a direct SSL socket connection 
-to the remote host at the specified port. This allows you to load certificates from SMTP or LDAP servers, if you use 
-the correct port.
+`https://repo1.maven.org`. The repository manager will connect using HTTPS and use the HTTP proxy server settings
+if applicable. When the remote is not accessible using +https://+, only enter the host name or IP address,
+optionally followed by colon and the port number. For example: +example.com:8443+ . In this case the repository
+manager will attempt a direct SSL socket connection to the remote host at the specified port. This allows you to
+load certificates from SMTP or LDAP servers, if you use the correct port.
 
 Alternatively you can choose the 'Paste PEM' option to configure trust of a remote certificate. Copy and paste the
 Base64 encoded X.509 DER certificate to trust. This text must be enclosed between lines containing `-----BEGIN
@@ -383,15 +375,15 @@ keytool -printcert -rfc -sslserver repo1.maven.org > repo1.pem
 ----
 
 The resulting `repo1.pem` file contains the encoded certificate text that you can cut and paste into the dialog in
-Nexus. An example of inserting such a certificate is shown in <<fig-ssl-pem>>.
+the user interface. An example of inserting such a certificate is shown in <<fig-ssl-pem>>.
 
 [[fig-ssl-pem]]
 .Providing a Certificate in PEM Format
 image::figs/web/ssl-pem.png[scale=50]
 
-If Nexus can successfully retrieve the remote certificate or decode the pasted certificate, the details will be shown
-allowing you to confirm details as shown in <<fig-ssl-add-server>>. Please review the displayed information
-carefully before clicking 'Add Certificate' to establish the truststore addition.
+If the repository manager can successfully retrieve the remote certificate or decode the pasted certificate, the
+details will be shown allowing you to confirm details as shown in <<fig-ssl-add-server>>. Please review the
+displayed information carefully before clicking 'Add Certificate' to establish the truststore addition.
 
 [[fig-ssl-add-server]]
 .Certificate Details Displayed after Successful Retrieval or Parsing
@@ -408,27 +400,27 @@ certificate], which can greatly simplify your certificate management duties.
 
 Managing trusted SSL certificates from the command line using
 http://docs.oracle.com/javase/8/docs/technotes/tools/index.html#security[keytool] and system properties is an
-alternative and more complex option than using the SSL certificate management features of Nexus.
+alternative and more complex option than using the SSL certificate management features of the repository manager.
 
 Before you begin the process of trusting a certificate from the command line you will need:
 
 * a basic understanding of http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html[SSL
   certificate technology and how the Java VM implements this feature]
 
-* command line access to the Nexus host operating system and the 'keytool' program
+* command line access to the host operating system and the 'keytool' program
 
-* network access to the remote SSL server you want to trust from the host running Nexus. This must include any HTTP
-  proxy server connection details.
+* network access to the remote SSL server you want to trust from the host running the repository manager. This
+  must include any HTTP proxy server connection details.
 
 If you are connecting to servers that have certificates which are not signed by a public CA, you will need to complete
 these steps:
 
-. Copy the default JVM truststore file (`$JAVA_HOME/jre/lib/security/cacerts`) to a Nexus specific location for editing.
+. Copy the default JVM truststore file (`$JAVA_HOME/jre/lib/security/cacerts`) to a specific location for editing.
 
 . Import additional trusted certificates into the copied truststore file.
 
-. Configure JSSE system properties for the Nexus process so that the custom truststore is consulted instead of the
-  default file.
+. Configure JSSE system properties for the repository manager process so that the custom truststore is consulted
+  instead of the default file.
 
 Some common commands to manually trust remote certificates can be found in our
 https://sonatype.zendesk.com/entries/95353268-SSL-Certificate-Guide#common-keytool-commands[SSL Certificate Guide].
@@ -440,47 +432,49 @@ javax.net.ssl.trustStore=<truststore>
 javax.net.ssl.trustStorePassword=<truststore_password>
 ----
 
-Once you have added the properties shown above, restart Nexus and attempt to proxy a remote repository using the
-imported certificate. Nexus will automatically register the certificates in the truststore file as trusted.
+Once you have added the properties shown above, restart the repository manager and attempt to proxy a remote
+repository using the imported certificate. The repository manager will automatically register the certificates in
+the truststore file as trusted.
 
 [[ssl-inbound]]
-==== Inbound SSL - Configuring Nexus to Serve Content via HTTPS
+==== Inbound SSL - Configuring to Serve Content via HTTPS
 
 {inall}
 
-Providing access to the Nexus user interface and content via HTTPS is a recommended best practice for any deployment.
+Providing access to the user interface and content via HTTPS is a recommended best practice for any deployment.
 
 You have two options:
 
-* Using a separate reverse proxy server in front of Nexus to manage HTTPS
-* Configure Nexus to serve HTTPS directly
+* Using a separate reverse proxy server in front of the repository manager to manage HTTPS
+* Configure the repository manager itself to serve HTTPS directly
 
 .Using A Reverse Proxy Server
 
-A common approach is to access Nexus through a dedicated server which answers HTTPS requests on behalf of Nexus - these
-servers are called reverse proxies or SSL/TLS terminators. Subsequently requests are forwarded to Nexus via HTTP and
-responses received via HTTP are then sent back to the requestor via HTTPS.
+A common approach is to access the repository manager through a dedicated server which answers HTTPS requests on
+behalf of the repository manager - these servers are called reverse proxies or SSL/TLS terminators. Subsequently
+requests are forwarded to the repository manager via HTTP and responses received via HTTP are then sent back to
+the requestor via HTTPS.
 
-There are a few advantages to using these which can be discussed with your networking team. For example, Nexus can be
-upgraded/installed without the need to work with a custom JVM keystore. The reverse proxy could already be in place for
-other systems in your network. Common reverse proxy choices are Apache httpd, nginx, Eclipse Jetty or even dedicated
-hardware appliances. All of them can be configured to serve SSL content, and there is a large amount of reference
-material available online.
+There are a few advantages to using these which can be discussed with your networking team. For example, the
+repository manager can be upgraded/installed without the need to work with a custom JVM keystore. The reverse
+proxy could already be in place for other systems in your network. Common reverse proxy choices are Apache httpd,
+nginx, Eclipse Jetty or even dedicated hardware appliances. All of them can be configured to serve SSL content,
+and there is a large amount of reference material available online.
 
 ////
 TBD - add link to reverse proxy setup doc once its done
 ////
 
-.Nexus Serving SSL Directly
+.Serving SSL Directly
 
-The second approach is to use the Eclipse Jetty instance that is distributed with Nexus to accept HTTPS 
-connections.
+The second approach is to use the Eclipse Jetty instance that is distributed with the repository manager to accept
+HTTPS connections.
 
-TIP: Keep in mind that you will have to repeat this configuration each time you upgrade Nexus, since they are
-modifications to the embedded Jetty instance located in '$NEXUS_HOME'.
+TIP: Keep in mind that you will have to repeat this configuration each time you upgrade the repository manager,
+since they are modifications to the embedded Jetty instance located in '$NEXUS_HOME'.
 
-To configure Nexus to accept HTTPS connections, first enable the file +jetty-https.xml+ for the Jetty startup
-configuration in +etc/org.sonatype.nexus.cfg+ by adding
+To configure the repository manager to accept HTTPS connections, first enable the file +jetty-https.xml+ for the
+Jetty startup configuration in +etc/org.sonatype.nexus.cfg+ by adding
 
 ----
 ${karaf.etc}/jetty-https.xml
@@ -503,20 +497,20 @@ Adjust the values in the +jetty-https.xml+ file to reflect your keystore setting
 that file suggests to create a subdirectory +$NEXUS_HOME/etc/ssl+ and copy the +keystore+ file in there and
 rename it to +keystore.jks+. You can either do that or choose a different location or filename for your keystore 
 file and update the paths for the +keystore+ and +truststore+ in the +jetty-https.xml+ file.  Remember to remove 
-the property pointing to the Nexus installation directory (`<Property name="nexus-base"/>`), if you want to refer 
+the property pointing to the installation directory (`<Property name="nexus-base"/>`), if you want to refer 
 to an absolute path.
 
-Once this is all in place you can start up Nexus and access the user interface at e.g., +https://localhost:8443/nexus+.
-If you have just created a self-signed certificate, web browsers may warn you about the certificate and you will
-have to acknowledge the fact that the certificate is self-signed. To avoid this behavior, you have to get a 
-certificate signed by a signing authority or reconfigure the web browser.
+Once this is all in place you can start up the repository manager and access the user interface at e.g.,
++https://localhost:8443/nexus+.  If you have just created a self-signed certificate, web browsers may warn you
+about the certificate and you will have to acknowledge the fact that the certificate is self-signed. To avoid this
+behavior, you have to get a certificate signed by a signing authority or reconfigure the web browser.
 
 TIP: This configuration process is available link:https://www.youtube.com/watch?v=YzcvU802Az8[as a video demonstration].
 
-Nexus is now available via HTTPS. If desired you can configure automatic redirection from HTTP to HTTPS. This can 
-be achieved by adding usage of `jetty-http-redirect-to-https.xml` as additional app parameters in 
-+org.sonatype.nexus.cfg+. In addition you have to update or add the `Base URL` in your Nexus server configuration
-using the <<admin-system-capabilities, Base URL capability>>.
+The repository manager is now available via HTTPS. If desired you can configure automatic redirection from HTTP to
+HTTPS. This can be achieved by adding usage of `jetty-http-redirect-to-https.xml` as additional app parameters in
++org.sonatype.nexus.cfg+. In addition you have to update or add the `Base URL` in your repository manager
+configuration using the <<admin-system-capabilities, Base URL capability>>.
 
 ////
 /* Local Variables: */
