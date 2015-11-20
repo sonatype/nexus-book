@@ -5,10 +5,10 @@
 [[sites-introduction]]
 === Introduction
 
-Nexus includes support for hosting, proxying and grouping static websites - the 'raw' format. Hosted repositories with
-this format can be used to store and provide a Maven-generated website. Proxy repositories can subsequently proxy them
-in other servers. The 'raw' format can also be used for other resources than HTML files exposed by straight HTTP-like
-browsable directory structures.
+{pro} and {oss} include support for hosting, proxying and grouping static websites - the 'raw' format. Hosted
+repositories with this format can be used to store and provide a Maven-generated website. Proxy repositories can
+subsequently proxy them in other servers. The 'raw' format can also be used for other resources than HTML files
+exposed by straight HTTP-like browsable directory structures.
 
 This chapter details the process of configuring raw repositories, configuring a simple Maven project to publish a
 Maven-generated project site and other use cases for raw repositories.
@@ -16,22 +16,22 @@ Maven-generated project site and other use cases for raw repositories.
 [[raw-hosted]]
 === Creating a Hosted Raw Repository
 
-To create a raw repository for hosting a static website, you simply create a new repository using the 'raw (hosted)'
-recipe as documented in <<admin-repositories>>.
+To create a raw repository for hosting a static website, you simply create a new repository using the 'raw
+(hosted)' recipe as documented in <<admin-repositories>>.
 
-For the Maven site example in <<maven-site>>, set the 'Name' to `site` and change the 'Deployment policy' to 'Allow
-redeploy'.
+For the Maven site example in <<maven-site>>, set the 'Name' to `site` and change the 'Deployment policy' to
+'Allow redeploy'.
 
-After creating the new raw repository, it appears in the list of repositories with the name 'site' provided earlier. The
-'URL' in the list can be used for deployment and access usage.
+After creating the new raw repository, it appears in the list of repositories with the name 'site' provided
+earlier. The 'URL' in the list can be used for deployment and access usage.
 
 [[maven-site]]
 === Creating and Deploying a Maven Site
 
 ==== Creating a New Maven Project
 
-In this section, you are be creating a minimal Maven project with a simple website that can be published to the hosted
-raw repository created in <<raw-hosted>>.
+In this section, you are be creating a minimal Maven project with a simple website that can be published to the
+hosted raw repository created in <<raw-hosted>>.
 
 The following steps can be used to create a new Maven project:
 
@@ -48,14 +48,15 @@ After running the +archetype:generate+ command, you will have a new project in a
 
 ==== Configuring Maven for Site Deployment
 
-To deploy a site to a raw repository in Nexus, you need to configure the project's `distributionManagement`, add site
-deployment information, and then update your Maven settings to include the appropriate credentials.
+To deploy a site to a raw repository in the repository manager, you need to configure the project's
+`distributionManagement`, add site deployment information, and then update your Maven settings to include the
+appropriate credentials.
 
-Add the following section to `sample-site/pom.xml` before the dependencies element.  This section tells Maven where to
-publish the Maven-generated project website:
+Add the following section to `sample-site/pom.xml` before the dependencies element.  This section tells Maven
+where to publish the Maven-generated project website:
 
 [[ex-sites-dist-man]]
-.Distribution Management for Site Deployment to Nexus
+.Distribution Management for Site Deployment
 ----
 <distributionManagement>
   <site>
@@ -65,15 +66,16 @@ publish the Maven-generated project website:
 </distributionManagement>
 ----
 
-The URL in the distribution management is not parameterized, which means that any redeployment overwrites old content
-and potentially leaves old stale files behind. To have a new deployment directory for each version, change the URL to a
-parameterized setup or change the whole URL between deployments.
+The URL in the distribution management is not parameterized, which means that any redeployment overwrites old
+content and potentially leaves old stale files behind. To have a new deployment directory for each version, change
+the URL to a parameterized setup or change the whole URL between deployments.
 
-If you combine this approach with a redirector or a static page that links to the different copies of your site, you can
-e.g., maintain separate sites hosting your javadoc and other documentation for different releases of your software.
+If you combine this approach with a redirector or a static page that links to the different copies of your site,
+you can e.g., maintain separate sites hosting your javadoc and other documentation for different releases of your
+software.
 
-The dav protocol used by for deployment to Nexus requires that you add the implementing library as a dependency of the
-Maven site plugin in your Maven project:
+The dav protocol used by for deployment to the repository manager requires that you add the implementing library
+as a dependency of the Maven site plugin in your Maven project:
 
 [[ex-sites-dav]]
 .Dependency for the Maven Site Plugin for DAV Support
@@ -98,12 +100,12 @@ Maven site plugin in your Maven project:
 
 ==== Adding Credentials to Your Maven Settings
 
-When the Maven site plugin deploys a site to Nexus, it needs to supply the appropriate deployment credentials to
-Nexus. To configure this, you need to add credentials to your Maven settings.  Edit your `~/.m2/settings.xml` file and
-add the following server configuration to the servers element.
+When the Maven site plugin deploys a site, it needs to supply the appropriate deployment credentials to the
+repository manager. To configure this, you need to add credentials to your Maven settings.  Edit your
+`~/.m2/settings.xml` file and add the following server configuration to the servers element.
 
 [[ex-sites-deploy-credentials]]
-.Configuring Deployment Credentials for Nexus Site Deployment
+.Configuring Deployment Credentials for Site Deployment
 ----
 <settings>
   <servers>
@@ -116,15 +118,16 @@ add the following server configuration to the servers element.
 </settings>
 ----
 
-NOTE: <<ex-sites-deploy-credentials>> uses the default `admin` username and password. For real world usage you would use
-the username and password of a user with the privilege to write to the target repository.
+NOTE: <<ex-sites-deploy-credentials>> uses the default `admin` username and password. For real world usage you
+would use the username and password of a user with the privilege to write to the target repository.
 
-==== Publishing a Maven Site to Nexus
+==== Publishing a Maven Site
 
-To publish the site to the hosted raw repository in Nexus, run `mvn site-deploy` from the `sample-site` directory.  The
-Maven site plugin will deploy this site to Nexus using the credentials stored in your Maven settings:
+To publish the site to the hosted raw repository in the repository manager, run `mvn site-deploy` from the
+`sample-site` directory.  The Maven site plugin will deploy this site to the repository using the credentials
+stored in your Maven settings:
 
-.Sample Maven Log from Deploying a Site to Nexus
+.Sample Maven Log from Deploying a Site
 ----
 $ mvn site-deploy
 [INFO] Scanning for projects...
@@ -156,47 +159,48 @@ http://localhost:8081/repository/site/ - Session: Disconnected
 Once the site has been published, you can load the site in a browser by going to
 http://localhost:8081/repository/site/index.html[http://localhost:8081/repository/site/index.html].
 
-.Maven-Created Sample Site Hosted in Nexus Raw Repository
+.Maven-Created Sample Site Hosted in a Raw Repository
 image::figs/web/sites-sample-site.png[scale=60]
 
 
 TIP: A complete Maven project example can be found in the
-https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x/maven/simple-project[Nexus book examples].
+https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x/maven/simple-project[documentation book examples].
 
 === Proxying and Grouping Raw Repositories
 
-Beside the common use case using hosted raw repositories for site deployments, Nexus supports proxying as well as
-grouping of raw repositories.
+Beside the common use case using hosted raw repositories for site deployments, the repository manager supports
+proxying as well as grouping of raw repositories.
 
 The creation follows the same process as documented in <<admin-repositories>> using the 'raw (proxy)' and the 'raw
 (group)' recipes.
 
-A raw proxy repository can be used to proxy any static website. This includes a Maven site hosted in a raw repository in
-another Nexus server or a plain static website hosted on another web server like Apache httpd. It can also be used to
-proxy directory structures exposed via a web server to distribute archives such as `https://nodejs.org/dist/`.
+A raw proxy repository can be used to proxy any static website. This includes a Maven site hosted in a raw
+repository in another {pro} server or a plain static website hosted on another web server like Apache httpd. It
+can also be used to proxy directory structures exposed via a web server to distribute archives such as
+`https://nodejs.org/dist/`.
 
 NOTE: No content is modified when proxied. This means that e.g., any absolute URL used with HTML document remain
 absolute and therefore bypass the proxying mechanism.
 
-Grouping raw repositories is possible and can e.g., be used to aggregate multiple site repositories. However keep in
-mind that the raw format does not contain any logic to resolve conflicts between the different repositories in the
-group. Any request to the group causes Nexus to check the member repositories in order and return the first matching
-content.
+Grouping raw repositories is possible and can e.g., be used to aggregate multiple site repositories. However keep
+in mind that the raw format does not contain any logic to resolve conflicts between the different repositories in
+the group. Any request to the group causes the repository manager to check the member repositories in order and
+return the first matching content.
 
 === Uploading Files to Hosted Raw Repositories
 
-Many other tools, besides using Maven, can be used to upload files to a hosted raw repository. A simple HTTP PUT can
-upload files. The following example uses the `curl` command and the default credentials of the `admin` user to upload a
-`test.png` file to a hosted raw repository with the name `documentation`.
+Many other tools, besides using Maven, can be used to upload files to a hosted raw repository. A simple HTTP PUT
+can upload files. The following example uses the `curl` command and the default credentials of the `admin` user to
+upload a `test.png` file to a hosted raw repository with the name `documentation`.
 
 .An Example Upload Command Using `curl`: 
 ----
 curl -v --user 'admin:admin123' --upload-file ./test.png http://localhost:8081/repository/documentation/test.png 
 ----
 
-After a completed upload Nexus provides the file at the URL
-`http://localhost:8081/repository/documentation/test.png`. Using this approach in a script entire static websites or any
-other binary resources can be uploaded.
+After a completed upload the repository manager provides the file at the URL
+`http://localhost:8081/repository/documentation/test.png`. Using this approach in a script entire static websites
+or any other binary resources can be uploaded.
 
 ////
 /* Local Variables: */
