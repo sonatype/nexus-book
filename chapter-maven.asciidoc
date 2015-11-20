@@ -5,26 +5,26 @@
 [[maven-introduction]]
 === Introduction
 
-Historically Nexus started as a repository manager supporting the Maven repository format. While it supports many other
-repository formats now, the Maven repository format is still the most common and well supported format for build and
-provisioning tools running on the JVM and beyond.
+Historically {pro} started as a repository manager supporting the Maven repository format. While it supports many
+other repository formats now, the Maven repository format is still the most common and well supported format for
+build and provisioning tools running on the JVM and beyond.
 
-This chapter shows example configurations for using Nexus with a Maven and number of other tools. The setups take
-advantage of Nexus merging many repositories and exposing them via a repository group. Setting this up is documented in
-the chapter in addition to the configuration used by specific tools.
+This chapter shows example configurations for using {pro} with a Maven and number of other tools. The setups take
+advantage of the repository manager merging many repositories and exposing them via a repository group. Setting
+this up is documented in the chapter in addition to the configuration used by specific tools.
 
 
 [[maven-sect-single-group]]
 === Apache Maven
 
-To use Nexus with http://maven.apache.org/[Apache Maven], we configure Maven to check Nexus instead of the default,
-built-in connection to the Central Repository.
+To use repository manager with http://maven.apache.org/[Apache Maven], we configure Maven to check the repository
+manager instead of the default, built-in connection to the Central Repository.
 
-To do this, you add a +mirror+ configuration and override the default configuration for the +central+ repository in your
-+~/.m2/settings.xml+ as shown in <<ex-maven-nexus-simple>>.
+To do this, you add a +mirror+ configuration and override the default configuration for the +central+ repository
+in your +~/.m2/settings.xml+ as shown in <<ex-maven-nexus-simple>>.
 
-.Listing: Configuring Maven to Use a Single Nexus Group
-anchor:ex-maven-nexus-simple[Listing: Configuring Maven to Use a Single Nexus Group]
+.Listing: Configuring Maven to Use a Single Repository Group
+anchor:ex-maven-nexus-simple[Listing: Configuring Maven to Use a Single Repository Group]
 ----
 <settings>
   <mirrors>
@@ -67,18 +67,18 @@ anchor:ex-maven-nexus-simple[Listing: Configuring Maven to Use a Single Nexus Gr
 
 In <<ex-maven-nexus-simple>>, we have defined a single profile called +nexus+. It configures a +repository+ and a
 +pluginRepository+ with the id +central+ that overrides the same repositories in the super pom. The super pom is
-internal to every Apache Maven install and establishes default values. These overrides are important since they change
-the repositories by enabling snapshots and replacing the URL with a bogus URL. This URL is overridden by the +mirror+
-setting in the same settings.xml file to point to the URL of your single Nexus group. This Nexus group can, therefore,
-contain release as well as snapshot components and Maven will pick them up.
+internal to every Apache Maven install and establishes default values. These overrides are important since they
+change the repositories by enabling snapshots and replacing the URL with a bogus URL. This URL is overridden by
+the +mirror+ setting in the same settings.xml file to point to the URL of your single repository group. This
+repository group can, therefore, contain release as well as snapshot components and Maven will pick them up.
 
 The +mirrorOf+ pattern of +*+ causes any repository request to be redirected to this mirror and to your single
 repository group, which in the example is the +public+ group.
 
-It is possible to use other patterns in the mirrorOf field. A possible valuable setting is to use +external:*+. This
-matches all repositories except those using +localhost+ or file based repositories. This is used in conjunction with a
-repository manager when you want to exclude redirecting repositories that are defined for integration testing. The
-integration test runs for Apache Maven itself require this setting.
+It is possible to use other patterns in the mirrorOf field. A possible valuable setting is to use
++external:*+. This matches all repositories except those using +localhost+ or file based repositories. This is
+used in conjunction with a repository manager when you want to exclude redirecting repositories that are defined
+for integration testing. The integration test runs for Apache Maven itself require this setting.
 
 More documentation about mirror settings can be found in the
 http://maven.apache.org/guides/mini/guide-mirror-settings.html[mini guide on the Maven web site].
@@ -89,10 +89,10 @@ As a last configuration the +nexus+ profile is listed as an active profile in th
 [[ant-ivy]]
 === Apache Ant and Apache Ivy
 
-http://ant.apache.org/ivy/[Apache Ivy] is a dependency manager often used in Apache Ant builds. It supports the Maven
-repository format and can be configured to download dependencies that can be declared in the +ivy.xml+ file. This
-configuration can be contained in the +ivysettings.xml+. A minimal example for resolving dependencies from a Nexus
-server running on +localhost+ is shown in <<ivysettings-minimal>>.
+http://ant.apache.org/ivy/[Apache Ivy] is a dependency manager often used in Apache Ant builds. It supports the
+Maven repository format and can be configured to download dependencies that can be declared in the +ivy.xml+
+file. This configuration can be contained in the +ivysettings.xml+. A minimal example for resolving dependencies
+from a repository manager running on +localhost+ is shown in <<ivysettings-minimal>>.
 
 anchor:ivysettings-minimal[Listing: Minimal Ivy Configuration in an Ant file]
 Listing: Minimal Ivy Configuration in an Ant file
@@ -109,12 +109,14 @@ Listing: Minimal Ivy Configuration in an Ant file
 
 These minimal settings allow the +ivy:retrieve+ task to download the declared dependencies.
 
-To deploy build outputs to a Nexus repository with the +ivy:publish+ task, user credentials and the URL of the target
-repository have to be added to +ivysettings.xml+ and the makepom and publish tasks have to be configured and invoked.
+To deploy build outputs to a repository with the +ivy:publish+ task, user credentials and the URL of the target
+repository have to be added to +ivysettings.xml+ and the makepom and publish tasks have to be configured and
+invoked.
 
-Full example projects can be found in the +ant-ivy+ folder of the https://github.com/sonatype/nexus-book-examples[Nexus
-book examples project] in the +nexus-3.0.x+ branch. A full build of the +simple-project+, including downloading the
-declared dependencies and uploading the build output to Nexus can be invoked with
+Full example projects can be found in the +ant-ivy+ folder of the
+https://github.com/sonatype/nexus-book-examples[documentation examples project] in the +nexus-3.0.x+ branch. A
+full build of the +simple-project+, including downloading the declared dependencies and uploading the build output
+to the repository manager can be invoked with
 
 ----
 cd ant-ivy/simple-project
@@ -131,11 +133,11 @@ Further details about using these example projects can be found in
 === Apache Ant and Eclipse Aether
 
 http://www.eclipse.org/aether/[Eclipse Aether] is the dependency management component used in Apache Maven 3+. The
-project provides Ant tasks that can be configured to download dependencies that can be declared in +pom.xml+ file or in
-the Ant build fiel directly.
+project provides Ant tasks that can be configured to download dependencies that can be declared in +pom.xml+ file
+or in the Ant build fiel directly.
 
-This configuration can be contained in your Ant +build.xml+ or a separate file that is imported. A minimal example for
-resolving dependencies from a Nexus server running on +localhost+ is shown in <<aether-minimal>>.
+This configuration can be contained in your Ant +build.xml+ or a separate file that is imported. A minimal example
+for resolving dependencies from a repository manager running on +localhost+ is shown in <<aether-minimal>>.
 
 anchor:aether-minimal[Listing: Minimal Aether Configuration in an Ant file]
 .Listing: Minimal Aether Configuration in an Ant file
@@ -153,13 +155,13 @@ anchor:aether-minimal[Listing: Minimal Aether Configuration in an Ant file]
 
 These minimal settings allow the +aether:resolve+ task to download the declared dependencies.
 
-To deploy build outputs to a Nexus repository with the +aether:deploy+ task, user authentication and details about the
+To deploy build outputs to a repository with the +aether:deploy+ task, user authentication and details about the
 target repositories have to be added .
 
 Full example projects can be found in the +ant-aether+ folder of the
-https://github.com/sonatype/nexus-book-examples[Nexus book examples project] in the +nexus-3.0.x+ branch. A full build
-of the +simple-project+, including downloading the declared dependencies and uploading the build output to Nexus can be
-invoked with
+https://github.com/sonatype/nexus-book-examples[documentation examples project] in the +nexus-3.0.x+ branch. A
+full build of the +simple-project+, including downloading the declared dependencies and uploading the build output
+to the repository manager can be invoked with
 
 ----
 cd ant-aether/simple-project
@@ -190,7 +192,7 @@ repositories {
 
 These minimal settings allow Gradle to download the declared dependencies.
 
-To deploy build outputs to a Nexus repository with the +uploadArchives+ task, user authentication can be declared in
+To deploy build outputs to a repository with the +uploadArchives+ task, user authentication can be declared in
 e.g., +gradle.properties+:
 
 ----
@@ -217,9 +219,10 @@ uploadArchives {
 ----
 
 
-Full example projects can be found in the +gradle+ folder of the https://github.com/sonatype/nexus-book-examples[Nexus
-book examples project] in the +nexus-3.0.x+ branch. A full build of the +simple-project+, including downloading the
-declared dependencies and uploading the build output to Nexus can be invoked with
+Full example projects can be found in the +gradle+ folder of the
+https://github.com/sonatype/nexus-book-examples[documentation book examples project] in the +nexus-3.0.x+
+branch. A full build of the +simple-project+, including downloading the declared dependencies and uploading the
+build output to the repository manager can be invoked with
 
 ----
 cd gradle/simple-project
@@ -246,11 +249,11 @@ resolvers += "Nexus" at "http://localhost:8081/repository/maven-public/"
 
 These minimal settings allow sbt to download the declared dependencies.
 
-To deploy build outputs to a Nexus repository with the +publish+ task, user credentials can be declared in the
+To deploy build outputs to a repository with the +publish+ task, user credentials can be declared in the
 +build.sbt+ file:
 
 ----
-credentials += Credentials("Sonatype Nexus Repository Manager",
+credentials += Credentials("Nexus Repository Manager",
 "nexus.scala-tools.org", "admin", "admin123")
 ----
 
@@ -297,9 +300,9 @@ anchor:leiningen-minima[Listing: Leiningen Configuration]
 
 These minimal settings allow Leiningen to download the declared dependencies.
 
-To deploy build outputs to a Nexus repository with the +deploy+ command, the target repositories have to be add to
-+project.clj+ as +deploy-repositories+. This avoids Leiningen checking for dependencies in these repositories, which is
-not necessary, since they are already part of the Nexus +public+ repository group used in +mirrors+.
+To deploy build outputs to a repository with the +deploy+ command, the target repositories have to be add to
++project.clj+ as +deploy-repositories+. This avoids Leiningen checking for dependencies in these repositories,
+which is not necessary, since they are already part of the +public+ repository group used in +mirrors+.
 
 ----
   :deploy-repositories [
