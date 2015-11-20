@@ -1,25 +1,25 @@
 [[install]]
-== Installing and Running Nexus
+== Installing and Running {pro}
 
 [[install-introduction]]
 === Introduction
 
-Nexus is a Java application that requires a Java Runtime Environment. When you run Nexus, you are running a server
-application with a web-based user interface.  The Nexus application runs with the Eclipse Jetty servlet container
-and Apache Karaf OSGi-container. 
+{pro} is a Java application that requires a Java Runtime Environment. When you run {pro} or {oss}, you are running
+a server application with a web-based user interface.  The application itself runs with the Eclipse Jetty servlet
+container and Apache Karaf OSGi-container.
 
-Installation is a simple process. This chapter provides further details to get started with Nexus and keep it
-running successfully in production deployments.
+Installation is a simple process. This chapter provides further details to get started and keep the repository
+manager running successfully in production deployments.
 
-WARNING: Currently Nexus 3 is a pre-release application and running it for production usage is not recommended.
+WARNING: Currently {pro}  3.0 is a pre-release application and running it for production usage is not recommended.
 
 [[install-sect-downloading]]
-=== Downloading Nexus
+=== Downloading
 
-Nexus can be downloaded from https://support.sonatype.com/forums/23079216[Sonatype]. Bundles are available for the
+{oss} can be downloaded from https://support.sonatype.com/forums/23079216[Sonatype]. Bundles are available for the
 64-bit versions for Apple OSX, Microsoft Windows and Unix/Linux. They contain all necessary resources to install and run
-Nexus. You can download a plain archive file or an installer for your operating system of a specific release
-version of Nexus.
+the repository manager. You can download a plain archive file or an installer for your operating system of a specific release
+version.
 
 The plain archive files are Gzip TAR (TGZ) or ZIP files and are suitable for installation without a graphical user
 interface purely using command line-based interaction. The file names include operating system qualifiers and are
@@ -48,8 +48,8 @@ documented in <<installation-archive>> and <<installation-installer>>.
 
 === Java Runtime Environment
 
-{nexus} requires a Java 8 Runtime Environment (JRE) from Oracle. The install bundles for OSX and Windows include suitable
-runtime environments for the specific operating system.
+{pro} requires a Java 8 Runtime Environment (JRE) from Oracle. The install bundles for OSX and Windows include
+suitable runtime environments for the specific operating system.
 
 If you prefer to use an external runtime or use a Unix operating system, we recommend to use the latest version of
 Java 8 available from the http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle website].
@@ -64,20 +64,20 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
 ----
 
 When multiple JDK or JRE versions are installed, you need to ensure the correct version is configured by running
-the above command as the operating system user, that is used to run Nexus. Potentially you need to update the
-configuration to specify a specific JRE installation path.
+the above command as the operating system user, that is used to run the repository manager. Potentially you need
+to update the configuration to specify a specific JRE installation path.
 
 TIP: OpenJDK or other Java distributions or older Java versions are not supported.
 
 [[installation-archive]]
 ===  Installing and Running with the Bundle Archive
 
-The bundle archives combine the Nexus application and all required resources in an archive
-file. Installing and running Nexus is straightforward. Simply unpack the Nexus bundle archive in a directory, to
-which you have full access. 
+The bundle archives combine the application and all required resources in an archive file. Installing and running
+{pro} is straightforward. Simply unpack the bundle archive in a directory, to which you have full access.
 
-If you are installing Nexus on a local workstation to give it a test run, you can install it in your home
-directory or wherever you like. Nexus doesn't have any hard-coded directories and will run from any directory.
+If you are installing the repository manager on a local workstation to give it a test run, you can install it in
+your home directory or wherever you like. {pro} doesn't have any hard-coded directories and will run from any
+directory.
 
 You can extract the archive ZIP for Windows with any archiving tool like http://www.7-zip.org/download.html[7zip]
 or on the command line with e.g.  
@@ -87,8 +87,8 @@ or on the command line with e.g.
 $ 7za.exe e nexus-{version-exact}-win64.zip
 ----
 
-On Windows you should install Nexus outside +Program Files+ to avoid problems with Windows file registry
-virtualization. If you plan to run the repository manager as a specific user you can install it into the
+On Windows you should install the repository manager outside +Program Files+ to avoid problems with Windows file
+registry virtualization. If you plan to run the repository manager as a specific user you can install it into the
 +AppData\Local+ directory of that users home directory. Otherwise simply use e.g., +C:\nexus+ or something
 similar, ensuring that the user running the application has full access.
 
@@ -107,7 +107,8 @@ The extraction process creates a directory with a number of directories inside. 
 details about these folders can be found in <<directories>>
 
 The `bin` folder contains the generic startup scripts for Unix-like platforms called `nexus`. The Windows platform
-equivalent is called `nexus.exe`. To start Nexus from the `bin` folder on a Unix-like platform like Linux use
+equivalent is called `nexus.exe`. To start the repository manager from the `bin` folder on a Unix-like platform
+like Linux use
 
 ----
 ./nexus run
@@ -119,20 +120,21 @@ The equivalent invocation on Windows requires a `/` in front of the `run` and an
 nexus.exe /run
 ----
 
-Starting Nexus with the `run` command will leave Nexus running in the current shell and display the log output.
+Starting the repository manager with the `run` command will leave it running in the current shell and display the
+log output.
 
-Nexus is fully started once you see a message like the following in the log:
+The repository manager is fully started once you see a message like the following in the log:
 
 [subs="attributes"]
 ----
-Started Sonatype Nexus OSS {version-exact}
+Started {pro} {version-exact}
 ----
 
-In order to shut down Nexus running via the `run` command, you have to press `CTRL-C`.
+In order to shut down the repository manager running via the `run` command, you have to press `CTRL-C`.
 
-The `nexus` script can be used to manage Nexus as a background application on OSX and Unix with the `start`,
-`stop`, `restart`, `force-reload` and `status` commands. The Windows `nexus.exe` command supports similar commands
-with a prefix of `/` e.g., `/run`.
+The `nexus` script can be used to manage the repository manager as a background application on OSX and Unix with
+the `start`, `stop`, `restart`, `force-reload` and `status` commands. The Windows `nexus.exe` command supports
+similar commands with a prefix of `/` e.g., `/run`.
 
 Once the repository manager is started you can access the user interface as details in <<access>>.
 
@@ -153,55 +155,54 @@ Unix:: Run the `.sh` file in a command line window or double-clicking on it. Thi
 application user interface. Passing the `-c` option allows you to run the installer purely in the command line
 window.
 
-The installer application guides you through multiple steps to get Nexus installed:
+The installer application guides you through multiple steps to get the repository manager installed:
 
 Welcome:: Press 'Next' after reading the instructions to proceed.
 
-Installation Type:: Select the edition of Nexus you want to install.
+Installation Type:: Select the edition you want to install.
 
-Destination Directory:: Configure the directory into which the Nexus application will be installed. The user
-running the installer and the user that will run the Nexus application have to have full access to the specified
-directory.
+Destination Directory:: Configure the directory into which the application will be installed. The user running the
+installer and the user that will run the application have to have full access to the specified directory.
 
-Data Directory:: Configure the directory for all the data stored by Nexus including configuration, repository and
-component data.
+Data Directory:: Configure the directory for all the data stored by the repository manager including
+configuration, repository and component data.
 
 Options:: Configure 'HTTP', 'JVM' and 'Service'-related aspects. The 'HTTP' configuration allows you to configure
 the 'HTTP Port', the 'HTTP Host' and the 'Context Path'. 
 +
 The port defaults to 8081 and can be set to any available port in your organization. The host defaults to 0.0.0.0,
-which means that Nexus will be available via any IP number assigned to the server. The context path defaults to
-the root context, but can be configured to other paths such as `/nexus`.
+which means that the repository manager will be available via any IP number assigned to the server. The context
+path defaults to the root context, but can be configured to other paths such as `/nexus`.
 +
 The 'JVM'  configuration includes 'Initial Heap' and 'Maximum Heap' parameters. The 'Select JVM' checkbox allows
 you to activate an additional setup step, that will allow you to use a specific JVM installation instead of the
 bundled JVM.
 + 
-The 'Service' configuration allows you to start the Nexus repository manager as part of the installation process.
+The 'Service' configuration allows you to start the repository manager as part of the installation process.
 
 License Agreement::  Read and accept the license agreement with the checkbox and press 'Install' to proceed.
 
 After the extraction of all required assets into the configured directories a last step allows you to create a
 desktop icon and open the application. Press 'Finish' to complete the installation.
 
-If you selected to start the application, your web-browser will be started and the Nexus web interface detailed in
+If you selected to start the application, your web-browser will be started and the user interface detailed in
 <<access>> will be accessible.
 
 [[access]]
-=== Accessing the Nexus User Interface
+=== Accessing the User Interface
 
 Once the repository manager is started, the application is listening on the configured IP address range and
-port. By default any IP address and port 8081 are used. To access the Nexus web application, fire up a web browser
-and type in the URL http://serveripaddress:port[http://serveripaddress:port]
-e.g. http://localhost:8081/[http://localhost:8081/]. If Nexus started up successfully and network settings allow
-you to connect to the server, the user interface looks similar to <<fig-nexus-ui-initial>>.
+port. By default any IP address and port 8081 are used. To access the web application user interface, fire up a
+web browser and type in the URL http://serveripaddress:port[http://serveripaddress:port]
+e.g. http://localhost:8081/[http://localhost:8081/]. If the repository manager started up successfully and network
+settings allow you to connect to the server, the user interface looks similar to <<fig-nexus-ui-initial>>.
 
 [[fig-nexus-ui-initial]]
-.Initial Nexus User Interface
+.Initial User Interface
 image::figs/web/ui-overview-anonymous.png[scale=45]
 
-While we use +localhost+ throughout this documentation, you may need to use the IP Loopback Address of 
-+127.0.0.1+, the IP address or the DNS hostname assigned to the machine running Nexus.
+While we use +localhost+ throughout this documentation, you may need to use the IP Loopback Address of
++127.0.0.1+, the IP address or the DNS hostname assigned to the machine running the repository manager.
 
 Next steps after successfully accessing the user interface are detailed in <<using>>, <<admin>> and following
 chapters.
@@ -209,7 +210,7 @@ chapters.
 [[directories]]
 === Installation Directories
 
-An installation of the Nexus repository manager includes a number of nested directories: 
+An installation of the repository manager includes a number of nested directories: 
 
 [subs="attributes"]
 ----
@@ -227,8 +228,8 @@ system
 
 `LICENSE.txt and NOTICE.txt`:: contain legal details about the license and copyright notices.
 `bin`::  contains the `nexus` startup script itself as well as startup-related  configuration files.
-`data`:: This directory contains all of the repository and configuration data for Nexus. By default from an
-archive bundle install, this directory is nested within the Nexus-installation directory. If you desire to
+`data`:: This directory contains all of the repository and configuration data. By default from an
+archive bundle install, this directory is nested within the installation directory. If you desire to
 separate the application files from the actual data you can customize the location of the +data+ directory. This
 can be achieved by setting the `nexus-work` property in the configuration file `etc/org.sonatype.nexus.cfg`
 to an absolute path e.g. `nexus-work=/opt/nexus-data`.
@@ -238,22 +239,22 @@ TBD... should this be documented or is it needed or should it be removed from th
 ////
 `etc` :: contains configuration files.
 `lib` :: contains binary libraries related to Apache Karaf.
-`public`:: contains public resources of the Nexus application.
-`system`:: contains all components and plugins that constitute the Nexus application.
+`public`:: contains public resources of the  application.
+`system`:: contains all components and plugins that constitute the application.
 
 
 [[configure-runtime]]
-=== Configuring the Runtime Environment for Nexus
+=== Configuring the Runtime Environment
 
 Configuring the specifics of the repository manager runtime involves configuration for all components in various
 configuration files and startup scripts. This section details these and provides recipes for specific tasks.
 
-The startup of the JVM running Nexus is managed via files in the `bin` directory within the Nexus installation. 
-Nexus startup is performed with the JVM configured via the `JAVA_HOME` environment variable and the configuration 
-in the file `bin\setenv` .
+The startup of the JVM running the repository manager is managed via files in the `bin` directory within the
+installation.  The application startup is performed with the JVM configured via the `JAVA_HOME` environment
+variable and the configuration in the file `bin\setenv` .
 
-The main location for further configuration files is the `etc` directory within the Nexus installation. It 
-numerous files including specifically:
+The main location for further configuration files is the `etc` directory within the installation. It numerous
+files including specifically:
 
 config.properties:: The main configuration for the Apache Karaf runtime. This file should 'not' be modified.
 
@@ -264,7 +265,7 @@ jetty-*.xml:: A number of configuration files for Eclipse Jetty
 
 org.apache.* and org.ops4j.*:: Various Karaf and OSGi related configuration files.
 
-org.sonatype.nexus.cfg:: Main configuration file for the Nexus application allowing you to configure aspects 
+org.sonatype.nexus.cfg:: Main configuration file for the application allowing you to configure aspects 
 such as ports used for HTTP and HTTPS access, location of the data and configuration storage as well as the 
 context path and host.
 
