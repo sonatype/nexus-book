@@ -16,29 +16,29 @@ https://hub.docker.com/[Docker Hub] is the original registry for Docker containe
 more and more other publicly available registries such as the https://cloud.google.com/container-registry/[Google
 Container Registry] and others.
 
-Nexus supports Docker registries as the Docker repository format for hosted and proxy repositories. You can then
-expose these repositories to the client-side tools directly or as a repository group, which is a repository that
-merges and exposes the contents of multiple repositories in one convenient URL.
+{pro} and {oss} support Docker registries as the Docker repository format for hosted and proxy repositories. You
+can then expose these repositories to the client-side tools directly or as a repository group, which is a
+repository that merges and exposes the contents of multiple repositories in one convenient URL.
 
 This allows you to reduce time and bandwidth usage for accessing Docker images in a registry as well as share your
 images within your organization in a hosted repository. Users can then launch containers based on those images,
-resulting in a completely private Docker registry with all the features available in the Nexus Repository Manager.
+resulting in a completely private Docker registry with all the features available in the repository manager.
 
 [[docker-ssl-connector]]
 === SSL and Docker Connector Configuration
 
 Docker relies on secure connections using SSL to connect to the repositories. You are therefore required to expose
-Nexus to your client tools via HTTPS. This can be configured via an external proxy server or directly with
-Nexus. Further details can be found in <<ssl-inbound>>.
+the repository manager to your client tools via HTTPS. This can be configured via an external proxy server or
+directly with the repository manager. Further details can be found in <<ssl-inbound>>.
 
-Interaction of the Docker client with Docker repositories requires specific ports to be used. These can be
-configured in the repository configuration for Docker repositories in the 'Docker Connectors' section. In order
-for this to work on your network, you need to ensure that the chosen ports are available in your organization and
-not used by some other application, and that no firewall or other network configuration prevents connectivity.
+Interaction of the `docker` client with repositories requires specific ports to be used. These can be configured
+in the repository configuration in the 'Docker Connectors' section. In order for this to work on your network, you
+need to ensure that the chosen ports are available in your organization and not used by some other application,
+and that no firewall or other network configuration prevents connectivity.
 
-NOTE: The Docker client does not allow a context as part of the path to a registry, as the namespace and image
- name are embedded in the URLs it uses. This is why requests for Docker repositories on Nexus are served on a
- specific and separate port from the rest of the application instead of how most other Nexus repositories serve
+NOTE: The `docker` client does not allow a context as part of the path to a registry, as the namespace and image
+ name are embedded in the URLs it uses. This is why requests to repositories on the repository manager are served
+ on a specific and separate port from the rest of the application instead of how most other repositories serve
  content via a path i.e. `<nexus-hostname>/<repositoryName>/<path to content>`.
 
 The recommended minimal configuration requires one port for a Docker repository group used for read access to all
@@ -50,15 +50,15 @@ proxy and hosted Docker repositories as well as Docker repository groups.
 .Docker Connector Configuration
 image::figs/web/docker-connectors.png[scale=50]
 
-If you have configured Nexus to use HTTPS directly, you have to configure a HTTPS docker connector. If an external
-proxy server translates incoming HTTPS requests to HTTP and forwards the request to Nexus via HTTP you have to
-configure the respective HTTP port.
+If you have configured the repository manager to use HTTPS directly, you have to configure a HTTPS docker
+connector. If an external proxy server translates incoming HTTPS requests to HTTP and forwards the request to the
+repository manager via HTTP you have to configure the respective HTTP port.
 
-TIP: A configured context-path for the Nexus user interface does not affect the Docker connector URLs. E.g. if
-your Nexus instance is configured to be available at http://localhost:8081/nexus instead of the default root
-context http://localhost:8081/, the URLs for your Docker repositories will still only use the configured port for
-the repository and omit the context path in the URL. This is a side-effect of the the fact that Docker does not
-support context paths in the registry API.
+TIP: A configured context-path for the user interface does not affect the Docker connector URLs. E.g. if your
+repository manager instance is configured to be available at http://localhost:8081/nexus instead of the default
+root context http://localhost:8081/, the URLs for your Docker repositories will still only use the configured port
+for the repository and omit the context path in the URL. This is a side-effect of the the fact that Docker does
+not support context paths in the registry API.
 
 
 [[docker-registry-api]]
@@ -69,10 +69,9 @@ version 2 (V2). The newer V2 will completely replace the old V1 in the future. C
 registries as well as other tools use V2, but in many cases fall back to V1. E.g., search is currently only
 implemented in V1.
 
-The Nexus repository managers support V1 as well as V2 of the API. All Docker repository
-configurations contain a section to configure 'Docker Registry API Support'. If you activate 'Enable Docker V1
-API' for a repository it is enabled to use V1 as a fallback from V2. Without this option any V1 requests result in
-errors from the client tool.
+{pro} and {oss} support V1 as well as V2 of the API. All Docker repository configurations contain a section to
+configure 'Docker Registry API Support'. If you activate 'Enable Docker V1 API' for a repository it is enabled to
+use V1 as a fallback from V2. Without this option any V1 requests result in errors from the client tool.
 
 TIP: We suggest to *only* activate V1 support for repository groups that will be used for command line-based
 searches, when any client side tools in use require V1 or when a upstream proxy repository requires V1.
@@ -148,10 +147,10 @@ different versions, set the 'Deployment Policy' to 'Disable Redeploy'.
 [[docker-group]]
 === Repository Groups for Docker
 
-A repository group is the recommended way to expose all your Docker repositories for read access from Nexus to
-your users. It allows you to pull images from all repositories in the group without needing any further client
-side configuration after the initial setup. A repository group allows you to expose the aggregated content of
-multiple proxy and hosted repositories with one URL to your tools.
+A repository group is the recommended way to expose all your repositories for read access to your users. It allows
+you to pull images from all repositories in the group without needing any further client side configuration after
+the initial setup. A repository group allows you to expose the aggregated content of multiple proxy and hosted
+repositories with one URL to your tools.
 
 To create a Docker repository group, simply create a new 'docker (group)' repository as documented in
 <<admin-repositories>>.
@@ -165,9 +164,9 @@ Minimal configuration steps are:
 Typically the member list includes a mixture of proxy and hosted repositories to allow access to public as well as
 private images.
 
-Using the 'Docker Connectors' port of the repository group and the Nexus URL in your client tool gives you access
-to the container images in all repositories from the group. Any new images added as well as any new repositories
-added to the group will automatically be available.
+Using the 'Docker Connectors' port of the repository group and the URL of the repository manager in your client
+tool gives you access to the container images in all repositories from the group. Any new images added as well as
+any new repositories added to the group will automatically be available.
 
 TIP: Check out this repository configuration demonstrated in link:https://www.youtube.com/watch?v=oxCztw5MfAw[a
 video].
@@ -197,11 +196,11 @@ automations scenarios.
 
 === Accessing Repositories 
 
-You can browse Docker repositories in the Nexus user interface and inspect the components and assets and their
-details as documented in <<browse-browse>>.
+You can browse Docker repositories in the user interface and inspect the components and assets and their details
+as documented in <<browse-browse>>.
 
-When using the 'docker' command line client or any other tools using Nexus indirectly the common structure for commands can
-be:
+When using the 'docker' command line client, or any other tools using the repository manager indirectly, the
+common structure for commands can be:
 
 ----
 docker <command> <nexus-hostname>:<repository-port>/<namespace>/<image>:<tag>
@@ -212,22 +211,22 @@ docker search <nexus-hostname>:<repository-port>/<search-term>
 with
 
 command:: a docker command such a 'push' or 'pull'
-nexus-hostname:: the IP number or hostname of your Nexus server
+nexus-hostname:: the IP number or hostname of your repository manager
 repository-port:: the port configured as the Docker connector for the specific repository or repository group
 namespace:: the namespace of the specific image reflecting the owner
 image:: the name of the Docker image
 tag:: the optional tag of the image, defaulting to 'latest' when omitted
 search-term:: the search term or name of the image to search for
 
-The most important aspects are to know and use the correct hostname for the Nexus server and the port for the desired
-repository or repository group.
+The most important aspects are to know and use the correct hostname for the repository manager and the port for
+the desired repository or repository group.
 
 [[docker-search]]
 === Searching
 
-Searching for Docker images can be performed in the Nexus user interface as described in <<search-components>>. This
-search will find all Docker images that are currently stored in Nexus repositories, either because they have been pushed
-to a hosted repository or they have been proxied from an upstream repository and cached in Nexus.
+Searching for Docker images can be performed in the user interface as described in <<search-components>>. This
+search will find all Docker images that are currently stored in repositories, either because they have been pushed
+to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
 
 The more common use case for a Docker user is to search for images on the command line:
 
@@ -238,8 +237,9 @@ postgres  The PostgreSQL object-relational database... 1025   [OK]
 ...
 ----
 
-By default this search uses Docker Hub as preconfigured in Docker and will only find images available there. A
-more powerful search is provided by Nexus when searching against a Docker repository group with the syntax
+By default this search uses Docker Hub as preconfigured in `docker` and will only find images available there. A
+more powerful search is provided by the repository manager when searching against a repository group with the
+syntax
 
 ----
 docker search <nexus-hostname>:<repository-port>/<search-term>
@@ -247,12 +247,12 @@ docker search <nexus-hostname>:<repository-port>/<search-term>
 
 with
 
-nexus-hostname:: the IP number or hostname of your Nexus server
+nexus-hostname:: the IP number or hostname of your repository manager
 repository-port:: the port configured as the Docker connector for the specific repository or repository group
 search-term:: the search term or name of the image to search for
 
 
-An example looking for a `postgres` image on a Nexus server running on the host `nexus.example.com` and exposing a
+An example looking for a `postgres` image on {oss} running on the host `nexus.example.com` and exposing a
 repository group with a Docker connector port of 18443 looks like this:
 
 ----
@@ -267,9 +267,9 @@ returned from the remote repositories configured as proxy repositories in the gr
 [[docker-pull]]
 === Pulling Images
 
-Downloading images, also known as pulling, from Nexus can be performed with the Docker `pull`.  The only necessary
-additions are the hostname or IP address of the Nexus server as well as the Docker connector port for the
-repository or repository group to download from:
+Downloading images, also known as pulling, from the repository manager can be performed with the `docker pull`
+command.  The only necessary additions are the hostname or IP address of the repository manager as well as the
+Docker connector port for the repository or repository group to download from:
 
 ----
 docker pull <nexus-hostname>:<repository-port>/<image>
@@ -279,8 +279,8 @@ The preferred setup is to proxy all relevant sources of public/private images yo
 most common choice. Then configure one or more hosted repositories to contain your own images, and expose these
 repositories through one Docker group repository.
 
-Examples for various images from a Nexus server running on the host `nexus.example.com` and exposing a Docker
-repository group with a Docker connector port of 18443 are:
+Examples for various images from {oss} running on the host `nexus.example.com` and exposing a Docker repository
+group with a Docker connector port of 18443 are:
 
 ----
 docker pull nexus.example.com:18443/ubuntu
@@ -288,9 +288,9 @@ docker pull nexus.example.com:18443/bitnami/node
 docker pull nexus.example.com:18443/postgres:9.4
 ----
 
-These snippets download the official `ubuntu` image, the `node` image from the user `bitnami` and the version 9.4 of the
-`postgres` image. Official images such as `ubuntu` or `postgres` belong to the `library` user on Docker Hub and will
-therefore show up as `library/ubuntu` and `library/postgres` in Nexus.
+These snippets download the official `ubuntu` image, the `node` image from the user `bitnami` and the version 9.4
+of the `postgres` image. Official images such as `ubuntu` or `postgres` belong to the `library` user on Docker Hub
+and will therefore show up as `library/ubuntu` and `library/postgres` in the repository manager.
 
 After a successful `pull` you can start the container with `run`.
 
@@ -298,9 +298,9 @@ After a successful `pull` you can start the container with `run`.
 === Pushing Images
 
 
-Sharing an image can be achieved, by publishing it to a hosted repository in Nexus. This is completely private and
-requires you to `tag` and `push` the image. To tag an image, the image identifier (imageId) is required.  It is
-listed when showing the list of all images with `docker images`. Syntax and an example are for creating a tag are
+Sharing an image can be achieved, by publishing it to a hosted repository. This is completely private and requires
+you to `tag` and `push` the image. To tag an image, the image identifier (imageId) is required.  It is listed when
+showing the list of all images with `docker images`. Syntax and an example are for creating a tag are
 
 ----
 docker tag <imageId> <nexus-hostname>:<repository-port>/<image>:<tag>
@@ -331,16 +331,16 @@ Pushing tag for rev [af340544ed62] on
 {https://nexus.example.com:18444/repository/docker-internal/v1/repositories/hello-world/tags/labeltest}
 ----
 
-Now, this updated image is available in Nexus and can be pulled by anyone with access to the repository, or the
-repository group, containing the image. Pulling the image from the repository group exposed at port 18443 can be
-done with:
+Now, this updated image is available in the repository manager and can be pulled by anyone with access to the
+repository, or the repository group, containing the image. Pulling the image from the repository group exposed at
+port 18443 can be done with:
 
 ----
 docker pull nexus.example.com:18443/hello-world:labeltest
 ----
 
-Prior to push, and depending on your Nexus configuration, Nexus login credentials may be required before a push
-or pull can occur.
+Prior to push, and depending on your configuration, repository manager login credentials may be required before a
+push or pull can occur.
 
 TIP: Searching, Browsing, Pushing and Pulling are all showcased in
 link:https://www.youtube.com/watch?v=Z2jH9LgeeI8[this video].
