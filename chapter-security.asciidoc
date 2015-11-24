@@ -441,7 +441,7 @@ the truststore file as trusted.
 
 {inall}
 
-Providing access to the user interface and content via HTTPS is a recommended best practice for any deployment.
+Providing access to the user interface and content via HTTPS is a best practice.
 
 You have two options:
 
@@ -470,47 +470,50 @@ TBD - add link to reverse proxy setup doc once its done
 The second approach is to use the Eclipse Jetty instance that is distributed with the repository manager to accept
 HTTPS connections.
 
-TIP: Keep in mind that you will have to repeat this configuration each time you upgrade the repository manager,
-since they are modifications to the embedded Jetty instance located in '$NEXUS_HOME'.
+[[enable-https]]
+.How to Enable the HTTPS Connector
 
-To configure the repository manager to accept HTTPS connections, first enable the file +jetty-https.xml+ for the
-Jetty startup configuration in +etc/org.sonatype.nexus.cfg+ by adding
+. Create a Java keystore file at `{karaf.etc}/ssl/keystore.jks` which contains the Jetty SSL certificate to use.
+  Instructions are available on the http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html[Eclipse Jetty documentation site].
 
-----
-${karaf.etc}/jetty-https.xml
-----
+. Edit `NEXUS_HOME/etc/org.sonatype.nexus.cfg`. Add a property on a new line `application-port-ssl=8443`. Change
+  `8443` to be your preferred port on which to expose the HTTPS connector.
 
-to the `nexus-args` field.
+. Edit `NEXUS_HOME/etc/org.sonatype.nexus.cfg`. Change the `nexus-args` property comma delimited value to include
+  `{karaf.etc}/jetty-https.xml`. Save the file.
 
-Next, still in +etc/org.sonatype.nexus.cfg+, define the port you want to use for the HTTPS connection by adding 
-the +application-port-ssl+ property like
+. Restart Nexus. Verify HTTPS connections can be established.
 
-----
-application-port-ssl=8443
-----
-
-Create a keystore file containing a single certificate that Jetty will use for the HTTPS connections.  
-Instructions are available on the http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html[Eclipse 
-Jetty documentation site].
-
-Adjust the values in the +jetty-https.xml+ file to reflect your keystore settings. The default configuration in 
-that file suggests to create a subdirectory +$NEXUS_HOME/etc/ssl+ and copy the +keystore+ file in there and
-rename it to +keystore.jks+. You can either do that or choose a different location or filename for your keystore 
-file and update the paths for the +keystore+ and +truststore+ in the +jetty-https.xml+ file.  Remember to remove 
-the property pointing to the installation directory (`<Property name="nexus-base"/>`), if you want to refer 
-to an absolute path.
-
-Once this is all in place you can start up the repository manager and access the user interface at e.g.,
-+https://localhost:8443/nexus+.  If you have just created a self-signed certificate, web browsers may warn you
-about the certificate and you will have to acknowledge the fact that the certificate is self-signed. To avoid this
-behavior, you have to get a certificate signed by a signing authority or reconfigure the web browser.
+. Update the `Base URL` to use `https` in your repository manager configuration using the <<admin-system-capabilities, Base URL capability>>.
 
 TIP: This configuration process is available link:https://www.youtube.com/watch?v=YzcvU802Az8[as a video demonstration].
 
-The repository manager is now available via HTTPS. If desired you can configure automatic redirection from HTTP to
-HTTPS. This can be achieved by adding usage of `jetty-http-redirect-to-https.xml` as additional app parameters in
-+org.sonatype.nexus.cfg+. In addition you have to update or add the `Base URL` in your repository manager
-configuration using the <<admin-system-capabilities, Base URL capability>>.
+[[enable-redirect-to-https]]
+.How to Redirect All Plain HTTP Requests to HTTPS
+
+Some organizations need to remind their users that Nexus should only be used over HTTPS - redirecting HTTP
+requests to HTTPS can help.
+
+. Follow all the steps under <<enable-https,How to Enable the HTTPS Connector>>. Make sure the `nexus-args` property value still
+  includes the reference to `{karaf.etc}/jetty-http.xml`
+
+. Edit `NEXUS_HOME/etc/org.sonatype.nexus.cfg`. Change the `nexus-args` property comma delimited value to include
+  `jetty-http-redirect-to-https.xml`. Save the file.
+
+. Restart Nexus. Verify all plain HTTP requests get redirected to the equivalent HTTPS url.
+
+TIP: Redirecting HTTP requests is not recommended because it introduces implied security and creates
+increased network latency. Clients which send Basic Authorization headers preemptively may unintentionally
+expose credentials in plain text.
+
+[[disable-http]]
+.How to Disable the HTTP Connector
+
+. Edit `NEXUS_HOME/etc/org.sonatype.nexus.cfg`. Change the `nexus-args` property comma delimited value to not include
+  `{karaf.etc}/jetty-http.xml`. Save the file.
+
+. Restart Nexus. Verify plain HTTP requests are no longer serviced.
+
 
 ////
 /* Local Variables: */
