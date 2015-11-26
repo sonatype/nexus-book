@@ -65,13 +65,6 @@ Minimal configuration steps are:
 
 The npm registry information is immediately updated as packages are deployed or deleted from the repository.
 
-//// 
-TBD
-The scheduled tasks to recreate the npm metadata database based on the
-components in a hosted repository and to back up the database are
-documented in <<scheduled-tasks>>.
-////
-
 [[npm-grouping-registries]]
 === Grouping npm Registries
 
@@ -95,10 +88,6 @@ the group will automatically be available.
 
 
 === Browsing npm Registries and Searching Modules
-
-////
-TBD link to browse chapter once we got it
-////
 
 You can browse npm repositories in the user interface inspecting the components and assets and their details as
 documented in <<browse-browse>>.
@@ -124,38 +113,47 @@ registry = http://localhost:8081/repository/npm-all/
 ----
 
 With this configuration any npm commands will use the new registry from the repository manager. The command line
-output will reference the URLs:
+output will reference the URLs in `--verbose` mode or with `info` logging for the downloads of the requested packages:
 
 ----
-$ npm install bower
-npm install bower
-npm http GET http://localhost:8081/repository/npm-all/bower
-npm http 200 http://localhost:8081/repository/npm-all/bower
-npm http GET http://localhost:8081/repository/npm-all/bower-config
+$ npm --loglevel info install grunt
+...
+npm http fetch GET http://localhost:8081/repository/npmjs-org/grunt/-/grunt-0.4.5.tgz
+npm http fetch 200 http://localhost:8081/repository/npmjs-org/grunt/-/grunt-0.4.5.tgz
+...
+npm http fetch GET http://localhost:8081/repository/npm-all/underscore/-/underscore-1.7.0.tgz
+npm http fetch 200 http://localhost:8081/repository/npm-all/underscore/-/underscore-1.7.0.tgz
+
 ...
 ----
 
-By default any anonymous user has read access to the repositories and repository groups. If desired, the
-repository manager can be configured to require authentication by adding +always-auth=true+ to the +.npmrc+ file
-and adding the encoded authentication details as documented in <<npm-deploying-packages>>.
+=== npm Security
+
+By default any anonymous user has read access to the repositories and repository groups. If anonymous access, as
+documented in <<anonymous>> is disabled, or write access is required for publishing a package, the user needs to
+authenticate to the repository manager.
+
+This authentication requires the +npm Bearer Token Realm+.  Simply add the realm to the active realms in the
++Realms+ feature of the +Security+ menu from the +Administration+ menu to activate it as documented in <<realms>>.
+
+Once the realm is activated, a user can establish the authentication to a repository with the `npm login` command.
+
+----
+npm login --registry=http://localhost:8081/repository/npm-internal
+----
+
+Provide your repository manager username and password as well as your email address when prompted. Upon successful
+completion, a line for authentication of this combination is automatically added to your +.npmrc+ configuration
+file for the specific repository.
+
+Further details on +npm login+ can be found on the https://docs.npmjs.com/cli/adduser[npm website].
+
 
 [[npm-deploying-packages]]
 === Publishing npm Packages
 
 Publishing your own packages to a npm hosted repository allows you to share packages across your organization or
-with external partners.
-
-Publishing requires authentication. It can be configured for your user account using +npm login+ on the command
-line.  Provide your repository manager username and password when prompted.  Upon successful completion, a line
-for authentication of this combination is automatically added to your +.npmrc+ configuration file.  Nexus supports
-specifically targeted registries and scoped packages using +npm login+ as well, otherwise the authentication will
-be used for all registries and packages unless further authentication definitions are configured.  Details on +npm
-login+ can be seen on the https://docs.npmjs.com/cli/adduser[npm website].
-
-Using authentication to publish further requires the +npm Bearer Token Realm+. Add the realm to the active realms
-in the +Realms+ feature of the +Security+ menu from the +Administration+ menu to activate it.
-
-With authentication configured you can publish your packages with the +npm publish+ command.
+with external partners. With authentication configured you can publish your packages with the +npm publish+ command.
 
 The +npm publish+ command uses a +registry+ configuration value to know where to publish your package. There are
 several ways to change the registry value to point at your hosted npm repository.
