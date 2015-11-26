@@ -134,16 +134,17 @@ registry = http://localhost:8081/nexus/content/groups/npm-all/
 -----
 
 With this configuration any npm commands will use the new registry from the repository manager. The command line
-output will reference the URLs. E.g.
-
+output will reference the URLs in `--verbose` mode or with `info` logging for the downloads of the requested
+packages:
+ 
 ----
-$ npm install bower
-npm install bower
-npm http GET http://localhost:8081/nexus/content/groups/npm-all/bower
-npm http 200 http://localhost:8081/nexus/content/groups/npm-all/bower
-npm http GET http://localhost:8081/nexus/content/groups/npm-all/bower-config
-npm http GET http://localhost:8081/nexus/content/groups/npm-all/bower-endpoint-parser
+$ npm --loglevel info install grunt
 ...
+npm http fetch GET http://localhost:8081/repository/npmjs-org/grunt/-/grunt-0.4.5.tgz
+npm http fetch 200 http://localhost:8081/repository/npmjs-org/grunt/-/grunt-0.4.5.tgz
+...
+npm http fetch GET http://localhost:8081/repository/npm-all/underscore/-/underscore-1.7.0.tgz
+npm http fetch 200 http://localhost:8081/repository/npm-all/underscore/-/underscore-1.7.0.tgz
 ----
 
 By default any anonymous user has read access to the repositories and repository groups. If desired, the
