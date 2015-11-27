@@ -103,8 +103,9 @@ $ tar xvzf nexus-{version-exact}-unix.tar.gz
 You install the repository manager in a directory other than your users home directory. On a
 Unix machine common practice is to use `/opt`.
 
-The extraction process creates a directory with a number of directories inside. Further
-details about these folders can be found in <<directories>>
+The extraction process creates a directory with a number of directories inside. This directory is referred to as
+the 'installation directory'.  In contains the application and related resources as well as the 'data directory'
+for component and repository storage. Further details about these folders can be found in <<directories>>
 
 The `bin` folder contains the generic startup scripts for Unix-like platforms called `nexus`. The Windows platform
 equivalent is called `nexus.exe`. To start the repository manager from the `bin` folder on a Unix-like platform
@@ -162,10 +163,12 @@ Welcome:: Press 'Next' after reading the instructions to proceed.
 Installation Type:: Select the edition you want to install.
 
 Destination Directory:: Configure the directory into which the application will be installed. The user running the
-installer and the user that will run the application have to have full access to the specified directory.
+installer and the user that will run the application have to have full access to the specified directory. Further
+details about this 'installation directory' can be found in <<directories>>.
 
 Data Directory:: Configure the directory for all the data stored by the repository manager including
-configuration, repository and component data.
+configuration, repository and component data. Further details about this 'data directory' can be found in
+<<directories>>.
 
 Options:: Configure 'HTTP', 'JVM' and 'Service'-related aspects. The 'HTTP' configuration allows you to configure
 the 'HTTP Port', the 'HTTP Host' and the 'Context Path'. 
@@ -184,6 +187,9 @@ License Agreement::  Read and accept the license agreement with the checkbox and
 
 After the extraction of all required assets into the configured directories a last step allows you to create a
 desktop icon and open the application. Press 'Finish' to complete the installation.
+
+The two directories created and populated are referred to as the 'installation directory' and the 'data
+directory'. More details can be found in <<directories>>.
 
 If you selected to start the application, your web-browser will be started and the user interface detailed in
 <<access>> will be accessible.
@@ -208,9 +214,24 @@ Next steps after successfully accessing the user interface are detailed in <<usi
 chapters.
 
 [[directories]]
-=== Installation Directories
+=== Directories
 
-An installation of the repository manager includes a number of nested directories: 
+There are two main directories created and used by the repository manager.
+
+Installation directory:: This directory is contains the Nexus Repository Manager application and all the required
+additional components such as Java libraries and configuration file. The name of the directory by default uses
+`nexus-` and is appended with the version name. In this documentation it is referred to as `install-dir` in any
+code segments.
+
+Data Directory:: This directory contains all the repositories, components and other data that is being stored and
+managed by the repository manager. It is located within the installation directory by default for archive-based
+installs and called `data`. The installer application allows you to configure the location of this directory. In
+this documentation is is referred to as `data-dir` in any code segments.
+
+[[installation-directory]]
+==== Installation Directory
+
+The installation directory includes a number of nested directories:
 
 [subs="attributes"]
 ----
@@ -230,11 +251,9 @@ system
 
 `bin`::  contains the `nexus` startup script itself as well as startup-related  configuration files.
 
-`data`:: This directory contains all of the repository and configuration data. By default from an archive bundle
-install, this directory is nested within the installation directory. If you desire to separate the application
-files from the actual data you can customize the location of the +data+ directory. This can be achieved by
-updating the paths in the properties `karaf.data`, `karaf.instance`, and `java.io.tmpdir` in
-`bin/nexus.vmoptions`.
+`data`:: This 'data directory' contains all of the repository and configuration data. By default, from an archive
+bundle install, this directory is nested within the installation directory. More details can be found
+<<data-directory>>.
 
 //// 
 TBD... should this be documented or is it needed or should it be removed from the product
@@ -250,16 +269,25 @@ TBD... should this be documented or is it needed or should it be removed from th
 `system`:: contains all components and plugins that constitute the application.
 
 
+[[data-directory]]
+==== Data Directory
+
+The data directory contains subdirectories such as `blobs`, `db`, `elasticsearch` and others. These contain all
+the components, repository, configuration and other data presented by the repository manager.
+
+If you desire to separate the application files from the actual data, you can customize the location of the 'data
+directory'. This can be achieved by updating the paths in the properties `karaf.data`, `karaf.instance`, and
+`java.io.tmpdir` in `install-dir/bin/nexus.vmoptions`.
+
 [[configure-runtime]]
 === Configuring the Runtime Environment
 
 Configuring the specifics of the repository manager runtime involves configuration for all components in various
 configuration files and startup scripts. This section details these and provides recipes for specific tasks.
 
-The startup of the JVM running the repository manager is managed via files in the `bin` directory within the
+The startup of the JVM running the repository manager is managed via files in the `install-dir/bin` directory within the
 installation.  The application startup is performed with the JVM configured via the `JAVA_HOME` environment
-variable and the configuration in the file `bin/nexus.vmoptions` . This file also contains configuration options
-for the data directory e.g.
+variable and the configuration in the file `install-dir/bin/nexus.vmoptions` :
 
 ----
 -Xms256M
