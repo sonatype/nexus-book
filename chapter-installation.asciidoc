@@ -227,19 +227,26 @@ system
 ----
 
 `LICENSE.txt and NOTICE.txt`:: contain legal details about the license and copyright notices.
+
 `bin`::  contains the `nexus` startup script itself as well as startup-related  configuration files.
-`data`:: This directory contains all of the repository and configuration data. By default from an
-archive bundle install, this directory is nested within the installation directory. If you desire to
-separate the application files from the actual data you can customize the location of the +data+ directory. This
-can be achieved by setting the `nexus-work` property in the configuration file `etc/org.sonatype.nexus.cfg`
-to an absolute path e.g. `nexus-work=/opt/nexus-data`.
+
+`data`:: This directory contains all of the repository and configuration data. By default from an archive bundle
+install, this directory is nested within the installation directory. If you desire to separate the application
+files from the actual data you can customize the location of the +data+ directory. This can be achieved by
+updating the paths in the properties `karaf.data`, `karaf.instance`, and `java.io.tmpdir` in
+`bin/nexus.vmoptions`.
+
 //// 
 TBD... should this be documented or is it needed or should it be removed from the product
 `deploy`:: is empty. 
 ////
+
 `etc` :: contains configuration files.
+
 `lib` :: contains binary libraries related to Apache Karaf.
+
 `public`:: contains public resources of the  application.
+
 `system`:: contains all components and plugins that constitute the application.
 
 
@@ -251,7 +258,24 @@ configuration files and startup scripts. This section details these and provides
 
 The startup of the JVM running the repository manager is managed via files in the `bin` directory within the
 installation.  The application startup is performed with the JVM configured via the `JAVA_HOME` environment
-variable and the configuration in the file `bin\setenv` .
+variable and the configuration in the file `bin/nexus.vmoptions` . This file also contains configuration options
+for the data directory e.g.
+
+----
+-Xms256M
+-Xmx768M
+-XX:+UnlockDiagnosticVMOptions
+-XX:+UnsyncloadClass
+-Djava.net.preferIPv4Stack=true
+-Dkaraf.home=.
+-Dkaraf.base=.
+-Dkaraf.etc=etc
+-Djava.util.logging.config.file=etc/java.util.logging.properties
+-Dkaraf.data=data
+-Dkaraf.instances=data/instances
+-Djava.io.tmpdir=data/tmp
+-Dkaraf.startLocalConsole=false
+----
 
 The main location for further configuration files is the `etc` directory within the installation. It numerous
 files including specifically:
