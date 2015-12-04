@@ -1,7 +1,11 @@
-import airspeed
 import glob
 import os
 import argparse
+
+import sys
+
+sys.path.insert(0, "airspeed")
+import airspeed
 
 parser = argparse.ArgumentParser(description='Script to wrap produces html into template for site deployment')
 parser.add_argument('-p','--path',help='Path in which to do the replacement', required=True)
