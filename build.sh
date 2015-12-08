@@ -28,5 +28,5 @@ a2x  -k -fpdf -dbook --xsl-file=docbook-xsl/fo.xsl --dblatex-opts="-P toc.sectio
 echo "done"
 
 echo "Building multi page html version of eval guide"
-a2x  -k -a promo -fchunked --xsl-file=docbook-xsl/custom-chunked.xsl --xsltproc-opts "--stringparam chunk.section.depth 1 --stringparam toc.section.depth 1" -dbook --dblatex-opts=" -P doc.lot.show=  -P latex.output.revhistory=0 -P doc.publisher.show=0" -D target sonatype-nexus-eval-guide.asciidoc
+a2x  -k -a promo -fchunked --xsl-file=docbook-xsl/custom-chunked.xsl --xsltproc-opts "--stringparam chunk.section.depth 0 --stringparam toc.section.depth 1" -dbook --dblatex-opts=" -P doc.lot.show=  -P latex.output.revhistory=0 -P doc.publisher.show=0" -D target sonatype-nexus-eval-guide.asciidoc
 echo "done"
