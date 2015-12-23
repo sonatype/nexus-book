@@ -1,0 +1,157 @@
+[[rhc]]
+== Repository Health Check
+
+[[rhc-introduction]]
+=== Introduction
+
+{rhc} is a feature of {pro} and {oss} that integrates data from the {ds}.
+
+{rhc} provides access to a limited subset of the available data right in your repository manager. The {ds} expose 
+known data about the components in proxy repositories, including license information, security vulnerability 
+data, and other statistics like relative usage popularity and age. {rhc} allows you to examine a high level 
+overview of the available security and license data of open source components in an analyzed repository.
+
+When enabled, {rhc} analyzes all components found in a proxy repository regardless of the format. The Maven 2 
+format repositories need to have a 'Version policy' of type 'Release' configured to be scanned. Availability of 
+component metadata varies depending on the format and is constantly improved via updates to the {ds}.
+
+NuGet proxy repositories support {rhc} and identification of components is performed. Some license or security
+data is provided as well. Support for NPM repositories has similar restrictions. 
+
+[[rhc-config]]
+=== Configuring {rhc}
+
+==== Configuration Per Repository
+
+{rhc} can be setup for any repository, as long as the following apply:
+
+* The repository 'Type' is 'Proxy'.
+* If 'Format' is 'maven2', the repository 'Version policy' is 'Release'.
+
+NOTE: If the repository is in 'Status' of 'Offline' you can run the health check analysis however it will not complete until the repository is 'Online'.
+
+{rhc} for a single repository can be enabled in one of two ways. The quickest way is to simply click the 
+'Analyze' button available in the list of repositories. After pressing this button, you will be prompted to 
+either analyze all or only the selected repository.
+
+Alternatively, you can select the repository in the list of repositories and then click the 'Enable HealthCheck' 
+button.
+
+Once enabled, a task that performs the initial analysis is created and started. This task uses the identifier of 
+the repository and the prefix 'Health Check:' as a name and is configured to run regularly. New component data is 
+supplied by the {ds} to {pro} daily. The recurrence frequency can be changed in the scheduled task administration 
+described in <<admin-system-tasks>>. Disabling health check for a specific repository removes this scheduled task 
+automatically. You can also remove these tasks manually however adding them cannot be done through the tasks 
+administration and must be done as described above.
+
+After a successful analysis and page refresh, the 'Health Check' column in the list of repositories will display 
+security and license issue counts for the repository. An example is displayed in <<fig-rhc-repo-list-quality>>. 
+
+[[fig-rhc-repo-list-quality]]
+.The Repositories List with Health Check Result Counts
+image::figs/web/rhc-repo-list.png[scale=50]
+
+Hovering your mouse pointer over that value will display the 'Repository Health Check' summary data in a pop-up 
+window. A sample window from {pro} is displayed in <<fig-rhc-summary-pop-up>>.
+
+[[fig-rhc-summary-pop-up]]
+.A Result Summary for a {rhc}
+image::figs/web/rhc-summary-report.png[scale=40]
+
+At the bottom of the summary modal, {pro} users can click the link 'View Detailed Report' to access the 
+detailed report. It will show up in a new browser tab.
+
+==== Global Configuration
+
+Alternatively to enabling and disabling health check for each repository, you can enable health check globally. 
+This can be achieved by creating and configuring a new capability called 'Health Check: Configuration'. Details 
+about managing capabilities can be found in <<admin-system-capabilities>>. 
+
+The 'Health Check: Configuration' capability can be enabled and disabled using the 'Enable this capability' 
+checkbox and set up health check for all proxy repositories by enabling 'Configure for all proxy repositories'. 
+With this configuration, health check will be enabled for all existing proxy repositories. Any newly created 
+proxy repository will automatically have health check enabled as well.
+
+If your remote server is not configured to trust your repository manager, you will need to configure the capability to 'Use the Nexus truststore' and add a certificate of trust there.  For more on adding certificates, see <<ssl-proxy-repo>>. 
+
+[[rhc-details]]
+=== Accessing the Detailed {rhc} Report
+
+{inrmonly}
+
+The detailed report contains the same overview data and charts for security and license information at the top 
+displayed in <<fig-rhc-detail-summary>> .
+
+[[fig-rhc-detail-summary]]
+.Summary of the Detailed {rhc} Panel
+image::figs/orig/rhc-detail-summary.png[scale=50]
+
+Below this overview a drop-down allows you to toggle between two lists displaying further details, as shown in 
+<<fig-rhc-detail-security-list>>. Select 'View By: Vulnerabilities' to inspect details of the security issues and 
+'View By: Artifacts' to further review the license information. Both lists have a filter for each column at the 
+bottom of the list that allows you to narrow down the number of rows in the table and find specific entries 
+easily.
+
+The security list, as visible in <<fig-rhc-detail-security-list>>, contains columns for 'Threat Level', 'Problem 
+Code' and the GAV parameters identifying the affected component. The 'Problem Code' column is a link to the 
+security warning referenced and commonly links a specific entry in http://www.osvdb.org[the Open Source Vulnerability Database] 
+or http://cve.mitre.org[the Common Vulnerabilities and Exposures] list. Both of these databases have descriptive 
+text defining the vulnerability and further information and reference links.
+
+[[fig-rhc-detail-security-list]]
+.The Security Data in the Detailed Repository Health Check Report
+image::figs/web/rhc-detail-security-list.png[scale=45]
+
+The 'Threat Level' is rated in values used by the vulnerability databases and ranges from 0 for a low threat to 
+10 for the highest threat. 'Critical' values (noted in red) range from 8 to 10. 'Severe' values (noted in orange) 
+range from 4-7, and 'Moderate' values (noted in yellow) range from 1 to 3.
+
+The license list, as visible in <<fig-rhc-detail-license-list>>, shows a derived threat in the 'License Threat' 
+column. The 'Declared License' column details the license information found in POM file. The 'Observed Licenses 
+in Source' columns lists all the licenses found in the actual source code of the library in the form of file 
+headers and license files. This data is based on source code scanning performed and provided by the {ds}.
+
+For maven components, the next columns for the GAV parameters allow you to identify the component.  For NuGet components the columns are instead 'Id' and 'Version' but with the same intent.
+
+The last column 'Security Issues' displays an indicator for potentially existing security issue for the same 
+component.
+
+[[fig-rhc-detail-license-list]]
+.The License Data in the Detailed Repository Health Check Report
+image::figs/web/rhc-detail-license-list.png[scale=45]
+
+Licenses such as GPL-2.0 or GPL-3.0 are classified as the highest 'License Threat' and labeled as 'Copyleft' and 
+use red as signaling color.
+
+A 'Non-Standard' or 'Not Provided' license is classified as a moderate threat and uses orange. 'Non-Standard' as 
+a classification is triggered by the usage of atypical licenses for open source software such as
+http://charityware.info/[CharityWare license], 
+http://en.wikipedia.org/wiki/Beerware[BeerWare], http://en.wikipedia.org/wiki/University_of_Illinois/NCSA_Open_Source_License[NCSA Open Source License] 
+and many others. 'Not Provided' is trigged as classification if no license information was found anywhere.
+
+Licenses such as CDDL-1.0, EPL-1.0 or GPL-2.0-CPE receive a 'Weak Copyleft' classification and yellow as 
+notification color.
+
+'Liberal' licenses that are generally friendly to inclusion in commercial products use blue and include licenses 
+such as Apache-2.0, MIT or BSD.
+
+A general description about the implications of the different licenses is available when hovering over the 
+specific category in the 'License Analysis Summary'. Further information about the different licenses can be 
+obtained from the http://opensource.org/licenses[Open Source Initiative]. Mixed license scenarios like a mixture 
+of licenses such as Apache-1.1, Apache-2.0, LGPL and LGPL-2.1 can be complicated to assess in their impact and 
+might be legally invalid depending on the combination of licenses observed.  Detailed implications to your 
+business and software are best discussed with your lawyers.
+
+{pro} reports all components in the local storage of the respective repository in the detail panel. This means
+that at some stage a build running against your repository manager required these components and caused a 
+download of them to local storage.
+
+To determine which project and build caused this download to be able to fix the offending dependency by upgrading 
+to a newer version or removing it with an alternative solution with a more suitable license, you will have to 
+investigate all your projects.
+
+////
+/* Local Variables: */
+/* ispell-personal-dictionary: "ispell.dict" */
+/* End:             */
+////
