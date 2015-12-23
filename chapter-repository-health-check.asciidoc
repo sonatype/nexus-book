@@ -11,12 +11,13 @@ known data about the components in proxy repositories, including license informa
 data, and other statistics like relative usage popularity and age. {rhc} allows you to examine a high level 
 overview of the available security and license data of open source components in an analyzed repository.
 
-When enabled, {rhc} analyzes all components found in a proxy repository regardless of the format. The Maven 2 
-format repositories need to have a 'Version policy' of type 'Release' configured to be scanned. Availability of 
-component metadata varies depending on the format and is constantly improved via updates to the {ds}.
+When enabled, {rhc} analyzes all components found in a proxy repository regardless of the format. Maven 2 proxy 
+repositories need to have a 'Version policy' of type 'Release' configured to be scanned. NuGet proxy 
+repositories support {rhc} and identification of components is performed. Some license or security data is 
+provided as well. Support for NPM repositories has similar restrictions.
 
-NuGet proxy repositories support {rhc} and identification of components is performed. Some license or security
-data is provided as well. Support for NPM repositories has similar restrictions. 
+Availability of component metadata varies depending on the format and is constantly improved via updates to the 
+{ds}.
 
 [[rhc-config]]
 === Configuring {rhc}
@@ -37,34 +38,36 @@ either analyze all or only the selected repository.
 Alternatively, you can select the repository in the list of repositories and then click the 'Enable HealthCheck' 
 button.
 
-Once enabled, a task that performs the initial analysis is created and started. This task uses the identifier of 
-the repository and the prefix 'Health Check:' as a name and is configured to run regularly. New component data is 
-supplied by the {ds} to {pro} daily. The recurrence frequency can be changed in the scheduled task administration 
-described in <<admin-system-tasks>>. Disabling health check for a specific repository removes this scheduled task 
-automatically. You can also remove these tasks manually however adding them cannot be done through the tasks 
-administration and must be done as described above.
+Once enabled, a task that performs the analysis is created and initialized. This task uses the identifier of the  
+repository and the prefix 'Health Check:' as a name and is automatically configured to run regularly. The 
+recurrence frequency can be changed in the scheduled task administration described in <<admin-system-tasks>>. New 
+component data is supplied by the {ds} to {pro} daily.
+
+Disabling health check for a specific repository removes this scheduled task automatically. You can also remove 
+these tasks manually however adding them cannot be done through the tasks administration and must be done as 
+described previously.
 
 After a successful analysis and page refresh, the 'Health check' column in the list of repositories will display 
 security and license issue counts for the repository. An example is displayed in <<fig-rhc-repo-list-quality>>. 
 
 [[fig-rhc-repo-list-quality]]
-.The Repositories List with Health Check Result Counts
-image::figs/web/rhc-repo-list.png[scale=50]
+.The Repositories List with Health Check Result Count
+image::figs/web/rhc-repo-list.png[scale=25]
 
-Hovering your mouse pointer over that value will display the 'Repository Health Check' summary data in a pop-up 
-window. A sample window from {pro} is displayed in <<fig-rhc-summary-pop-up>>.
+Hovering your mouse pointer over that value will display the Repository Health Check summary data in a pop-up 
+window. A sample window is displayed in <<fig-rhc-summary-pop-up>>.
 
 [[fig-rhc-summary-pop-up]]
 .A Result Summary for a {rhc}
 image::figs/web/rhc-summary-report.png[scale=40]
 
-At the bottom of the summary modal, {pro} users can click the link 'View Detailed Report' to access the 
-detailed report. It will show up in a new browser tab.
+At the bottom of the summary pop-up, {pro} users can click the link 'View Detailed Report' to access a more  
+detailed report. It will show up in a new browser tab.  More details are provided in <<rhc-details>>.
 
 ==== Global Configuration
 
-Alternatively to enabling and disabling health check for each repository, you can enable health check globally. 
-This can be achieved by creating and configuring a new capability called 'Health Check: Configuration'. Details 
+Alternatively to enabling and disabling health check for each repository, you can enable {rhc} globally. This can 
+be achieved by creating and configuring a new capability called 'Health Check: Configuration'. General details 
 about managing capabilities can be found in <<admin-system-capabilities>>. 
 
 The 'Health Check: Configuration' capability can be enabled and disabled using the 'Enable this capability' 
@@ -80,7 +83,7 @@ If your remote server is not configured to trust your repository manager, you wi
 {inrmonly}
 
 The detailed report contains the same overview data and charts for security and license information at the top 
-displayed in <<fig-rhc-detail-summary>> .
+displayed in <<fig-rhc-detail-summary>>.
 
 [[fig-rhc-detail-summary]]
 .Summary of the Detailed {rhc} Panel
@@ -111,7 +114,9 @@ column. The 'Declared License' column details the license information found in P
 in Source' columns lists all the licenses found in the actual source code of the library in the form of file 
 headers and license files. This data is based on source code scanning performed and provided by the {ds}.
 
-For maven components, the next columns for the GAV parameters allow you to identify the component.  For NuGet components the columns are instead 'Id' and 'Version' but with the same intent.
+For Maven components, the next columns for the GAV parameters allow you to identify the component.  For NuGet 
+components the columns are instead 'Id' and 'Version' but with the same intent.
+//TBD add report information for npm
 
 The last column 'Security Issues' displays an indicator for potentially existing security issue for the same 
 component.
