@@ -1,22 +1,24 @@
 [[rhc]]
 == Repository Health Check
 
+{inall}
+
 [[rhc-introduction]]
 === Introduction
 
 {rhc} is a feature of {pro} and {oss} that integrates data from the {ds}.
 
-{rhc} provides access to a limited subset of the available data right in your repository manager. The {ds} expose 
-known data about the components in proxy repositories, including license information, security vulnerability 
-data, and other statistics like relative usage popularity and age. {rhc} allows you to examine a high level 
-overview of the available security and license data of open source components in an analyzed repository.
+{rhc} provides access to a limited subset of the available data right in your repository manager. The {ds} expose
+known data about the components in proxy repositories, including license information, security vulnerability data,
+and other statistics like relative usage popularity and age. {rhc} allows you to examine a high level overview of
+the available security and license data of components in an analyzed repository.
 
-When enabled, {rhc} analyzes all components found in a proxy repository regardless of the format. Maven 2 proxy 
-repositories need to have a 'Version policy' of type 'Release' configured to be scanned. NuGet proxy 
-repositories support {rhc} and component identification. Some license or security data is provided as well. 
-Support for NPM repositories has similar restrictions.
+When enabled, {rhc} analyzes all components found in a proxy repository regardless of the format. maven2 proxy
+repositories need to have a 'Version policy' of type 'Release' configured to be analyzed. nuget proxy repositories
+support {rhc} and component identification. Some license or security data is provided as well.  Support for npm
+repositories has similar restrictions.
 
-Availability of component metadata varies depending on the format and is constantly improved via updates to the 
+Availability of component metadata varies depending on the format and is constantly improved via updates to the
 {ds}.
 
 [[rhc-config]]
@@ -29,14 +31,15 @@ Availability of component metadata varies depending on the format and is constan
 * The repository 'Type' is 'Proxy'.
 * If 'Format' is 'maven2', the repository 'Version policy' is 'Release'.
 
-NOTE: If the repository 'Status' is 'Offline' you can run the health check analysis however it will not complete until the repository is 'Online'.
+NOTE: If the repository 'Status' is 'Offline' you can run the health check analysis, however it will not complete
+until the repository is 'Online'.
 
-{rhc} for a single repository can be enabled in one of two ways. The quickest way is to click the 'Analyze' 
-button available in the list of repositories. After pressing this button, you will be prompted to either analyze 
-all or only the selected repository.
+{rhc} for a single repository can be enabled in one of two ways. The quickest way is to click the 'Analyze' button
+available in the list of repositories. After pressing this button, you will be prompted to either analyze all or
+only the selected repository and to agree to the license terms at the first activation of {rhc},
 
 Alternatively, you can select the repository in the list of repositories and then click the 'Enable HealthCheck' 
-button.
+button in the repository configuration view.
 
 Once enabled, a task that performs the analysis is created and initialized. This task uses the identifier of the  
 repository and the prefix 'Health Check:' as a name and is automatically configured to run regularly. The 
@@ -47,22 +50,22 @@ Disabling health check for a specific repository removes this scheduled task aut
 these tasks manually. Adding them, however, cannot be done through the tasks administration and must be done as 
 described previously.
 
-After a successful analysis and page refresh, the 'Health check' column in the list of repositories will display 
+After a successful analysis and refresh, the 'Health check' column in the list of repositories will display 
 security and license issue counts for the repository. An example is displayed in <<fig-rhc-repo-list-quality>>. 
 
 [[fig-rhc-repo-list-quality]]
 .The Repositories List with Health Check Result Count
 image::figs/web/rhc-repo-list.png[scale=25]
 
-Hovering your mouse pointer over that value will display the Repository Health Check summary data in a pop-up 
-window. A sample window is displayed in <<fig-rhc-summary-pop-up>>.
+Hovering your mouse pointer over that value will display the summary data in a pop-up window. A sample window is
+displayed in <<fig-rhc-summary-pop-up>>.
 
 [[fig-rhc-summary-pop-up]]
 .A Result Summary for a {rhc}
 image::figs/web/rhc-summary-report.png[scale=40]
 
-At the bottom of the summary pop-up, {pro} users can click the link 'View Detailed Report' to access a more  
-detailed report. It will show up in a new browser tab.  More details are provided in <<rhc-details>>.
+At the bottom of the summary, you can click the link 'View Detailed Report' to access a more detailed report. This
+report is only available in {pro}.  More details are provided in <<rhc-details>>.
 
 ==== Global Configuration
 
@@ -75,7 +78,8 @@ checkbox and set up health check for all proxy repositories by enabling 'Configu
 With this configuration, health check will be enabled for all existing proxy repositories. Any newly created 
 proxy repository will automatically have health check enabled as well.
 
-If your remote server is not configured to trust your repository manager, you will need to configure the capability to 'Use the Nexus truststore' and add a certificate of trust there.  For more on adding certificates, see <<ssl-proxy-repo>>. 
+Selecting 'User the Nexus truststore' allows seemless interaction when remote repositories are accessed
+via SSL. For more on adding certificates, see <<ssl-proxy-repo>>.
 
 [[rhc-details]]
 === Accessing the Detailed {rhc} Report
@@ -89,17 +93,17 @@ displayed in <<fig-rhc-detail-summary>>.
 .Summary of the Detailed {rhc} Panel
 image::figs/web/rhc-detail-summary.png[scale=50]
 
-Below this overview a drop-down allows you to toggle between two lists displaying further details, as shown in 
-<<fig-rhc-detail-security-list>>. Select 'View By: Vulnerabilities' to inspect details of the security issues and 
-'View By: Artifacts' to further review the license information. Both lists have a filter for each column at the 
-bottom of the list that allows you to narrow down the number of rows in the table and find specific entries 
+Below the overview a drop-down allows you to toggle between two lists displaying further details, as shown in
+<<fig-rhc-detail-security-list>>. Select 'View By: Vulnerabilities' to inspect details of the security issues and
+'View By: Artifacts' to further review the license information. Both lists have a filter for each column at the
+bottom of the list that allows you to narrow down the number of rows in the table and find specific entries
 easily.
 
-The security list, as visible in <<fig-rhc-detail-security-list>>, contains columns for 'Threat Level', 'Problem 
-Code' and the GAV parameters identifying the affected component. The 'Problem Code' column is a link to the 
-security warning referenced and commonly links a specific entry in http://www.osvdb.org[the Open Source Vulnerability Database] 
-or http://cve.mitre.org[the Common Vulnerabilities and Exposures] list. Both of these databases have descriptive 
-text defining the vulnerability and further information and reference links.
+The security list, as visible in <<fig-rhc-detail-security-list>>, contains columns for 'Threat Level', 'Problem
+Code' and the GAV parameters identifying the affected component. The 'Problem Code' column is a link to the
+security warning referenced and commonly links a specific entry in http://www.osvdb.org[the Open Source
+Vulnerability Database] or http://cve.mitre.org[the Common Vulnerabilities and Exposures] list. Both of these
+databases have descriptive texts defining the vulnerability and further information and reference links.
 
 [[fig-rhc-detail-security-list]]
 .The Security Data in the Detailed Repository Health Check Report
@@ -116,10 +120,8 @@ headers and license files. This data is based on source code scanning performed 
 
 For Maven components, the next columns for the GAV parameters allow you to identify the component.  For NuGet 
 components the columns are instead 'Id' and 'Version' but with the same intent.
-//TBD add report information for npm
 
-The last column 'Security Issues' displays an indicator for potentially existing security issue for the same 
-component.
+The column 'Security Issues' displays an indicator for potentially existing security issue for the same component.
 
 [[fig-rhc-detail-license-list]]
 .The License Data in the Detailed Repository Health Check Report
@@ -140,10 +142,11 @@ notification color.
 'Liberal' licenses that are generally friendly to inclusion in commercial products use blue and include licenses 
 such as Apache-2.0, MIT or BSD.
 
-A general description about the implications of the different licenses is available when hovering over the 
-specific category in the 'License Analysis Summary'. Detailed information about the different licenses can be 
-obtained from the http://opensource.org/licenses[Open Source Initiative]. Mixed license scenarios, like an inclusion of Apache-1.1, Apache-2.0, LGPL and LGPL-2.1 licenses, can be complicated to assess in their impact and 
-might be legally invalid depending on the combination of licenses observed.  Detailed implications to your 
+A general description about the implications of the different licenses is available when hovering over the
+specific category in the 'License Analysis Summary'. Detailed information about the different licenses can be
+obtained from the http://opensource.org/licenses[Open Source Initiative]. Mixed license scenarios, like an
+inclusion of Apache-1.1, Apache-2.0, LGPL and LGPL-2.1 licenses, can be complicated to assess in their impact and
+might be legally invalid depending on the combination of licenses observed.  Detailed implications to your
 business and software are best discussed with your lawyers.
 
 {pro} reports all components in the local storage of the respective repository in the detail panel. This means
