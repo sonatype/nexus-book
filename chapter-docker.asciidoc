@@ -25,16 +25,16 @@ images within your organization in a hosted repository. Users can then launch co
 resulting in a completely private Docker registry with all the features available in the repository manager.
 
 [[docker-ssl-connector]]
-=== SSL and Docker Connector Configuration
+=== SSL and Repository Connector Configuration
 
 Docker relies on secure connections using SSL to connect to the repositories. You are therefore required to expose
 the repository manager to your client tools via HTTPS. This can be configured via an external proxy server or
 directly with the repository manager. Further details can be found in <<ssl-inbound>>.
 
 Interaction of the `docker` client with repositories requires specific ports to be used. These can be configured
-in the repository configuration in the 'Docker Connectors' section. In order for this to work on your network, you
-need to ensure that the chosen ports are available in your organization and not used by some other application,
-and that no firewall or other network configuration prevents connectivity.
+in the repository configuration in the 'Repository Connectors' section. In order for this to work on your 
+network, you need to ensure that the chosen ports are available in your organization and not used by some other 
+application, and that no firewall or other network configuration prevents connectivity.
 
 NOTE: The `docker` client does not allow a context as part of the path to a registry, as the namespace and image
  name are embedded in the URLs it uses. This is why requests to repositories on the repository manager are served
@@ -43,23 +43,22 @@ NOTE: The `docker` client does not allow a context as part of the path to a regi
 
 The recommended minimal configuration requires one port for a Docker repository group used for read access to all
 repositories and one port for each hosted Docker repository that will receive push events from your users. The
-'Docker Connector' configuration displayed in <<fig-docker-connectors>> is available in the configuration for
-proxy and hosted Docker repositories as well as Docker repository groups.
+'Repository Connectors' configuration displayed in <<fig-repository-connectors>> is available in the 
+configuration for proxy and hosted Docker repositories as well as Docker repository groups.
 
-[[fig-docker-connectors]]
-.Docker Connector Configuration
-image::figs/web/docker-connectors.png[scale=50]
+[[fig-repository-connectors]]
+.Repository Connector Configuration
+image::figs/web/repository-connectors.png[scale=50]
 
-If you have configured the repository manager to use HTTPS directly, you have to configure a HTTPS docker
+If you have configured the repository manager to use HTTPS directly, you have to configure a HTTPS repository
 connector. If an external proxy server translates incoming HTTPS requests to HTTP and forwards the request to the
 repository manager via HTTP you have to configure the respective HTTP port.
 
-TIP: A configured context-path for the user interface does not affect the Docker connector URLs. E.g. if your
-repository manager instance is configured to be available at http://localhost:8081/nexus instead of the default
-root context http://localhost:8081/, the URLs for your Docker repositories will still only use the configured port
-for the repository and omit the context path in the URL. This is a side-effect of the the fact that Docker does
-not support context paths in the registry API.
-
+TIP: A configured context-path for the user interface does not affect the repository connector URLs used by 
+Docker. E.g. if your repository manager instance is configured to be available at http://localhost:8081/nexus 
+instead of the default root context http://localhost:8081/, the URLs for your Docker repositories will still only 
+use the configured port for the repository and omit the context path in the URL. This is a side-effect of the the 
+fact that Docker does not support context paths in the registry API.
 
 [[docker-registry-api]]
 === Support for Docker Registry API
@@ -94,8 +93,8 @@ Minimal configuration steps are:
 - Select correct 'Docker index' and configure it
 - Select 'Blob store' for 'Storage'
 
-Optionally you can configure 'Docker Connectors' as explained in <<docker-ssl-connector>>, although typically read
-access is done via a repository group and not a proxy repository directly, and write access is done against a
+Optionally you can configure 'Repository Connectors' as explained in <<docker-ssl-connector>>, although typically 
+read access is done via a repository group and not a proxy repository directly, and write access is done against a
 hosted repository.
 
 The 'Remote Storage' has to be set to the URL of the remote registry you want to proxy. The configuration for
@@ -137,11 +136,11 @@ Minimal configuration steps are:
 - Define 'Name'
 - Select 'Blob store' for 'Storage'
 
-If you add a 'Docker Connectors' configuration as documented in <<docker-ssl-connector>> you can `push` images to
-this repository, and subsequently access them directly from the hosted repository or ideally from the Docker
-repository group as documented in <<docker-group>>.
+If you add a 'Repository Connectors' configuration as documented in <<docker-ssl-connector>> you can `push` 
+images to this repository, and subsequently access them directly from the hosted repository or ideally from the 
+Docker repository group as documented in <<docker-group>>.
 
-By default this step will allow repeated deployment of images. If you want to enforce new deployments using
+By default this setup will allow repeated deployment of images. If you want to enforce new deployments using
 different versions, set the 'Deployment Policy' to 'Disable Redeploy'.
 
 [[docker-group]]
@@ -164,9 +163,9 @@ Minimal configuration steps are:
 Typically the member list includes a mixture of proxy and hosted repositories to allow access to public as well as
 private images.
 
-Using the 'Docker Connectors' port of the repository group and the URL of the repository manager in your client
-tool gives you access to the container images in all repositories from the group. Any new images added as well as
-any new repositories added to the group will automatically be available.
+Using the 'Repository Connectors' port of the repository group and the URL of the repository manager in your 
+client tool gives you access to the container images in all repositories from the group. Any new images added as 
+well as any new repositories added to the group will automatically be available.
 
 TIP: Check out this repository configuration demonstrated in link:https://www.youtube.com/watch?v=oxCztw5MfAw[a
 video].
@@ -190,7 +189,7 @@ authentication is persisted in `~/.docker/config.json` and reused for any subseq
 repository.  Individual login operations must be performed for each repository and repository group you want to
 access in an authenticated manner.
 
-TIP: Specifically when planning to push to a repository a pre-emptive login operation is advisable as it removes
+TIP: Specifically when planning to push to a repository a preemptive login operation is advisable as it removes
 the need for use interaction and is therefore suitable for continuous integration server setups and the
 automations scenarios.
 
@@ -210,9 +209,9 @@ docker search <nexus-hostname>:<repository-port>/<search-term>
 
 with
 
-command:: a docker command such a 'push' or 'pull'
+command:: a docker command such as 'push' or 'pull'
 nexus-hostname:: the IP number or hostname of your repository manager
-repository-port:: the port configured as the Docker connector for the specific repository or repository group
+repository-port:: the port configured as the repository connector for the specific repository or repository group
 namespace:: the namespace of the specific image reflecting the owner
 image:: the name of the Docker image
 tag:: the optional tag of the image, defaulting to 'latest' when omitted
@@ -300,7 +299,7 @@ After a successful `pull` you can start the container with `run`.
 
 Sharing an image can be achieved, by publishing it to a hosted repository. This is completely private and requires
 you to `tag` and `push` the image. To tag an image, the image identifier (imageId) is required.  It is listed when
-showing the list of all images with `docker images`. Syntax and an example are for creating a tag are
+showing the list of all images with `docker images`. Syntax and an example are for creating a tag are:
 
 ----
 docker tag <imageId> <nexus-hostname>:<repository-port>/<image>:<tag>
