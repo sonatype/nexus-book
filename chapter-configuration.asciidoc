@@ -329,6 +329,14 @@ task.
 
 The following task types are available to perform specific maintenance:
 
+Execute Script:: Scripts can be provided in the 'Source' field and have to be written using the Groovy programming
+language. These scripts can use the APIs of the repository manager to perform maintenance and other modification
+tasks. Please consult the Javadoc and source for further information.
+
+Publish Maven Indexer Indexes:: Maven indexes can be used to download an index of available components to a client
+including e.g. a developers IDE. The task publishes the index for all 'maven2'-formatted repositories or a
+specific one.
+
 Purge Incomplete Docker Uploads:: Docker uploads to a repository can be hundreds of MB in size. It is possible to
 have incomplete uploads or orphaned files remain in temporary storage as a result of incomplete or interrupted
 uploads. The temporary storage consumed by these incomplete or orphaned uploads can be cleaned up with this
@@ -347,7 +355,6 @@ Any component that has not been requested in the configured number of days will 
 Purge Unused Maven Snapshots:: This task can be used to remove unused snapshots from Maven repositories. Any
 snapshot that has not been requested in the configured number of days will be purged.
 
-
 Rebuild Maven Repository Metadata:: This task rebuilds the maven-metadata.xml files with the correct information
 and will also validate the checksums (.md5/.sha1) for all files in the specified maven2 hosted repository. The
 'Group Id', 'Artifact Id' and 'Base Version' parameters allow you to narrow down the section of the repository
@@ -356,6 +363,9 @@ that will be repaired. Typically this task is run manually to repair a corrupted
 Rebuild Repository Index:: With support for hosted and proxy repositories, this task can rebuild the index. It
 inspects actual components and assets found in the repository and rebuilds the index to reflect the true content
 for supporting search and browse actions.
+
+Un-publish Maven Indexer Indexes:: This task is the counter-part to the task 'Publish Maven Indexer Indexes' and
+can remove the index.
 
 Beyond these tasks any plugin can provide additional scheduled tasks, which will appear once you have installed 
 the plugin.
