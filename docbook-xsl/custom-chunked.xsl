@@ -87,7 +87,7 @@
             half-measures and compromises such as storing binaries in
             source control.  Stop developing in the Dark Ages, read
             this book, and start using a repository manager.  Trust
-            us, once you start using Sonatype Nexus, you'll wonder how you ever
+            us, once you start using a Nexus Repositor Manager, you'll wonder how you ever
             functioned without it.
           </p>
         </div>
