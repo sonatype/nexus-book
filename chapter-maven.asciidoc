@@ -1,5 +1,5 @@
-[[config]]
-== Configuring Maven and Other Build Tools
+[[maven]]
+== Maven Repositories with Apache Maven and Other Tools
 {inall}
 
 [[maven-introduction]]
@@ -10,13 +10,123 @@ other repository formats now, the Maven repository format is still the most comm
 build and provisioning tools running on the JVM and beyond.
 
 This chapter shows example configurations for using {pro} with a Maven and number of other tools. The setups take
-advantage of the repository manager merging many repositories and exposing them via a repository group. Setting
-this up is documented in the chapter in addition to the configuration used by specific tools.
+advantage of the repository manager merging many repositories and exposing them via a repository
+group. Configuring the repositories and the repository groups is documented in the chapter in addition to the
+configuration used by specific tools.
+
+=== Maven Repository Format
+
+tbd
+
+explain format and also talk about strict vs lax (Layout policy) as well as release vs snapshot (Versions policy).
+
+=== Proxying Maven Repositories
+
+A default installation of {pro} or {oss} includes a proxy repository configured to access the Central Repository.
+To reduce duplicate downloads and improve download speeds for your developers and CI servers, you should proxy the
+all other remote repositories as well.
+
+To proxy an external Maven repository, you simply create a new repository using the recipe 'maven2 (proxy)' as documented in
+<<admin-repositories>>. 
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Define URL for 'Remote storage' e.g. `https://repo1.maven.org/maven2/`
+- Select a 'Blob store' for 'Storage'
+
+This creates a repository using the a 'Release' 'Version policy' and a 'Strict' 'Layout policy'. 
 
 
+=== Hosting Maven Repositories
+
+
+A hosted repository for NuGet can be used to upload your own packages as well as third-party packages. The
+repository manager includes a hosted NuGet repository named 'maven2-hosted' by default.
+
+////
+TBD
+ It is good practice to
+create two separate hosted repositories for these purposes.
+////
+
+To create another NuGet hosted repository, simply create a new 'maven2 (hosted)' repository. An example
+configuration from the default 'maven2-hosted' repository is displayed in
+<<fig-nuget-hosted-releases-configuration>>.
+
+[[fig-nuget-hosted-releases-configuration]]
+.Example Configuration for a NuGet Hosted Repository
+image::figs/web/nuget-hosted-releases-configuration.png[scale=50]
+
+The NuGet feed is immediately updated as packages are deployed or deleted from the host repository.
+
+A private npm registry can be used to upload your own packages as well as third-party packages. You can create a
+private npm registry by setting up a hosted repository with the npm format in the repository manager. It is good
+practice to create two separate hosted repositories for these purposes.
+
+To create a hosted repository with npm format, simply create a new 'maven2 (hosted)' as documented in
+<<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Select 'Blob store' for 'Storage'
+
+The npm registry information is immediately updated as packages are deployed or deleted from the repository.
+
+
+=== Grouping Maven Repositories
+
+A repository group is the recommended way to expose all your npm registries repositories from the repository
+manager to your users, without needing any further client side configuration. A repository group allows you to
+expose the aggregated content of multiple proxy and hosted repositories with one URL to npm and other tools. This
+is possible for npm repositories by creating a new 'npm (group)' as documented in <<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Select 'Blob store' for 'Storage'
+- Add npm repositories to the 'Members' list in the desired order
+
+A typical, useful example would be to group the proxy repository that: proxies the npm registry, a npm, hosted
+repository with internal software packages and another npm, hosted repository with third-party packages.
+
+Using the 'URL' of the repository group as your npm repository URL in your client tool will give you access to the
+packages in all three repositories with one URL. Any new packages added as well as any new repositories added to
+the group will automatically be available.
+
+
+A repository group is the recommended way to expose all your NuGet repositories from the repository manager to
+your users, without needing any further client side configuration. A repository group allows you to expose the
+aggregated content of multiple proxy and hosted repositories with one URL to your tools.
+
+{pro} and {oss} includes a 'nuget-group' repository group by default. This typical, useful example groups the
+'nuget.org-proxy' proxy repository that proxies the NuGet Gallery and the 'nuget-hosted' hosted repository.
+
+Using the 'URL' of the repository group can be used in your client tool and will give you access to the packages
+in all repositories from the group with one URL. Any new packages added as well as any new repositories added to
+the group will automatically be available.
+
+=== Browsing and Searching Maven Repositories
+
+You can browse Maven repositories in the user interface inspecting the components and assets and their details as
+documented in <<browse-browse>>.
+
+Searching can be performed in the user interface as described in <<search-components>>. This search finds all
+components and assets that are currently stored in the repository manager, either because they have been deployed
+to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
+
+TIP:: You can change the default column order in the search and browse user interfaces to the familiar order of
+'Group' (groupId), 'Name' (artifactId) and 'Version'. Simple drag the 'Group' column from the middle to the left
+using the header. This setting will be persisted as your preference in your web browser.
+
+////
+TBD
+
+////
 [[maven-sect-single-group]]
-=== Apache Maven
-
+=== Configuring Apache Maven
+f
 To use repository manager with http://maven.apache.org/[Apache Maven], we configure Maven to check the repository
 manager instead of the default, built-in connection to the Central Repository.
 
@@ -85,9 +195,13 @@ http://maven.apache.org/guides/mini/guide-mirror-settings.html[mini guide on the
 
 As a last configuration the +nexus+ profile is listed as an active profile in the +activeProfiles+ element.
 
+////
+TBD - add deploy docs
+////
+
 
 [[ant-ivy]]
-=== Apache Ant and Apache Ivy
+=== Configuring Apache Ant and Apache Ivy
 
 http://ant.apache.org/ivy/[Apache Ivy] is a dependency manager often used in Apache Ant builds. It supports the
 Maven repository format and can be configured to download dependencies that can be declared in the +ivy.xml+
@@ -130,7 +244,7 @@ Further details about using these example projects can be found in
 
 
 [[ant-aether]]
-=== Apache Ant and Eclipse Aether
+=== Configuring Apache Ant and Eclipse Aether
 
 http://www.eclipse.org/aether/[Eclipse Aether] is the dependency management component used in Apache Maven 3+. The
 project provides Ant tasks that can be configured to download dependencies that can be declared in +pom.xml+ file
@@ -174,7 +288,7 @@ Further details about using these example projects can be found in <<eval>>.
 
 
 [[gradle]]
-=== Gradle
+=== Configuring Gradle
 
 http://www.gradle.org/[Gradle] has a built in dependency management component that supports the Maven repository
 format. In order to configure a Gradle project to resolve +dependencies+ declared in +build.gradle+ file, a +maven+
@@ -315,6 +429,15 @@ User credentials can be declared in +~/.lein/credentials.clj.gpg+ or will be pro
 
 Further documentation can be found on the http://leiningen.org/[Leiningen website].
 
+////
+=== Plain HTTP Access
+
+talk about simple download of stuff via HTTP Get with curl or wget or whatever
+
+upload with POST as well maybe..
+
+
+////
 
 ////
 /* Local Variables: */
