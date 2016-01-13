@@ -188,6 +188,45 @@ As a last configuration the +nexus+ profile is listed as an active profile in th
 TBD - add deploy docs
 ////
 
+Deployment to a repository is configured in the `pom.xml` for the respective project in the
+`distributionManagement` section. Using the default repositories of the repository manager
+
+----
+<project>
+...
+<distributionManagement>
+    <repository>
+      <id>nexus</id>
+      <name>Releases</name>
+      <url>http://localhost:8081/repository/maven-releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus</id>
+      <name>Snapshot</name>
+      <url>http://localhost:8081/repository/maven-snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+...
+----
+
+The credentials used for the deployment are looked from a 'server' section in a users `settings.xml`:
+
+----
+<settings>
+....
+  <servers>
+    <server>
+      <id>nexus</id>
+      <username>admin</username>
+      <password>admin123</password>
+    </server>
+  </servers>
+----
+
+Full example projects can be found in the +maven+ folder of the
+https://github.com/sonatype/nexus-book-examples[documentation examples project] in the +nexus-3.0.x+ branch. A
+full build of the +simple-project+, including downloading the declared dependencies and uploading the build output
+to the repository manager can be invoked with `mvn clean deploy`.
 
 [[ant-ivy]]
 === Configuring Apache Ant and Apache Ivy
