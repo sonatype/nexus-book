@@ -6,37 +6,45 @@
 === Introduction
 
 Historically {pro} started as a repository manager supporting the Maven repository format. This chapter explains
-the default configuration included in {pro} and {oss} and instructions for creating further repositories as well
-as searching and browsing the repositories. Build tool configuration for Apache Maven, Apache Ant, Gradle and others 
-tools follow.
-
-The setups take advantage of the repository manager merging many repositories and exposing them via a repository
-group.
+the default configuration included in {pro} and {oss}, instructions for creating further Maven repositories as
+well as searching and browsing the repositories. Build tool configuration for Apache Maven, Apache Ant, Gradle and
+others tools follow. The configuration examples take advantage of the repository manager merging many repositories
+and exposing them via a repository group.
 
 === Maven Repository Format
 
 http://maven.apache.org[Apache Maven] created the most widely used repository format in the Java development
 ecosystem with the release of Apache Maven 2. It is used by all newer versions of Apache Maven and many other
-tools including Apache Ivy, Gradle, sbt, Aether and Leiningen. Further information about the formate can be found
-in <<concepts-maven-format>>.
+tools including Apache Ivy, Gradle, sbt, Eclipse Aether and Leiningen. Further information about the format can be
+found in <<concepts-maven-format>>.
 
-The format is used by many, publically available repositories. The default repository is called the
-http://central.sonatype.org[Central Repository] and it is the largest repository of components aimed at
-Java/JVM-based development and beyond. The Central Repository is configured as a proxy repository by default.
+The format is used by many, publicly available repositories. The default repository, the
+http://central.sonatype.org[Central Repository], is the largest repository of components aimed at Java/JVM-based
+development and beyond. The Central Repository is configured as a proxy repository by default in Apache Maven and
+widely used in other tools.
 
 The specifics of the Maven repository format can be configured for each repository in the 'Maven 2' section:
 
-Version policy:: A Maven repository can be configured to be suitable for release components with the 'Release'
-version policy. The Central Repository uses a release version policy. Continuous development is typically
-performed with snapshot versions supported by the 'Snapshot' version policy. The 'Mixed' version policy allows you
-to support both approaches within one repository.
+Version policy::
+
+Release;; A Maven repository can be configured to be suitable for release components with the 'Release'
+version policy. The Central Repository uses a release version policy.
+
+Snapshot;; Continuous development is typically performed with snapshot versions supported by the 'Snapshot'
+version policy.
+
+Mixed;; The 'Mixed' version policy allows you to support both approaches within one repository.
 
 Layout policy:: The Maven repository format implements a directory structure as well as a naming convention for
-the files withing the structure. Apache Maven follows these conventions. Other build tools, such as sbt, and
+the files within the structure. Apache Maven follows these conventions. Other build tools, such as sbt, and
 custom tools have historically created usages that violate the file naming conventions and published them to
-public repositories such as the Central Repository. These tools rely on these changed conventions. You can
-configure a layout policy of 'Permissive' to allow assets in the repository that violate the default format. The
-default value of 'Strict' is used by Apache Maven, Eclipse Aether and other tools and is the preferred setting.
+public repositories such as the Central Repository. These tools rely on these changed conventions.
+
+Permissive;; You can configure a layout policy of 'Permissive' to allow assets in the repository that violate the
+default format.
+
+Strict;; The default value of 'Strict' is used by Apache Maven, Eclipse Aether and other tools and is the
+preferred setting.
 
 === Proxying Maven Repositories
 
@@ -45,7 +53,7 @@ via `https://repo1.maven.org/maven2/`. To reduce duplicate downloads and improve
 developers and CI servers, you should proxy all other remote repositories you access, as proxy repositories as
 well.
 
-To proxy an external Maven repository, you simply create a new repository using the recipe 'maven2 (proxy)' as
+To proxy a Maven repository, you simply create a new repository using the recipe 'maven2 (proxy)' as
 documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
@@ -57,7 +65,7 @@ Minimal configuration steps are:
 This creates a repository using the a 'Release' version policy and a 'Strict' layout policy. Both can be
 configured as appropriate for the remote repository.
 
-If they remote repository contains a mixture of release and snapshot versions, you have to createset the version
+If they remote repository contains a mixture of release and snapshot versions, you have to set the version
 policy to 'Mixed'.
 
 Usage of the repository with build tools such as sbt, potentially requires the layout policy to be set to
@@ -168,7 +176,7 @@ In <<ex-maven-nexus-simple>>, we have defined a single profile called +nexus+. I
 +pluginRepository+ with the id +central+ that overrides the same repositories in the super pom. The super pom is
 internal to every Apache Maven install and establishes default values. These overrides are important since they
 change the repositories by enabling snapshots and replacing the URL with a bogus URL. This URL is overridden by
-the +mirror+ setting in the same settings.xml file to point to the URL of your single repository group. This
+the +mirror+ setting in the same `settings.xml` file to point to the URL of your single repository group. This
 repository group can, therefore, contain release as well as snapshot components and Maven will pick them up.
 
 The +mirrorOf+ pattern of +*+ causes any repository request to be redirected to this mirror and to your single
@@ -209,7 +217,8 @@ Deployment to a repository is configured in the `pom.xml` for the respective pro
 ...
 ----
 
-The credentials used for the deployment are looked from a 'server' section in a users `settings.xml`:
+The credentials used for the deployment are looked from a 'server' section in a users `settings.xml` using the
+`nexus` value used in the `id` fields:
 
 ----
 <settings>
@@ -252,7 +261,7 @@ Listing: Minimal Ivy Configuration in an Ant file
 These minimal settings allow the +ivy:retrieve+ task to download the declared dependencies.
 
 To deploy build outputs to a repository with the +ivy:publish+ task, user credentials and the URL of the target
-repository have to be added to +ivysettings.xml+ and the makepom and publish tasks have to be configured and
+repository have to be added to +ivysettings.xml+ and the `makepom` and `publish` tasks have to be configured and
 invoked.
 
 Full example projects can be found in the +ant-ivy+ folder of the
@@ -276,7 +285,7 @@ Further details about using these example projects can be found in
 
 http://www.eclipse.org/aether/[Eclipse Aether] is the dependency management component used in Apache Maven 3+. The
 project provides Ant tasks that can be configured to download dependencies that can be declared in +pom.xml+ file
-or in the Ant build fiel directly.
+or in the Ant build file directly.
 
 This configuration can be contained in your Ant +build.xml+ or a separate file that is imported. A minimal example
 for resolving dependencies from a repository manager running on +localhost+ is shown in <<aether-minimal>>.
@@ -418,16 +427,16 @@ publishing].
 === Leiningen
 
 http://leiningen.org/[Leiningen] has a built in dependency management component and defaults to the Maven repository
-format. As a build tool it is mostly used for projects using the Coljure language. Many libraries useful for these
+format. As a build tool it is mostly used for projects using the Clojure language. May libraries useful for these
 projects are published to the Clojars repository. If you want to use these, you have to create two proxy repositories
 with the remote URL +http://clojars.org/repo/+. This repository is mixed and you therefore have to create a release and
 a snapshot proxy repository and then add both to the public group.
 
-In order to configure a Leinigen project to resolve dependencies declared in the +project.clj+ file, a +mirrors+ section
+In order to configure a Leiningen project to resolve dependencies declared in the +project.clj+ file, a +mirrors+ section
 overriding the built in +central+ and +clojars+ repositories as shown below has to be declared
 
 
-anchor:leiningen-minima[Listing: Leiningen Configuration]
+anchor:leiningen-minimal[Listing: Leiningen Configuration]
 .Listing: Leiningen Configuration
 ----
   :mirrors {
@@ -456,16 +465,6 @@ which is not necessary, since they are already part of the +public+ repository g
 User credentials can be declared in +~/.lein/credentials.clj.gpg+ or will be prompted for.
 
 Further documentation can be found on the http://leiningen.org/[Leiningen website].
-
-////
-=== Plain HTTP Access
-
-talk about simple download of stuff via HTTP Get with curl or wget or whatever
-
-upload with POST as well maybe..
-
-
-////
 
 ////
 /* Local Variables: */
