@@ -5,11 +5,13 @@
 [[maven-introduction]]
 === Introduction
 
-Historically {pro} started as a repository manager supporting the Maven repository format. This chapter explains
-the default configuration included in {pro} and {oss}, instructions for creating further Maven repositories as
-well as searching and browsing the repositories. Build tool configuration for Apache Maven, Apache Ant, Gradle and
-others tools follow. The configuration examples take advantage of the repository manager merging many repositories
-and exposing them via a repository group.
+Historically {pro} started as a repository manager supporting the Maven repository format and it continues to
+include excellent support for users of Apache Maven , Apache Ant/Ivy, Eclipse Aether, Gradle and others.
+
+This chapter explains the default configuration included in {pro} and {oss}, instructions for creating further
+Maven repositories as well as searching and browsing the repositories. Build tool configuration for Apache Maven,
+Apache Ant, Gradle and others tools follow. The configuration examples take advantage of the repository manager
+merging many repositories and exposing them via a repository group.
 
 === Maven Repository Format
 
@@ -18,12 +20,13 @@ ecosystem with the release of Apache Maven 2. It is used by all newer versions o
 tools including Apache Ivy, Gradle, sbt, Eclipse Aether and Leiningen. Further information about the format can be
 found in <<concepts-maven-format>>.
 
-The format is used by many, publicly available repositories. The default repository, the
-http://central.sonatype.org[Central Repository], is the largest repository of components aimed at Java/JVM-based
-development and beyond. The Central Repository is configured as a proxy repository by default in Apache Maven and
-widely used in other tools.
+The format is used by many publicly available repositories. The http://central.sonatype.org[Central Repository] is
+the largest repository of components aimed at Java/JVM-based development and beyond and is used the Maven
+repository format for release components of numerous open source projects. It is configured as a proxy repository
+by default in Apache Maven and widely used in other tools.
 
-The specifics of the Maven repository format can be configured for each repository in the 'Maven 2' section:
+In addition to the generic repository management features documented in <<admin-repositories>>, specifics of the
+Maven repository format can be configured for each repository in the 'Maven 2' section:
 
 Version policy::
 
@@ -35,26 +38,28 @@ version policy.
 
 Mixed;; The 'Mixed' version policy allows you to support both approaches within one repository.
 
-Layout policy:: The Maven repository format implements a directory structure as well as a naming convention for
-the files within the structure. Apache Maven follows these conventions. Other build tools, such as sbt, and
-custom tools have historically created usages that violate the file naming conventions and published them to
-public repositories such as the Central Repository. These tools rely on these changed conventions.
+Layout policy:: The Maven repository format defines a directory structure as well as a naming convention for the
+files within the structure. Apache Maven follows these conventions. Other build tools, such as sbt, and custom
+tools have historically created usages that use the directory structure less strictly, violating the file naming
+conventions. Components based on these tools' different conventions have been ublished them to public
+repositories, such as the Central Repository. These tools rely on these changed conventions.
 
 Permissive;; You can configure a layout policy of 'Permissive' to allow assets in the repository that violate the
 default format.
 
-Strict;; The default value of 'Strict' is used by Apache Maven, Eclipse Aether and other tools and is the
-preferred setting.
+Strict;; The default value of 'Strict' requires publishing and accessig tools to follow the Apache Maven
+conventions. This is the preferred setting if you are using Apache Maven, Eclipse Aether, and other strictly
+compatible tools.
 
 === Proxying Maven Repositories
 
 A default installation of {pro} or {oss} includes a proxy repository configured to access the Central Repository
-via `https://repo1.maven.org/maven2/`. To reduce duplicate downloads and improve download speeds for your
-developers and CI servers, you should proxy all other remote repositories you access, as proxy repositories as
-well.
+via HTTPS using the URL 'https://repo1.maven.org/maven2/'. To reduce duplicate downloads and improve download
+speeds for your developers and CI servers, you should proxy all other remote repositories you access as proxy
+repositories as well.
 
-To proxy a Maven repository, you simply create a new repository using the recipe 'maven2 (proxy)' as
-documented in <<admin-repositories>>.
+To proxy a Maven repository, you simply create a new repository using the recipe 'maven2 (proxy)' as documented in
+<<admin-repositories>>.
 
 Minimal configuration steps are:
 
@@ -77,7 +82,7 @@ A hosted Maven repository can be used to deploy your own as well as third-party 
 of {pro} and {oss} includes a two hosted Maven repositories. The 'maven-releases' repository uses a release
 version policy and the 'maven-snapshots' repository uses a snapshot version policy.
 
-To create another hosted Maven repository, simply create a new repository with the recipe 'maven2 (hosted)' as
+To create another hosted Maven repository, add a new repository with the recipe 'maven2 (hosted)' as
 documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
@@ -87,7 +92,7 @@ Minimal configuration steps are:
 
 === Grouping Maven Repositories
 
-A repository group is the recommended way to expose all your Maven registries repositories from the repository
+A repository group is the recommended way to expose all your Maven repositories from the repository
 manager to your users, without needing any further client side configuration. A repository group allows you to
 expose the aggregated content of multiple proxy and hosted repositories as well as other repository groups with
 one URL for tool configuration. This is possible for Maven repositories by creating a new repository with the
@@ -99,21 +104,18 @@ Minimal configuration steps are:
 - Select 'Blob store' for 'Storage'
 - Add Maven repositories to the 'Members' list in the desired order
 
-A typical, useful example is the 'maven-public' group that is configured by default. It merges the 'maven-central'
-proxy repository with the 'maven-releases' and 'maven-snapshots' hosted repositories. Using the 'URL' of the
-repository group gives you access to the packages in all three repositories with one URL. Any new component added
-as well as any new repositories added to the group will automatically be available.
+A typical, useful example is the 'maven-public' group that is configured by default. It aggregates the
+'maven-central' proxy repository with the 'maven-releases' and 'maven-snapshots' hosted repositories. Using the
+'URL' of the repository group gives you access to the packages in all three repositories with one URL. Any new
+component added as well as any new repositories added to the group will automatically be available.
 
-A repository group is the recommended way to expose all your NuGet repositories from the repository manager to
-your users, without needing any further client side configuration. A repository group allows you to expose the
-aggregated content of multiple proxy and hosted repositories with one URL to your tools.
 
 === Browsing and Searching Maven Repositories
 
 You can browse Maven repositories in the user interface inspecting the components and assets and their details as
 documented in <<browse-browse>>.
 
-Searching components can be performed in the user interface as described in <<search-components>>. A search finds all
+Components can be serched in the user interface as described in <<search-components>>. A search finds all
 components and assets that are currently stored in the repository manager, either because they have been deployed
 to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
 
@@ -193,7 +195,7 @@ http://maven.apache.org/guides/mini/guide-mirror-settings.html[mini guide on the
 As a last configuration the +nexus+ profile is listed as an active profile in the +activeProfiles+ element.
 
 Deployment to a repository is configured in the `pom.xml` for the respective project in the
-`distributionManagement` section. Using the default repositories of the repository manager
+`distributionManagement` section. Using the default repositories of the repository manager:
 
 ----
 <project>
