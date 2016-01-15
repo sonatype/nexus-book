@@ -329,6 +329,10 @@ task.
 
 The following task types are available to perform specific maintenance:
 
+Compact blob store:: Content deleted from a <<admin-repository-blobstores,blob store>> is not physically deleted
+from the storage device. Instead they are only internally marked for deletion. This task performs the actual
+deletion of the relevant files, and therefore frees up the storage space.
+
 ////
 Execute Script:: Scripts can be provided in the 'Source' field and have to be written using the Groovy programming
 language. These scripts can use the APIs of the repository manager to perform maintenance and other modification
@@ -420,6 +424,9 @@ fully accessible by the operating system user account running the Nexus reposito
 
 Once a blob store has been created it can no longer be modified and any blob store used by a repository or
 repository group can not be deleted.
+
+Blobs deleted in a repository are only marked for deletion. The 'Compact blob store' <<admin-system-tasks,task>>
+can be used to permanently delete these 'soft-deleted' blobs and therefore free up the used storage space.
 
 [[proxy-repository]]
 ==== Proxy Repository
