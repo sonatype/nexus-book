@@ -1,21 +1,130 @@
-[[config]]
-== Configuring Maven and Other Build Tools
+[[maven]]
+== Maven Repositories with Apache Maven and Other Tools
 {inall}
 
 [[maven-introduction]]
 === Introduction
 
-Historically {pro} started as a repository manager supporting the Maven repository format. While it supports many
-other repository formats now, the Maven repository format is still the most common and well supported format for
-build and provisioning tools running on the JVM and beyond.
+Historically {pro} started as a repository manager supporting the Maven repository format and it continues to
+include excellent support for users of Apache Maven , Apache Ant/Ivy, Eclipse Aether, Gradle and others.
 
-This chapter shows example configurations for using {pro} with a Maven and number of other tools. The setups take
-advantage of the repository manager merging many repositories and exposing them via a repository group. Setting
-this up is documented in the chapter in addition to the configuration used by specific tools.
+This chapter explains the default configuration included in {pro} and {oss}, instructions for creating further
+Maven repositories as well as searching and browsing the repositories. Build tool configuration for Apache Maven,
+Apache Ant, Gradle and others tools follow. The configuration examples take advantage of the repository manager
+merging many repositories and exposing them via a repository group.
 
+=== Maven Repository Format
+
+http://maven.apache.org[Apache Maven] created the most widely used repository format in the Java development
+ecosystem with the release of Apache Maven 2. It is used by all newer versions of Apache Maven and many other
+tools including Apache Ivy, Gradle, sbt, Eclipse Aether and Leiningen. Further information about the format can be
+found in <<concepts-maven-format>>.
+
+The format is used by many publicly available repositories. The http://central.sonatype.org[Central Repository] is
+the largest repository of components aimed at Java/JVM-based development and beyond and is used the Maven
+repository format for release components of numerous open source projects. It is configured as a proxy repository
+by default in Apache Maven and widely used in other tools.
+
+In addition to the generic repository management features documented in <<admin-repositories>>, specifics of the
+Maven repository format can be configured for each repository in the 'Maven 2' section:
+
+Version policy::
+
+Release;; A Maven repository can be configured to be suitable for release components with the 'Release'
+version policy. The Central Repository uses a release version policy.
+
+Snapshot;; Continuous development is typically performed with snapshot versions supported by the 'Snapshot'
+version policy.
+
+Mixed;; The 'Mixed' version policy allows you to support both approaches within one repository.
+
+Layout policy:: The Maven repository format defines a directory structure as well as a naming convention for the
+files within the structure. Apache Maven follows these conventions. Other build tools, such as sbt, and custom
+tools have historically created usages that use the directory structure less strictly, violating the file naming
+conventions. Components based on these tools' different conventions have been ublished them to public
+repositories, such as the Central Repository. These tools rely on these changed conventions.
+
+Permissive;; You can configure a layout policy of 'Permissive' to allow assets in the repository that violate the
+default format.
+
+Strict;; The default value of 'Strict' requires publishing and accessig tools to follow the Apache Maven
+conventions. This is the preferred setting if you are using Apache Maven, Eclipse Aether, and other strictly
+compatible tools.
+
+=== Proxying Maven Repositories
+
+A default installation of {pro} or {oss} includes a proxy repository configured to access the Central Repository
+via HTTPS using the URL 'https://repo1.maven.org/maven2/'. To reduce duplicate downloads and improve download
+speeds for your developers and CI servers, you should proxy all other remote repositories you access as proxy
+repositories as well.
+
+To proxy a Maven repository, you simply create a new repository using the recipe 'maven2 (proxy)' as documented in
+<<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Define URL for 'Remote storage' e.g. `https://repo1.maven.org/maven2/`
+- Select a 'Blob store' for 'Storage'
+
+This creates a repository using the a 'Release' version policy and a 'Strict' layout policy. Both can be
+configured as appropriate for the remote repository.
+
+If they remote repository contains a mixture of release and snapshot versions, you have to set the version
+policy to 'Mixed'.
+
+Usage of the repository with build tools such as sbt, potentially requires the layout policy to be set to
+'Permissive'.
+
+=== Hosting Maven Repositories
+
+A hosted Maven repository can be used to deploy your own as well as third-party components. A default installation
+of {pro} and {oss} includes a two hosted Maven repositories. The 'maven-releases' repository uses a release
+version policy and the 'maven-snapshots' repository uses a snapshot version policy.
+
+To create another hosted Maven repository, add a new repository with the recipe 'maven2 (hosted)' as
+documented in <<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Select 'Blob store' for 'Storage'
+
+=== Grouping Maven Repositories
+
+A repository group is the recommended way to expose all your Maven repositories from the repository
+manager to your users, without needing any further client side configuration. A repository group allows you to
+expose the aggregated content of multiple proxy and hosted repositories as well as other repository groups with
+one URL for tool configuration. This is possible for Maven repositories by creating a new repository with the
+'maven2 (group)' recipe as documented in <<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Select 'Blob store' for 'Storage'
+- Add Maven repositories to the 'Members' list in the desired order
+
+A typical, useful example is the 'maven-public' group that is configured by default. It aggregates the
+'maven-central' proxy repository with the 'maven-releases' and 'maven-snapshots' hosted repositories. Using the
+'URL' of the repository group gives you access to the packages in all three repositories with one URL. Any new
+component added as well as any new repositories added to the group will automatically be available.
+
+
+=== Browsing and Searching Maven Repositories
+
+You can browse Maven repositories in the user interface inspecting the components and assets and their details as
+documented in <<browse-browse>>.
+
+Components can be serched in the user interface as described in <<search-components>>. A search finds all
+components and assets that are currently stored in the repository manager, either because they have been deployed
+to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
+
+TIP:: You can change the default column order in the search and browse user interfaces to the familiar order of
+'Group' (groupId), 'Name' (artifactId) and 'Version'. Simple drag the 'Group' column from the middle to the left
+using the header. This setting will be persisted as your preference in your web browser.
 
 [[maven-sect-single-group]]
-=== Apache Maven
+=== Configuring Apache Maven
 
 To use repository manager with http://maven.apache.org/[Apache Maven], we configure Maven to check the repository
 manager instead of the default, built-in connection to the Central Repository.
@@ -69,7 +178,7 @@ In <<ex-maven-nexus-simple>>, we have defined a single profile called +nexus+. I
 +pluginRepository+ with the id +central+ that overrides the same repositories in the super pom. The super pom is
 internal to every Apache Maven install and establishes default values. These overrides are important since they
 change the repositories by enabling snapshots and replacing the URL with a bogus URL. This URL is overridden by
-the +mirror+ setting in the same settings.xml file to point to the URL of your single repository group. This
+the +mirror+ setting in the same `settings.xml` file to point to the URL of your single repository group. This
 repository group can, therefore, contain release as well as snapshot components and Maven will pick them up.
 
 The +mirrorOf+ pattern of +*+ causes any repository request to be redirected to this mirror and to your single
@@ -85,9 +194,49 @@ http://maven.apache.org/guides/mini/guide-mirror-settings.html[mini guide on the
 
 As a last configuration the +nexus+ profile is listed as an active profile in the +activeProfiles+ element.
 
+Deployment to a repository is configured in the `pom.xml` for the respective project in the
+`distributionManagement` section. Using the default repositories of the repository manager:
+
+----
+<project>
+...
+<distributionManagement>
+    <repository>
+      <id>nexus</id>
+      <name>Releases</name>
+      <url>http://localhost:8081/repository/maven-releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus</id>
+      <name>Snapshot</name>
+      <url>http://localhost:8081/repository/maven-snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+...
+----
+
+The credentials used for the deployment are looked from a 'server' section in a users `settings.xml` using the
+`nexus` value used in the `id` fields:
+
+----
+<settings>
+....
+  <servers>
+    <server>
+      <id>nexus</id>
+      <username>admin</username>
+      <password>admin123</password>
+    </server>
+  </servers>
+----
+
+Full example projects can be found in the +maven+ folder of the
+https://github.com/sonatype/nexus-book-examples[documentation examples project] in the +nexus-3.0.x+ branch. A
+full build of the +simple-project+, including downloading the declared dependencies and uploading the build output
+to the repository manager can be invoked with `mvn clean deploy`.
 
 [[ant-ivy]]
-=== Apache Ant and Apache Ivy
+=== Configuring Apache Ant and Apache Ivy
 
 http://ant.apache.org/ivy/[Apache Ivy] is a dependency manager often used in Apache Ant builds. It supports the
 Maven repository format and can be configured to download dependencies that can be declared in the +ivy.xml+
@@ -110,7 +259,7 @@ Listing: Minimal Ivy Configuration in an Ant file
 These minimal settings allow the +ivy:retrieve+ task to download the declared dependencies.
 
 To deploy build outputs to a repository with the +ivy:publish+ task, user credentials and the URL of the target
-repository have to be added to +ivysettings.xml+ and the makepom and publish tasks have to be configured and
+repository have to be added to +ivysettings.xml+ and the `makepom` and `publish` tasks have to be configured and
 invoked.
 
 Full example projects can be found in the +ant-ivy+ folder of the
@@ -122,6 +271,7 @@ to the repository manager can be invoked with
 cd ant-ivy/simple-project
 ant deploy
 ----
+
 ////
 tbd
 Further details about using these example projects can be found in
@@ -130,11 +280,11 @@ Further details about using these example projects can be found in
 
 
 [[ant-aether]]
-=== Apache Ant and Eclipse Aether
+=== Configuring Apache Ant and Eclipse Aether
 
 http://www.eclipse.org/aether/[Eclipse Aether] is the dependency management component used in Apache Maven 3+. The
 project provides Ant tasks that can be configured to download dependencies that can be declared in +pom.xml+ file
-or in the Ant build fiel directly.
+or in the Ant build file directly.
 
 This configuration can be contained in your Ant +build.xml+ or a separate file that is imported. A minimal example
 for resolving dependencies from a repository manager running on +localhost+ is shown in <<aether-minimal>>.
@@ -174,7 +324,7 @@ Further details about using these example projects can be found in <<eval>>.
 
 
 [[gradle]]
-=== Gradle
+=== Configuring Gradle
 
 http://www.gradle.org/[Gradle] has a built in dependency management component that supports the Maven repository
 format. In order to configure a Gradle project to resolve +dependencies+ declared in +build.gradle+ file, a +maven+
@@ -253,11 +403,13 @@ To deploy build outputs to a repository with the +publish+ task, user credential
 +build.sbt+ file:
 
 ----
-credentials += Credentials("Nexus Repository Manager",
+credentials += Credentials("Sonatype Nexus Repository Manager",
 "nexus.scala-tools.org", "admin", "admin123")
 ----
 
-and then used in the +publishTo+ configuration:
+TIP: The credentials string should never change, as third-party clients depend on it
+
+And then used in the +publishTo+ configuration:
 
 ----
 publishTo <<= version { v: String =>
@@ -276,16 +428,16 @@ publishing].
 === Leiningen
 
 http://leiningen.org/[Leiningen] has a built in dependency management component and defaults to the Maven repository
-format. As a build tool it is mostly used for projects using the Coljure language. Many libraries useful for these
+format. As a build tool it is mostly used for projects using the Clojure language. Many libraries useful for these
 projects are published to the Clojars repository. If you want to use these, you have to create two proxy repositories
 with the remote URL +http://clojars.org/repo/+. This repository is mixed and you therefore have to create a release and
 a snapshot proxy repository and then add both to the public group.
 
-In order to configure a Leinigen project to resolve dependencies declared in the +project.clj+ file, a +mirrors+ section
+In order to configure a Leiningen project to resolve dependencies declared in the +project.clj+ file, a +mirrors+ section
 overriding the built in +central+ and +clojars+ repositories as shown below has to be declared
 
 
-anchor:leiningen-minima[Listing: Leiningen Configuration]
+anchor:leiningen-minimal[Listing: Leiningen Configuration]
 .Listing: Leiningen Configuration
 ----
   :mirrors {
@@ -314,7 +466,6 @@ which is not necessary, since they are already part of the +public+ repository g
 User credentials can be declared in +~/.lein/credentials.clj.gpg+ or will be prompted for.
 
 Further documentation can be found on the http://leiningen.org/[Leiningen website].
-
 
 ////
 /* Local Variables: */
