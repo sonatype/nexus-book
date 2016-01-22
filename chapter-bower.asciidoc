@@ -1,0 +1,98 @@
+[[bower]]
+== Bower Repositories
+{inall}
+
+[[bower-introduction]]
+=== Introduction
+
+TBD
+
+=== Bower Repository Format
+
+TBD
+
+=== Proxying Bower Repositories
+
+A default installation of {pro} or {oss} includes a proxy repository configured to access the Central Repository
+via HTTPS using the URL 'https://repo1.maven.org/maven2/'. To reduce duplicate downloads and improve download
+speeds for your developers and CI servers, you should proxy all other remote repositories you access as proxy
+repositories as well.
+
+To proxy a Bower repository, you simply create a new repository using the recipe 'bower (proxy)' as documented in
+<<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Define URL for 'Remote storage' e.g. TBD
+- Select a 'Blob store' for 'Storage'
+
+This creates a repository using the a 'Release' version policy and a 'Strict' layout policy. Both can be
+configured as appropriate for the remote repository.
+
+If they remote repository contains a mixture of release and snapshot versions, you have to set the version
+policy to 'Mixed'.
+
+Usage of the repository with build tools such as sbt, potentially requires the layout policy to be set to
+'Permissive'.
+
+=== Hosting Bower Repositories
+
+A hosted Maven repository can be used to deploy your own as well as third-party components. A default installation
+of {pro} and {oss} includes a two hosted Maven repositories. The 'maven-releases' repository uses a release
+version policy and the 'maven-snapshots' repository uses a snapshot version policy.
+
+To create another hosted Maven repository, add a new repository with the recipe 'maven2 (hosted)' as
+documented in <<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Select 'Blob store' for 'Storage'
+
+=== Grouping Bower Repositories
+
+A repository group is the recommended way to expose all your Maven repositories from the repository
+manager to your users, without needing any further client side configuration. A repository group allows you to
+expose the aggregated content of multiple proxy and hosted repositories as well as other repository groups with
+one URL for tool configuration. This is possible for Maven repositories by creating a new repository with the
+'maven2 (group)' recipe as documented in <<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Select 'Blob store' for 'Storage'
+- Add Maven repositories to the 'Members' list in the desired order
+
+A typical, useful example is the 'maven-public' group that is configured by default. It aggregates the
+'maven-central' proxy repository with the 'maven-releases' and 'maven-snapshots' hosted repositories. Using the
+'URL' of the repository group gives you access to the packages in all three repositories with one URL. Any new
+component added as well as any new repositories added to the group will automatically be available.
+
+
+=== Browsing and Searching Bower Repositories
+
+You can browse Maven repositories in the user interface inspecting the components and assets and their details as
+documented in <<browse-browse>>.
+
+Components can be serched in the user interface as described in <<search-components>>. A search finds all
+components and assets that are currently stored in the repository manager, either because they have been deployed
+to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
+
+TIP:: You can change the default column order in the search and browse user interfaces to the familiar order of
+'Group' (groupId), 'Name' (artifactId) and 'Version'. Simple drag the 'Group' column from the middle to the left
+using the header. This setting will be persisted as your preference in your web browser.
+
+=== Configuring Bower
+
+TBD
+
+=== Publishing Bower Components
+
+TBD
+
+////
+/* Local Variables: */
+/* ispell-personal-dictionary: "ispell.dict" */
+/* End:             */
+////
