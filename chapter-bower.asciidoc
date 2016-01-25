@@ -5,7 +5,15 @@
 [[bower-introduction]]
 === Introduction
 
-Bower is a package manager for front-end development. (More TBD)
+Bower is a package manager for front-end development. Consumers of javascript packages who routinely build projects need to keep track of and access remote packages. Using Bower ensures front-end packages are up to date (or set to the specific versions you need). The package manager installs the right versions of the packages you need and their dependencies. Bower can manages such components as contain HTML, CSS, JavaScript, and images as well.
+
+
+Bower works by fetching and installing packages from all over, taking care of hunting, finding, downloading, and saving the stuff you’re looking for. Bower keeps track of these packages in a manifest file, bower.json. How you use packages is up to you. Bower provides hooks to facilitate using packages in your tools and workflows.
+
+Nexus Repository Manager and Nexus Repository Manager OSS support the Bower registry format for proxy repositories. This allows you to take advantage of the packages in the Bower registry and other public registries without incurring repeated downloads of packages, since they will be proxied in the repository manager.
+
+
+Bower is optimized for the front-end. If multiple packages depend on a package - jQuery for example - Bower will download jQuery just once. This is known as a flat dependency graph and it helps reduce page load.
 
 === Bower Repository Format
 
@@ -13,8 +21,10 @@ TBD
 
 === Proxying Bower Repositories
 
+RESOURCE - NEXUS-9580
+
 A default installation of {pro} or {oss} includes a proxy repository configured to access the Central Repository
-via HTTPS using the URL 'https://repo1.maven.org/maven2/'. To reduce duplicate downloads and improve download
+via HTTPS using the URL 'https://repo1.Bower.org/Bower2/'. To reduce duplicate downloads and improve download
 speeds for your developers and CI servers, you should proxy all other remote repositories you access as proxy
 repositories as well.
 
@@ -38,11 +48,13 @@ Usage of the repository with build tools such as sbt, potentially requires the l
 
 === Hosting Bower Repositories
 
-A hosted Maven repository can be used to deploy your own as well as third-party components. A default installation
-of {pro} and {oss} includes a two hosted Maven repositories. The 'maven-releases' repository uses a release
-version policy and the 'maven-snapshots' repository uses a snapshot version policy.
+RESOURCE - NEXUS-9581
 
-To create another hosted Maven repository, add a new repository with the recipe 'maven2 (hosted)' as
+A hosted Bower repository can be used to deploy your own as well as third-party components. A default installation
+of {pro} and {oss} includes a two hosted Maven repositories. The 'Bower-releases' repository uses a release
+version policy and the 'Bower-snapshots' repository uses a snapshot version policy.
+
+To create another hosted Maven repository, add a new repository with the recipe 'Bower2 (hosted)' as
 documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
@@ -52,11 +64,13 @@ Minimal configuration steps are:
 
 === Grouping Bower Repositories
 
+RESOURCE - NEXUS-9579
+
 A repository group is the recommended way to expose all your Maven repositories from the repository
 manager to your users, without needing any further client side configuration. A repository group allows you to
 expose the aggregated content of multiple proxy and hosted repositories as well as other repository groups with
 one URL for tool configuration. This is possible for Maven repositories by creating a new repository with the
-'maven2 (group)' recipe as documented in <<admin-repositories>>.
+'Bower2 (group)' recipe as documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
 
@@ -64,13 +78,15 @@ Minimal configuration steps are:
 - Select 'Blob store' for 'Storage'
 - Add Maven repositories to the 'Members' list in the desired order
 
-A typical, useful example is the 'maven-public' group that is configured by default. It aggregates the
-'maven-central' proxy repository with the 'maven-releases' and 'maven-snapshots' hosted repositories. Using the
+A typical, useful example is the 'Bower-public' group that is configured by default. It aggregates the
+'Bower-central' proxy repository with the 'Bower-releases' and 'Bower-snapshots' hosted repositories. Using the
 'URL' of the repository group gives you access to the packages in all three repositories with one URL. Any new
 component added as well as any new repositories added to the group will automatically be available.
 
 
 === Browsing and Searching Bower Repositories
+
+TBD
 
 You can browse Maven repositories in the user interface inspecting the components and assets and their details as
 documented in <<browse-browse>>.
