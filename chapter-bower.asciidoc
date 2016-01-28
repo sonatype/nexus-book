@@ -5,22 +5,49 @@
 [[bower-introduction]]
 === Introduction
 
-Bower/[http://bower.io/] is a package manager for front-end development. Consumers of javascript packages who routinely build projects need to keep track of and access remote packages. Using Bower ensures front-end packages are up to date (or set to the specific versions you need). The package manager installs the right versions of the packages you need and their dependencies. Bower can manages such components as contain HTML, CSS, JavaScript, and images as well.
+Bower/[http://bower.io/] is a package manager for front-end web development. Consumers of JavaScript packages who routinely build projects need to keep track of and access remote packages. Using Bower ensures front-end packages are up to date (or set to the specific versions you need). The package manager installs the right versions of the packages you need and their dependencies. Bower can manages such components as contain HTML, CSS, JavaScript, and images as well.
 
-Bower works by fetching and installing packages from all over, taking care of hunting, finding, downloading, and saving the stuff you’re looking for. Bower keeps track of these packages in a manifest file, bower.json. How you use packages is up to you. Bower provides hooks to facilitate using packages in your tools and workflows.
+{pro} and {oss} support the Bower registry format for proxy repositories. This allows you to take advantage of the packages in the Bower registry and other public registries without incurring repeated downloads of packages, since they will be proxied in the repository manager. The proxy allows {pro} and {oss} to grab artifacts from Bower. In order for the proxy to work you must install at resolver which allows {pro} and {oss} to connect to the Bower registry.
 
-{pro} and {oss} support the Bower registry format for proxy repositories. This allows you to take advantage of the packages in the Bower registry and other public registries without incurring repeated downloads of packages, since they will be proxied in the repository manager. The proxy allows {pro} and {oss} to grab artifacts from Bower. In order fo the proxy to work you must install at resolver which allows {pro} and {oss} to connect to the Bower registry.
+Bower is optimized for the front-end. If multiple packages depend on a single package Bower will download jQuery just once. This is known as a flat dependency graph and it helps reduce page load. You will likely want to install the resolver globally. Once published to npm, you should be able to install by using:
 
-Bower is optimized for the front-end. If multiple packages depend on a single package Bower will download jQuery just once. This is known as a flat dependency graph and it helps reduce page load. You can install Bower to your system locally and globally.
+=== Installing Bower
 
-To install locally
+Install Bower from your terminal. Use npm to install.
+
+To install globally:
 ----
 npm install -g bower-nexus3-resolver
 ----
 
-To install globally
+To install from source code:
 ----
-bower install -g jquery
+bower install -g
+----
+
+=== Fetching Packages with Bower
+
+Bower works by fetching and installing packages from all over, taking care of hunting, finding, downloading, and saving the stuff you’re looking for. Bower keeps track of these packages in a manifest file, bower.json. How you use packages is up to you. Bower provides hooks to facilitate using packages in your tools and workflows.
+
+Section TBD
+
+=== Configuring Bower
+
+In the project root you will find a file called package.json. This file maintains a variety of metadata vital to the project, specifically npm and the end users of the Bower package. Additionally you need to create a .bowerrc file, which you can build in JSON. The JSON in the prject's .bowerrc file must reference the pluggable resolver you installed. The rewrite capabilities enable the resolver to for a particular URL to a package somewhere, it "resolves" what kind of thing it is and what that means in terms of how to get it, including pulling it down.
+
+You may also install the resolver on a per-project basis instead by adding it as a devDependency in your package.json:
+----
+"devDependencies" : {
+  "bower-nexus3-resolver" : "*"
+}
+----
+
+Create and add .bowerrc file
+----
+{
+    "registry"    : "http://host:port/repository/your-bower-repo",
+    "resolvers"   : "bower-nexus3-resolver"
+}
 ----
 
 === Bower Repository Format
@@ -29,12 +56,14 @@ TBD
 
 === Proxying Bower Repositories
 
-To reduce duplicate downloads and improve download speeds for your developers and CI servers, you should proxy the registry hosted at http://bower.herokuapp.com. By default Bower accesses this registry directly. You can also proxy any other registries you require.
+With your privileges you can setup a proxy repository inside of the repository manager. This enable the system to proxy other private Nexus Bower registries. To reduce duplicate downloads and improve download speeds for your developers and CI servers, you should proxy the registry hosted at http://bower.herokuapp.com/[http://bower.herokuapp.com]. By default Bower accesses this registry directly. You can also proxy any other registries you require.
+ 
 
 Minimal configuration steps are:
 
 - Define 'Name'
-- Define URL for 'Remote storage' e.g. http://bower.herokuapp.com
+- Define URL for 'Remote storage' e.g. http://bower.herokuapp.com/[http://bower.herokuapp.com]
+- Enable rewrite of package URLs
 - Select a 'Blob store' for 'Storage'
 
 This creates a repository using the a 'Release' version policy and a 'Strict' layout policy. Both can be
@@ -46,14 +75,17 @@ policy to 'Mixed'.
 Usage of the repository with build tools such as sbt, potentially requires the layout policy to be set to
 'Permissive'.
 
+
 === Hosting Bower Repositories
 
+
+TBD
 
 A hosted Bower repository can be used to deploy your own as well as third-party components. A default installation
 of {pro} and {oss} includes a two hosted Maven repositories. The Bower repository you create uses a release
 version policy and the 'Bower-snapshots' repository uses a snapshot version policy.
 
-To create another hosted Maven repository, add a new repository with the recipe 'Bower2 (hosted)' as
+To create another hosted Bower repository, add a new repository with the recipe 'Bower2 (hosted)' as
 documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
@@ -61,10 +93,13 @@ Minimal configuration steps are:
 - Define 'Name'
 - Select 'Blob store' for 'Storage'
 
+
 === Grouping Bower Repositories
 
 
-A repository group is the recommended way to expose all your Maven repositories from the repository
+TBD
+
+A repository group is the recommended way to expose all your Bower repositories from the repository
 manager to your users, without needing any further client side configuration. A repository group allows you to
 expose the aggregated content of multiple proxy and hosted repositories as well as other repository groups with
 one URL for tool configuration. This is possible for Maven repositories by creating a new repository with the
@@ -96,9 +131,6 @@ TIP:: You can change the default column order in the search and browse user inte
 'Group' (groupId), 'Name' (artifactId) and 'Version'. Simple drag the 'Group' column from the middle to the left
 using the header. This setting will be persisted as your preference in your web browser.
 
-=== Configuring Bower
-
-TBD
 
 === Publishing Bower Components
 
