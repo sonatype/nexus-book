@@ -13,7 +13,7 @@ Bower works by fetching and installing packages from all over, taking care of hu
 
 Bower is optimized for the front-end. If multiple packages depend on a single package Bower will download jQuery just once. This is known as a flat dependency graph and it helps reduce page load. You can install Bower to your system locally and globally.
 
-To install locally (e.g. jQuery)
+To install locally
 ----
 npm install -g bower-nexus3-resolver
 ----
@@ -29,26 +29,18 @@ TBD
 
 === Proxying Bower Repositories
 
-RESOURCE - NEXUS-9580
-
-A default installation of {pro} or {oss} includes a proxy repository configured to access the Central Repository
-via HTTPS using the URL 'https://repo1.Bower.org/Bower2/'. To reduce duplicate downloads and improve download
-speeds for your developers and CI servers, you should proxy all other remote repositories you access as proxy
-repositories as well.
-
-To proxy a Bower repository, you simply create a new repository using the recipe 'bower (proxy)' as documented in
-<<admin-repositories>>.
+To reduce duplicate downloads and improve download speeds for your developers and CI servers, you should proxy the registry hosted at http://bower.herokuapp.com. By default Bower accesses this registry directly. You can also proxy any other registries you require.
 
 Minimal configuration steps are:
 
 - Define 'Name'
-- Define URL for 'Remote storage' e.g. TBD
+- Define URL for 'Remote storage' e.g. http://bower.herokuapp.com
 - Select a 'Blob store' for 'Storage'
 
 This creates a repository using the a 'Release' version policy and a 'Strict' layout policy. Both can be
 configured as appropriate for the remote repository.
 
-If they remote repository contains a mixture of release and snapshot versions, you have to set the version
+If the remote repository contains a mixture of release and snapshot versions, you have to set the version
 policy to 'Mixed'.
 
 Usage of the repository with build tools such as sbt, potentially requires the layout policy to be set to
@@ -56,10 +48,9 @@ Usage of the repository with build tools such as sbt, potentially requires the l
 
 === Hosting Bower Repositories
 
-RESOURCE - NEXUS-9581
 
 A hosted Bower repository can be used to deploy your own as well as third-party components. A default installation
-of {pro} and {oss} includes a two hosted Maven repositories. The 'Bower-releases' repository uses a release
+of {pro} and {oss} includes a two hosted Maven repositories. The Bower repository you create uses a release
 version policy and the 'Bower-snapshots' repository uses a snapshot version policy.
 
 To create another hosted Maven repository, add a new repository with the recipe 'Bower2 (hosted)' as
@@ -72,7 +63,6 @@ Minimal configuration steps are:
 
 === Grouping Bower Repositories
 
-RESOURCE - NEXUS-9579
 
 A repository group is the recommended way to expose all your Maven repositories from the repository
 manager to your users, without needing any further client side configuration. A repository group allows you to
@@ -94,9 +84,8 @@ component added as well as any new repositories added to the group will automati
 
 === Browsing and Searching Bower Repositories
 
-TBD
 
-You can browse Maven repositories in the user interface inspecting the components and assets and their details as
+You can browse Bower repositories in the user interface inspecting the components and assets and their details as
 documented in <<browse-browse>>.
 
 Components can be serched in the user interface as described in <<search-components>>. A search finds all
