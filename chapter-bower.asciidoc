@@ -18,9 +18,8 @@ downloads of packages, since they will be proxied in the repository manager. The
 to grab artifacts from Bower. In order for the proxy to work you must install a resolver which allows {pro} and 
 {oss} to connect to the Bower registry.
 
-Bower is optimized for the front-end. If multiple packages depend on a single package Bower will download a component 
-(e.g jQuery) just once. This is known as a flat dependency graph and it 
-helps reduce page load.
+Bower is optimized for the front-end. If multiple packages depend on a single package Bower will download a 
+component (e.g jQuery) just once. This is known as a flat dependency graph and it helps reduce page load.
 
 [[bower-installation]]
 === Installing Bower
@@ -35,7 +34,7 @@ npm install
 
 To utilize the Mocha framework to invoke your tests, run:
 ----
-npm test.
+npm test
 ----
 
 Test output is displayed to the console. In the event of test failure, command will return a non-zero result code.
@@ -47,8 +46,8 @@ npm pack
 
 The +.npmignore+ file is configured to exclude the Maven POM and other unrelated files.
 
-You also have the option of using Maven to generate the +.tgz+ package and test reports by performing a Maven build 
-of the module. The outputs will be placed in the target subdirectory, similar to standard Maven builds.
+You also have the option of using Maven to generate the +.tgz+ package and test reports by performing a Maven 
+build of the module. The outputs will be placed in the target subdirectory, similar to standard Maven builds.
 
 You can also build as part of a build of the entire project by specifying the +-Pinclude-bower-resolver+ option.
 
@@ -62,27 +61,30 @@ To install from source code:
 bower install -g
 ----
 
-Bower works by fetching and installing packages from all over; the package manager automatically searches and saves 
-them in the repository. Bower keeps track of these packages in a manifest file, +bower.json+. Bower provides hooks to 
-facilitate using packages in your tools and workflows.
+Bower works by fetching and installing packages from all over; the package manager automatically searches and 
+saves them in the repository. Bower keeps track of these packages in a manifest file, +bower.json+. Bower 
+provides hooks to facilitate using packages in your tools and workflows.
 
 [[bower-resolver-config]]
 === Configuring the Bower Resolver
 
-In the project root you will find a file called +package.json+. This file maintains a variety of metadata vital to 
-the project, specifically npm and the end users of the Bower package. Additionally you need to create a .bowerrc file, 
-which you can build in JSON. The JSON in the project's .bowerrc file must reference the resolver you installed. Rewrite 
-capabilities enable the resolver to for a particular URL to a package somewhere, it "resolves" what kind of thing it is 
-and what that means in terms of how to get it, including pulling it down.
+In the project root you will find a file called +package.json+. This file maintains a variety of metadata vital 
+to the project, specifically npm and the end users of the Bower package. Additionally you need to create a 
++.bowerrc+ file, which you can build in JSON. The JSON in the project's +.bowerrc+ file must reference 
+theresolver you installed. Rewrite capabilities enable the resolver to for a particular URL to a package 
+somewhere, it "resolves" what kind of thing it is and what that means in terms of how to get it, including 
+pulling it down.
 
-You may also install the resolver on a per-project basis instead by adding it as a +devDependency+ in your +package.json+:
+You may also install the resolver on a per-project basis instead by adding it as a +devDependency+ in your 
++package.json+:
 ----
 "devDependencies" : {
   "bower-nexus3-resolver" : "*"
 }
 ----
 
-Use the resolver by configuring your .bowerrc file with the URL for the Bower registry in the repository manager:
+Use the resolver by configuring your +.bowerrc+ file with the URL for the Bower registry in the repository 
+manager:
 ----
 {
     "registry"    : "http://host:port/repository/your-bower-repo",
@@ -93,16 +95,19 @@ Use the resolver by configuring your .bowerrc file with the URL for the Bower re
 [[bower-proxying]]
 === Proxying Bower Repositories
 
-With your privileges you can set up a proxy repository inside of the repository manager. This enables the system to proxy 
-other private Nexus Bower registries. To reduce duplicate downloads and improve download speeds for your developers and CI 
-servers, you should proxy the registry hosted at http://bower.herokuapp.com/[http://bower.herokuapp.com]. By default 
+With your privileges you can set up a proxy repository inside of the repository manager. This enables the system 
+to proxy other private Nexus Bower registries. To reduce duplicate downloads and improve download speeds for your 
+developers and CI servers, you should proxy the registry hosted at 
+http://bower.herokuapp.com/[http://bower.herokuapp.com]. By default 
 Bower accesses this registry directly. You can also proxy any other registries you require.
 
-When rewrite capabilities are activated the Bower resolver forces itself to Nexus to retrieve an artifact (e.g. tar.gz). 
+When rewrite capabilities are activated the Bower resolver forces itself to Nexus to retrieve an artifact (e.g. 
+tar.gz). 
 
-If deactivated, no rewrite of the URL occurs. As a result, original component URL is exposed. Turning off rewrite capabilities 
-proxies the information directly from Bower’s registry without redirecting to the repository manager to retrieve artifacts. 
-The content will be as if navigating directly to the HTTPS Bower’s registry in your browser.
+If deactivated, no rewrite of the URL occurs. As a result, original component URL is exposed. Turning off rewrite 
+capabilities proxies the information directly from Bower’s registry without redirecting to the repository manager 
+to retrieve artifacts. The content will be as if navigating directly to the HTTPS Bower’s registry in your 
+browser.
  
 Minimal configuration steps are:
 
@@ -111,22 +116,25 @@ Minimal configuration steps are:
 - Enable rewrite of package URLs
 - Select a 'Blob store' for 'Storage'
 
-This creates a repository using the a 'Release' version policy and a 'Strict' layout policy. Both can be configured as 
-appropriate for the remote repository.
+This creates a repository using the a 'Release' version policy and a 'Strict' layout policy. Both can be 
+configured as appropriate for the remote repository.
 
-If the remote repository contains a mixture of release and snapshot versions, you have to set the version policy to 'Mixed'.
+If the remote repository contains a mixture of release and snapshot versions, you have to set the version policy 
+to 'Mixed'.
 
-Usage of the repository with build tools such as sbt, potentially requires the layout policy to be set to 'Permissive'.
+Usage of the repository with build tools such as sbt, potentially requires the layout policy to be set to 
+'Permissive'.
 
 [[bower-hosting]]
 === Hosting Bower Repositories
 
-A hosted Bower repository can be used to deploy your own as well as third-party components. A default installation of {pro} 
-and {oss} includes two hosted Maven repositories. The Bower proxy repository you create uses a release version policy 
+A hosted Bower repository can be used to deploy your own as well as third-party components. A default 
+installation of {pro} and {oss} includes two hosted Maven repositories. The Bower proxy repository you create 
+uses a release version policy 
 ('maven-releases') and the 'maven-snapshots' repository uses a snapshot version policy.
 
-To create another hosted Bower repository, add a new repository with the recipe 'Bower2 (hosted)' as documented in 
-<<admin-repositories>>.
+To create another hosted Bower repository, add a new repository with the recipe 'Bower2 (hosted)' as documented 
+in <<admin-repositories>>.
 
 Minimal configuration steps are:
 
@@ -136,9 +144,11 @@ Minimal configuration steps are:
 [[bower-grouping]]
 === Grouping Bower Repositories
 
-A repository group is the recommended way to expose all your Bower repositories from the repository manager to your users, without needing any further client side configuration. A repository group allows you to expose the aggregated content of 
-multiple proxy and hosted repositories as well as other repository groups with one URL for tool configuration. This is 
-possible for Maven repositories by creating a new repository with the 'npm (group)' recipe as documented in <<admin-repositories>>.
+A repository group is the recommended way to expose all your Bower repositories from the repository manager to 
+your users, without needing any further client side configuration. A repository group allows you to expose the 
+aggregated content of multiple proxy and hosted repositories as well as other repository groups with one URL for 
+tool configuration. This is possible for Maven repositories by creating a new repository with the 'npm (group)' 
+recipe as documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
 
@@ -146,21 +156,20 @@ Minimal configuration steps are:
 - Select 'Blob store' for 'Storage'
 - Add Maven repositories to the 'Members' list in the desired order
 
-A typical, useful example is the 'Bower-public' group that is configured by default. It aggregates the 'Bower-central' proxy 
-repository with the 'Bower-releases' and 'Bower-snapshots' hosted repositories. Using the 'URL' of the repository group gives 
-you access to the packages in all three repositories with one URL. Any new component added as well as any new repositories 
-added to the group will automatically be available.
+A typical, useful example is the 'Bower-public' group that is configured by default. It aggregates the 
+'Bower-central' proxy repository with the 'Bower-releases' and 'Bower-snapshots' hosted repositories. Using the 
+'URL' of the repository group gives you access to the packages in all three repositories with one URL. Any new 
+component added as well as any new repositories added to the group will automatically be available.
 
 [[bower-browse-search]]
 === Browsing and Searching Bower Repositories
 
-You can browse Bower repositories in the user interface inspecting the components and assets and their details as documented 
-in <<browse-browse>>.
+You can browse Bower repositories in the user interface inspecting the components and assets and their details as 
+documented in <<browse-browse>>.
 
-Components can be serched in the user interface as described in <<search-components>>. A search finds all components and assets 
-that are currently stored in the repository manager, either because they have been deployed to a hosted repository or they have 
-been proxied from an upstream repository and cached in the repository manager.
-
+Components can be serched in the user interface as described in <<search-components>>. A search finds all 
+components and assets that are currently stored in the repository manager, either because they have been deployed 
+to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
 
 === Publishing Bower Components
 
