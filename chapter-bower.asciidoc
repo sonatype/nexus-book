@@ -9,88 +9,15 @@ http://bower.io[Bower] is a package manager for front-end web development. Consu
 packages who routinely build projects need to keep track of and access remote packages. Using Bower 
 ensures front-end packages are up to date (or set to the specific versions you need). The package manager 
 installs the right versions of the packages you need and their dependencies. Bower can manage such components 
-as HTML, CSS, JavaScript, and images. Further, it provides a pluggable resolver to integrate the repository 
-manager with Bower.
+as HTML, CSS, JavaScript, and images.
 
 {pro} and {oss} support the Bower registry format for proxy repositories. This allows the repository manager 
 to take advantage of the packages in the Bower registry and other public registries without incurring repeated 
 downloads of packages, since they will be proxied in the repository manager. The proxy allows {pro} and {oss} 
-to grab artifacts from Bower. In order for the proxy to work you must install a resolver which allows {pro} and 
-{oss} to connect to the Bower registry.
+to grab artifacts from Bower. To use Bower with the Nexus 3 Repository Manager, you will need to install and configure a pluggable resolver that allows Bower to interact with the repository manager.
 
 Bower is optimized for the front-end. If multiple packages depend on a single package Bower will download a 
 component (e.g jQuery) just once. This is known as a flat dependency graph and it helps reduce page load.
-
-[[bower-installation]]
-=== Installing Bower
-
-To use Bower, a command line tool, ensure the npm package is already published in the repository manager. 
-See <<_introduction>> to review configuration if not yet installed and published.
-
-To pull down all necessary package dependencies from source, run:
-----
-npm install
-----
-
-To utilize the Mocha framework to invoke your tests, run:
-----
-npm test
-----
-
-Test output is displayed to the console. In the event of test failure, command will return a non-zero result code.
-
-To produce a +.tgz+ containing the package contents run:
-----
-npm pack
-----
-
-The +.npmignore+ file is configured to exclude the Maven POM and other unrelated files.
-
-You also have the option of using Maven to generate the +.tgz+ package and test reports by performing a Maven 
-build of the module. The outputs will be placed in the target subdirectory, similar to standard Maven builds.
-
-You can also build as part of a build of the entire project by specifying the +-Pinclude-bower-resolver+ option.
-
-Install the +.tgz+ file to distribute the resolver globally:
-----
-npm install -g bower-nexus3-resolver-version.tgz
-----
-
-To install from source code:
-----
-bower install -g
-----
-
-Bower works by fetching and installing packages from all over; the package manager automatically searches and 
-saves them in the repository. Bower keeps track of these packages in a manifest file, +bower.json+. Bower 
-provides hooks to facilitate using packages in your tools and workflows.
-
-[[bower-resolver-config]]
-=== Configuring the Bower Resolver
-
-In the project root you will find a file called +package.json+. This file maintains a variety of metadata vital 
-to the project, specifically npm and the end users of the Bower package. Additionally you need to create a 
-+.bowerrc+ file, which you can build in JSON. The JSON in the project's +.bowerrc+ file must reference 
-theresolver you installed. Rewrite capabilities enable the resolver to for a particular URL to a package 
-somewhere, it "resolves" what kind of thing it is and what that means in terms of how to get it, including 
-pulling it down.
-
-You may also install the resolver on a per-project basis instead by adding it as a +devDependency+ in your 
-+package.json+:
-----
-"devDependencies" : {
-  "bower-nexus3-resolver" : "*"
-}
-----
-
-Use the resolver by configuring your +.bowerrc+ file with the URL for the Bower registry in the repository 
-manager:
-----
-{
-    "registry"    : "http://host:port/repository/your-bower-repo",
-    "resolvers"   : "bower-nexus3-resolver"
-}
-----
 
 [[bower-proxying]]
 === Proxying Bower Repositories
@@ -106,7 +33,7 @@ tar.gz).
 
 If deactivated, no rewrite of the URL occurs. As a result, original component URL is exposed. Turning off rewrite 
 capabilities proxies the information directly from Bower’s registry without redirecting to the repository manager 
-to retrieve artifacts. The content will be as if navigating directly to the HTTPS Bower’s registry in your 
+to retrieve artifacts. The content will be as if navigating directly to the Bower registry in your 
 browser.
  
 Minimal configuration steps are:
@@ -116,25 +43,16 @@ Minimal configuration steps are:
 - Enable rewrite of package URLs
 - Select a 'Blob store' for 'Storage'
 
-This creates a repository using the a 'Release' version policy and a 'Strict' layout policy. Both can be 
-configured as appropriate for the remote repository.
-
-If the remote repository contains a mixture of release and snapshot versions, you have to set the version policy 
-to 'Mixed'.
-
-Usage of the repository with build tools such as sbt, potentially requires the layout policy to be set to 
-'Permissive'.
-
 [[bower-hosting]]
 === Hosting Bower Repositories
 
 A hosted Bower repository can be used to deploy your own as well as third-party components. A default 
 installation of {pro} and {oss} includes two hosted Maven repositories. The Bower proxy repository you create 
-uses a release version policy 
-('maven-releases') and the 'maven-snapshots' repository uses a snapshot version policy.
+uses a release version policy ('maven-releases') and the 'maven-snapshots' repository uses a snapshot version 
+policy.
 
-To create another hosted Bower repository, add a new repository with the recipe 'Bower2 (hosted)' as documented 
-in <<admin-repositories>>.
+To create another hosted Bower repository, add a new repository with the recipe 'repository-name (hosted)' as 
+documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
 
@@ -161,6 +79,46 @@ A typical, useful example is the 'Bower-public' group that is configured by defa
 'URL' of the repository group gives you access to the packages in all three repositories with one URL. Any new 
 component added as well as any new repositories added to the group will automatically be available.
 
+[[bower-installation]]
+=== Installing Bower
+
+Before installing the package, make sure you have npm published on Nexus 3. See <<_introduction>> to review configuration if not yet installed and published.
+
+To install from source code:
+
+Bower works by fetching and installing packages from all over; the package manager automatically searches and 
+saves them in the repository. Bower keeps track of these packages in a manifest file, +bower.json+. Bower 
+provides hooks to facilitate using packages in your tools and workflows.
+
+Now that your repositories are set up in Nexus 3, download the Bower package +.tgz+ file, globally. Then install it with npm:
+----
+npm install -g foo.tgz
+----
+
+You can also build as part of a build of the entire project by specifying the +-Pinclude-bower-resolver+ option.
+
+[[bower-resolver-config]]
+=== Configuring the Bower Resolver
+
+You will need to create a +.bowerrc+ file, which you can build in JSON. The JSON in the project's +.bowerrc+ file must reference the resolver you installed. 
+
+You may also install the resolver on a per-project basis instead by adding it as a +devDependency+ in your 
++package.json+:
+----
+"devDependencies" : {
+  "bower-nexus3-resolver" : "*"
+}
+----
+
+Configure your +.bowerrc+ file to reference the URL for the Bower registry in the repository 
+manager:
+----
+{
+    "registry"    : "http://host:port/repository/your-bower-repo",
+    "resolvers"   : "bower-nexus3-resolver"
+}
+----
+
 [[bower-browse-search]]
 === Browsing and Searching Bower Repositories
 
@@ -171,9 +129,7 @@ Components can be searched in the user interface as described in <<search-compon
 components and assets that are currently stored in the repository manager, either because they have been deployed 
 to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
 
-=== Publishing Bower Components
-
-TBD
+Rewrite capabilities enable the resolver to "resolves" what kind of thing it is and what that means in terms of how to get it, including pulling it down.
 
 ////
 /* Local Variables: */
