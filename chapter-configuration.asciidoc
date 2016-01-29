@@ -640,7 +640,6 @@ certificate' button triggers the display of the SSL certificate details in a dia
 or remove the certificate from the certificate truststore maintained by the repository manager. Further details
 are documented in <<ssl-proxy-repo>>.
 
-
 ////
 Download Remote Indexes;; Download the index of a remote repository can be configured with this setting. If
 enabled, Nexus will download the index, if it exists, and use that for its searches as well as serve that up to
@@ -738,37 +737,12 @@ metadata for such components. This cache value determines the maximum age for th
 retrieved.
 ////
 
-===== Configuration for Maven2 Format
+Some repository formats include configuration options, specific for this format:
 
-Version policy:: A Maven repository can either host release components or development components. The 'Version
-policy' allows you to set 'Snapshot' for development components that end up with '-SNAPSHOT' in the version
-string. This allows repeated uploads where the actual number used is composed of a date/timestamp and an
-enumerator and the retrieval can still use the '-SNAPSHOT' version string. The version policy can only be set,
-when the repository is created and can not be changed at a later stage. Repository groups can be used to expose a
-combination of release and development versions from multiple repositories.
-
-Strict Content Type Validation:: Maven repositories can be configured to validate any new components to see if the
-MIME-type corresponds to the content of the file by enabling this setting. Any files with a mismatch are rejected.
-
-===== Configuration for NuGet Format
-	
-The NuGet repository format uses http://www.odata.org/[OData] queries for communication between the client and the
-repository. These queries include metadata information about available packages and other data.
-
-When the repository manager receives queries from the +nuget+ client, it passes these queries on to the remote
-repositories, configured as proxy repository, if necessary.
-
-To avoid sending identical queries to the remote repository, the repositry manager caches the queries and will
-rely on previously stored metadata if the same query is received again before the cache expires.
-
-The parameters 'Query cache size' and 'Query cache age' can be used to configure the size of this cache in terms
-of how many queries are cached as well as the rate at which queries expire and are subsequently re-run.
-
-===== Configuration for Docker Format
-
-The Docker repository format adds configuration for 'Docker Connectors' and 'Docker Registry API Support'. More
-details can be found in <<docker>>.
-
+* 'Repository Connectors', 'Docker Registry API Support' and 'Docker Index' for Docker repositories -
+  <<docker-ssl-connector>>, <<docker-registry-api>> and <<docker-proxy>>
+* 'Maven 2' for Maven repositories - <<maven-repository-format>> 
+* 'NuGet' for NuGet proxy repositories - <<nuget-repository-format>>
 
 ===== Repository Groups
 

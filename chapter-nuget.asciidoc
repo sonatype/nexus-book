@@ -31,7 +31,23 @@ The NuGet Visual Studio extension allows you to download the package from the re
 Visual Studio project or solution. NuGet copies everything and makes any required changes to your project setup
 and configuration files. Removing a package will clean up any changes as required.
 
-[[nuget-nuget_proxy_repositories]]
+[[nuget-repository-format]]
+=== NuGet Repository Format
+
+The NuGet repository format uses OData queries for communication between the client and the repository. These
+queries include metadata information about available packages and other data.
+
+When the repository manager receives queries from the nuget client, it passes these queries on to the remote
+repositories, configured as proxy repository, if necessary.
+
+To avoid sending identical queries to the remote repository, the repositry manager caches the queries and will
+rely on previously stored metadata if the same query is received again before the cache expires.
+
+The 'NuGet' section is included in for NuGet Proxy repositories to allow configuration of this caching. The
+parameters 'Query cache size' and 'Query cache age' can be used to configure the size of this cache in terms of
+how many queries are cached as well as the rate at which queries expire and are subsequently re-run.
+
+[[nuget-proxy]]
 === NuGet Proxy Repositories
 
 The NuGet Gallery is the common repository used by all package authors and consumers. To reduce duplicate
@@ -44,7 +60,7 @@ To proxy another external NuGet repository, you simply create a new 'nuget (prox
 <<admin-repositories>>. The 'Remote Storage' has to be set to the URL of the remote repository you want to proxy.
 
 The default configuration for proxying the NuGet Gallery is partially visible in <<fig-nuget-proxy-org>> and uses
-the URL of the API `http://www.nuget.org/api/v2/`.
+the URL of the API `http://www.nuget.org/api/v2/`. 
 
 [[fig-nuget-proxy-org]]
 .NuGet Proxy Repository Configuration for the NuGet Gallery
@@ -53,19 +69,14 @@ image::figs/web/nuget-proxy-org.png[scale=50]
 By default, searches in NuGet proxy repositories in the repository manager initiated by a client like `nuget` or
 VisualStudio will be passed through to the remote repositories. The search results are merged with internal search
 results and included in an internally managed index. This merging has to make some assumptions to generate
-component counts. These counts should therefore be considered approximate numbers.
+component counts. These counts should therefore be considered approximate numbers. The cache can be configured in
+the 'NuGet' section documented in <<nuget-repository-format>>.
 
-[[nuget-nuget_hosted_repositories]]
+[[nuget-hosted]]
 === NuGet Hosted Repositories
 
 A hosted repository for NuGet can be used to upload your own packages as well as third-party packages. The
 repository manager includes a hosted NuGet repository named 'nuget-hosted' by default.
-
-////
-TBD
- It is good practice to
-create two separate hosted repositories for these purposes.
-////
 
 To create another NuGet hosted repository, simply create a new 'nuget (hosted)' repository. An example
 configuration from the default 'nuget-hosted' repository is displayed in
@@ -77,14 +88,7 @@ image::figs/web/nuget-hosted-releases-configuration.png[scale=50]
 
 The NuGet feed is immediately updated as packages are deployed or deleted from the host repository.
 
-////
-TBD
-To rebuild the feed for a hosted 
-NuGet repository you can manually schedule a 'Rebuild NuGet Feed'
-task.
-////
-
-[[nuget-nuget_group_repositories]]
+[[nuget-group]]
 === NuGet Repository Groups
 
 A repository group is the recommended way to expose all your NuGet repositories from the repository manager to
@@ -134,8 +138,9 @@ deployed. Users with the necessary 'apikey-all' security privilege can access th
 the 'User' menu by pressing on their username in the main toolbar.
 
 You can access your API key by pressing on the 'Access API Key' button and providing your username and password
-again. The resulting dialog as well as the surrounding user interface context is displayed in <<fig-nuget-api-key>>. It
-shows the API key itself as well as the full command line to register the key for usage with `nuget`.
+again. The resulting dialog as well as the surrounding user interface context is displayed in
+<<fig-nuget-api-key>>. It shows the API key itself as well as the full command line to register the key for usage
+with `nuget`.
 
 The 'Reset API Key' button can be used to invalidate an existing API key and create a new one.
 
@@ -143,27 +148,25 @@ The 'Reset API Key' button can be used to invalidate an existing API key and cre
 .Accessing your NuGet API Key
 image::figs/web/nuget-api-key.png[scale=50]
 
-IMPORTANT: Usage of the API key requires the 'NuGet API-Key Realm' to be activated. To do this, simply add the realm to the active
-realms in the 'Realms' feature of the 'Security' menu from the 'Administration' menu.
+IMPORTANT: Usage of the API key requires the 'NuGet API-Key Realm' to be activated. To do this, simply add the
+realm to the active realms in the 'Realms' feature of the 'Security' menu from the 'Administration' menu.
 
 
 ==== Creating a Package for Deployment
 
-Creating a package for deployment can be done with the +pack+ command of the +nuget+ command line tool or within Visual
-Studio. Detailed documentation can be found on the http://docs.nuget.org/[NuGet website].
+Creating a package for deployment can be done with the +pack+ command of the +nuget+ command line tool or within
+Visual Studio. Detailed documentation can be found on the http://docs.nuget.org/[NuGet website].
 
 ==== Command line based Deployment to a NuGet Hosted Repository
 
 The +nuget+ command line tool allows you to deploy packages to a repository with the +push+ command. The command
 requires you to use the 'NuGet API Key' and the 'URL' of the target hosted repository. For example, you could push
-to the hosted repository created in <<nuget-nuget_hosted_repositories>> using the URL
+to the hosted repository created in <<nuget-hosted>> using the URL
 `http://localhost:8081/repository/nuget-hosted`.
 
 Using the +delete+ command of +nuget+ allows you to remove packages in a similar fashion. Further information
 about the command line tool is available in the
 http://docs.nuget.org/docs/reference/command-line-reference[on-line help].
-
-
 
 [[nuget-integration_of_nexus_nuget_repositories_in_visual_studio]]
 === Integration with Visual Studio

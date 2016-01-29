@@ -13,6 +13,7 @@ Maven repositories as well as searching and browsing the repositories. Build too
 Apache Ant, Gradle and others tools follow. The configuration examples take advantage of the repository manager
 merging many repositories and exposing them via a repository group.
 
+[[maven-repository-format]]
 === Maven Repository Format
 
 http://maven.apache.org[Apache Maven] created the most widely used repository format in the Java development
@@ -26,7 +27,7 @@ repository format for release components of numerous open source projects. It is
 by default in Apache Maven and widely used in other tools.
 
 In addition to the generic repository management features documented in <<admin-repositories>>, specifics of the
-Maven repository format can be configured for each repository in the 'Maven 2' section:
+Maven repository format can be configured for each repository in the 'Maven 2' section. 
 
 Version policy::
 
@@ -34,7 +35,10 @@ Release;; A Maven repository can be configured to be suitable for release compon
 version policy. The Central Repository uses a release version policy.
 
 Snapshot;; Continuous development is typically performed with snapshot versions supported by the 'Snapshot'
-version policy.
+version policy.  These version values have to end with '-SNAPSHOT' in the POM file. This allows repeated uploads
+where the actual number used is composed of a date/timestamp and an enumerator and the retrieval can still use the
+'-SNAPSHOT' version string. The repository manager and client tools manage the metadata files that manage this
+translation from the snapshot version to the timestamp value.
 
 Mixed;; The 'Mixed' version policy allows you to support both approaches within one repository.
 
@@ -50,6 +54,9 @@ default format.
 Strict;; The default value of 'Strict' requires publishing and accessig tools to follow the Apache Maven
 conventions. This is the preferred setting if you are using Apache Maven, Eclipse Aether, and other strictly
 compatible tools.
+
+Strict Content Type Validation:: Maven repositories can be configured to validate any new components to see if the
+MIME-type corresponds to the content of the file by enabling this setting. Any files with a mismatch are rejected.
 
 === Proxying Maven Repositories
 
