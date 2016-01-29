@@ -60,6 +60,32 @@ instead of the default root context http://localhost:8081/, the URLs for your Do
 use the configured port for the repository and omit the context path in the URL. This is a side-effect of the the 
 fact that Docker does not support context paths in the registry API.
 
+==== Tips for SSL Certificate Usage
+
+The requirement of Docker to use HTTPS forces the usage of SSL certificates. By default, Docker looks up the
+validity of the certificate, by checking with certificate authorities. If you are using a purchased certificate,
+that is registered with these authorities, all functionality works as desired. However, if you are creating a
+certificate yourself with tools such as `openssl`, it is not registered. This is often called a self-signed
+certificate. Using a sef-signed certificate requires, further configuration steps to ensure that Docker accepts
+the certificates and provides full functionality.
+
+Docker can be configured to skip certificate validation, which effectively allows usage self-signed certificates,
+with the `--insecure-registry` flag. Each repository on the repository manager accessed from Docker, has to be
+configured. An example set for docker accessing a {pro} running on localhost with a hosted repository on port
+18444 and a repository group on port 18443 is:
+
+----
+--insecure-registry localhost:18843 --insecure-registry localhost:18444
+----
+
+
+
+
+
+
+
+
+
 [[docker-registry-api]]
 === Support for Docker Registry API
 
