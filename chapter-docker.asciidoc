@@ -24,9 +24,9 @@ This allows you to reduce time and bandwidth usage for accessing Docker images i
 images within your organization in a hosted repository. Users can then launch containers based on those images,
 resulting in a completely private Docker registry with all the features available in the repository manager.
 
-TIP: Docker is a fast moving project and requires usage of current operating system versions. For example, usage
-of Red Hat Enterprise Linux 6 is simply not supported. Please use the https://docs.docker.com/[official
-documentation] as additional help, for your usage.
+TIP: Docker is a fast moving project and requires usage of current operating system versions and tools. For
+example, usage of Red Hat Enterprise Linux 6 is simply not supported. Please use the
+https://docs.docker.com/[official documentation] as reference and help for your usage.
 
 [[docker-ssl-connector]]
 === SSL and Repository Connector Configuration
@@ -67,25 +67,25 @@ fact that Docker does not support context paths in the registry API.
 ==== Tips for SSL Certificate Usage
 
 The requirement of Docker to use HTTPS forces the usage of SSL certificates. By default, Docker looks up the
-validity of the certificate, by checking with certificate authorities. If you are using a purchased certificate,
+validity of the certificate by checking with certificate authorities. If you are using a purchased certificate,
 that is registered with these authorities, all functionality works as desired. However, if you are creating a
 certificate yourself with tools such as `openssl`, it is not registered. This is often called a self-signed
-certificate. Using a sef-signed certificate requires, further configuration steps to ensure that Docker accepts
-the certificates and provides full functionality.
+certificate. Using a self-signed certificate requires further configuration steps to ensure that Docker provides
+full functionality.
 
-TIP: SSL certificates are not very expensive and we recommend buying a certicate for your {pro} to simplify Docker
-usage.
+TIP: SSL certificates are not expensive and we recommend buying a certicate for your {pro} to simplify Docker
+usage and increase security.
 
-Docker can be configured to skip certificate validation, which effectively allows usage self-signed certificates,
-with the `--insecure-registry` flag. Each repository on the repository manager accessed from Docker, has to be
-configured. An example set for docker accessing a {pro} running on localhost with a hosted repository on port
-18444 and a repository group on port 18443 is:
+Docker can be configured to skip certificate validation, which effectively allows usage of self-signed
+certificates, with the `--insecure-registry` flag. Each repository on the repository manager accessed from Docker,
+has to be configured. An example set for docker accessing a {pro} running on `localhost` with a hosted repository
+on port `18444` and a repository group on port `18443` is:
 
 ----
 --insecure-registry localhost:18843 --insecure-registry localhost:18444
 ----
 
-The specific syntax of the start for the Docker daemon changed between versions of Docker. A manual start of for
+The specific syntax of the start for the Docker daemon changed between versions of Docker. A manual start of
 Docker version 1.6.2, for example, looks like this:
 
 ----
@@ -94,7 +94,7 @@ docker -d -D --insecure-registry localhost:18443
 
 On newer versions `-d` is replaced with `daemon`.
 
-If docker is configured to start up as a service on a Linux distribution, the configuration also varies based on
+If Docker is configured to start up as a service on a Linux distribution, the configuration varies based on
 the distribtuion, its version as well as the startup system in use. For example on Ubuntu 15.10, a customized
 startup can be configured in the file `/etc/systemd/system/docker.service.d/custom.conf`. The customized start can
 be set up with:
@@ -105,7 +105,7 @@ ExecStart=
 ExecStart=/usr/bin/docker daemon -H fd:// --insecure-registry localhost:80183 --insecure-registry localhost:80184
 ----
 
-Alternatively you can configure docker to accept your self-signed certificate `ca.cert` by copying the certificate into
+Alternatively you can configure Docker to accept your self-signed certificate `ca.cert` by copying the certificate into
 `/etc/docker/certs.d/localhost:18443/ca.crt` and respective other directories for each repository.
 
 Further information can be found in the https://docs.docker.com/registry/insecure/[official documentation].
