@@ -5,35 +5,34 @@
 [[bower-introduction]]
 === Introduction
 
-http://bower.io[Bower] is a package manager for front-end web development. Consumers of JavaScript 
-packages who routinely build projects need to keep track of and access remote packages. Using Bower 
-ensures front-end packages are up to date (or set to the specific versions you need). The package manager 
-installs the right versions of the packages you need and their dependencies. Bower can manage such components 
-as HTML, CSS, JavaScript, and images.
+http://bower.io[Bower] is a package manager for front-end web development. Consumers of JavaScript packages who
+routinely build projects need to keep track of and access remote packages. Using Bower ensures front-end packages
+are up to date (or set to the specific versions you need). The package manager installs the right versions of the
+packages you need and their dependencies. Bower can manage such components as HTML, CSS, JavaScript, and images.
 
-{pro} and {oss} support the Bower registry format for proxy repositories. This allows the repository manager 
-to take advantage of the packages in the Bower registry and other public registries without incurring repeated 
-downloads of packages, since they will be proxied in the repository manager. The proxy allows {pro} and {oss} 
-to grab artifacts from Bower. To use Bower with the Nexus 3 Repository Manager, you will need to install and configure a pluggable resolver that allows Bower to interact with the repository manager.
+{pro} and {oss} support the Bower registry format for proxy repositories. This allows the repository manager to
+take advantage of the packages in the Bower registry and other public registries without incurring repeated
+downloads of packages, since they will be proxied in the repository manager. The proxy allows {pro} and {oss} to
+grab artifacts from Bower. To use Bower with the Nexus 3 Repository Manager, you will need to install and
+configure a pluggable resolver that allows Bower to interact with the repository manager.
 
-Bower is optimized for the front-end. If multiple packages depend on a single package Bower will download a 
+Bower is optimized for the front-end. If multiple packages depend on a single package Bower will download a
 component (e.g jQuery) just once. This is known as a flat dependency graph and it helps reduce page load.
 
-[[bower-proxying]]
+[[bower-proxy]]
 === Proxying Bower Repositories
 
-You can set up a proxy repository inside of the repository manager. This enables the system 
-to proxy other Nexus Bower registries. To reduce duplicate downloads and improve download 
-speeds for your developers and CI servers, you should proxy the registry hosted at 
-http://bower.herokuapp.com/[http://bower.herokuapp.com]. By default Bower accesses this registry directly. You can also proxy any other registries you require.
+You can set up a proxy repository inside of the repository manager. This enables the system to proxy other Nexus
+Bower registries. To reduce duplicate downloads and improve download speeds for your developers and CI servers,
+you should proxy the registry hosted at http://bower.herokuapp.com/[http://bower.herokuapp.com]. By default Bower
+accesses this registry directly. You can also proxy any other registries you require.
 
-When rewrite capabilities are activated the Bower resolver forces itself to Nexus to retrieve an artifact (e.g. 
-tar.gz). 
+When rewrite capabilities are activated the Bower resolver forces itself to Nexus to retrieve an artifact (e.g.
+tar.gz).
 
-If deactivated, no rewrite of the URL occurs. As a result, original component URL is exposed. Turning off rewrite 
-capabilities proxies the information directly from Bower’s registry without redirecting to the repository manager 
-to retrieve artifacts. The content will be as if navigating directly to the Bower registry in your 
-browser.
+If deactivated, no rewrite of the URL occurs. As a result, original component URL is exposed. Turning off rewrite
+capabilities proxies the information directly from Bower’s registry without redirecting to the repository manager
+to retrieve artifacts. The content will be as if navigating directly to the Bower registry in your browser.
  
 Minimal configuration steps are:
 
@@ -41,7 +40,7 @@ Minimal configuration steps are:
 - Define URL for 'Remote storage' e.g. http://bower.herokuapp.com/[http://bower.herokuapp.com]
 - Select a 'Blob store' for 'Storage'
 
-[[bower-hosting]]
+[[bower-hosted]]
 === Hosting Bower Repositories
 
 A hosted Bower repository can be used to deploy your own as well as third-party components.
@@ -54,16 +53,27 @@ Minimal configuration steps are:
 - Define 'Name'
 - Select 'Blob store' for 'Storage'
 
+
+////
+[[bower-group]]
+=== Grouping Bower Repositories
+
+tbd
+
+////
+
 [[bower-installation]]
 === Installing Bower
 
-Before installing the package, make sure you have npm installed locally. See <<_introduction>> to review configuration if not yet installed and published.
+Before installing the package, make sure you have npm installed locally. See <<npm>> to review
+configuration if not yet installed and published.
 
-Bower works by fetching and installing packages from all over; the package manager automatically searches and 
-saves them in the repository. Bower keeps track of these packages in a manifest file, +bower.json+. Bower 
-provides hooks to facilitate using packages in your tools and workflows.
+Bower works by fetching and installing packages from all over; the package manager automatically searches and
+saves them in the repository. Bower keeps track of these packages in a manifest file, +bower.json+. Bower provides
+hooks to facilitate using packages in your tools and workflows.
 
-Now that your repositories are set up in Nexus 3, download the Bower package +.tgz+ file. Then install it with npm, globally:
+Now that your repositories are set up in the repository manager, download the Bower package +.tgz+ file. Then
+install it with npm, globally:
 ----
 npm install -g bower-nexus3-resolver-1.0.0-pre.tgz
 ----
@@ -73,7 +83,8 @@ You can also build as part of a build of the entire project by specifying the +-
 [[bower-resolver-config]]
 === Configuring the Bower Resolver
 
-You will need to create a +.bowerrc+ file, which you can build in JSON. The JSON in the project's +.bowerrc+ file must reference the resolver you installed.
+You will need to create a +.bowerrc+ file, which you can build in JSON. The JSON in the project's +.bowerrc+ file
+must reference the resolver you installed.
 
 Configure your +.bowerrc+ file to reference the URL for the Bower registry in the repository 
 manager:
@@ -91,6 +102,7 @@ You may also install the resolver on a per-project basis instead by adding it as
   "bower-nexus3-resolver" : "*"
 }
 ----
+
 
 [[bower-browse-search]]
 === Browsing and Searching Bower Repositories
