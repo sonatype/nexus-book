@@ -296,9 +296,9 @@ directory'. This can be achieved by updating the paths in the properties `karaf.
 Configuring the specifics of the repository manager runtime involves configuration for all components in various
 configuration files and startup scripts. This section details these and provides recipes for specific tasks.
 
-The startup of the JVM running the repository manager is managed via files in the `$install-dir/bin` directory within the
-installation.  The application startup is performed with the JVM configured via the `JAVA_HOME` environment
-variable and the configuration in the file `$install-dir/bin/nexus.vmoptions` :
+The startup of the JVM running the repository manager is managed via files in the `$install-dir/bin` directory
+within the installation.  The application startup is performed with the JVM configured via the `JAVA_HOME`
+environment variable and the configuration in the file `$install-dir/bin/nexus.vmoptions` :
 
 ----
 -Xms256M
@@ -334,15 +334,46 @@ context path and host.
 
 system.properties:: Configuration parameters used for the JVM and application start up.
 
-////
-TBD
-Maybe this belongs into the configuration chapter but here are some ideas
-Small recipes
-- configure Java runtime
-- configure context
-- configure port
-- configure data directory location
-////
+==== Updating Memory Allocation and other JVM Paramaters
+
+The default memory  allocation for the repository manager is a lower value of `768kb`, suitable for most usage
+patterns. As a Java application running on the JVM the repository manager is using JVM configuration parameters
+for numerous settings as part of the startup parameters for the JVM. These values are defined in the configuration file 
+ `$install-dir/bin/nexus.vmoptions`. Increased memory configuration can be set with e.g. :
+
+----
+-Xms512M
+-Xmx2G
+----
+
+Other JVM parameters such as GC algorithm can be configured in the same location.
+
+
+==== Changing HTTP Port and Context
+
+The default value for the HTTP port used to access the repository manager user interface and resources is
+`8081`. In addition, the root context is used. The user interface is therefore available at
+e.g. `http://localhost:8081/`. Port and context are configured in `$install-dir/etc/org.sonatype.nexus.cfg`.
+A suitable configuration to expose the user interface at `http://localhost:9081/repository/` is:
+
+----
+application-port=9081
+nexus-context-path=/repository/
+----
+
+==== Configuring Data Storage Location
+
+<<installation-archive,Bundle archive installation>> of the repository manager configures the location of the
+storage for binary blobs in the `data` directory, which is nested inside the application directory. The
+<<installation-installer,installer application>> allows the user to configure the location of this directory to be
+any path. The configuration of this folder is located in `$install-dir/bin/nexus.vmoptions`. For example, if you
+want to use the absolute path `/opt/repository/storage/`, you have to change to:
+
+----
+-Dkaraf.data=/opt/repository/storage
+-Dkaraf.instances=/opt/repository/storage/instances
+-Djava.io.tmpdir=/opt/repository/storage/tmp
+----
 
 ////
 /* Local Variables: */
