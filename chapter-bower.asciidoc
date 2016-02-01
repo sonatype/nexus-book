@@ -46,7 +46,7 @@ Minimal configuration steps are:
 
 A hosted Bower repository can be used to deploy your own as well as third-party components.
 
-To create another hosted Bower repository, add a new repository with the recipe 'repository-name (hosted)' as 
+To create another hosted Bower repository, add a new repository with the recipe 'bower (hosted)' as 
 documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
@@ -54,40 +54,18 @@ Minimal configuration steps are:
 - Define 'Name'
 - Select 'Blob store' for 'Storage'
 
-[[bower-grouping]]
-=== Grouping Bower Repositories
-
-A repository group is the recommended way to expose all your Bower repositories from the repository manager to 
-your users, without needing any further client side configuration. A repository group allows you to expose the 
-aggregated content of multiple proxy and hosted repositories as well as other repository groups with one URL for 
-tool configuration. This is possible for Maven repositories by creating a new repository with the 'npm (group)' 
-recipe as documented in <<admin-repositories>>.
-
-Minimal configuration steps are:
-
-- Define 'Name'
-- Select 'Blob store' for 'Storage'
-- Add Maven repositories to the 'Members' list in the desired order
-
-A typical, useful example is the 'Bower-public' group that is configured by default. It aggregates the 
-'Bower-central' proxy repository with the 'Bower-releases' and 'Bower-snapshots' hosted repositories. Using the 
-'URL' of the repository group gives you access to the packages in all three repositories with one URL. Any new 
-component added as well as any new repositories added to the group will automatically be available.
-
 [[bower-installation]]
 === Installing Bower
 
-Before installing the package, make sure you have npm published on Nexus 3. See <<_introduction>> to review configuration if not yet installed and published.
-
-To install from source code:
+Before installing the package, make sure you have npm installed locally. See <<_introduction>> to review configuration if not yet installed and published.
 
 Bower works by fetching and installing packages from all over; the package manager automatically searches and 
 saves them in the repository. Bower keeps track of these packages in a manifest file, +bower.json+. Bower 
 provides hooks to facilitate using packages in your tools and workflows.
 
-Now that your repositories are set up in Nexus 3, download the Bower package +.tgz+ file, globally. Then install it with npm:
+Now that your repositories are set up in Nexus 3, download the Bower package +.tgz+ file. Then install it with npm, globally:
 ----
-npm install -g foo.tgz
+npm install -g bower-nexus3-resolver-1.0.0-pre.tgz
 ----
 
 You can also build as part of a build of the entire project by specifying the +-Pinclude-bower-resolver+ option.
@@ -95,22 +73,22 @@ You can also build as part of a build of the entire project by specifying the +-
 [[bower-resolver-config]]
 === Configuring the Bower Resolver
 
-You will need to create a +.bowerrc+ file, which you can build in JSON. The JSON in the project's +.bowerrc+ file must reference the resolver you installed. 
-
-You may also install the resolver on a per-project basis instead by adding it as a +devDependency+ in your 
-+package.json+:
-----
-"devDependencies" : {
-  "bower-nexus3-resolver" : "*"
-}
-----
+You will need to create a +.bowerrc+ file, which you can build in JSON. The JSON in the project's +.bowerrc+ file must reference the resolver you installed.
 
 Configure your +.bowerrc+ file to reference the URL for the Bower registry in the repository 
 manager:
 ----
 {
     "registry"    : "http://host:port/repository/your-bower-repo",
-    "resolvers"   : "bower-nexus3-resolver"
+    "resolvers"   : "bower-nexus3-resolver-1.0.0-pre"
+}
+----
+
+You may also install the resolver on a per-project basis instead by adding it as a +devDependency+ in your 
++package.json+:
+----
+"devDependencies" : {
+  "bower-nexus3-resolver" : "*"
 }
 ----
 
