@@ -14,7 +14,7 @@ manager running successfully in production deployments.
 [[install-sect-downloading]]
 === Downloading
 
-{oss} can be downloaded from https://support.sonatype.com/forums/23079216[Sonatype]. Bundles are available for the
+{oss} can be downloaded from https://support.sonatype.com/forums/23079216[Sonatype]. Distributions are available for the
 64-bit versions for Apple OSX, Microsoft Windows and Unix/Linux. They contain all necessary resources to install and run
 the repository manager. You can download a plain archive file or an installer for your operating system of a specific release
 version.
@@ -30,7 +30,7 @@ nexus-{version-exact}-unix.tar.gz
 nexus-{version-exact}-win64.zip
 ----
 
-The operating system-specific installer applications can be used for installation in a graphical user interface.  The file
+The operating system-specific installers can be used for installation in a graphical user interface.  The file
 naming includes operating system qualifiers and uses the native extensions for applications:
 
 [subs="attributes"]
@@ -40,13 +40,13 @@ nexus-{version-exact}-unix.sh
 nexus-{version-exact}-win64.exe
 ----
 
-Next steps, after a successful download, depend on the bundle you downloaded and the operating system and are
+Next steps, after a successful download, depend on the distribution you downloaded and the operating system and are
 documented in <<installation-archive>> and <<installation-installer>>.
 
 
 === Java Runtime Environment
 
-{pro} requires a Java 8 Runtime Environment (JRE) from Oracle. The install bundles for OSX and Windows include
+{pro} requires a Java 8 Runtime Environment (JRE) from Oracle. The distributions for OSX and Windows include
 suitable runtime environments for the specific operating system.
 
 If you prefer to use an external runtime or use a Unix operating system, we recommend to use the latest version of
@@ -68,10 +68,10 @@ to update the configuration to specify a specific JRE installation path.
 TIP: OpenJDK or other Java distributions or older Java versions are not supported.
 
 [[installation-archive]]
-===  Installing and Running with the Bundle Archive
+===  Installing and Running with the Distribution Archive
 
-The bundle archives combine the application and all required resources in an archive file. Installing and running
-{pro} is straightforward. Simply unpack the bundle archive in a directory, to which you have full access.
+The distribution archives combine the application and all required resources in an archive file. Installing and
+running {pro} is straightforward. Simply unpack the archive in a directory, to which you have full access.
 
 If you are installing the repository manager on a local workstation to give it a test run, you can install it in
 your home directory or wherever you like. {pro} doesn't have any hard-coded directories and will run from any
@@ -138,23 +138,22 @@ similar commands with a prefix of `/` e.g., `/run`.
 Once the repository manager is started you can access the user interface as details in <<access>>.
 
 [[installation-installer]]
-===  Installing and Running with the Installer Application
+===  Installing and Running with the Installer
 
-The installer applications can be used as an alternative to the bundle archive installation process
-documented in <<installation-archive>>.
+The installers can be used as an alternative to the distribution archive installation process documented in
+<<installation-archive>>.
 
-You can start the installer application following these operating system-specific steps:
+You can start the installer following these operating system-specific steps:
 
 Windows::  Start the `.exe` by double-clicking on it.
 
 OSX:: Extract the `.dmg` file by double-clicking on the file icon and then start the installer by double-clicking
 on the `.app`.
 
-Unix:: Run the `.sh` file in a command line window or double-clicking on it. This starts the installer
-application user interface. Passing the `-c` option allows you to run the installer purely in the command line
-window.
+Unix:: Run the `.sh` file in a command line window or double-clicking on it. This starts the installer user
+interface. Passing the `-c` option allows you to run the installer purely in the command line window.
 
-The installer application guides you through multiple steps to get the repository manager installed:
+The installer guides you through multiple steps to get the repository manager installed:
 
 Welcome:: Press 'Next' after reading the instructions to proceed.
 
@@ -236,7 +235,7 @@ code segments.
 
 Data Directory:: This directory contains all the repositories, components and other data that is being stored and
 managed by the repository manager. It is located within the installation directory by default for archive-based
-installs and called `data`. The installer application allows you to configure the location of this directory. In
+installs and called `data`. The installer allows you to configure the location of this directory. In
 this documentation is is referred to as `$data-dir` in any code segments.
 
 [[installation-directory]]
@@ -262,9 +261,9 @@ system
 
 `bin`::  contains the `nexus` startup script itself as well as startup-related  configuration files.
 
-`data`:: This 'data directory' contains all of the repository and configuration data. By default, from an archive
-bundle install, this directory is nested within the installation directory. More details can be found
-<<data-directory>>.
+`data`:: This 'data directory' contains all of the repository and configuration data. By default, from a
+distribution archive install, this directory is nested within the installation directory. More details can be
+found <<data-directory>>.
 
 //// 
 TBD... should this be documented or is it needed or should it be removed from the product
@@ -286,10 +285,6 @@ TBD... should this be documented or is it needed or should it be removed from th
 The data directory contains subdirectories such as `blobs`, `db`, `elasticsearch` and others. These contain all
 the components, repository, configuration and other data presented by the repository manager.
 
-If you desire to separate the application files from the actual data, you can customize the location of the 'data
-directory'. This can be achieved by updating the paths in the properties `karaf.data`, `karaf.instance`, and
-`java.io.tmpdir` in `$install-dir/bin/nexus.vmoptions`.
-
 [[configure-runtime]]
 === Configuring the Runtime Environment
 
@@ -297,8 +292,8 @@ Configuring the specifics of the repository manager runtime involves configurati
 configuration files and startup scripts. This section details these and provides recipes for specific tasks.
 
 The startup of the JVM running the repository manager is managed via files in the `$install-dir/bin` directory
-within the installation.  The application startup is performed with the JVM configured via the `JAVA_HOME`
-environment variable and the configuration in the file `$install-dir/bin/nexus.vmoptions` :
+within the installation.  The application startup is performed with the JVM configuration in the file
+`$install-dir/bin/nexus.vmoptions` :
 
 ----
 -Xms256M
@@ -336,10 +331,10 @@ system.properties:: Configuration parameters used for the JVM and application st
 
 ==== Updating Memory Allocation and other JVM Paramaters
 
-The default memory  allocation for the repository manager is a lower value of `768kb`, suitable for most usage
+The default maximum  heap size  for the repository manager is a lower value of `768m`, suitable for most usage
 patterns. As a Java application running on the JVM the repository manager is using JVM configuration parameters
-for numerous settings as part of the startup parameters for the JVM. These values are defined in the configuration file 
- `$install-dir/bin/nexus.vmoptions`. Increased memory configuration can be set with e.g. :
+for numerous settings as part of the startup parameters for the JVM. These values are defined in the configuration
+file `$install-dir/bin/nexus.vmoptions`. Increased memory configuration can be set with e.g. :
 
 ----
 -Xms512M
@@ -353,21 +348,21 @@ Other JVM parameters such as GC algorithm can be configured in the same location
 
 The default value for the HTTP port used to access the repository manager user interface and resources is
 `8081`. In addition, the root context is used. The user interface is therefore available at
-e.g. `http://localhost:8081/`. Port and context are configured in `$install-dir/etc/org.sonatype.nexus.cfg`.
-A suitable configuration to expose the user interface at `http://localhost:9081/repository/` is:
+e.g. `http://localhost:8081/`. Port and context are configured in `$install-dir/etc/org.sonatype.nexus.cfg`.  A
+suitable configuration to expose the user interface at `http://localhost:9081/components/` is:
 
 ----
 application-port=9081
-nexus-context-path=/repository/
+nexus-context-path=/components/
 ----
 
 ==== Configuring Data Storage Location
 
-<<installation-archive,Bundle archive installation>> of the repository manager configures the location of the
-storage for binary blobs in the `data` directory, which is nested inside the application directory. The
-<<installation-installer,installer application>> allows the user to configure the location of this directory to be
-any path. The configuration of this folder is located in `$install-dir/bin/nexus.vmoptions`. For example, if you
-want to use the absolute path `/opt/repository/storage/`, you have to change to:
+<<installation-archive,Distribution archive installation>> of the repository manager configures the location of
+the <<data-directory, data directory>> to be nested inside the application directory. The
+<<installation-installer,installers>> allows the user to configure the location of this directory to be any
+path. The configuration of this folder is located in `$install-dir/bin/nexus.vmoptions`. For example, if you want
+to use the absolute path `/opt/repository/storage/`, you have to change to:
 
 ----
 -Dkaraf.data=/opt/repository/storage
