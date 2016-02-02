@@ -1,0 +1,164 @@
+[[plugin-development]]
+==  Plugin Development
+
+{inall}
+
+
+[[plugin-development-introduction]]
+=== Introduction
+
+{oss} and {pro} are built using a plugin architecture, where each edition includes a different set of plugins. The
+supporting core infrastructure, know as {platform}, uses the OSGi container Apache Karaf. You can install plugins
+available from the open source community, other vendors, or created by yourself in addition to the default
+plugins. 
+
+Plugins can provide further functionality for the backend such as support for new repository formats, specific
+behavior for components, new tasks, and any other additional functionality as well as new user interface
+components and modifications. They can also group a number of these features together in one plugin.
+
+This chapter provides a high level overview and information to begin using other plugings and developing your own
+plugins.
+
+[[plugin-development-installing]]
+=== Installing Plugins
+
+
+
+[[plugin-development-overview]]
+=== Plugin Development Overview
+
+The preferred way to write plugins is to use Java as the implementation language and Apache Maven as the build
+system. The https://github.com/sonatype/nexus-public[public code-base of {oss}] can be used as a starting point to
+investigate existing plugins and their source code. The easiest way to create a new plugin project is to replicate
+a plugin with a similar functionality. Inspect the source code of plugins with similar functionality, and read the
+JavaDoc documentation for the involved classes.
+
+TIP: Knowledge of Apache Maven, Java and OSGi are very valuable for {
+To gain access to all the components needed for your plugin development, you have to proxy the Sonatype grid
+repository with the URL below:
+
+----
+https://repository.sonatype.org/content/groups/sonatype-public-grid/
+----
+
+Set up your project to include inheriting from the parent of all the {oss} plugins with the version you are
+targeting as displayed in <<fig-nexus-plugins-parent>>.
+
+[[fig-nexus-plugins-parent]]
+.Inheriting from the nexus-plugins Parent
+----
+ <parent>
+    <groupId>org.sonatype.nexus.plugins</groupId>
+    <artifactId>nexus-plugins</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+  </parent>
+---- 
+
+WARNING: It is best to use the identical version of the parent as the {pro} instance no which you want to run your
+plugin. When developing a plugin you are using large parts of internals, which are subject to change from one
+version to another. This same logic applies to any dependencies as well.
+
+A plugin Maven project creates a custom build output file in the form of an OSGi bundle. Enable this by
+changing the packaging to `bundle`.
+
+and adding the bundle plugin listed in <<fig-nexus-plugins-packaging>>.
+
+
+[[fig-nexus-plugins-packaging]]
+.nexus-plugin Packaging
+----
+<project>
+...
+  <groupId>com.myorganization.nexus.plugins</groupId>
+  <artifactId>example-nexus-plugin</artifactId>
+  <version>1.0-SNAPSHOT</
+  <packaging>nexus-plugin</packaging>
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.nexus</groupId>
+        <artifactId>nexus-plugin-bundle-maven-plugin</artifactId>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+----
+
+Add the dependencies in <<fig-nexus-plugins-api-dependency>> to your
+Maven project pom.xml file, to access the Nexus Plugin API and test
+support.
+
+[[fig-nexus-plugins-api-dependency]]
+.Adding the Nexus Plugin API and Testsupport
+----
+  <dependencies>
+    <dependency>
+      <groupId>org.sonatype.nexus</groupId>
+      <artifactId>nexus-plugin-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.nexus</groupId>
+      <artifactId>nexus-plugin-testsupport</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+----
+
+These dependencies pull in a large number of transitive dependencies that expose {pro} functionality and other
+libraries to your project.  Depending on the type of plugin and functionality you aim to create, additional
+dependencies and other details can be added to this minimal project setup.  A large number of further classes is
+available and can be used as part of your plugin development. Some of these classes are contained in other
+plugins. If you want to use these, you have to add a dependency to this plugin to your plugin's pom.xml.
+
+An example is a plugin you create that exposes a REST API for further integrations with tools outside of the
+repository manager similar to how all other plugins expose a REST API. The dependency to add is displayed in
+<<fig-staging-dependency>>.
+
+[[fig-staging-dependency]]
+.Adding a Dependency to the Nexus Siesta Plugin
+----
+<dependency>
+  <groupId>com.sonatype.nexus.plugins</groupId>
+  <artifactId>nexus-siesta-plugin</artifactId>
+  <type>nexus-plugin</type>
+  <scope>provided</scope>
+</dependency>
+----
+
+{pro}, {oss} and plugins use JSR-330 annotations like +@javax.inject.Inject+ and the Google Guice dependency
+injection framework. Typical classes are +@Named+ and are often a +@Singleton+ . Other components are typically
+injected via constructor injection as displayed in the example from the +virusscan+ example plugin in
+<<fig-constructor-injection>>.
+
+[[fig-constructor-injection]]
+.Constructor Injection
+----
+  @Inject
+  public VirusScannerRequestProcessor(final EventBus eventBus,
+                                      final List<VirusScanner> scanners)
+  {
+    this.eventBus = Preconditions.checkNotNull(eventBus);
+    this.scanners = Preconditions.checkNotNull(scanners);
+    ...
+----
+
+Your Maven project setup should follow the typical standard directory
+layout conventions. In addition, static resources such as JavaScript
+files, images, and CSS should be placed in
++src/main/resources/static+.
+
+Once you have created your Maven project as described above, you can
+build the plugin with
+
+----
+mvn clean install
+----
+
+
+[[plugdev]]
+=== Plugin for a New Repository Format
+
+
+
