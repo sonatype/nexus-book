@@ -24,7 +24,7 @@ This chapter covers all aspects of security of the repository manager including
 
 * user account and access right management related to user interface as well as to component access documented in
   <<privileges>>, <<roles>> and <<users>>,
-* selection of security backend systems documented <<realms>> including the built-in system as well as LDAP,
+* selection of security backend systems documented <<realms>> including the built-in system as well as <<ldap, LDAP>>,
 ////
 , Atlassian Crowd and others
 ////
@@ -248,6 +248,50 @@ If you want to disable unauthenticated access to the repository manager entirely
 anonymous users to access the server' checkbox. The 'Username' and 'Realm' controls allow you to change the
 details for the anonymous user. E.g. you might have a 'guest' account defined in your LDAP system and desire to
 use that user for anonymous access.
+
+
+[[ldap]]
+=== LDAP
+{inall}
+
+
+[[ldap-introduction]]
+==== Introduction 
+
+{pro} and {oss} can use the Lightweight Directory Access Protocol (LDAP) for authentication via external systems
+providing LDAP support such as Microsoft Exchange/Active Directory, http://www.openldap.org/[OpenLDAP],
+https://directory.apache.org/apacheds/[ApacheDS] and others. The 'LDAP relam' provides the repository manager with
+the capability to authenticate users against an LDAP server.  In addition to handling authentication, the
+repository manager can be configured to map roles to LDAP user groups. If a user is a member of a LDAP group that
+matches the ID of a role, the repository manager grants that user the matching role. In addition to this highly
+configurable user and group mapping capability, the repository manager can augment LDAP group membership with
+specific user-role mapping.
+
+The repository manager can cache authentication information and supports multiple LDAP servers and user/group
+mappings. Connection details to the LDAP server and the user/group mappings as well as specific account logins can
+be tested directly from the user interface.
+
+All these feature allow you to adapt to any specific LDAP usage scenario and take advantage of the central
+authentication set up across your organization in all your repository managers.
+
+[[ldap-sect-enabling]]
+=== Enabling the LDAP Authentication Realm
+
+In order to use LDAP authentication in the repository manager, you need to activate the 'LDAP realm':
+
+- Navigate to the <<realms, Realms>> administration section
+- Select the 'LDAP Realm' and add it to the list of 'Active' realms on the right
+- Ensure that the 'LDAP Realm' is located beneath the 'Nexus Authenticating Realm' in the list
+- Press 'Save'
+
+
+TIP: We suggest to leave the 'Nexus Authenticating Realm' and the 'Nexus Authorizing Realm' activated so that the
+repository manager can be used by 'anonymous', 'admin' and other users configured in this realm even with LDAP
+authentication offline or unavailable. Any user account not found in the 'Nexus Authenticating Realm', will be
+passed through to LDAP authentication.
+
+
+
 
 [[remote-user-token]]
 === Authentication via Remote User Token
