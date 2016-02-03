@@ -22,6 +22,7 @@ plugins.
 [[plugin-development-installing]]
 === Installing Plugins
 
+tbd - document how to load a plugin via the karaf console probably, and where to put it so it is available there..
 
 
 [[plugin-development-overview]]
@@ -58,107 +59,28 @@ WARNING: It is best to use the identical version of the parent as the {pro} inst
 plugin. When developing a plugin you are using large parts of internals, which are subject to change from one
 version to another. This same logic applies to any dependencies as well.
 
-A plugin Maven project creates a custom build output file in the form of an OSGi bundle. Enable this by
-changing the packaging to `bundle`.
-
-and adding the bundle plugin listed in <<fig-nexus-plugins-packaging>>.
-
-
-[[fig-nexus-plugins-packaging]]
-.nexus-plugin Packaging
-----
-<project>
-...
-  <groupId>com.myorganization.nexus.plugins</groupId>
-  <artifactId>example-nexus-plugin</artifactId>
-  <version>1.0-SNAPSHOT</
-  <packaging>nexus-plugin</packaging>
-...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.sonatype.nexus</groupId>
-        <artifactId>nexus-plugin-bundle-maven-plugin</artifactId>
-        <extensions>true</extensions>
-      </plugin>
-    </plugins>
-  </build>
-----
-
-Add the dependencies in <<fig-nexus-plugins-api-dependency>> to your
-Maven project pom.xml file, to access the Nexus Plugin API and test
-support.
-
-[[fig-nexus-plugins-api-dependency]]
-.Adding the Nexus Plugin API and Testsupport
-----
-  <dependencies>
-    <dependency>
-      <groupId>org.sonatype.nexus</groupId>
-      <artifactId>nexus-plugin-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.nexus</groupId>
-      <artifactId>nexus-plugin-testsupport</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-----
+A plugin Maven project creates a custom build output file in the form of an OSGi bundle. Enable this by changing
+the packaging to `bundle`. In addition, you need to add the `karaf-maven-plugin` and any needed dependencies.
+Inspect the `pom.xml` files for specific plugins in the `plugins` directory
 
 These dependencies pull in a large number of transitive dependencies that expose {pro} functionality and other
 libraries to your project.  Depending on the type of plugin and functionality you aim to create, additional
 dependencies and other details can be added to this minimal project setup.  A large number of further classes is
-available and can be used as part of your plugin development. Some of these classes are contained in other
-plugins. If you want to use these, you have to add a dependency to this plugin to your plugin's pom.xml.
+available and can be used as part of your plugin development.
 
-An example is a plugin you create that exposes a REST API for further integrations with tools outside of the
-repository manager similar to how all other plugins expose a REST API. The dependency to add is displayed in
-<<fig-staging-dependency>>.
 
-[[fig-staging-dependency]]
-.Adding a Dependency to the Nexus Siesta Plugin
-----
-<dependency>
-  <groupId>com.sonatype.nexus.plugins</groupId>
-  <artifactId>nexus-siesta-plugin</artifactId>
-  <type>nexus-plugin</type>
-  <scope>provided</scope>
-</dependency>
-----
-
-{pro}, {oss} and plugins use JSR-330 annotations like +@javax.inject.Inject+ and the Google Guice dependency
-injection framework. Typical classes are +@Named+ and are often a +@Singleton+ . Other components are typically
-injected via constructor injection as displayed in the example from the +virusscan+ example plugin in
-<<fig-constructor-injection>>.
-
-[[fig-constructor-injection]]
-.Constructor Injection
-----
-  @Inject
-  public VirusScannerRequestProcessor(final EventBus eventBus,
-                                      final List<VirusScanner> scanners)
-  {
-    this.eventBus = Preconditions.checkNotNull(eventBus);
-    this.scanners = Preconditions.checkNotNull(scanners);
-    ...
-----
-
-Your Maven project setup should follow the typical standard directory
-layout conventions. In addition, static resources such as JavaScript
-files, images, and CSS should be placed in
-+src/main/resources/static+.
-
-Once you have created your Maven project as described above, you can
-build the plugin with
-
-----
-mvn clean install
-----
-
+Once you have created your Maven project as described above, you can build the plugin with `mvn clean install`.
 
 [[plugdev]]
 === Plugin for a New Repository Format
+
+tbd but basically
+
+- implement proxy repo
+- implement hosted repo
+- implement repository group
+- implement specific search criteria
+- implement format specifc search
 
 
 
