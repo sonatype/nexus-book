@@ -34,7 +34,8 @@ investigate existing plugins and their source code. The easiest way to create a 
 a plugin with a similar functionality. Inspect the source code of plugins with similar functionality, and read the
 JavaDoc documentation for the involved classes.
 
-TIP: Knowledge of Apache Maven, Java and OSGi are very valuable for {
+TIP: Knowledge of Apache Maven, Java and OSGi are very valuable for your plugin development efforts.
+
 To gain access to all the components needed for your plugin development, you have to proxy the Sonatype grid
 repository with the URL below:
 
@@ -71,23 +72,66 @@ available and can be used as part of your plugin development.
 
 Once you have created your Maven project as described above, you can build the plugin with `mvn clean install`.
 
-[[plugdev]]
-=== Plugin for a New Repository Format
+[[repo-format]]
+=== Support for a New Repository Format
 
-tbd but basically
+In this chapter we are going to examine the efforts required to implement support for a new repository format in
+the {pro}. By default, the repository manager includes support for various repository formats including
+`raw`-format, `maven2`-format and others.
 
-- implement proxy repo
-- implement hosted repo
-- implement repository group
-- implement specific search criteria
-- implement format specifc search
+To provide sufficient support for users a new repository format needs to include a number of features:
 
-optional
+- proxying components from remote repositories
+- storing and managing components in a hosted repository
+- exposing multiple repositories to users as a single repository group
+- format-specific search criteria and the related search functionality
 
-- implement any required tasks for maintenance
-- implement client side tools if required
-- implement custom tabs or other displays in the UI
-- more ?
+Depending on the specific of the repository format being implemented a number of other features have to be
+provided or can optionally provide additional value to the user:
+
+- any required tasks for maintenance of the repositories and their content
+- client side tools to allow the standard tools to interact with the repositories on the repository manager
+- custom features to display information about the repositories or their content in the user interface
+
+The implementation of all these features for the `raw`-format can be found in the module
+`plugins/nexus-repository-raw`. The `raw` format is a good example codebase to expose as it present the most
+simplistic repository format.
+
+The Maven repositry format as used by Apache Maven and many other tools is implemented in the
+`plugins/nexus-repository-maven` module. It can serve as another, slightly more complex, example. Examining the
+code base can be especially useful, if you know the Maven repository format.
+
+==== Proxy Repository
+
+TBD
+
+==== Hosted Repository
+
+TBD
+
+==== Repository Group
+
+TBD
+
+==== Search Criteria and Indexes
+
+TBD
+
+==== Client Tools
+
+TBD - separate section, example like bower resolver
+
+
+====  User Interface Extensions
+
+TBD - another separate section probably
+
+
+==== Tasks
+
+TBD - probably best to have a separate task only example chapter and link to it
+
+
 
 === Contributing Plugins
 
