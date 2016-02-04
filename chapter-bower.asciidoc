@@ -22,13 +22,10 @@ component (e.g jQuery) just once. This is known as a flat dependency graph and i
 [[bower-proxy]]
 === Proxying Bower Repositories
 
-You can set up a proxy repository inside of the repository manager. This enables the system to proxy other Nexus
-Bower registries. To reduce duplicate downloads and improve download speeds for your developers and CI servers,
-you should proxy the registry hosted at http://bower.herokuapp.com/[http://bower.herokuapp.com]. By default Bower
-accesses this registry directly. You can also proxy any other registries you require.
+You can set up a proxy repository inside of the repository manager. This enables the system to proxy non-Nexus Bower registries. To reduce duplicate downloads and improve download speeds for your developers and CI servers,
+you should proxy the registry hosted at http://bower.herokuapp.com/[http://bower.herokuapp.com].
 
-When rewrite capabilities are activated the Bower resolver forces itself to Nexus to retrieve an artifact (e.g.
-tar.gz).
+Rewrite capabilities are a default setting. This allows the Bower resolver to force itself through Nexus to retrieve an artifact.
 
 If deactivated, no rewrite of the URL occurs. As a result, original component URL is exposed. Turning off rewrite
 capabilities proxies the information directly from Bower’s registry without redirecting to the repository manager
@@ -40,6 +37,7 @@ Minimal configuration steps are:
 - Define URL for 'Remote storage' e.g. http://bower.herokuapp.com/[http://bower.herokuapp.com]
 - Select a 'Blob store' for 'Storage'
 
+////
 [[bower-hosted]]
 === Hosting Bower Repositories
 
@@ -52,7 +50,7 @@ Minimal configuration steps are:
 
 - Define 'Name'
 - Select 'Blob store' for 'Storage'
-
+////
 
 ////
 [[bower-group]]
@@ -63,17 +61,17 @@ tbd
 ////
 
 [[bower-installation]]
-=== Installing Bower
+=== Installing the Bower Resolver
 
 Before installing the package, make sure you have npm installed locally. See <<npm>> to review
-configuration if not yet installed and published.
+configuration if not yet installed.
 
 Bower works by fetching and installing packages from all over; the package manager automatically searches and
 saves them in the repository. Bower keeps track of these packages in a manifest file, +bower.json+. Bower provides
 hooks to facilitate using packages in your tools and workflows.
 
-Now that your repositories are set up in the repository manager, download the Bower package +.tgz+ file. Then
-install it with npm, globally:
+Now that your repositories are set up in the repository manager, download the Bower resolver package +.tgz+ file. 
+Then install it with npm, globally:
 ----
 npm install -g bower-nexus3-resolver-1.0.0-pre.tgz
 ----
@@ -91,7 +89,7 @@ manager:
 ----
 {
     "registry"    : "http://host:port/repository/your-bower-repo",
-    "resolvers"   : "bower-nexus3-resolver-1.0.0-pre"
+    "resolvers"   : ["bower-nexus3-resolver-1.0.0-pre"]
 }
 ----
 
