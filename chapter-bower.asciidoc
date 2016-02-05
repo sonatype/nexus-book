@@ -13,8 +13,7 @@ packages you need and their dependencies. Bower can manage such components as HT
 {pro} and {oss} support the Bower registry format for proxy repositories. This allows the repository manager to
 take advantage of the packages in the Bower registry and other public registries without incurring repeated
 downloads of packages, since they will be proxied in the repository manager. The proxy allows {pro} and {oss} to
-grab artifacts from Bower. To use Bower with the Nexus 3 Repository Manager, you will need to install and
-configure a pluggable resolver that allows Bower to interact with the repository manager.
+grab artifacts from Bower.
 
 Bower is optimized for the front-end. If multiple packages depend on a single package Bower will download a
 component (e.g jQuery) just once. This is known as a flat dependency graph and it helps reduce page load.
@@ -25,7 +24,7 @@ component (e.g jQuery) just once. This is known as a flat dependency graph and i
 You can set up a proxy repository inside of the repository manager. This enables the system to proxy non-Nexus Bower registries. To reduce duplicate downloads and improve download speeds for your developers and CI servers,
 you should proxy the registry hosted at http://bower.herokuapp.com/[http://bower.herokuapp.com].
 
-Rewrite capabilities are a default setting. This allows the Bower resolver to force itself through Nexus to retrieve an artifact.
+Rewrite capabilities are a default setting. This allows the Bower resolver to force itself through the Nexus to retrieve an artifact.
 
 If deactivated, no rewrite of the URL occurs. As a result, original component URL is exposed. Turning off rewrite
 capabilities proxies the information directly from Bower’s registry without redirecting to the repository manager
@@ -63,14 +62,18 @@ tbd
 [[bower-installation]]
 === Installing the Bower Resolver
 
-Before installing the package, make sure you have npm installed locally. See <<npm>> to review
-configuration if not yet installed.
+To use Bower with the Nexus 3 Repository Manager, you will need to install and configure a custom resolver that 
+plugs into the package manager and interacts with the repository manager. The resolver is an API introduced in 
+Bower version 1.5. It fetches artifacts and version information through Nexus 3 Repository Manager, then 
+automatically searches and saves the artifacts in the repository.
 
-Bower works by fetching and installing packages from all over; the package manager automatically searches and
-saves them in the repository. Bower keeps track of these packages in a manifest file, +bower.json+. Bower provides
-hooks to facilitate using packages in your tools and workflows.
+The resolver keeps track of these packages in a manifest file, +bower.json+. Bower provides hooks to facilitate 
+using packages in your tools and workflows.
 
-Now that your repositories are set up in the repository manager, download the Bower resolver package +.tgz+ file. 
+Before installing the package, make sure you have npm installed locally. See <<npm>> to review configuration if 
+not yet installed. If not already, upgrade your Bower package to version 1.5 or higher before you proceed to the resolver download.
+
+When your repositories are set up in the repository manager, download the Bower resolver package +.tgz+ file. 
 Then install it with npm, globally:
 ----
 npm install -g bower-nexus3-resolver-1.0.0-pre.tgz
