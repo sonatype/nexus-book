@@ -12,16 +12,17 @@ the Bower registry and other public registries without incurring repeated downlo
 be proxied in the repository manager. The proxy allows {pro} and {oss} to grab artifacts from Bower.
 
 The Bower proxy is optimized for the front-end. It downloads a component (e.g. jQuery) just once when multiple 
-packages depend on the proxy, reducing page load. To use the Bower proxy to access registries through Nexus 3, 
+packages depend on the proxy, reducing page load. To use the Bower proxy to access registries through Nexus, 
 set up a custom URL resolver that plugs into the package manager and interacts with the repository manager. The 
 resolver is an API introduced in Bower version 1.5. It fetches artifacts and version information through the 
-Nexus 3 Repository Manager, then automatically searches and saves the artifacts in the 
-repository.
+repository manager, then automatically searches and saves the artifacts in the repository.
 
 [[bower-proxy]]
 === Proxying Bower Repositories
 
-You can set up Bower proxy repository inside of the repository manager. This enables the system to proxy non-Nexus Bower registries. To reduce duplicate downloads and improve download speeds for your developers and CI servers, you should proxy the registry hosted at http://bower.herokuapp.com/[http://bower.herokuapp.com].
+You can set up Bower proxy repository within Nexus to access a remote repository location. For example, you can 
+configure your Bower proxy to access the public Bower registry at 
+http://bower.herokuapp.com/[http://bower.herokuapp.com] or your own private registry.
 
 Enabling rewrite allows the Bower resolver to force itself through the Nexus to retrieve an artifact. This is enabled by default.
 
@@ -62,11 +63,11 @@ tbd
 [[bower-installation]]
 === Installing the Bower Resolver
 
-The resolver keeps track of these packages in a manifest file, +bower.json+. Bower provides hooks to facilitate 
-using packages in your tools and workflows.
+The Bower resolver keeps track of these packages in a manifest file, +bower.json+. Bower provides hooks to 
+facilitate using packages in your tools and workflows.
 
-Before installing the package, make sure you have npm installed locally. See <<npm>> to review configuration if 
-not yet installed. If not already, upgrade your Bower package to version 1.5 or higher before you proceed to the resolver download.
+Before installing resolver, make sure you have <<npm>> installed locally. Also, be sure to upgrade your Bower 
+package to version 1.5 or higher before you proceed to the resolver download.
 
 You can install the downloaded Bower resolver package using npm globally with the command:
 ----
@@ -76,10 +77,9 @@ npm install -g bower-nexus3-resolver.tgz
 [[bower-resolver-config]]
 === Configuring the Bower Resolver
 
-You will need to create a +.bowerrc+ file, which you can build in JSON. The JSON in the project's +.bowerrc+ file
-must reference the repository you configured. Adjust or modify the file to include the repository you add.
+You need a +.bowerrc+ JSON file to use the Bower resolver. You can create a global file or modify your existing global file. Include the registry URL in the file.
 
-Configure your +.bowerrc+ file to reference the URL for the Bower registry in the repository 
+For example, here's a +.bowerrc+ file that references the URL for the Bower registry in the repository 
 manager:
 ----
 {
@@ -88,7 +88,7 @@ manager:
 }
 ----
 
-You may also install the resolver on a per-project basis instead by adding it as a +devDependency+ in your 
+You may also install the resolver on a per-project basis by adding it as a +devDependency+ in your 
 +package.json+:
 ----
 "devDependencies" : {
