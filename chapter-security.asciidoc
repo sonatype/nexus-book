@@ -75,8 +75,9 @@ realms are used.
 Nexus Authenticating Realm and Nexus Authorizing Realm:: These are the built-in realms used by default. They allow
 the repository manager to manage security setup without additional external systems.
 
-LDAP Realm:: This realm identifies external storage in an LDAP system including e.g., Microsoft ActiveDirectory,
+LDAP Realm:: This realm identifies external storage in an LDAP system such as Microsoft ActiveDirectory,
 ApacheDS, OpenLDAP and many others.
+
 ////
  with details documented in
 <<ldap>>.
@@ -99,7 +100,6 @@ NuGet API-Key Realm:: This realm is required for deployments to nuget-format rep
 
 WARNING: Removing all realms from the 'Active' section prevents access to the repository manager for any user
 including any administrative access and has to be avoided.
-
 
 [[privileges]]
 === Privileges
@@ -290,8 +290,45 @@ repository manager can be used by 'anonymous', 'admin' and other users configure
 authentication offline or unavailable. Any user account not found in the 'Nexus Authenticating Realm', will be
 passed through to LDAP authentication.
 
+[[ldap-sect-connecting]]
+=== Connecting to an LDAP Server
 
+In order to create and manage LDAP server configurations, press the 'Create connection' button to start a new entry.
 
+The following parameters allow you to create an LDAP connection with the repository manager:
+
+Name:: Enter an unique name for then new connection.
+
+LDAP server address:: Create the format of your LDAP URL. Enter 'Protocol', 'Hostname', and 'Port'.
+
+Protocol;; Valid values in this drop-down are +ldap+ and +ldaps+ that correspond to the Lightweight Directory Access Protocol and the Lightweight Directory Access Protocol over SSL.
+
+Hostname;; The hostname or IP address of the LDAP.
+
+Port;; The port on which the LDAP server is listening. Port 389 is the default port for the +ldap+ protocol, and port 636 is the default port for the +ldaps+.
+
+Search base:: The search base is the Distinguished Name (DN) to be appended to the LDAP query. The search base usually corresponds to the domain name of an organization. For example, the search base on the Sonatype LDAP server could be +dc=sonatype,dc=com+.
+
+Authentication Method:: The repository manager provides four distinct authentication methods to be used when connecting to the LDAP Server:
+
+Simple Authentication;; Simple authentication is not recommended for production deployments not using the secure ldaps protocol as it sends a clear-text password over the network.
+
+Anonymous Authentication;; Used when the repository manager only needs read-only access to non protected entries and attributes when binding to the LDAP.
+
+Digest-MD5;; This is an improvement on the CRAM-MD5 authentication
+method. For more information, see http://www.ietf.org/rfc/rfc2831.txt[http://www.ietf.org/rfc/rfc2831.txt].
+
+CRAM-MD5;; The Challenge-Response Authentication Method (CRAM) is based on the HMAC-MD5 MAC algorithm. In this authentication method, the server sends a challenge string to the client. The client responds with a username followed by a Hex digest that the server compares to an expected value. For more information, see RFC 2195.
+
+For a full discussion of LDAP authentication approaches, see
+http://www.ietf.org/rfc/rfc2829.txt[http://www.ietf.org/rfc/rfc2829.txt] and
+http://www.ietf.org/rfc/rfc2251.txt[http://www.ietf.org/rfc/rfc2251.txt].
+
+SASL Realm:: The Simple Authentication and Security Layer (SASL) realm used to connect. It is only available if the authentication method is Digest-MD5 or CRAM-MD5.
+
+Username:: Username of an LDAP user with which to connect (or bind). This is a Distinguished Name of a user who has read access to all users and groups.
+
+Password:: Password for an administrative LDAP user
 
 [[remote-user-token]]
 === Authentication via Remote User Token
