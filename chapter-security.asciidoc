@@ -188,8 +188,7 @@ desired 'scm' group and confirm by pressing 'Create mapping'.
 TIP: For faster access or if you cannot see your group name, you can also type in a portion or the whole name of the
 group and it will limit the dropdown to the selected text.
 
-Once the external role has been selected, creates a linked  role. You can then assign other roles and privileges 
-to this new externally mapped role like you would do for any other role.
+Once the external role has been selected, it creates a linked role. You can then assign other roles and privileges to this new externally mapped role like you would do for any other role.
 
 Any user that is part of the 'scm' group in LDAP, receives all the privileges defined in the created role allowing
 you to adapt your generic role in LDAP to the repository manager-specific use cases you want these users to be
@@ -291,7 +290,7 @@ authentication offline or unavailable. Any user account not found in the 'Nexus 
 passed through to LDAP authentication.
 
 [[ldap-sect-connecting]]
-=== Connecting to an LDAP Server
+=== LDAP Connection and Authentication
 
 In order to create and manage LDAP server configurations, press the 'Create connection' button to start a new entry.
 
@@ -329,6 +328,57 @@ SASL Realm:: The Simple Authentication and Security Layer (SASL) realm used to c
 Username:: Username of an LDAP user with which to connect (or bind). This is a Distinguished Name of a user who has read access to all users and groups.
 
 Password:: Password for an administrative LDAP user
+
+To test your connection to the external LDAP server click 'Verify Connection'. If set up is successful, click 'Next' to go the next steps.
+
+[[ldap-sect-usergroup]]
+=== User and Group Mapping
+
+The LDAP connection panel in {oss} contains sections to manage user and group element mapping. This configuration section is the default next step after you create the LDAP connection. It is separate panel called 'Choose Users and Groups'.
+
+The following parameters allow you to configure your user and group elements with the repository manager:
+
+Base DN:: Corresponds to the Base DN containing user entries. This DN is relative to the Search Base. For example, if your users are all contained in +ou=users,dc=sonatype,dc=com+ and you specified a Search Base of +dc=sonatype,dc=com+, you would use a value of +ou=users+.
+
+User Subtree:: Check the box if 'True'. Uncheck if 'False'. Values are 'True' if there is a tree below the Base DN that can contain user entries and 'False' if all users are contain within the specified Base DN. For example, if all users are in ou=users,dc=sonatype,dc=com this field should be False. If users can appear in organizational units within organizational units such as ou=development,ou=users,dc=sonatype,dc=com, this field should be True.
+
+Object Class:: This value defaults to inetOrgPerson which is a standard object class defined in http://www.faqs.org/rfcs/rfc2798.html/[RFC-2798]. This Object Class (inetOrgPerson) contains standard fields such as mail, uid. Other possible values are posixAccount or a custom class.
+
+User ID Attribute:: This is the attribute of the Object class that supplies the User ID. The repository manager uses this attribute as the User ID.
+
+Real Name Attribute:: This is the attribute of the Object class that supplies the real name of the user. The repository manager uses this attribute when it needs to display the real name of a user.
+
+E-Mail Attribute:: This is the attribute of the Object class that supplies the email address of the user. The repository manager uses this attribute when it needs to send an email to a user.
+
+Password Attribute:: This control is only available in {oss}. It can be used to configure the Object class, which supplies the password ("userPassword"). If this field is blank the user will be authenticated against a bind with the LDAP server.
+
+To map your LDAP groups as roles, click the check box to continue.
+
+The Group Type drop-down determines which fields are available in the user interface. Groups are generally one of two types in LDAP systems - static or dynamic. A static group contains a list of users. A dynamic group is a list of groups to which user belongs.
+
+Static groups are configured with the following parameters:
+
+Base DN:: This field is similar to the Base DN field described for 'User Element Mapping'. If your groups were defined under +ou=groups,dc=sonatype,dc=com+, this field would have a value of +ou=groups+.
+
+Group Subtree:: This field is similar to the User Subtree field described for User Element Mapping. If all groups are defined under the entry defined in Base DN, this field should be false. If a group can be defined in a tree of organizational units under the Base DN, then the field should be true.
+
+Object Class:: This value defaults to groupOfUniqueNames which is a standard object class defined in http://www.faqs.org/rfcs/rfc4519.html/[RFC-4519]. This default ('groupOfUniqueNames') is simply a collection of references to unique entries in an LDAP directory and can be used to associate user entries with a group. Other possible values are posixGroup or a custom class.
+
+Group ID Attribute:: Specifies the attribute of the Object class that specifies the Group ID. If the value of this field corresponds to the ID of a role, members of this group will have the corresponding privileges. Defaults to common name (+cn+).
+
+Group Member Attribute:: Specifies the attribute of the Object class which specifies a member of a group. A groupOfUniqueNames has multiple uniqueMember attributes for each member of a group. Defaults to uniqueMember.
+
+Group Member Format:: This field captures the format of the Group Member Attribute, and is used by the repository manager to extract a username from this attribute. For example, if the Group Member Attribute has the format +uid=brian,ou=users,dc=sonatype,dc=com+, then the Group Member Format would be +uid=$username,ou=users,dc=sonatype,dc=com+. If the Group Member Attribute had the format +username+, then the Group Member Format would be +$username+.
+
+If your installation does not use Static Groups, you can configure LDAP Integration to refer to an attribute on the User entry to derive group membership. To do this, select Dynamic Groups in the Group Type field in Group Element Mapping.
+
+Once you have configured the User and Group Settings you can check the correctness of your user mapping by pressing the "Verify user mapping" at the end of page.
+
+The repository manager provides you with the ability to test a user login directly. To test a user login, go to the User and Group Settings tab for a server listed in the Enterprise LDAP panel. Scroll to the bottom of the form, and you should see a button named "Verify login".
+
+If you click on "Verify Login", you will then be presented with the login credentials dialog shown below. You can use this dialog to login as an LDAP user and test the user and group mapping configuration for a particular server. This feature allows you to test user and group mapping configuration directly and to quickly diagnose and address difficult authentication and access control issues via the administrative interface.
+
+After your LDAP users and groups are verfied, go to roles to add external roles.
 
 [[remote-user-token]]
 === Authentication via Remote User Token
