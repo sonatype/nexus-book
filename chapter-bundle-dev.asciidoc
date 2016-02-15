@@ -8,8 +8,8 @@
 === Introduction
 
 {oss} and {pro} are built on top of the OSGi container http://karaf.apache.org/[Apache Karaf]. The supporting core
-infrastructure, know as {platform}, provides a foundation for these editions. The functionality is encapsulated in
-a number of OSGi bundles. Each edition is composed of a number of bundles, that provided the specific features.
+infrastructure, known as {platform}, provides a foundation for these editions. The functionality is encapsulated
+in a number of OSGi bundles. Each edition is composed of a number of bundles, that provide the specific features.
 
 Bundles can provide further functionality for the backend such as support for new repository formats, specific
 behavior for components, new tasks, and any other additional functionality as well as new user interface
@@ -18,12 +18,18 @@ components and modifications. They can also group a number of these features tog
 This chapter provides a high level overview and information to begin developing your own bundles for the
 {platform}, and specifically the {pro}.
 
-If you work on any bundle development and required any help or assistance, please contact the development team:
+Knowledge of Apache Maven and Java are required for your bundle development efforts. OSGi-related knowledge is
+highly relevant and beneficial. Please ensure to consult the documentation for the relevant projects, when
+necessary.
+
+If you work on any bundle development and require any help or assistance, please contact the development team:
 
 * the https://groups.google.com/a/glists.sonatype.com/forum/?hl=en#!forum/nexus-users[users mailing list]
 * the https://links.sonatype.com/products/nexus/community-chat[community chat channel]
 * or via email to nexus-feedback@sonatype.com
 
+WARNING: This documentation is not complete and we encourage you to provide feedback to help us answer any
+questions you might have and improve this chapter as needed.
 
 
 [[bundle-development-installing]]
@@ -45,47 +51,33 @@ you can change to
 nexus-features=nexus-oss-feature,my-custom-feature
 ----
 
-The feature and 
+The feature `my-custom-feature` is a Maven project that includes the desired bundles as dependencies.
+Alternatively you can add a specific feature via Karaf commands.
 
-TBD - document how to load a bundle via the karaf console probably, and where to put it so it is available there,
-or should we just refer to the Karaf docs for now?
+Bundles can be loaded via the Karaf console. To enable the console, set `karaf.startLocalConsole` in
+`bin\nexus.vmoptions` to `true`. This allows you to access the Karaf console by pressing enter after starting the
+repository manager with the `run` option.
 
+The `bundle:install` command can be used to load a bundle into the container.
 
-you can edit the config in etc/org.sonatype.nexus.cfg add your feature to nexus-features list
+For development usage, you can set the local Maven repository as the source for any bundle loading with e.g.
 
-
-
-
-or you can manually add the feature via karaf conmmands, and it will remember those on reboot
-
-
-
-
-
-
-
-throw the bundle into the deploy folder and laod it with karaf commands should work too
-
-
-
-Reload Karaf Bundles
-Nexus modules can be rebuilt and redeployed into the Karaf container from the local maven repository using some simple commands from the console. After rebuilding and installing a module already deployed to the karaf container, you can redeploy it with these steps, which includes restarting the container.
-#change the repository location to the local maven repo
+----
 config:property-set -p org.ops4j.pax.url.mvn org.ops4j.pax.url.mvn.defaultRepositories "file:${user.home}/.m2/repository@id=system.repository@snapshots"
- 
-#find the bundle you want to update, i.e. org.sonatype.nexus.plugins.nexus-coreui-plugin
-bundle:list | grep coreui
- 
-# 270 | Active   | 200 | 3.0.0.SNAPSHOT    | org.sonatype.nexus.plugins.nexus-coreui-plugin
- 
-#update in OSGi is a two-step process: first update your bundles, then call refresh to make sure bundles that import from them are wired to the new version
-#often this refresh step is not required, but without it you might run into class-loading issues if the update leaves bundles wired to conflicting versions
+----
+
+Once your bundle is installed will be display a part of the output from `bundle:list`. With the local Maven
+repository configured as a source, you can rebuild your bundle and get it reloaded and the repository completed
+restarted with
+
+----
 bundle:update 270
 bundle:refresh
-  
-#the preceding steps updated and restarted affected bundles, but as Nexus still has a largely monolithic lifecycle you need to restart the Nexus application
-#to make sure it picks up and execute the new code - especially if that code is only used during startup
 system:shutdown -f -r
+----
+ 
+This process ensures that bundles are updated, imports are correctly picking up any changes and the full
+repository manager runs through the full startup lifecycle.
 
 
 [[bundle-development-overview]]
@@ -93,12 +85,9 @@ system:shutdown -f -r
 
 The preferred way to write bundles is to use Java as the implementation language and Apache Maven as the build
 system. The https://github.com/sonatype/nexus-public[public code-base of {oss}] can be used as a starting point to
-investigate existing bundles and their source code. The easiest way to create a new bundlep project is to replicate
+investigate existing bundles and their source code. The easiest way to create a new bundle project is to replicate
 a bundle with a similar functionality. Inspect the source code of bundles with similar functionality, and read the
 JavaDoc documentation for the involved classes.
-
-IMPORTANT: Knowledge of Apache Maven and Java are required for your bundle development efforts. OSGi-related
-knowledge is highly relevant and beneficial.
 
 To gain access to all the components needed for your bundle development, you have to proxy the Sonatype grid
 repository with the URL:
@@ -188,90 +177,47 @@ The Maven repositry format as used by Apache Maven and many other tools is imple
 `plugins/nexus-repository-maven` module. It can serve as another, slightly more complex, example. Examining the
 code base can be especially useful, if you know the Maven repository format.
 
-==== Repository Types and Repository Recipe
+==== Format, Recipe and Facet
 
-For each repository format there should be 3 types: proxy, hosted and group. Generally start
-with the proxy implementation as that informs exactly how a client interacts with the remote system we are
-proxying.
+Extending `Format` allows you define support for your new repository format. Proxy, hosted and group functionality
+are implemented in a corresponding `Recipe` implementation each. The recipe enables the system to configures the
+'view' of a repository. It configures the facets that decorate the implementation, and matches up routes with
+appropriate handlers. Some handlers like the `SecurityHandler` are required for all repositories, while others are
+used to implement format specific functionality like managing the content (i.e. RawContentHandler).
 
-Repository Recipe
+Facets are used to decorate the format and provide additional functionality like proxy support (e.g. RawProxyFacet).
 
-Each Repository Type has a corresponding Recipe implementation. This is how the system configures the 'view' of a
-Repository. It configures the facets that decorate the implementation, and matches up routes with appropriate
-handlers. Some handlers are required for all repositories (Security Handler for instance) while others need to be
-crafted to deal with the particulars of a Repository format (i.e. RawContentHandler). Routes are defined for each
-url a given format client can interact with, and handlers extract any parameterization from the requests to
-satisfy them appropriately. The Context class provides helpers for getting at details of the requests
-(i.e. insisting that required parameters are present).
+Each format plugin is required to extend `RepositoryFormatSecurityConfigurationResource` to provide security
+configuration. This simple implementation can be used to enhance the security rules as necessary.
 
-Facets
+==== Storage
 
-These decorate the Repository and provide additional functionality (i.e. RawProxyFacet). Attached facets can be
-accessed through 'repository.getFacet(clazz)' calls, which will throw exceptions if the requested facet is not
-configured.
+An addressable component in a repository is described as a `Component`. Typically it defines common metadata like
+name and version and acts as the parent for one or multiple assets. An `Asset` represents binary content of any
+type - usually a JAR file, ZIP archive or some other binary format and additional files associated with the
+package (i.e. pom.xml for maven).  Some metadata is automatically collected for Assets,
+like checksums, while each format can also contribute its own specific metadata. An asset should always have a
+`sha1` checksum, but certain formats may require other types of checksum and should extend the
+`Asset.attributes.checksum` map as required to store these.
 
-Security
+==== User Interface 
 
-Each format plugin should extend RepositoryFormatSecurityConfigurationResource to provide security
-configuration. Usually there's no need to do more than @Named this implementation, but it could be used to
-enhance/change the plugin security rules as necessary.
+The user interface for supporting a new repositort format is following a standard-pattern and is implemented as a
+recipe in the `nexus-coreui-plugin` bundle in
+`src/main/resources/static/rapture/NX/coreui/view/repository/recipe/`. These merely compose configuration for
+specific facets are implemented in , which should be implemented in `.../repository/facet`.
 
-Data Storage
-
-The overall package is described as a Component, which is essentially just common metadata (name, version, etc)
-and a parent for Assets. An Asset represents binary content of any type, usually a jar/zip and perhaps additional
-files associated with the package (i.e. pom.xml for maven). Some metadata is automatically collected for Assets,
-like checksums, while each format can also contribute its own specific metadata. This should be attached to the
-Asset attributes in a Map named after the format, i.e. attributes.gem. Note that an asset should always have a
-sha1 checksum, but certain formats may require other types of checksum and should extend the
-Asset.attributes.checksum map as required to store these.
-
-UI
-
-UI bits required are fairly boilerplate and can generally be cut&pasted from existing content, along with
-approriate naming updates. We do not yet have a mechanism for cleanly incorporating plugin UI content, so this
-should be implemented in:
-nexus-internal/plugins/nexus-coreui-plugin/src/main/resources/static/rapture/NX/coreui/view/repository/recipe. These
-merely compose configuration for specific facets, which should be implemented in:
-nexus-internal/plugins/nexus-coreui-plugin/src/main/resources/static/rapture/NX/coreui/view/repository/facet If a
-given format requires any additional specific configuration, add a new facet configuration screen with the
-required fields. They should all be mapped to the key/value map (called attributes) of the repository. i.e. for
-the gems plugin, any gem specific configuration (if there is any?) would be mapped to
-attributes.gem.fooConfigProperty. New format configurations need to be registered in the 'views' configuration of:
-nexus-internal/plugins/nexus-coreui-plugin/src/main/resources/static/rapture/NX/coreui/controller/Repositories.js
-
-
-==== Proxy Repository
-
-TBD
-
-==== Hosted Repository
-
-TBD
-
-==== Repository Group
-
-TBD
-
-==== Search Criteria and Indexes
-
-TBD
-
-==== Client Tools
-
-TBD - separate section, example like bower resolver
-
-
-====  User Interface Extensions
-
-TBD - another separate section probably
-
+If a given format requires any additional specific configuration you have to add a new facet configuration screen
+with the required fields. They have to be mapped to the key/value map called attributes of the
+repository. E.e. for a repository format `foo` it has to be mapped to `attributes.foo.someConfigProperty`. New
+format configurations need to be registered in the 'views' configuration of the controller in
+`.../coreui/controller/Repositories.js`.
 
 ==== Tasks
 
-TBD - probably best to have a separate task only example chapter and link to it
-
-
+Tasks are be implemented for scheduled maintenance and similar task, that operate on a repository as a whole. The
+Maven repository bundle includes a number of tasks that can serve as an example in the
+`org.sonatype.nexus.repository.maven.tasks` package. 
 
 === Contributing Bundles
 
