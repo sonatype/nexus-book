@@ -23,11 +23,9 @@ Increasingly, {pro} is used in globally distributed teams or used by projects th
 many cases, it is advisable for each physical location to host its own {pro} instance. This local instance hosts
 its own components and proxies the other servers.
 
-An example deployment scenario is displayed in
-<<fig-smart-proxy-scenario>>. Using the traditional polling
-approach, specifically when used with snapshot repositories, can
-result in significant traffic and a performance hit for all involved
-servers.
+An example deployment scenario is displayed in <<fig-smart-proxy-scenario>>. Using the traditional polling
+approach, specifically when used with snapshot repositories, can result in significant traffic and a performance
+hit for all involved servers.
 
 The 'Smart Proxy' feature replaces this constant polling approach with a 'Publish/Subscribe'-based messaging
 approach between repository manager instances sharing a mutual trust. Once a component is published to a
@@ -49,34 +47,27 @@ Proxy' configuration screen. It is available in the left-hand navigation in the 
 .Global Configuration for Smart Proxy
 image::figs/web/smart-proxy-global-config.png[scale=50]
 
-The 'Network Settings' section allows you to enable the smart proxy
-server with a checkbox. This will need to be enabled on all servers
-that publish events in the smart proxy network, while servers
-that act only as subscribers can leave this option unchecked.
+The 'Network Settings' section allows you to enable the smart proxy server with a checkbox. This will need to be
+enabled on all servers that publish events in the smart proxy network, while servers that act only as subscribers
+can leave this option unchecked.
 
-In addition, you can configure the address and port where the
-publishing server will be available. The default address of 0.0.0.0
-will cause the proxy to listen on all addresses. The default port
-number of 0 will trigger usage of a random available port number for
-connection listening. If a random port is used, it will be chosen when
+In addition, you can configure the address and port where the publishing server will be available. The default
+address of 0.0.0.0 will cause the proxy to listen on all addresses. The default port number of 0 will trigger
+usage of a random available port number for connection listening. If a random port is used, it will be chosen when
 the server (re)starts.
 
-With the 'Advertised URI' field it is possible to configure a specific
-address to be broadcasted by the proxy to the subscribing smart proxy
-clients enabling, e.g., usage of a publicly available fully qualified
-hostname, including the domain or also just the usage of an externally
-reachable IP number.
+With the 'Advertised URI' field it is possible to configure a specific address to be broadcasted by the proxy to
+the subscribing smart proxy clients enabling, e.g., usage of a publicly available fully qualified hostname,
+including the domain or also just the usage of an externally reachable IP number.
 
 IMPORTANT: It is important to configure the ports in the repository manager and any firewall between the servers
 to allow the direct socket connection between the servers and to avoid using random ports.
 
-The 'Status' field below the form will show the current status of the
-smart proxy including the full address and port.
+The 'Status' field below the form will show the current status of the smart proxy including the full address and
+port.
 
-The 'Public Key' field displays the key identifying this server
-instance. It is automatically populated with the certificate associated
-with the public/private key pair that is generated when the server is
-first run.
+The 'Public Key' field displays the key identifying this server instance. It is automatically populated with the
+certificate associated with the public/private key pair that is generated when the server is first run.
 
 TIP: The key is stored in +sonatype-work/nexus/conf/keystore/private.ks+ and identifies this server. If you copy
 the sonatype work folder from one server to another as part of a migration or a move from testing to staging or
@@ -86,10 +77,9 @@ generated, simply remove the keystore file and restart the repository manager.
 [[smartproxy-establishing_trust]]
 === Establishing Trust
 
-The servers publishing as well as subscribing to events identify
-themselves with their public key. This key has to be registered with
-the other servers in the 'Trusted Certificates' section of the 'Smart
-Proxy' configuration screen.
+The servers publishing as well as subscribing to events identify themselves with their public key. This key has to
+be registered with the other servers in the 'Trusted Certificates' section of the 'Smart Proxy' configuration
+screen.
 
 To configure two repository managers as trusted smart proxies, you copy the public key from the certificate of the
 other server in the 'Trusted Certificates' configuration section by adding a new trusted certificate with a
@@ -110,18 +100,14 @@ itself. No external configuration or usage of external keys is necessary.
 [[smartproxy-repository_specific_smart_proxy_configuration]]
 === Repository Specific Smart Proxy Configuration
 
-Once Smart Proxy has been configured and enabled as previously described,
-you have to configure which repositories contents should be
-proxied more efficiently between the servers. This is done in the 'Repositories'
-administration interface in a separate configuration tab titled 'Smart
-Proxy', which allows you to configure repository-specific details as
-compared to server wide details described above.
+Once Smart Proxy has been configured and enabled as previously described, you have to configure which repositories
+contents should be proxied more efficiently between the servers. This is done in the 'Repositories' administration
+interface in a separate configuration tab titled 'Smart Proxy', which allows you to configure repository-specific
+details as compared to server wide details described above.
 
-On the publishing repository manager you have to enable smart proxy on the
-desired hosted, virtual or proxy repositories in the repository
-configuration. This is accomplished by selecting the 'Publish Updates'
-checkbox in the 'Publish' section of the 'Smart Proxy' configuration
-for a specific repository as displayed in
+On the publishing repository manager you have to enable smart proxy on the desired hosted, virtual or proxy
+repositories in the repository configuration. This is accomplished by selecting the 'Publish Updates' checkbox in
+the 'Publish' section of the 'Smart Proxy' configuration for a specific repository as displayed in
 <<fig-smart-proxy-repo-list-hosted>> and pressing save.
 
 [[fig-smart-proxy-repo-list-hosted]]
@@ -141,12 +127,10 @@ image::figs/web/smart-proxy-repo-list-proxy.png[scale=65]
 [[smartproxy-smart_proxy_security_and_messages]]
 === Smart Proxy Security and Messages
 
-Smart Proxy messages are started with an initial handshake via
-HTTP. This handshake allows the two server to exchange their keys and
-confirm that they are configured with a valid trust relationship to
-communicate. After a successful handshake, messages are sent in the
-middleware layer and can be configured to be sent via SSL encrypted
-messages. 
+Smart Proxy messages are started with an initial handshake via HTTP. This handshake allows the two server to
+exchange their keys and confirm that they are configured with a valid trust relationship to communicate. After a
+successful handshake, messages are sent in the middleware layer and can be configured to be sent via SSL encrypted
+messages.
  
 The following events are broadcasted via Smart Proxy.
 
@@ -156,9 +140,8 @@ The following events are broadcasted via Smart Proxy.
 - repository cache or a part of it has been cleared
 - Smart Proxy publishing has been disabled
 
-On the recipient side this will cause the changes to be applied,
-mimicking what happened on the publisher. If Smart Proxy is disabled the
-subscription will be stopped.
+On the recipient side this will cause the changes to be applied, mimicking what happened on the publisher. If
+Smart Proxy is disabled the subscription will be stopped.
 
 [[smartproxy-example_setup]]
 === Example Setup
@@ -172,9 +155,8 @@ each developer team and any locally running continuous integration server and ot
 .Deployment Scenario for a Smart Proxy Use Case
 image::figs/web/smart-proxy-scenario.png[scale=50]
 
-When the development team in New York does a commit to their component
-build, a continuous integration server deploys a new component
-snapshot version to the 'Nexus 1' instance.
+When the development team in New York does a commit to their component build, a continuous integration server
+deploys a new component snapshot version to the 'Nexus 1' instance.
 
 With smart proxy enabled, this deployment is immediately followed by notifications, sent to the trusted smart
 proxy subscribers in 'Nexus 2', 'Nexus 3', and 'Nexus 4'. These are collocated with the developers in London,
@@ -212,8 +194,8 @@ Typically smart proxy is configured in the dedicated user interfaces provided an
 chapter. More fine grained and advanced configuration is exposed in the capabilities administration documented in
 <<capabilities>>.
 
-Specficically the following capabilities for the core smart proxy
-features are automatically created and maintained.
+Specficically the following capabilities for the core smart proxy features are automatically created and
+maintained.
 
 Smart Proxy: Identity:: Provides the unique identity for the repository manager.
 
@@ -226,23 +208,21 @@ node.
 Smart Proxy: Secure Connector:: Secures the connection using identity
 and trust.
 
-In addition you can find one smart proxy capability for each repository 
-configured to be publish or subscribe updates with Smart Proxy.
+In addition you can find one smart proxy capability for each repository configured to be publish or subscribe
+updates with Smart Proxy.
 
-Smart Proxy: Publish:: Configures publishing updates to a specific
-repository via smart proxy.
+Smart Proxy: Publish:: Configures publishing updates to a specific repository via smart proxy.
 
-Smart Proxy: Subscribe:: Configures subscribing to updates for a
-specific proxy repository. This capability exposes the additional
-setting 'Delete' in the 'Settings' tab. If deletion is enabled, any
-component deletions in the publishing repository is also carried out
-in the subscribing repositories. The 'Preemptive Fetch' flag allows
-you to enable a download of components to the susbscribing proxy
-repository prior to any component requests received by it. The default
-behaviour with preemptive fetch disabled only publishes the fact that
-new components are available from the publishing repository.
+Smart Proxy: Subscribe:: Configures subscribing to updates for a specific proxy repository. This capability
+exposes the additional setting 'Delete' in the 'Settings' tab. If deletion is enabled, any component deletions in
+the publishing repository is also carried out in the subscribing repositories. The 'Preemptive Fetch' flag allows
+you to enable a download of components to the susbscribing proxy repository prior to any component requests
+received by it. The default behaviour with preemptive fetch disabled only publishes the fact that new components
+are available from the publishing repository.
 
-TIP: A series of videos demonstrating Smart Proxy is available http://www.sonatype.org/nexus/members-only/video-gallery-2/free-training-nexus-professional-and-smart-proxy/[on the Nexus community site].
+TIP: A series of videos demonstrating Smart Proxy is available
+http://www.sonatype.org/nexus/members-only/video-gallery-2/free-training-nexus-professional-and-smart-proxy/[on
+the Nexus community site].
 ////
 /* Local Variables: */
 /* ispell-personal-dictionary: "ispell.dict" */
