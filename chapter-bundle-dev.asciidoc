@@ -11,8 +11,8 @@
 infrastructure, known as {platform}, provides a foundation for these editions. The functionality is encapsulated
 in a number of OSGi bundles. Each edition is composed of a number of bundles, that provide the specific features.
 
-Bundles can provide further functionality for the backend such as support for new repository formats, specific
-behavior for components, new tasks, and any other additional functionality as well as new user interface
+Bundles can provide further functionality for the back-end such as support for new repository formats, specific
+behaviour for components, new tasks, and any other additional functionality as well as new user interface
 components and modifications. They can also group a number of these features together in one bundle.
 
 This chapter provides a high level overview and information to begin developing your own bundles for the
@@ -41,7 +41,7 @@ be loaded by the OSGi container.
 The default build assembles multiple bundles into features that form the foundation of {oss} and {pro}. A number
 of these definitions can be found in https://github.com/sonatype/nexus-public/tree/master/assemblies/[the
 assemblies] module. The supported distributions are defined in the modules `nexus-oss-feature` and
-`nexus-pro-feature`, which are part of the internal codebase. 
+`nexus-pro-feature`, which are part of the internal code-base. 
 
 An installation of the repository manager defines the feature it loads in `etc/org.sonatype.nexus.cfg` and
 additional features can be declared to be loaded there. E.g. to add `my-custom-feature` to an {oss} installation
@@ -77,7 +77,7 @@ system:shutdown -f -r
 ----
  
 This process ensures that bundles are updated, imports are correctly picking up any changes and the full
-repository manager runs through the full startup lifecycle.
+repository manager runs through the full start-up life-cycle.
 
 
 [[bundle-development-overview]]
@@ -123,7 +123,7 @@ dependencies and other details can be added to this minimal project setup.  A la
 available and can be used as part of your bundle development.
 
 With the exception of interfaces and code that is required to be accessible from modules outside of the format
-bundle, all code should be nested within an 'internal' directory that will be isolated by the OSGi runtime
+bundle, all code should be nested within an 'internal' directory that will be isolated by the OSGi run-time
 container.
 
 Once you have created your Maven project as described above, you can build the bundle with `mvn clean install`.
@@ -151,7 +151,7 @@ and necessary steps for implementation;
 * How does the concepts of components and assets used in {pro} map to the format?
 * What is the best way to map the component identifier of name, version and group to the format?
 * What format specific attributes should stored on components and  assets?
-* Is it necessary to rewrite proxied metadata? E.g. proxied metadata contains absolute urls to proxied server that
+* Is it necessary to rewrite proxied metadata? E.g. proxied metadata contains absolute URLs to proxied server that
 we have to rewrite to point to repository manager.
 * Are there any special features that should be considered?
 
@@ -170,10 +170,10 @@ provided or can optionally provide additional value to the user:
 - custom features to display information about the repositories or their content in the user interface
 
 The implementation of all these features for the `raw`-format can be found in the module
-`plugins/nexus-repository-raw`. The `raw` format is a good example codebase to expose as it present the most
+`plugins/nexus-repository-raw`. The `raw` format is a good example code-base to expose as it present the most
 simplistic repository format.
 
-The Maven repositry format as used by Apache Maven and many other tools is implemented in the
+The Maven repository format as used by Apache Maven and many other tools is implemented in the
 `plugins/nexus-repository-maven` module. It can serve as another, slightly more complex, example. Examining the
 code base can be especially useful, if you know the Maven repository format.
 
@@ -196,13 +196,13 @@ An addressable component in a repository is described as a `Component`. Typicall
 name and version and acts as the parent for one or multiple assets. An `Asset` represents binary content of any
 type - usually a JAR file, ZIP archive or some other binary format and additional files associated with the
 package (i.e. pom.xml for maven).  Some metadata is automatically collected for Assets,
-like checksums, while each format can also contribute its own specific metadata. An asset should always have a
-`sha1` checksum, but certain formats may require other types of checksum and should extend the
+like check-sums, while each format can also contribute its own specific metadata. An asset should always have a
+`sha1` check-sum, but certain formats may require other types of check-sum and should extend the
 `Asset.attributes.checksum` map as required to store these.
 
 ==== User Interface 
 
-The user interface for supporting a new repositort format is following a standard-pattern and is implemented as a
+The user interface for supporting a new repository format is following a standard-pattern and is implemented as a
 recipe in the `nexus-coreui-plugin` bundle in
 `src/main/resources/static/rapture/NX/coreui/view/repository/recipe/`. These merely compose configuration for
 specific facets are implemented in , which should be implemented in `.../repository/facet`.
@@ -221,8 +221,9 @@ Maven repository bundle includes a number of tasks that can serve as an example 
 
 === Contributing Bundles
 
-Ideally any new bundles created, yields significant benefits for the overall community of users. Sonatype encourages
-contriubtion of such bundles to the upstream repository and is offering support and help for such efforts.
+Ideally any new bundles created, yields significant benefits for the overall community of users. Sonatype
+encourages contribution of such bundles to the upstream repository and is offering support and help for such
+efforts.
 
 The minimum steps for such contributions are:
 
