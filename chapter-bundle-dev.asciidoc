@@ -1,0 +1,246 @@
+[[bundle-development]]
+==  Bundle Development
+
+{inall}
+
+
+[[bundle-development-introduction]]
+=== Introduction
+
+{oss} and {pro} are built on top of the OSGi container http://karaf.apache.org/[Apache Karaf]. The supporting core
+infrastructure, known as {platform}, provides a foundation for these editions. The functionality is encapsulated
+in a number of OSGi bundles. Each edition is composed of a number of bundles, that provide the specific features.
+
+Bundles can provide further functionality for the back-end such as support for new repository formats, specific
+behaviour for components, new tasks, and any other additional functionality as well as new user interface
+components and modifications. They can also group a number of these features together in one bundle.
+
+This chapter provides a high level overview and information to begin developing your own bundles for the
+{platform}, and specifically the {pro}.
+
+Knowledge of Apache Maven and Java are required for your bundle development efforts. OSGi-related knowledge is
+highly relevant and beneficial. Please ensure to consult the documentation for the relevant projects, when
+necessary.
+
+If you work on any bundle development and require any help or assistance, please contact the development team:
+
+* the https://groups.google.com/a/glists.sonatype.com/forum/?hl=en#!forum/nexus-users[users mailing list]
+* the https://links.sonatype.com/products/nexus/community-chat[community chat channel]
+* or via email to nexus-feedback@sonatype.com
+
+WARNING: This documentation is not complete and we encourage you to provide feedback to help us answer any
+questions you might have and improve this chapter as needed.
+
+
+[[bundle-development-installing]]
+=== Installing Bundles
+
+In order to have your features from your bundle available as part of the repository manager, the bundle needs to
+be loaded by the OSGi container.
+
+The default build assembles multiple bundles into features that form the foundation of {oss} and {pro}. A number
+of these definitions can be found in https://github.com/sonatype/nexus-public/tree/master/assemblies/[the
+assemblies] module. The supported distributions are defined in the modules `nexus-oss-feature` and
+`nexus-pro-feature`, which are part of the internal code-base. 
+
+An installation of the repository manager defines the feature it loads in `etc/org.sonatype.nexus.cfg` and
+additional features can be declared to be loaded there. E.g. to add `my-custom-feature` to an {oss} installation
+you can change to
+
+----
+nexus-features=nexus-oss-feature,my-custom-feature
+----
+
+The feature `my-custom-feature` is a Maven project that includes the desired bundles as dependencies.
+Alternatively you can add a specific feature via Karaf commands.
+
+Bundles can be loaded via the Karaf console. To enable the console, set `karaf.startLocalConsole` in
+`bin\nexus.vmoptions` to `true`. This allows you to access the Karaf console by pressing enter after starting the
+repository manager with the `run` option.
+
+The `bundle:install` command can be used to load a bundle into the container.
+
+For development usage, you can set the local Maven repository as the source for any bundle loading with e.g.
+
+----
+config:property-set -p org.ops4j.pax.url.mvn org.ops4j.pax.url.mvn.defaultRepositories "file:${user.home}/.m2/repository@id=system.repository@snapshots"
+----
+
+Once your bundle is installed will be display a part of the output from `bundle:list`. With the local Maven
+repository configured as a source, you can rebuild your bundle and get it reloaded and the repository completed
+restarted with
+
+----
+bundle:update 270
+bundle:refresh
+system:shutdown -f -r
+----
+ 
+This process ensures that bundles are updated, imports are correctly picking up any changes and the full
+repository manager runs through the full start-up life-cycle.
+
+
+[[bundle-development-overview]]
+=== Bundle Development Overview
+
+The preferred way to write bundles is to use Java as the implementation language and Apache Maven as the build
+system. The https://github.com/sonatype/nexus-public[public code-base of {oss}] can be used as a starting point to
+investigate existing bundles and their source code. The easiest way to create a new bundle project is to replicate
+a bundle with a similar functionality. Inspect the source code of bundles with similar functionality, and read the
+JavaDoc documentation for the involved classes.
+
+To gain access to all the components needed for your bundle development, you have to proxy the Sonatype grid
+repository with the URL:
+
+----
+https://repository.sonatype.org/content/groups/sonatype-public-grid/
+----
+
+Set up your project to include inheriting from the parent of all the {oss} bundles with the version you are
+targeting as displayed in <<fig-nexus-plugins-parent>>.
+
+[[fig-nexus-plugins-parent]]
+.Inheriting from the nexus-plugins Parent
+----
+ <parent>
+    <groupId>org.sonatype.nexus.plugins</groupId>
+    <artifactId>nexus-plugins</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+  </parent>
+---- 
+
+WARNING: It is best to use the identical version of the parent as the {pro} instance on which you want to run your
+bundle. When developing a bundle you are using large parts of internals, which are subject to change from one
+version to another. This same logic applies to any dependencies as well.
+
+A bundle Maven project creates a custom build output file in the form of an OSGi bundle. Enable this by changing
+the packaging to `bundle`. In addition, you need to add the `karaf-maven-plugin` and any needed dependencies.
+Inspect the `pom.xml` files for specific bundle in the `plugins` directory for further details.
+
+These dependencies pull in a large number of transitive dependencies that expose {pro} functionality and other
+libraries to your project.  Depending on the type of bundle and functionality you aim to create, additional
+dependencies and other details can be added to this minimal project setup.  A large number of further classes is
+available and can be used as part of your bundle development.
+
+With the exception of interfaces and code that is required to be accessible from modules outside of the format
+bundle, all code should be nested within an 'internal' directory that will be isolated by the OSGi run-time
+container.
+
+Once you have created your Maven project as described above, you can build the bundle with `mvn clean install`.
+
+[[repo-format]]
+=== Support for a New Repository Format
+
+In this chapter we are going to examine the efforts required to implement support for a new repository format in
+the {pro}. By default, the repository manager includes support for various repository formats including
+`raw`-format, `maven2`-format and others.
+
+When considering to implement support for a new repository format, it is important to get a good understanding of
+the format itself as well as the tools and the community working with the format. It might even be necessary to
+read and understand the source code of potential native, upstream implementations to support a format.
+
+Following are a few questions that can provide some useful answers leading to a better understanding of the format
+and necessary steps for implementation;
+
+* What is this format all about?
+* What tools (client/server) are involved?
+* What communication is performed between client and server?
+* Do any protocols or specifications exist?
+* What authentication method needs to be supported by the repository manager?
+* How can the repository manager authenticate against a proxied remote server?
+* How does the concepts of components and assets used in {pro} map to the format?
+* What is the best way to map the component identifier of name, version and group to the format?
+* What format specific attributes should stored on components and  assets?
+* Is it necessary to rewrite proxied metadata? E.g. proxied metadata contains absolute URLs to proxied server that
+we have to rewrite to point to repository manager.
+* Are there any special features that should be considered?
+
+To provide sufficient support for users, a new repository format needs to include a number of features:
+
+- proxying components from remote repositories
+- storing and managing components in a hosted repository
+- exposing multiple repositories to users as a single repository group
+- format-specific search criteria and the related search functionality
+
+Depending on the specific of the repository format being implemented a number of other features have to be
+provided or can optionally provide additional value to the user:
+
+- any required tasks for maintenance of the repositories and their content
+- client side tools to allow the standard tools to interact with the repositories on the repository manager
+- custom features to display information about the repositories or their content in the user interface
+
+The implementation of all these features for the `raw`-format can be found in the module
+`plugins/nexus-repository-raw`. The `raw` format is a good example code-base to expose as it present the most
+simplistic repository format.
+
+The Maven repository format as used by Apache Maven and many other tools is implemented in the
+`plugins/nexus-repository-maven` module. It can serve as another, slightly more complex, example. Examining the
+code base can be especially useful, if you know the Maven repository format.
+
+==== Format, Recipe and Facet
+
+Extending `Format` allows you define support for your new repository format. Proxy, hosted and group functionality
+are implemented in a corresponding `Recipe` implementation each. The recipe enables the system to configures the
+'view' of a repository. It configures the facets that decorate the implementation, and matches up routes with
+appropriate handlers. Some handlers like the `SecurityHandler` are required for all repositories, while others are
+used to implement format specific functionality like managing the content (i.e. RawContentHandler).
+
+Facets are used to decorate the format and provide additional functionality like proxy support (e.g. RawProxyFacet).
+
+Each format plugin is required to extend `RepositoryFormatSecurityConfigurationResource` to provide security
+configuration. This simple implementation can be used to enhance the security rules as necessary.
+
+==== Storage
+
+An addressable component in a repository is described as a `Component`. Typically it defines common metadata like
+name and version and acts as the parent for one or multiple assets. An `Asset` represents binary content of any
+type - usually a JAR file, ZIP archive or some other binary format and additional files associated with the
+package (i.e. pom.xml for maven).  Some metadata is automatically collected for Assets,
+like check-sums, while each format can also contribute its own specific metadata. An asset should always have a
+`sha1` check-sum, but certain formats may require other types of check-sum and should extend the
+`Asset.attributes.checksum` map as required to store these.
+
+==== User Interface 
+
+The user interface for supporting a new repository format is following a standard-pattern and is implemented as a
+recipe in the `nexus-coreui-plugin` bundle in
+`src/main/resources/static/rapture/NX/coreui/view/repository/recipe/`. These merely compose configuration for
+specific facets are implemented in , which should be implemented in `.../repository/facet`.
+
+If a given format requires any additional specific configuration you have to add a new facet configuration screen
+with the required fields. They have to be mapped to the key/value map called attributes of the
+repository. E.e. for a repository format `foo` it has to be mapped to `attributes.foo.someConfigProperty`. New
+format configurations need to be registered in the 'views' configuration of the controller in
+`.../coreui/controller/Repositories.js`.
+
+==== Tasks
+
+Tasks are be implemented for scheduled maintenance and similar task, that operate on a repository as a whole. The
+Maven repository bundle includes a number of tasks that can serve as an example in the
+`org.sonatype.nexus.repository.maven.tasks` package. 
+
+=== Contributing Bundles
+
+Ideally any new bundles created, yields significant benefits for the overall community of users. Sonatype
+encourages contribution of such bundles to the upstream repository and is offering support and help for such
+efforts.
+
+The minimum steps for such contributions are:
+
+* Sign and submit a http://www.sonatype.org/SonatypeCLA.pdf[contributor license agreement] to Sonatype
+* Create a pull request with the relevant changes to the https://github.com/sonatype/nexus-public[nexus-public
+  repository]
+
+In further collaboration we will decide upon next steps on a case-by-case basis and work with you to
+
+* Create sufficient tests
+* Provide access to upstream repositories
+* Facilitate other infrastructure such as CI server builds
+* Help you with verification and testing
+* Work with you on user documentation and outreach
+* Expose your work to the user community
+* And many others.
+
+
+
+
