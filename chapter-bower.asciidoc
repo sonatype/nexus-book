@@ -17,29 +17,6 @@ set up a custom URL resolver that plugs into the package manager and interacts w
 resolver is an API introduced in Bower version 1.5. It fetches artifacts and version information through the 
 repository manager, then automatically searches and saves the artifacts in the repository.
 
-[[bower-resolver-config]]
-=== Configuring the Bower Resolver
-
-You need a +.bowerrc+ JSON file to use the Bower resolver. You can create a new or modify an existing global 
-file. Include the registry URL in the file.
-
-Create a +.bowerrc+ file that points to the URL of a Bower group that will merge your proxy and hosted 
-repositories. The reference to the resolver will also be added, after installed. See the example, below.
-----
-{
-    "registry"    : "http://localhost:8081/repository/bower-group",
-	"resolvers"   : ["bower-nexus3-resolver"]
-}
----- 
-
-You may also install the resolver on a per-project basis by adding it as a +devDependency+ in your 
-+package.json+:
-----
-"devDependencies" : {
-  "bower-nexus3-resolver" : "*"
-}
-----
-
 [[bower-installation]]
 === Installing the Bower Resolver
 
@@ -83,7 +60,7 @@ A hosted Bower repository can be used to map to private Bower registries. You ca
 install components (such as libraries or frameworks) against a hosted repository in Nexus.
 
 To create the Bower package run the command +bower register <packagename> <giturl>+ against a hosted repository. 
-Nexus will create an asset that point to the Git URL. A user will be able to browse Bower packages assets that are registered to a hosted repository.
+Nexus will create an asset that point to the Git URL. A user will be able to browse Bower assets that are registered to a hosted repository.
 
 To add another hosted Bower repository, start a new repository with the recipe 'bower (hosted)' as 
 documented in <<admin-repositories>>.
@@ -115,17 +92,41 @@ components of the same name, the first will be grabbed, and so on.
 
 
 [[bower-browse-search]]
-=== Browsing and Searching Bower Repositories
+=== Browsing Bower Repositories and Searching Packages
 
 You can browse Bower repositories in the user interface inspecting the components and assets and their details as 
 documented in <<browse-browse>>. Further searching can be done in the user interface as described in 
 <<search-components>>. 
 
-////
-A search finds all 
-components and assets that are currently stored in the repository manager, either because they have been deployed 
-to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
-////
+Searching for Bower installed packages can be performed in the user interface as described in 
+<<search-components>>.This search will find all Bower modules that are currently stored in the repository 
+manager, either because they have been pushed to a hosted repository or they have been proxied from an upstream 
+repository and cached in the repository manager.
+
+
+[[bower-config]]
+=== Configuring Bower
+
+Installing Bower is done via npm. So, if you install npm first, installing Bower will work. But to do a complete 
+npm configuration for Nexus, review <<_introduction>> to set up and configure the package manager.
+
+Create a +.bowerrc+ file that points to the URL of a Bower group that will merge your proxy and hosted 
+repositories. You can create a new or modify an existing global file. The reference to the resolver will also be 
+added, after installed. See the example, below.
+----
+{
+    "registry"    : "http://localhost:8081/repository/bower-group",
+	"resolvers"   : ["bower-nexus3-resolver"]
+}
+---- 
+
+You may also install the resolver on a per-project basis by adding it as a +devDependency+ in your 
++package.json+:
+----
+"devDependencies" : {
+  "bower-nexus3-resolver" : "*"
+}
+----
 
 ////
 /* Local Variables: */
