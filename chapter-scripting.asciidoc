@@ -21,7 +21,8 @@ extracted. E.g. the component different versions and the specific JAR files for 
 are available in versioned directories at `http://repo1.maven.org/maven2/org/sonatype/nexus/nexus-core/`.
 
 This manual process can be simplified and improved by the usage of a Maven project declaring the relevant
-components as dependencies:
+components as dependencies. An example project with this setup and a few scripts is available in the
+https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[book examples project].
 
 anchor:script-maven-project[Maven project for Scripting]
 .Maven project pom.xml declaring the API dependencies for scripting
@@ -55,7 +56,6 @@ anchor:script-maven-project[Maven project for Scripting]
       <artifactId>nexus-security</artifactId>
       <version>${nx-version}</version>
     </dependency>
-  
     <dependency>
       <groupId>org.sonatype.nexus.plugins</groupId>
       <artifactId>nexus-script-plugin</artifactId>
@@ -89,7 +89,8 @@ repository.createMavenHosted("private")
 This method simply uses the default values for the rest of the parameters and is therefore equivalent to
 
 ----
-repository.createMavenHosted("private", 
+repository.createMavenHosted("private", BlobStoreManager.DEFAULT_BLOBSTORE_NAME, VersionPolicy.RELEASE,
+        WritePolicy.ALLOW_ONCE, LayoutPolicy.STRICT)
 ----
 
 You can inspect the default values in the API documentation available by inspecting the declaration in your IDE or
@@ -143,6 +144,30 @@ curl -v -X POST -u admin:admin123 --header "Content-Type: text/plain" 'http://lo
 ----
 
 A successful execution should result in a `HTTP/1.1 200 OK` result.
+
+Scripts can be removed with a HTTP DELETE operation to the specific script:
+
+----
+curl -v -X DELETE -u admin:admin123 'http://localhost:8081/service/siesta/rest/v1/script/maven'
+----
+
+Scripts can receive runtime parameters via the REST API
+
+----
+curl -v -X POST -u admin:admin123 --header "Content-Type: text/plain" 'http://localhost:8081/service/siesta/rest/v1/script/updateAnonymousAccess/run' -d 'false'
+----
+
+and receive them as arguments that have to be parsed by the script as desired
+
+----
+security.setAnonymousAccess(Boolean.valueOf(args))
+----
+
+Since the scripts are typically longer than a single line and creating them in a separate file in the IDE is
+recommended, using a helper script that formats a `.groovy` file into a JSON file and submits it to the repository
+manager can be convenient approach. The `complex-example` project in the
+https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[scripting section of the book examples project ]
+includes an example implementation using Groovy.
 
 
 [[scripting-example]]
