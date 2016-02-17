@@ -17,19 +17,6 @@ set up a custom URL resolver that plugs into the package manager and interacts w
 resolver is an API introduced in Bower version 1.5. It fetches artifacts and version information through the 
 repository manager, then automatically searches and saves the artifacts in the repository.
 
-[[bower-installation]]
-=== Installing the Bower Resolver
-
-The Bower resolver keeps track of packages in a manifest file, +bower.json+. Bower provides hooks to 
-facilitate using packages in your tools and workflows.
-
-Before installing resolver, make sure you have npm installed. Also, be sure to upgrade your Bower 
-package to version 1.5 or higher.
-
-You can install the Bower resolver package using npm with this command:
-----
-npm install -g bower-nexus3-resolver
-----
 
 [[bower-proxy]]
 === Proxying Bower Repositories
@@ -56,25 +43,12 @@ Minimal configuration steps are:
 [[bower-hosted]]
 === Hosting Bower Repositories
 
-When you create a Bower hosted repository in Nexus it allows you to install components (such as libraries and 
-frameworks) from private registries, and public registries that have authentication.
-
-////
-lets you register your own bower package
-////
- 
-Floating - Nexus will create an asset that points to the Git URL. A user will be able to browse Bower assets that are 
-registered to a hosted repository.
+Creating a Bower hosted repository allows you to register packages and store components in the repository 
+manager. The hosted repository acts as an authoritative location for these components. This effectively creates 
+an asset that becomes a pointer to an external URL (such as a git repository).
 
 To add another hosted Bower repository, start a new repository with the recipe 'bower (hosted)' as 
 documented in <<admin-repositories>>.
-
-////
-note bower hosted is its own registry
-
-from joe: I recognize the Hosted section esp with my most recent comments might read a little light. I think it IS a little light because I don't think this is the major focus of Bower implementation. For more flesh, you might consider relaying why someone would want to register to a hosted Bower repo. That should add a sentence or two. But I also think light is good if it's a straightforward area where there's not a lot to be done.
-
-////
 
 Minimal configuration steps are:
 
@@ -105,66 +79,66 @@ grabbed, and so on.
 [[bower-browse-search]]
 === Browsing Bower Repositories and Searching Packages
 
-You can browse Bower repositories in the user interface inspecting the components and assets and their details as 
-documented in Browse Assets.
+You can browse Bower repositories in the user interface inspecting the components and assets and their details, 
+as described in <<search-components>>.
 
-Searching for Bower installed packages can be performed in the user interface as described in 
-<<search-components>>. This search will find all Bower modules that are currently stored in the repository 
-manager, either because they have been pushed to a hosted repository or they have been proxied from an upstream 
-repository and cached in the repository manager.
+Searching for Bower installed packages can be performed in the user interface, too. This search will find all 
+Bower modules that are currently stored in the repository manager, either because they have been pushed to a 
+hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
 
 
 [[bower-config]]
 === Configuring Bower
 
-Installing Bower is done via npm. So, if you install npm first, installing Bower will work. But to do a complete 
-npm configuration for Nexus, review <<_introduction>> to set up and configure the package manager.
+Installing Bower is done via npm. So, if you install npm first, your can run Bower. But to do a complete 
+npm configuration for Nexus, review <<_introduction>> to set up and configure the package manager. Also, be sure 
+your Bower package to version 1.5 or higher.
 
-You need a +.bowerrc+ JSON file to access the URLs . You can create a global file or modify the existing 
+In order to proxy downloads through Nexus, install the Bower resolver with this command:
+----
+npm install -g bower-nexus3-resolver
+----
+
+The Bower resolver keeps track of packages in a manifest file, +bower.json+. Bower provides hooks to 
+facilitate using packages in your tools and workflows.
+
+You need a +.bowerrc+ JSON file to access the registry URLs. You can create a global file or modify the existing 
 one. Include the registry URL in the file. If, for example, you ever deploy a package to a single Bower 
 hosted repo, set up your +.bowerrc+ like the example, below. 
 ----
 "registry": {
-       "search": [
-          "http://localhost:8081/repository/bower-group"
-      ],
-       "register": "http://admin:admin123@localhost:8081/repository/bower-hosted"
+       "search": ["http://localhost:8081/repository/bower-group"],
+       "register": ["http://admin:admin123@localhost:8081/repository/bower-hosted"]
+	   "resolvers": ["bower-nexus3-resolver"]
     }
 ---- 
 
-////
-This configuration is no longer strictly accurate now that we're talking about group and hosted repos. Yes, you'll want the search registry to point to the group repo, but you'll also need a register entry:
+The URL you configure for the resolver should be in the group. Since you cannot register to a group nor search a 
+hosted repository this configuration is necessary. Also, duplicating the resolver value is not necessary. 
+Once configured it becomes executable in the +.bowerrc+ located in your home directory.
 
-https://github.com/bower/spec/blob/master/config.md#registry
+You have the option to configure multiple search places, but you will only be able to use one register URL. In 
+other words you can only use one hosted repository at a time. 
 
+For example, you might have two hosted repositories (e.g. Hosted1 and Hosted2) and want to push to Hosted1, then 
+later to Hosted2. You would need to manually adjust the register line in the +bowerrc+ example, above.
 
-Here's the configuration I ended up with for my tests (joe):
+If you wish to maintain a private registry, change the value in the file as shown:
 
+----
+"registry": "https://bower.herokuapp.com"
+----
+
+If you desire to use a per-project +.bowerrc+, then in addition to the single hosted repository +.bowerrc+ you 
+must have a project-specific +.bowerrc+ that only contains the following:
+
+----
 "registry": {
-       "search": [
-          "http://localhost:8081/repository/bowerg"
-       ],
-       "register": "http://admin:admin123@localhost:8081/repository/bowerh"
-    }
-It may be noteworthy here (or above, in hosted), that you can have multiple search places but only one register. So basically you can only have one hosted repo at once. If you wanted to push to Hosted1 then later to Hosted2, you'd need to manually adjust the registry line here. OR do what you follow up with below and have the individual .bowerrc point to the correct hosted (makes a nice segue).
-
-BTW, in case not clear, that snip doesn't include the resolver line=) - add it --
-
-frederick - If you're going to use a per-project .bowerrc as @mosabua has suggested, then in addition to the normal .bowerrc you have above, you'll also want to have a per-project .bowerrc that only contains the following (note that they don't need to repeat the resolver section since it should be in the home directory .bowerrc):
-
- {
-      "registry": {
-         "register": "http://admin:admin123@localhost:8081/repository/bowerh"
-      }
-}
-If they're using a special case where they only have the one hosted repo, then they can use the example setup @joedragons has since they won't be editing it all the time. (In fairness, people may just end up preferring to edit their .bowerrc anyway, I don't know how people would use this with Nexus in the wild to be honest.)
+   "register": "http://admin:admin123@localhost:8081/repository/bower-hosted"
+   }
+----
 
 ////
-
-The URL you configure for the resolver should be in the group. Since you cannot register to a group and cannot 
-search a hosted repository this configuration is necessary.
-In the example the registry object defaults to search the Bower group.
-
 You may also install the resolver on a per-project basis by adding it as a +devDependency+ in your 
 +package.json+:
 ----
@@ -172,6 +146,7 @@ You may also install the resolver on a per-project basis by adding it as a +devD
   "bower-nexus3-resolver" : "*"
 }
 ----
+////
 
 ////
 /* Local Variables: */
