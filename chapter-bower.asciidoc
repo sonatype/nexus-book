@@ -43,11 +43,11 @@ Minimal configuration steps are:
 [[bower-hosted]]
 === Hosting Bower Repositories
 
-Creating a Bower hosted repository allows you to register packages and store components in the repository 
-manager. The hosted repository acts as an authoritative location for these components. This effectively creates 
-an asset that becomes a pointer to an external URL (such as a git repository).
+Creating a Bower hosted repository allows you to register packages in the repository manager. The hosted 
+repository acts as an authoritative location for these components. This effectively creates an asset that becomes 
+a pointer to an external URL (such as a git repository).
 
-To add another hosted Bower repository, start a new repository with the recipe 'bower (hosted)' as 
+To add a hosted Bower repository, create a new repository with the recipe 'bower (hosted)' as 
 documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
@@ -63,7 +63,7 @@ A repository group is the recommended way to expose all your Bower repositories 
 your users, with minimal additional client side configuration. A repository group allows you to expose the 
 aggregated content of multiple proxy and hosted repositories as well as other repository groups with one URL in 
 tool configuration. This is possible for Bower repositories by creating a new repository with the 'bower (group)' 
-recipe as documented in <<admin-repositories>>.
+recipe.
 
 Minimal configuration steps are:
 
@@ -73,24 +73,13 @@ Minimal configuration steps are:
 
 Bower groups operate by order of selection. In other words, the first member in a given group is accessed; and 
 each subsequent group is accessed, accordingly. If there are two components of the same name, the first will be 
-grabbed, and so on.
-
-
-[[bower-browse-search]]
-=== Browsing Bower Repositories and Searching Packages
-
-You can browse Bower repositories in the user interface inspecting the components and assets and their details, 
-as described in <<search-components>>.
-
-Searching for Bower installed packages can be performed in the user interface, too. This search will find all 
-Bower modules that are currently stored in the repository manager, either because they have been pushed to a 
-hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
+grabbed.
 
 
 [[bower-config]]
 === Configuring Bower
 
-Installing Bower is done via npm. So, if you install npm first, your can run Bower. But to do a complete 
+Installing Bower is done via npm. So, if you install npm first, you can run Bower. But to do a complete 
 npm configuration for Nexus, review <<_introduction>> to set up and configure the package manager. Also, be sure 
 your Bower package to version 1.5 or higher.
 
@@ -104,18 +93,22 @@ facilitate using packages in your tools and workflows.
 
 You need a +.bowerrc+ JSON file to access the registry URLs. You can create a global file or modify the existing 
 one. Include the registry URL in the file. If, for example, you ever deploy a package to a single Bower 
-hosted repo, set up your +.bowerrc+ like the example, below. 
+hosted repo, set up your +.bowerrc+. In this example you replace your group and hosted repository names with the 
+ones below. 
 ----
-"registry": {
-       "search": ["http://localhost:8081/repository/bower-group"],
-       "register": ["http://admin:admin123@localhost:8081/repository/bower-hosted"]
-	   "resolvers": ["bower-nexus3-resolver"]
-    }
+{
+    "registry" : {
+        "search" : [ 
+            "http://localhost:8081/repository/bower-group"
+        ],
+        "register" : "http://admin:admin123@localhost:8081/repository/bower-hosted"
+   },
+   "resolvers" : [ "bower-nexus3-resolver" ]
+}
 ---- 
 
-The URL you configure for the resolver should be in the group. Since you cannot register to a group nor search a 
-hosted repository this configuration is necessary. Also, duplicating the resolver value is not necessary. 
-Once configured it becomes executable in the +.bowerrc+ located in your home directory.
+Duplicating the resolver value is not necessary. Once configured it becomes accessible in the +.bowerrc+ located 
+in your global file.
 
 You have the option to configure multiple search places, but you will only be able to use one register URL. In 
 other words you can only use one hosted repository at a time. 
@@ -123,14 +116,8 @@ other words you can only use one hosted repository at a time.
 For example, you might have two hosted repositories (e.g. Hosted1 and Hosted2) and want to push to Hosted1, then 
 later to Hosted2. You would need to manually adjust the register line in the +bowerrc+ example, above.
 
-If you wish to maintain a private registry, change the value in the file as shown:
-
-----
-"registry": "https://bower.herokuapp.com"
-----
-
 If you desire to use a per-project +.bowerrc+, then in addition to the single hosted repository +.bowerrc+ you 
-must have a project-specific +.bowerrc+ that only contains the following:
+must have a project-specific +.bowerrc+ that contains the following:
 
 ----
 "registry": {
@@ -138,15 +125,16 @@ must have a project-specific +.bowerrc+ that only contains the following:
    }
 ----
 
-////
-You may also install the resolver on a per-project basis by adding it as a +devDependency+ in your 
-+package.json+:
-----
-"devDependencies" : {
-  "bower-nexus3-resolver" : "*"
-}
-----
-////
+
+[[bower-browse-search]]
+=== Browsing Bower Repositories and Searching Packages
+
+You can browse Bower repositories in the user interface inspecting the components and assets and their details, 
+as described in <<search-components>>.
+
+Searching for Bower installed packages can be performed in the user interface, too. This search will find all 
+Bower modules that are currently stored in the repository manager, either because they have been pushed to a 
+hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
 
 ////
 /* Local Variables: */
