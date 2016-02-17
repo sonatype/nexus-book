@@ -1,11 +1,167 @@
 [[scripting]]
 ==  Scripting
-
 {inall}
 
 
 [[scripting-introduction]]
 === Introduction
 
+Automation via scripts is a common scenario. The {pro} provides API's thats simplify provisioning and other tasks
+in the repository manager. These API's can be invoked from scripts that are published to the repository manager
+and executed there.
+
+=== Writing Scripts
+
+The scripting language used on the repository manager is http://www.groovy-lang.org/[Groovy]. Any editor can be
+used to author the scripts. 
+
+The API's available are contained in a number of JAR files. All these files including JavaDoc and Sources archives
+are available from the http://search.maven.org[Central Repository]. They can be manually downloaded and
+extracted. E.g. the component different versions and the specific JAR files for `org.sonatype.nexus:nexus-core`
+are available in versioned directories at `http://repo1.maven.org/maven2/org/sonatype/nexus/nexus-core/`.
+
+This manual process can be simplified and improved by the usage of a Maven project declaring the relevant
+components as dependencies:
+
+anchor:script-maven-project[Maven project for Scripting]
+.Maven project pom.xml declaring the API dependencies for scripting
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.example.automation</groupId>
+  <artifactId>nexus-script-demo</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <properties>
+    <nx.version>3.0.0-SNAPSHOT</nx.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.sonatype.nexus</groupId>
+      <artifactId>nexus-core</artifactId>
+      <version>${nx-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.nexus</groupId>
+      <artifactId>nexus-script</artifactId>
+      <version>${nx-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.nexus</groupId>
+      <artifactId>nexus-security</artifactId>
+      <version>${nx-version}</version>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.sonatype.nexus.plugins</groupId>
+      <artifactId>nexus-script-plugin</artifactId>
+      <version>${nx-version}</version>
+    </dependency>
+  </dependencies>
+</project>
+----
+
+Development environments such as IntelliJ IDEA or Eclipse IDE can download the relevant JavaDoc and Sources JAR
+files to ease your development. Typically you would create your scripts in `src/main/groovy` or
+`src/main/scripts`.
+
+The scripting API exposes specific tooling for IntelliJ IDEA that allows you to get access to code completion and
+similar convenience features, while writing your scripts in this Maven project. Currently the API exposes four
+main providers with numerous convenient methods:
+
+* `core`
+* `repository`
+* `blobStore`
+* `security`
+
+The API is deliberately designed to be simple to use. It encapsulates complex configuration in single method
+invocations. Many of the included methods use default values that can be omitted. For example the method to create
+a Maven hosted repository in the simplest usage simply requires a name.
+
+----
+repository.createMavenHosted("private")
+----
+
+This method simply uses the default values for the rest of the parameters and is therefore equivalent to
+
+----
+repository.createMavenHosted("private", 
+----
+
+You can inspect the default values in the API documentation available by inspecting the declaration in your IDE or
+by viewing the JavaDoc.
+
+In terms of overall complexity of the scripts created, we suggest to break large tasks up into multiple scripts
+and therefore invocations.
+
+[[scripting-configuration]]
+=== Managing and Running Scripts
+
+////
+Note: A number of useful scripts and more are available at
+https://gist.github.com/kellyrob99/ea0294433448e72ed64d
+////
+
+Once you have completed the creation of your script, you need to publish it to the repository manager for execution.
+This is done by REST API invocations against the endpoint:
+
+----
+http://localhost:8081/service/siesta/rest/v1/script
+----
+
+This endpoint accepts JSON-formatted payloads with your script as the `content`.
+
+.Example JSON formatted file `maven.json` with a simple repository creation script 
+----
+{
+  "name": "maven",
+  "type": "groovy",
+  "content": "repository.createMavenHosted('private')"
+}
+----
+
+The JSON file can be published to the repository manager with a HTTP POST operation like
+
+----
+curl -v -X POST -u admin:admin123 --header "Content-Type: application/json" 'http://localhost:8081/service/siesta/rest/v1/script' -d @maven.json 
+----
+
+A list of scripts stored on the repository manager can be accessed with
+
+----
+curl -v -X GET -u admin:admin123 'http://localhost:8081/service/siesta/rest/v1/script'
+----
+
+A script can subsequently be executed by sending a POST to the `run` method of the specific script
+
+----
+curl -v -X POST -u admin:admin123 --header "Content-Type: text/plain" 'http://localhost:8081/service/siesta/rest/v1/script/maven/run'
+----
+
+A successful execution should result in a `HTTP/1.1 200 OK` result.
+
+
+[[scripting-example]]
+=== Examples
+
+////
+Note: the nexus-testsuite includes a number of example scripts,
+ unfortunately they are not available to the public so we need to duplicate them here for now
+
+https://github.com/sonatype/nexus-internal/tree/master/private/testsuite/nexus-testsuite-data/src/main/resources/provisioningScripts
+
+////
+
+
 tbd
+
+
+
+
+
+
 
