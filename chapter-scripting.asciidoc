@@ -137,7 +137,9 @@ A list of scripts stored on the repository manager can be accessed with
 curl -v -X GET -u admin:admin123 'http://localhost:8081/service/siesta/rest/v1/script'
 ----
 
-A script can subsequently be executed by sending a POST to the `run` method of the specific script
+The same call with a script name appended returns the actual script content.
+
+A script can be executed by sending a POST to the `run` method of the specific script
 
 ----
 curl -v -X POST -u admin:admin123 --header "Content-Type: text/plain" 'http://localhost:8081/service/siesta/rest/v1/script/maven/run'
@@ -163,11 +165,8 @@ and receive them as arguments that have to be parsed by the script as desired
 security.setAnonymousAccess(Boolean.valueOf(args))
 ----
 
-Since the scripts are typically longer than a single line and creating them in a separate file in the IDE is
-recommended, using a helper script that formats a `.groovy` file into a JSON file and submits it to the repository
-manager can be convenient approach. The `complex-example` project in the
-https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[scripting section of the book examples project ]
-includes an example implementation using Groovy.
+Interaction with the REST API for scripts can be done with any scripting language capable of HTTP calls as
+mentioned above. In the following section we are going to look at some further detailed examples.
 
 
 [[scripting-example]]
@@ -181,8 +180,26 @@ https://github.com/sonatype/nexus-internal/tree/master/private/testsuite/nexus-t
 
 ////
 
+The API for scripts is capable of a nubmer of task. This section provides examples for script writing, publishing
+and executing. Since scripts are typically longer than a single line and creating them in a separate file in
+the IDE is recommended, using a helper script that formats a `.groovy` file into a JSON file and submits it to the
+repository manager can be convenient approach.
 
-tbd
+The `complex-script` project in the https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[scripting
+section of the documentation examples project ] includes an example implementation using Groovy invoked from a
+shell script. All scripts in this folder can be published and executed via the `provision.sh` file or individually:
+
+----
+groovy addUpdatescript.groovy -u "admin" -p "admin123" -n "docker" -f "dockerRepositories.groovy" -h "http://localhost:8081"
+curl -v -X POST -u admin:admin123 --header "Content-Type: text/plain" "http://localhost:8081/service/siesta/rest/v1/script/docker/run"
+----
+
+The following scripts are available:
+
+dockerRepositories.groovy:: configures a proxy repository of DockerHub, a hosted repositoryt and a group
+npmAndBowerRepositories.groovy:: configures a set of proxy and hosted repositories as well as repository groups
+for NPM and Bower repositories suitable for server-side and client JavaScript-based development
+rawRepositories.groovy:: creates a new blob store and uses it for a hosted raw repository
 
 
 
