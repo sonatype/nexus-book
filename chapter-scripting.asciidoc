@@ -6,26 +6,26 @@
 [[scripting-introduction]]
 === Introduction
 
-Automation via scripts is a common scenario. The {pro} provides API's thats simplify provisioning and other tasks
-in the repository manager. These API's can be invoked from scripts that are published to the repository manager
-and executed there.
+Automation via scripts is a common scenario. The {pro} provides APIs that simplify provisioning and other tasks in
+the repository manager. These APIs can be invoked from scripts that are published to the repository manager and
+executed there.
 
 === Writing Scripts
 
 The scripting language used on the repository manager is http://www.groovy-lang.org/[Groovy]. Any editor can be
 used to author the scripts. 
 
-The API's available are contained in a number of JAR files. All these files including JavaDoc and Sources archives
-are available from the http://search.maven.org[Central Repository]. They can be manually downloaded and
-extracted. E.g. the component different versions and the specific JAR files for `org.sonatype.nexus:nexus-core`
+The available APIs are contained in a number of JAR files. All these files, including JavaDoc and Sources
+archives, are available from the http://search.maven.org[Central Repository]. They can be manually downloaded and
+extracted. E.g. the different versions and the specific JAR files for `org.sonatype.nexus:nexus-core`
 are available in versioned directories at `http://repo1.maven.org/maven2/org/sonatype/nexus/nexus-core/`.
 
 This manual process can be simplified and improved by the usage of a Maven project declaring the relevant
 components as dependencies. An example project with this setup and a few scripts is available in the
-https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[book examples project].
+https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[documentation examples project].
 
 anchor:script-maven-project[Maven project for Scripting]
-.Maven project pom.xml declaring the API dependencies for scripting
+.Maven Project pom.xml Declaring the API Dependencies for Scripting
 ----
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -79,8 +79,8 @@ main providers with numerous convenient methods:
 * `security`
 
 The API is deliberately designed to be simple to use. It encapsulates complex configuration in single method
-invocations. Many of the included methods use default values that can be omitted. For example the method to create
-a Maven hosted repository in the simplest usage simply requires a name.
+invocations. Many of the included methods use default values that can be omitted. For example, the method to create
+a hosted repository using the Maven format in the simplest usage simply requires a name.
 
 ----
 repository.createMavenHosted("private")
@@ -93,8 +93,8 @@ repository.createMavenHosted("private", BlobStoreManager.DEFAULT_BLOBSTORE_NAME,
         WritePolicy.ALLOW_ONCE, LayoutPolicy.STRICT)
 ----
 
-You can inspect the default values in the API documentation available by inspecting the declaration in your IDE or
-by viewing the JavaDoc.
+You can inspect the default values in the API documentation available by inspecting the declaration of the
+specific methods in your IDE or by viewing the JavaDoc.
 
 In terms of overall complexity of the scripts created, we suggest to break large tasks up into multiple scripts
 and therefore invocations.
@@ -153,7 +153,7 @@ Scripts can be removed with a HTTP DELETE operation to the specific script:
 curl -v -X DELETE -u admin:admin123 'http://localhost:8081/service/siesta/rest/v1/script/maven'
 ----
 
-Scripts can receive runtime parameters via the REST API
+Scripts can receive run-time parameters via the REST API
 
 ----
 curl -v -X POST -u admin:admin123 --header "Content-Type: text/plain" 'http://localhost:8081/service/siesta/rest/v1/script/updateAnonymousAccess/run' -d 'false'
@@ -166,10 +166,10 @@ security.setAnonymousAccess(Boolean.valueOf(args))
 ----
 
 Interaction with the REST API for scripts can be done with any scripting language capable of HTTP calls as
-mentioned above. In the following section we are going to look at some further detailed examples.
+mentioned above. In the following section we look at some further detailed examples.
 
 
-[[scripting-example]]
+[[scripting-examples]]
 === Examples
 
 ////
@@ -180,23 +180,24 @@ https://github.com/sonatype/nexus-internal/tree/master/private/testsuite/nexus-t
 
 ////
 
-The API for scripts is capable of a nubmer of task. This section provides examples for script writing, publishing
+The API for scripts is capable of a number of different task. This section provides examples for script writing, publishing
 and executing. Since scripts are typically longer than a single line and creating them in a separate file in
 the IDE is recommended, using a helper script that formats a `.groovy` file into a JSON file and submits it to the
-repository manager can be convenient approach.
+repository manager can be a convenient approach.
 
 The `complex-script` project in the https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[scripting
-section of the documentation examples project ] includes an example implementation using Groovy invoked from a
-shell script. All scripts in this folder can be published and executed via the `provision.sh` file or individually:
+section of the documentation examples project] includes an example implementation using Groovy invoked from a
+shell script. All scripts in this folder can be published and executed via the `provision.sh` file or
+individually:
 
 ----
-groovy addUpdatescript.groovy -u "admin" -p "admin123" -n "docker" -f "dockerRepositories.groovy" -h "http://localhost:8081"
+groovy addUpdateScript.groovy -u "admin" -p "admin123" -n "docker" -f "dockerRepositories.groovy" -h "http://localhost:8081"
 curl -v -X POST -u admin:admin123 --header "Content-Type: text/plain" "http://localhost:8081/service/siesta/rest/v1/script/docker/run"
 ----
 
 The following scripts are available:
 
-dockerRepositories.groovy:: configures a proxy repository of DockerHub, a hosted repositoryt and a group
+dockerRepositories.groovy:: configures a proxy repository of DockerHub, a hosted repository and a group
 npmAndBowerRepositories.groovy:: configures a set of proxy and hosted repositories as well as repository groups
 for NPM and Bower repositories suitable for server-side and client JavaScript-based development
 rawRepositories.groovy:: creates a new blob store and uses it for a hosted raw repository
