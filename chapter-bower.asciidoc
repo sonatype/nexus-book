@@ -5,45 +5,50 @@
 [[bower-introduction]]
 === Introduction
 
-http://bower.io[Bower] is a package manager for front-end web development. Consumers of JavaScript packages who
-routinely build projects need to keep track of and access remote packages. {pro} and {oss} support the Bower 
-registry format for proxy repositories. This allows the repository manager to take advantage of the packages in 
-the Bower registry and other public registries without incurring repeated downloads of packages. The proxy allows {pro} and {oss} to grab artifacts from Bower.
+http://bower.io[Bower] is a package manager for front-end web development. JavaScript developers using Bower gain
+convenient access to a large amount of packages from the remote Bower registry. This reduces the complexity of
+their development efforts and improves the resulting we applications.
 
-Bower is optimized for the front-end. It downloads a component (e.g. jQuery) just once even when a 
-single package depends on it, reducing page load. It uses a proxy to access remote registries with the help of a 
-custom URL resolver, which is dedicated to allowing integration of Bower with {pro} and {oss}. The resolver 
-is an API introduced in Bower version 1.5. Bower fetches artifacts and version information through the repository 
-manager, then automatically searches and saves the artifacts in the repository.
+{pro} and {oss} support the Bower registry format for hosted and proxy repositories. This allows the repository
+manager to take advantage of the packages in the official Bower registry and other public registries without
+incurring repeated downloads of packages.
 
+The official Bower registry is available for searches at http://bower.io/search[http://bower.io/search] and for
+package retrieval via the URL http://bower.herokuapp.com/[http://bower.herokuapp.com].
+
+You can publish your own packages to a private Bower registry as a hosted repository on the repository manager and
+then expose the remote and private repositories to Bower as a repository group, which is a repository that merges
+and exposes the contents of multiple repositories in one convenient URL. This allows you to reduce time and
+bandwidth usage for accessing Bower packages a registry as well as share your packages within your organization in
+a hosted repository.
 
 [[bower-proxy]]
 === Proxying Bower Repositories
 
-You can set up a Bower proxy repository within {pro} and {oss} to access a remote repository location. For 
-example, you can configure your Bower proxy to access the public Bower registry at 
-http://bower.herokuapp.com/[http://bower.herokuapp.com] or your own private registry.
+You can set up a Bower proxy repository to access a remote repository location, for example the official Bower
+registry at http://bower.herokuapp.com/[http://bower.herokuapp.com] that is configured as the default on Bower.
 
-Enabling rewrite allows the Bower resolver to force itself through the repository manager to retrieve an 
-artifact. This is enabled by default.
-
-If deactivated, no rewrite of the URL occurs. As a result, the original component URL is exposed. Turning off 
-rewrite capabilities proxies the information directly from the remote registry without redirecting to the 
-repository manager to retrieve artifacts. The content will be as if navigating directly to the Bower registry in 
-your browser.
- 
-Minimal configuration steps are:
+To proxy a Bower registry, you simply create a new 'bower (proxy)' as documented in <<admin-repositories>> in
+details. Minimal configuration steps are:
 
 - Define 'Name'
 - Define URL for 'Remote storage' e.g. http://bower.herokuapp.com/[http://bower.herokuapp.com]
 - Select a 'Blob store' for 'Storage'
 
+The 'Bower' specific configuration section include the setting to 'Enable rewrite of package URLs'. This causes
+Bower to retrieve components and their dependencies through the repository manager even if original meta data has
+hard-coded URLs to remote repositories. This setting 'Force Bower to retrieve packages via the proxy repository' is
+enabled by default.
+
+If deactivated, no rewrite of the URL occurs. As a result, the original component URL is exposed. Turning off
+rewrite capabilities proxies the information directly from the remote registry without redirecting to the
+repository manager to retrieve components.
 
 [[bower-hosted]]
 === Hosting Bower Repositories
 
-Creating a Bower hosted repository allows you to register packages in the repository manager. The hosted 
-repository acts as an authoritative location for these components. This effectively creates an asset that becomes 
+Creating a Bower hosted repository allows you to register packages in the repository manager. The hosted
+repository acts as an authoritative location for these components. This effectively creates an asset that becomes
 a pointer to an external URL (such as a Git repository).
 
 To add a hosted Bower repository, create a new repository with the recipe 'bower (hosted)' as 
@@ -51,108 +56,158 @@ documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
 
-- Define 'Name'
+- Define 'Name' - e.g. `bower-internal`
 - Select 'Blob store' for 'Storage'
 
 
 [[bower-group]]
-=== Grouping Bower Repositories
+=== Bower Repository Groups
 
-A repository group is the recommended way to expose all your Bower repositories from the repository manager to 
-your users, with minimal additional client side configuration. A repository group allows you to expose the 
-aggregated content of multiple proxy and hosted repositories as well as other repository groups with one URL in 
-tool configuration. This is possible for Bower repositories by creating a new repository with the 'bower (group)' 
-recipe.
+A repository group is the recommended way to expose all your Bower repositories from the repository manager to
+your users, with minimal additional client side configuration. A repository group allows you to expose the
+aggregated content of multiple proxy and hosted repositories as well as other repository groups with one URL in
+tool configuration. This is possible for Bower repositories by creating a new repository with the 'bower (group)'
+recipe as documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
 
-- Define 'Name'
+- Define 'Name' - e.g. `bower-all`
 - Select 'Blob store' for 'Storage'
 - Add Bower repositories to the 'Members' list in the desired order
-
-Bower groups operate by order of selection. In other words, the first member in a given group is accessed; and 
-each subsequent group is accessed, accordingly. If there are two components of the same name, the first will be 
-grabbed.
-
 
 [[bower-installation]]
 === Installing Bower
 
-Installing Bower is done via npm. So, if you install npm first, you can run Bower. But to do a complete 
-npm configuration for {oss} and {pro}, review <<_introduction>> to set up and configure the package manager. 
-Also, be sure to update your Bower package to version 1.5 or higher.
+Bower is typically installed with `npm`. Since the repository manager supports NPM repositories for proxying, we
+recommend to configure the relevant NPM repositories and npm as documented in <<npm>> prior to installing
+Bower. Once this is completed you can install Bower with the usual command.
 
-In order to proxy downloads through the repository manager, install the Bower resolver with this command:
+----
+ npm install -g bower
+----
+
+Bower version 1.5 or higher is required and can be verified with
+
+----
+$ bower -v
+1.7.7
+----
+
+In addition Bower requires a custom URL resolver to allow integration with {pro} and {oss}. The resolver is an API
+introduced in Bower version 1.5. Bower fetches component and version information through the repository manager,
+then automatically searches and saves the component in the repository. You can install the resolver with:
+
 ----
 npm install -g bower-nexus3-resolver
 ----
 
-[[bower-configuration]]
-=== Configuring Bower
-
-Once you have set up your hosted and proxy repositories for Bower packages, and created a repository group to 
-merge them you can create a +.bowerrc+ JSON file in the command line to access registry URLs. Adding the 
-"resolvers" variable to the file enables Bower to fetch artifacts for the repository manager.
-
-Edit your +.bowerrc+ file for a read-only group search and resolver to retrieve artifacts.
+Alternatively you can install the resolver on a per-project basis instead by adding it as a dependency in
+your `package.json`:
 
 ----
-{
-	"registry" : "http://localhost:8081/repository/bower-group",
-	"resolvers" : ["bower­-nexus3-­resolver"]
+"devDependencies" : {
+  "bower-nexus3-resolver" : "*"
 }
 ----
 
-To maintain a private registry, edit the registy variable.
 
+[[bower-download]]
+=== Configuring Bower Package Download
+
+Once you have set up your repositories for Bower packages, and installed Bower and the custom resolver, you can
+create a +.bowerrc+ JSON file to access registry URLs. The `registry` value is configured to access the Bower
+repository group that exposes the proxy and hosted repositories together. The `resolvers` configuration is
+necessary, so that Bower uses the required custom resolver.
+
+.Global .bowerrc file in your home directory for package download via the group bower-all
 ----
 {
-	"registry" : "http://localhost:8081/repository/private-repo",
-	"resolvers" : ["bower­-nexus3-­resolver"]
+  "registry" : {
+    "search" : [ "http://localhost:8081/repository/bower-all" ]
+   },
+ "resolvers" : [ "bower-nexus3-resolver" ]
 }
 ----
 
-To register a package with Bower edit the +.bowerrc+ with a register variable. It acts as a write operation since
-it has to go out to the repository manager and associate the package with a particular URL. 
+IMPORTANT: The .bowerrc file can be located in various locations. For global configuration for a specific
+developer working on multiple projects the users home directory is a suitable location. If multiple files exist,
+they are merged. Details can be found in http://bower.io/docs/config/[the documentation].
 
-In this example edit your file with a registry object to search a repository group and host a registered 
-package. 
+With this configuration in place, any further Bower command invocations trigger package downloads via the
+repository manager.
+
+Running an `install` command logs the download via the repository manager:
+
+----
+$ bower install jquery
+bower jquery#*              not-cached nexus+http://localhost:8081/repository/bower-all/jquery#*
+bower jquery#*                 resolve nexus+http://localhost:8081/repository/bower-all/jquery#*
+bower jquery#*                resolved nexus+http://localhost:8081/repository/bower-all/jquery#2.2.0
+bower jquery#^2.2.0            install jquery#2.2.0
+
+jquery#2.2.0 bower_components/jquery
+----
+
+If anonymous access to the repository manager is disabled, you have to specify the credentials for the accessing
+the repository manager as part of the URL like `http://username:password@host:port/repository/bower-all` or add a
+`nexus` section to your `.bowerrc` file.
+
+----
+{
+  "nexus" : {
+    "username" : "myusername"
+    "password" : "mypassword"
+  }
+}
+----
+
+Downloaded packages are cached, do not have to be retrieved from the remote repositories again and can be
+inspected in the user interface.
+
+
+
+[[bower-browse-search]]
+=== Browsing Bower Repositories and Searching Packages
+
+You can browse Bower repositories in the user interface inspecting the components and assets and their details, as
+described in <<search-components>>.
+
+Searching for Bower packages can be performed in the user interface, too. It finds all packages that are currently
+stored in the repository manager, either because they have been pushed to a hosted repository or they have been
+proxied from an upstream repository and cached in the repository manager.
+
+
+[[bower-register]]
+=== Registering Bower Packages
+
+If you are authoring your own packages and want to distribute them to other users in your organization, you have
+to publish them to a hosted repository on the repository manager. The consumers can then download it via the
+repository group as documented in <<bower-download>>.
+
+You can specify the URL for the target hosted repository in the `register` value in your `.bowerrc` file. If you
+are registering all packages you create in the same hosted repository you can configure in the your global
+configuration file e.g. located in your users home directory:
+ 
 ----
 {
     "registry" : {
         "search" : [ 
-            "http://localhost:8081/repository/bower-group"
+            "http://localhost:8081/repository/bower-all"
         ],
-        "register" : "http://localhost:8081/repository/bower-hosted"
+        "register" : "http://localhost:8081/repository/bower-internal"
    },
    "resolvers" : [ "bower-nexus3-resolver" ]
 }
 ----
 
-If you desire to use a per-project +.bowerrc+, then in addition to the single hosted repository +.bowerrc+ you 
-must have a project-specific +.bowerrc+ that contains the following:
+Alternatively, if you desire to use a per-project +.bowerrc+ file that you potentially version in your source code
+management system with the rest of the package code, you can use a simplified file:
 
 ----
 "registry": {
-   "register": "http://admin:admin123@localhost:8081/repository/bower-hosted"
+   "register": "http://localhost:8081/repository/bower-hosted"
    }
 ----
 
-TIP: There is no default global +.bowerrc+. You can configure Bower to register in a unique directory with your 
-own +.bowerrc+ and at the same time maintain a global one defined differently.
-
-[[bower-browse-search]]
-=== Browsing Bower Repositories and Searching Packages
-
-You can browse Bower repositories in the user interface inspecting the components and assets and their details, 
-as described in <<search-components>>.
-
-Searching for Bower packages can be performed in the user interface, too. It finds all packages that are 
-currently stored in the repository manager, either because they have been pushed to a hosted repository or they 
-have been proxied from an upstream repository and cached in the repository manager.
-
-////
-/* Local Variables: */
-/* ispell-personal-dictionary: "ispell.dict" */
-/* End:             */
-////
+Authentication is managed in the same manner as for proxying with anonymous access disabled as documented in
+<<bower-download>>.
