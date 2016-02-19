@@ -181,8 +181,9 @@ proxied from an upstream repository and cached in the repository manager.
 === Registering Bower Packages
 
 If you are authoring your own packages and want to distribute them to other users in your organization, you have
-to publish them to a hosted repository on the repository manager. The consumers can then download it via the
-repository group as documented in <<bower-download>>.
+to register them to a hosted repository on the repository manager. This establishes a metadata file in the
+repository that links to the source code repository. Typically this is a git repository. The consumers can then
+download it via the repository group as documented in <<bower-download>>.
 
 You can specify the URL for the target hosted repository in the `register` value in your `.bowerrc` file. If you
 are registering all packages you create in the same hosted repository you can configure in the your global
@@ -200,7 +201,7 @@ configuration file e.g. located in your users home directory:
 }
 ----
 
-Alternatively, if you desire to use a per-project +.bowerrc+ file that you potentially version in your source code
+Alternatively, if you desire to use a per-project `.bowerrc` file that you potentially version in your source code
 management system with the rest of the package code, you can use a simplified file:
 
 ----
@@ -211,3 +212,17 @@ management system with the rest of the package code, you can use a simplified fi
 
 Authentication is managed in the same manner as for proxying with anonymous access disabled as documented in
 <<bower-download>>.
+
+With this configuration you can run a command such as
+
+----
+bower register example-package git://gitserver/project.git
+----
+
+All semantic version tags on the git repository are now exposed as version for this package and consumers can
+install the package via the group repository like any other package.
+
+----
+bower install example-package
+----
+
