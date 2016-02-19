@@ -342,7 +342,8 @@ Username:: Username of an LDAP user with which to connect (or bind). This is a D
 
 Password:: Password for an administrative LDAP user
 
-To test your connection to the external LDAP server click 'Verify Connection'. If set up is successful, click 'Next' to go the next steps.
+To test your connection to the external LDAP server click 'Verify Connection'. If set up is successful, click 
+'Next' to go the next steps.
 
 [[ldap-sect-usergroup]]
 === User and Group Mapping
@@ -384,13 +385,26 @@ Password Attribute:: This control is only available in {oss}. It can be used to 
 supplies the password ("userPassword"). If this field is blank the user will be authenticated against a bind with 
 the LDAP server.
 
+Once the checkbox for 'Password Attribute' has been selected, the interface allows you to configure 
+the optional attribute. When not configured authentication will occur as a bind to the LDAP server. Otherwise 
+this is the attribute of the Object class that supplies the password of the user. The repository manager uses 
+this attribute when it is authenticating a user against an LDAP server.
+
+[[use-password-attribute.png]]
+.Password Attribute
+image::figs/web/use-password-attribute.png[scale=50]
+
 To map your LDAP groups as roles, click the check box to activate 'Group Type'.
 
 The 'Group Type' drop-down determines which fields are available in the user interface. Groups are generally one 
 of two types in LDAP systems - static or dynamic. A static group contains a list of users. A dynamic group is a 
 list of groups to which user belongs.
 
-Static groups are configured with the following parameters:
+[[group-element-mapping-static.png]]
+.Static Group Element Mapping
+image::figs/web/group-element-mapping-static.png[scale=50]
+
+Static groups, seen in <<group-element-mapping-static.png>>, are configured with the following parameters:
 
 Base DN:: This field is similar to the Base DN field described for 'User Element Mapping'. If your groups were 
 defined under +ou=groups,dc=sonatype,dc=com+, this field would have a value of +ou=groups+.
@@ -418,7 +432,7 @@ use this dialog to login as an LDAP user and test the user and group mapping con
 server. This feature allows you to test user and group mapping configuration directly and to quickly diagnose and 
 address difficult authentication and access control issues via the administrative interface.
 
-After your LDAP users and groups are verfied, go to roles to add external roles.
+After your LDAP users and groups are verfied, go to <<roles>> to add external roles.
 
 [[remote-user-token]]
 === Authentication via Remote User Token
