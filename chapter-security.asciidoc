@@ -292,9 +292,14 @@ passed through to LDAP authentication.
 [[ldap-sect-connecting]]
 === LDAP Connection and Authentication
 
+<<create-ldap-connection>> shows a simplified LDAP configuration for the repository manager 
+configured to connect to an LDAP server running on localhost port 10389 using the search base of `ou=system`. On 
+a more standard installation, you would likely not want to use Simple Authentication as it sends the password in 
+clear text over the network, and you would also use a search base that corresponds to your organization’s 
+top-level domain components such as dc=sonatype,dc=com.
+
 In order to create and manage LDAP server configurations, press the 'Create connection' button to start a new 
-entry. <<create-ldap-connection>> shows a simplified LDAP configuration for the repository manager 
-configured to connect to an LDAP server running on localhost port 10389 using the search base of `ou=system`.
+entry.
 
 [[create-ldap-connection]]
 .Create LDAP Connection Panel
@@ -364,9 +369,7 @@ DN that can contain user entries and 'False' if all users are contain within the
 if all users are in ou=users,dc=sonatype,dc=com this field should be False. If users can appear in organizational 
 units within organizational units such as +ou=development,ou=users,dc=sonatype,dc=com+, this field should be True.
 
-Object Class:: This value defaults to inetOrgPerson which is a standard object class defined in 
-http://www.faqs.org/rfcs/rfc2798.html/[RFC-2798]. This Object Class (inetOrgPerson) contains standard fields such 
-as mail, uid. Other possible values are posixAccount or a custom class.
+User Filter::
 
 User ID Attribute:: This is the attribute of the Object class that supplies the User ID. The repository manager 
 uses this attribute as the User ID.
@@ -381,11 +384,11 @@ Password Attribute:: This control is only available in {oss}. It can be used to 
 supplies the password ("userPassword"). If this field is blank the user will be authenticated against a bind with 
 the LDAP server.
 
-To map your LDAP groups as roles, click the check box to continue.
+To map your LDAP groups as roles, click the check box to activate 'Group Type'.
 
-The Group Type drop-down determines which fields are available in the user interface. Groups are generally one of 
-two types in LDAP systems - static or dynamic. A static group contains a list of users. A dynamic group is a list 
-of groups to which user belongs.
+The 'Group Type' drop-down determines which fields are available in the user interface. Groups are generally one 
+of two types in LDAP systems - static or dynamic. A static group contains a list of users. A dynamic group is a 
+list of groups to which user belongs.
 
 Static groups are configured with the following parameters:
 
@@ -406,9 +409,14 @@ If your installation does not use Static Groups, you can configure LDAP Integrat
 
 Once you have configured the User and Group Settings you can check the correctness of your user mapping by pressing the "Verify user mapping" at the end of page.
 
-The repository manager provides you with the ability to test a user login directly. To test a user login, go to the User and Group Settings tab for a server listed in the Enterprise LDAP panel. Scroll to the bottom of the form, and you should see a button named "Verify login".
+The repository manager provides you with the ability to test a user login directly. To test a user login, go to 
+the User and Group Settings tab for a server listed in the Enterprise LDAP panel. Scroll to the bottom of the 
+form, and you should see a button named "Verify login".
 
-If you click on "Verify Login", you will then be presented with the login credentials dialog shown below. You can use this dialog to login as an LDAP user and test the user and group mapping configuration for a particular server. This feature allows you to test user and group mapping configuration directly and to quickly diagnose and address difficult authentication and access control issues via the administrative interface.
+If you click on "Verify Login", you will then be presented with the login credentials dialog shown below. You can 
+use this dialog to login as an LDAP user and test the user and group mapping configuration for a particular 
+server. This feature allows you to test user and group mapping configuration directly and to quickly diagnose and 
+address difficult authentication and access control issues via the administrative interface.
 
 After your LDAP users and groups are verfied, go to roles to add external roles.
 
