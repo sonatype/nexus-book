@@ -259,7 +259,7 @@ use that user for anonymous access.
 
 {pro} and {oss} can use the Lightweight Directory Access Protocol (LDAP) for authentication via external systems
 providing LDAP support such as Microsoft Exchange/Active Directory, http://www.openldap.org/[OpenLDAP],
-https://directory.apache.org/apacheds/[ApacheDS] and others. The 'LDAP relam' provides the repository manager with
+https://directory.apache.org/apacheds/[ApacheDS] and others. The 'LDAP realm' provides the repository manager with
 the capability to authenticate users against an LDAP server.  In addition to handling authentication, the
 repository manager can be configured to map roles to LDAP user groups. If a user is a member of a LDAP group that
 matches the ID of a role, the repository manager grants that user the matching role. In addition to this highly
@@ -274,7 +274,7 @@ All these feature allow you to adapt to any specific LDAP usage scenario and tak
 authentication set up across your organization in all your repository managers.
 
 [[ldap-sect-enabling]]
-=== Enabling the LDAP Authentication Realm
+==== Enabling the LDAP Authentication Realm
 
 In order to use LDAP authentication in the repository manager, you need to activate the 'LDAP realm':
 
@@ -290,7 +290,7 @@ authentication offline or unavailable. Any user account not found in the 'Nexus 
 passed through to LDAP authentication.
 
 [[ldap-sect-connecting]]
-=== LDAP Connection and Authentication
+==== LDAP Connection and Authentication
 
 <<create-ldap-connection>> shows a simplified LDAP configuration for the repository manager 
 configured to connect to an LDAP server running on localhost port 10389 using the search base of `ou=system`. On 
@@ -346,7 +346,7 @@ To test your connection to the external LDAP server click 'Verify Connection'. I
 'Next' to go the next steps.
 
 [[ldap-sect-usergroup]]
-=== User and Group Mapping
+==== User and Group Mapping
 
 The LDAP connection panel in {oss} contains sections to manage user and group element mapping. This configuration 
 section is the default next step after you create the LDAP connection. It is separate panel called 'Choose Users 
@@ -394,11 +394,22 @@ this attribute when it is authenticating a user against an LDAP server.
 .Password Attribute
 image::figs/web/use-password-attribute.png[scale=50]
 
-To map your LDAP groups as roles, click the check box to activate 'Group Type'.
+To map your LDAP groups as roles, click the check box to activate 'Group Type'. The 'Group Type' drop-down 
+determines which fields are available in the user interface. Groups are generally one of two types in LDAP 
+systems - dynamic or static. A dynamic group is a list of groups to which users belong. A static group contains a 
+list of users.
 
-The 'Group Type' drop-down determines which fields are available in the user interface. Groups are generally one 
-of two types in LDAP systems - static or dynamic. A static group contains a list of users. A dynamic group is a 
-list of groups to which user belongs.
+Dynamic groups are configured via the 'Member of Attribute' parameter. The repository manager inspects this 
+attribute of the user entry to get a list of groups of which the user is a member. In this configuration, a user 
+entry would have an attribute that would contain the name of a group, such as 'memberOf'.
+
+[[group-element-mapping-dynamic.png]]
+.Dynamic Group Element Mapping
+image::figs/web/group-element-mapping-dynamic.png
+
+A static group would be captured in an entry with an Object class 'groupOfUniqueNames' that contains one or more 
+'uniqueMember' attributes. In a dynamic group configuration, each user entry in LDAP contains an attribute that 
+lists group membership.
 
 [[group-element-mapping-static.png]]
 .Static Group Element Mapping
@@ -418,6 +429,8 @@ Group ID Attribute:: Specifies the attribute of the Object class that specifies 
 Group Member Attribute:: Specifies the attribute of the Object class which specifies a member of a group. A groupOfUniqueNames has multiple uniqueMember attributes for each member of a group. Defaults to uniqueMember.
 
 Group Member Format:: This field captures the format of the Group Member Attribute, and is used by the repository manager to extract a username from this attribute. For example, if the Group Member Attribute has the format +uid=brian,ou=users,dc=sonatype,dc=com+, then the Group Member Format would be +uid=$username,ou=users,dc=sonatype,dc=com+. If the Group Member Attribute had the format +username+, then the Group Member Format would be +$username+.
+
+Dynamic groups are configured via the Member of Attribute parameter. the repository manager inspects this attribute of the user entry to get a list of groups of which the user is a member. In this configuration, a user entry would have an attribute that would contain the name of a group, such as 'memberOf'.
 
 If your installation does not use Static Groups, you can configure LDAP Integration to refer to an attribute on the User entry to derive group membership. To do this, select Dynamic Groups in the Group Type field in Group Element Mapping.
 
