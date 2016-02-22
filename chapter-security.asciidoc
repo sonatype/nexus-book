@@ -152,8 +152,8 @@ like LDAP.
 .Viewing the List of Defined Roles
 image::figs/web/roles-list.png[scale=60]
 
-To create a new role, click on the 'Create role' button, select 'Nexus Role' and fill out the Role creation feature 
-view shown in <<fig-roles-create>>.
+To create a new role, click on the 'Create role' button, select 'Nexus Role' and fill out the Role creation 
+feature view shown in <<fig-roles-create>>.
 
 [[fig-roles-create]]
 .Creating a New Role
@@ -182,13 +182,14 @@ privileges and roles in the repository manager.
 For example, assume that you have a group in LDAP named +scm+ and you want to make sure that everyone in the +scm+
 group has administrative privileges.
 
-Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick the
-desired 'scm' group and confirm by pressing 'Create mapping'.
+Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick 
+the desired 'scm' group and confirm by pressing 'Create mapping'.
 
-TIP: For faster access or if you cannot see your group name, you can also type in a portion or the whole name of the
-group and it will limit the dropdown to the selected text.
+TIP: For faster access or if you cannot see your group name, you can also type in a portion or the whole name of 
+the group and it will limit the dropdown to the selected text.
 
-Once the external role has been selected, it creates a linked role. You can then assign other roles and privileges to this new externally mapped role like you would do for any other role.
+Once the external role has been selected, it creates a linked role. You can then assign other roles and 
+privileges to this new externally mapped role like you would do for any other role.
 
 Any user that is part of the 'scm' group in LDAP, receives all the privileges defined in the created role allowing
 you to adapt your generic role in LDAP to the repository manager-specific use cases you want these users to be
@@ -374,7 +375,8 @@ DN that can contain user entries and 'False' if all users are contain within the
 if all users are in ou=users,dc=sonatype,dc=com this field should be False. If users can appear in organizational 
 units within organizational units such as +ou=development,ou=users,dc=sonatype,dc=com+, this field should be True.
 
-User Filter::
+User Filter:: This is the attribute that allows you to configure a subset of investigation types from the 
+database.
 
 User ID Attribute:: This is the attribute of the Object class that supplies the User ID. The repository manager 
 uses this attribute as the User ID.
@@ -400,51 +402,53 @@ image::figs/web/use-password-attribute.png[scale=50]
 
 To map your LDAP groups as roles, click the check box to activate 'Group Type'. The 'Group Type' drop-down 
 determines which fields are available in the user interface. Groups are generally one of two types in LDAP 
-systems - dynamic or static. A dynamic group is a list of groups to which users belong. A static group contains a 
+systems - static or dynamic. A dynamic group is a list of groups to which users belong. A static group contains a 
 list of users.
-
-Dynamic groups are configured via the 'Member of Attribute' parameter. The repository manager inspects this 
-attribute of the user entry to get a list of groups of which the user is a member. In this configuration, a user 
-entry would have an attribute that would contain the name of a group, such as 'memberOf'.
-
-[[group-element-mapping-dynamic.png]]
-.Dynamic Group Element Mapping
-image::figs/web/group-element-mapping-dynamic.png
-
-A static group would be captured in an entry with an Object class 'groupOfUniqueNames' that contains one or more 
-'uniqueMember' attributes. In a dynamic group configuration, each user entry in LDAP contains an attribute that 
-lists group membership.
 
 [[group-element-mapping-static.png]]
 .Static Group Element Mapping
 image::figs/web/group-element-mapping-static.png[scale=50]
 
-Static groups, seen in <<group-element-mapping-static.png>>, are configured with the following parameters:
+A static group would be captured in an entry with an Object class 'groupOfUniqueNames' that contains one or more 
+'uniqueMember' attributes. Static groups, seen in <<group-element-mapping-static.png>>, are configured with the 
+following parameters:
 
-Base DN:: This field is similar to the Base DN field described for 'User Element Mapping'. If your groups were 
+Group base DN:: This field is similar to the Base DN field described for 'User Element Mapping'. If your groups were 
 defined under +ou=groups,dc=sonatype,dc=com+, this field would have a value of +ou=groups+.
 
-Group Subtree:: This field is similar to the User Subtree field described for User Element Mapping. If all groups are defined under the entry defined in Base DN, this field should be false. If a group can be defined in a tree of organizational units under the Base DN, then the field should be true.
+Group subtree:: This field is similar to the User Subtree field described for User Element Mapping. If all groups are defined under the entry defined in Base DN, this field should be false. If a group can be defined in a tree of organizational units under the Base DN, then the field should be true.
 
-Object Class:: This value defaults to groupOfUniqueNames which is a standard object class defined in http://www.faqs.org/rfcs/rfc4519.html/[RFC-4519]. This default ('groupOfUniqueNames') is simply a collection of references to unique entries in an LDAP directory and can be used to associate user entries with a group. Other possible values are posixGroup or a custom class.
+Group object class:: This value defaults to 'groupOfUniqueNames' which is a standard object class defined in http://www.faqs.org/rfcs/rfc4519.html/[RFC-4519]. This default ('groupOfUniqueNames') is simply a collection of references to unique entries in an LDAP directory and can be used to associate user entries with a group. Other possible values are posixGroup or a custom class.
 
-Group ID Attribute:: Specifies the attribute of the Object class that specifies the Group ID. If the value of this field corresponds to the ID of a role, members of this group will have the corresponding privileges. Defaults to common name (+cn+).
+Group ID attribute:: Specifies the attribute of the Object class that specifies the Group ID. If the value of this field corresponds to the ID of a role, members of this group will have the corresponding privileges. Defaults to common name (+cn+).
 
-Group Member Attribute:: Specifies the attribute of the Object class which specifies a member of a group. A groupOfUniqueNames has multiple uniqueMember attributes for each member of a group. Defaults to uniqueMember.
+Group member attribute:: Specifies the attribute of the Object class which specifies a member of a group. A groupOfUniqueNames has multiple uniqueMember attributes for each member of a group. Defaults to uniqueMember.
 
-Group Member Format:: This field captures the format of the Group Member Attribute, and is used by the repository manager to extract a username from this attribute. For example, if the Group Member Attribute has the format +uid=brian,ou=users,dc=sonatype,dc=com+, then the Group Member Format would be +uid=$username,ou=users,dc=sonatype,dc=com+. If the Group Member Attribute had the format +username+, then the Group Member Format would be +$username+.
-
-Dynamic groups are configured via the Member of Attribute parameter. the repository manager inspects this attribute of the user entry to get a list of groups of which the user is a member. In this configuration, a user entry would have an attribute that would contain the name of a group, such as 'memberOf'.
+Group member format:: This field captures the format of the Group Member Attribute, and is used by the repository 
+manager to extract a username from this attribute. For example, if the Group Member Attribute has the format 
++uid=brian,ou=users,dc=sonatype,dc=com+, then the Group Member Format would be 
++uid=$username,ou=users,dc=sonatype,dc=com+. If the Group Member Attribute had the format +username+, then the 
+Group Member Format would be +$username+.
 
 If your installation does not use Static Groups, you can configure LDAP Integration to refer to an attribute on the User entry to derive group membership. To do this, select Dynamic Groups in the Group Type field in Group Element Mapping.
 
-Once you have configured the User and Group Settings you can check the correctness of your user mapping by pressing the "Verify user mapping" at the end of page.
+[[group-element-mapping-dynamic.png]]
+.Dynamic Group Element Mapping
+image::figs/web/group-element-mapping-dynamic.png
+
+Dynamic groups are configured via the 'Member of Attribute' parameter. The repository manager inspects this 
+attribute of the user entry to get a list of groups of which the user is a member. In this configuration, a user 
+entry would have an attribute that would contain the name of a group, such as 'memberOf'.
 
 The repository manager provides you with the ability to test a user login directly. To test a user login, go to 
 the User and Group Settings tab for a server listed in the Enterprise LDAP panel. Scroll to the bottom of the 
 form, and you should see a button named "Verify login".
 
-If you click on "Verify Login", you will then be presented with the login credentials dialog shown below. You can 
+The repository manager also allows you to test login capabilities. Once you have configured the User and Group 
+Settings you can check the correctness of your user mapping by pressing the 'Verify user mapping' button at the 
+end of page.
+
+If you click on 'Verify login', you will then be presented with the login credentials dialog shown below. You can 
 use this dialog to login as an LDAP user and test the user and group mapping configuration for a particular 
 server. This feature allows you to test user and group mapping configuration directly and to quickly diagnose and 
 address difficult authentication and access control issues via the administrative interface.
@@ -472,8 +476,9 @@ is logged in by receiving the username in a HTTP header field.
 
 The HTTP header integration can be activated by adding and enabling the 'Rut Auth' capability as documented in
 <<admin-system-capabilities>> and setting the 'HTTP Header name' to the header populated by your security
-system. Typically, this value is `REMOTE_USER`, but any arbitrary value can be set. An enabled capability automatically
-causes the 'Rut Auth Realm' to be added to the 'Active' realms in the 'Realms' configuration described in <<realms>>.
+system. Typically, this value is `REMOTE_USER`, but any arbitrary value can be set. An enabled capability 
+automatically causes the 'Rut Auth Realm' to be added to the 'Active' realms in the 'Realms' configuration 
+described in <<realms>>.
 
 When an external system passes a value through the header, authentication will be granted and the value will be
 used as the user name for configured authorization scheme. For example, on a default installation with the
