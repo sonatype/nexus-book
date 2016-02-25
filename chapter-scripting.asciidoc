@@ -213,7 +213,42 @@ user
 core.groovy:: configures the base URL capability and configures a proxy server
 
 
+Logging from your scripts into the repository manager logs is automatically available and performed with the usual
+calls
 
+----
+log.info('User jane.doe created')
+----
+
+The result of the last script line is by default returned as a string. It can therefore be useful to add a final
+script completion log message like
+
+----
+log.info('Script security completed successfully')
+----
+
+Passing parameters to the script has to use JSON encoded arguments like
+
+----
+[
+  id          : 'foo',
+  name        : 'bar',
+  description : 'baz',
+  privilegeIds: ['nx-all'],
+  roleIds     : ['nx-admin']
+]
+----
+
+which in turn can be parsed using the `JsonSlurper` class in the script:
+
+----
+import groovy.json.JsonSlurper
+
+//expects json string with appropriate content to be passed in
+def role = new JsonSlurper().parseText(args)
+
+security.addRole(role.id, role.name, role.description, role.privilegeIds, role.roleIds)
+----
 
 
 
