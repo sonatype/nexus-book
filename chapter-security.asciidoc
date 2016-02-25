@@ -1,3 +1,5 @@
+<<<<<<< Local Changes
+<<<<<<< Local Changes
 [[security]]
 == Security
 {inall}
@@ -24,7 +26,7 @@ This chapter covers all aspects of security of the repository manager including
 
 * user account and access right management related to user interface as well as to component access documented in
   <<privileges>>, <<roles>> and <<users>>,
-* selection of security backend systems documented <<realms>> including the built-in system as well as <<ldap, LDAP>>,
+* selection of security backend systems documented <<realms>> including the built-in system as well as LDAP,
 ////
 , Atlassian Crowd and others
 ////
@@ -75,9 +77,8 @@ realms are used.
 Nexus Authenticating Realm and Nexus Authorizing Realm:: These are the built-in realms used by default. They allow
 the repository manager to manage security setup without additional external systems.
 
-LDAP Realm:: This realm identifies external storage in an LDAP system such as Microsoft ActiveDirectory,
+LDAP Realm:: This realm identifies external storage in an LDAP system including e.g., Microsoft ActiveDirectory,
 ApacheDS, OpenLDAP and many others.
-
 ////
  with details documented in
 <<ldap>>.
@@ -101,6 +102,7 @@ NuGet API-Key Realm:: This realm is required for deployments to nuget-format rep
 WARNING: Removing all realms from the 'Active' section prevents access to the repository manager for any user
 including any administrative access and has to be avoided.
 
+
 [[privileges]]
 === Privileges
 {inall}
@@ -108,7 +110,7 @@ including any administrative access and has to be avoided.
 You can access the configuration of privileges via the 'Privileges' menu item in the 'Security' submenu in the
 'Administration' main menu.
 
-The repository manager use a number of types of privileges:
+The repository manager uses a number of types of privileges:
 
 application:: privileges related to the user interface and related functionality.
 repository-admin:: privileges related to the administration and configuration of a specific repository separated
@@ -119,7 +121,7 @@ repository-view:: privileges controlling access to the content of a specific rep
 Both 'repository-admin' as well as 'repository-view' privileges are automatically created and deleted by the
 repository manager, when repositories are created or deleted.
 
-The list of privileges displayed in <<fig-privileges-list>> displays an icon for the privilege 'type' as the first
+The list of privileges displayed in <<fig-privileges-list>> displays an icon for the privilege 'Type' as the first
 column and then adds:
 
 Name:: the internal identifier for the privilege
@@ -144,7 +146,7 @@ Roles aggregate privileges into a related context and can, in turn, be grouped t
 
 The repository manager ships with a predefined 'admin' as well as an 'anonymous' role. These can be inspected in
 the 'Roles' feature view accessible via the 'Roles' item in the 'Security' section of the 'Administration' main
-menu. A simple example is shown in <<fig-roles-list>>. The list displays the 'Name' an 'Description' of the role
+menu. A simple example is shown in <<fig-roles-list>>. The list displays the 'Name' and 'Description' of the role
 as well as the 'Source', which displays whether the role is internal ('Nexus') or a mapping to an external source
 like LDAP.
 
@@ -152,8 +154,8 @@ like LDAP.
 .Viewing the List of Defined Roles
 image::figs/web/roles-list.png[scale=60]
 
-To create a new role, click on the 'Create role' button, select 'Nexus Role' and fill out the Role creation 
-feature view shown in <<fig-roles-create>>.
+To create a new role, click on the 'Create role' button, select 'Nexus Role' and fill out the Role creation feature 
+view shown in <<fig-roles-create>>.
 
 [[fig-roles-create]]
 .Creating a New Role
@@ -182,16 +184,16 @@ privileges and roles in the repository manager.
 For example, assume that you have a group in LDAP named +scm+ and you want to make sure that everyone in the +scm+
 group has administrative privileges.
 
-Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick 
-the desired +scm+ group and confirm by pressing 'Create mapping'.
+Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick the
+desired 'scm' group and confirm by pressing 'Create mapping'.
 
-TIP: For faster access or if you cannot see your group name, you can also type in a portion or the whole name of 
-the group and it will limit the dropdown to the selected text.
+TIP: For faster access or if you cannot see your group name, you can also type in a portion or the whole name of the
+group and it will limit the dropdown to the selected text.
 
-Once the external role has been selected, it creates a linked role. You can then assign other roles and 
-privileges to this new externally mapped role like you would do for any other role.
+Once the external role has been selected, creates a linked  role. You can then assign other roles and privileges 
+to this new externally mapped role like you would do for any other role.
 
-Any user that is part of the +scm+ group in LDAP, receives all the privileges defined in the created role allowing
+Any user that is part of the 'scm' group in LDAP, receives all the privileges defined in the created role allowing
 you to adapt your generic role in LDAP to the repository manager-specific use cases you want these users to be
 allowed to perform.
 
@@ -249,6 +251,8 @@ anonymous users to access the server' checkbox. The 'Username' and 'Realm' contr
 details for the anonymous user. E.g. you might have a 'guest' account defined in your LDAP system and desire to
 use that user for anonymous access.
 
+<<<<<<< Local Changes
+<<<<<<< Local Changes
 
 [[ldap]]
 === LDAP
@@ -277,13 +281,13 @@ authentication set up across your organization in all your repository managers.
 [[ldap-sect-enabling]]
 ==== Enabling the LDAP Authentication Realm
 
-In order to use LDAP authentication in the repository manager, you need to load 'LDAP Realm' to Active realms. To 
-do the load click 'LDAP Realm' in the Available bin and move it to the Active bin. As shown in
-<<fig-active-realm>>, 'LDAP Realm' is listed below 'Nexus Authentication Realm' and 'Nexus Authorizing Realm'.
+In order to use LDAP authentication in the repository manager, you need to load 'LDAP Realm' from Available 
+realms to to Active realms. As shown in <<fig-active-realm>>, 'LDAP Realm' is listed below 'Nexus Authentication 
+Realm' and 'Nexus Authorizing Realm'.
 
 [[fig-active-realm]]
 .Activate LDAP Authentication Realm
-images::figs/web/activate-realm.png[scale=50]
+images::figs/web/active-realm.png[scale=50]
 
 - Navigate to the <<realms, Realms>> administration section
 - Select the 'LDAP Realm' and add it to the list of 'Active' realms on the right
@@ -330,26 +334,31 @@ Search base:: The search base is the Distinguished Name (DN) to be appended to t
 usually corresponds to the domain name of an organization. For example, the search base on the Sonatype LDAP 
 server could be +dc=sonatype,dc=com+.
 
-Authentication Method:: The repository manager provides four distinct authentication methods to be used when connecting to the LDAP Server:
+Authentication Method:: The repository manager provides four distinct authentication methods to be used when 
+connecting to the LDAP Server:
 
-Simple Authentication;; Simple authentication is not recommended for production deployments not using the secure ldaps protocol as it sends a clear-text password over the network.
+Simple Authentication;; Simple authentication is not recommended for production deployments not using the secure 
+ldaps protocol as it sends a clear-text password over the network.
 
-Anonymous Authentication;; Used when the repository manager only needs read-only access to non protected entries and attributes when binding to the LDAP.
+Anonymous Authentication;; Used when the repository manager only needs read-only access to non protected entries 
+and attributes when binding to the LDAP.
 
 Digest-MD5;; This is an improvement on the CRAM-MD5 authentication
-method. For more information, see http://www.ietf.org/rfc/rfc2831.txt[http://www.ietf.org/rfc/rfc2831.txt].
+method. For more information, see http://www.ietf.org/rfc/rfc2831.txt/[RFC-2831].
 
-CRAM-MD5;; The Challenge-Response Authentication Method (CRAM) is based on the HMAC-MD5 MAC algorithm. In this authentication method, the server sends a challenge string to the client. The client responds with a username followed by a Hex digest that the server compares to an expected value. For more information, see http://www.faqs.org/rfcs/rfc2195.html/[RFC-2195].
+CRAM-MD5;; The Challenge-Response Authentication Method (CRAM) is based on the HMAC-MD5 MAC algorithm. In this 
+authentication method, the server sends a challenge string to the client. The client responds with a username 
+followed by a Hex digest that the server compares to an expected value. For more information, see 
+http://www.faqs.org/rfcs/rfc2195.html/[RFC-2195].
 
 For a full discussion of LDAP authentication approaches, see
-http://www.ietf.org/rfc/rfc2829.txt[http://www.ietf.org/rfc/rfc2829.txt] and
-http://www.ietf.org/rfc/rfc2251.txt[http://www.ietf.org/rfc/rfc2251.txt].
+http://www.ietf.org/rfc/rfc2829.txt/[RFC-2829] and http://www.ietf.org/rfc/rfc2251.txt/[RFC-2251].
 
 SASL Realm:: The Simple Authentication and Security Layer (SASL) realm used to connect. It is only available if the authentication method is Digest-MD5 or CRAM-MD5.
 
 Username:: Username of an LDAP user with which to connect (or bind). This is a Distinguished Name of a user who has read access to all users and groups.
 
-Password:: Password for an administrative LDAP user
+Password:: Password for an administrative LDAP user.
 
 To test your connection to the external LDAP server click 'Verify connection'. If set up is successful, click 
 'Next' to go the next steps.
@@ -360,12 +369,12 @@ To test your connection to the external LDAP server click 'Verify connection'. I
 The LDAP connection panel in {pro} and {oss} contains sections to manage user and group element mapping. This 
 configuration section is the default next step after you create the LDAP connection. It is separate panel called 
 'Choose Users and Groups'. This panel provided a 'Configuration template' drop-down displayed in 
-<<fig-security-ldap-user-group-temp-config>> that will adjust the rest of the field inputs based on your 
+<<configuration-template>> that will adjust the rest of the field inputs based on your 
 template selection.
 
-[[fig-security-ldap-user-group-temp-config]]
+[[fig-configuration-template]]
 .Configuration Template for Users and Groups
-image::figs/web/security-ldap-user-group-temp-config[scale=50]
+image::figs/web/configuration-template.png[scale=50]
 
 The following parameters allow you to configure your user and group elements with the repository manager:
 
@@ -468,6 +477,10 @@ address difficult authentication and access control issues via the administrativ
 
 After your LDAP users and groups are verified, go to <<roles>> to add external roles.
 
+=======
+>>>>>>> External Changes
+=======
+>>>>>>> External Changes
 [[remote-user-token]]
 === Authentication via Remote User Token
 {inall}
@@ -489,9 +502,8 @@ is logged in by receiving the username in a HTTP header field.
 
 The HTTP header integration can be activated by adding and enabling the 'Rut Auth' capability as documented in
 <<admin-system-capabilities>> and setting the 'HTTP Header name' to the header populated by your security
-system. Typically, this value is `REMOTE_USER`, but any arbitrary value can be set. An enabled capability 
-automatically causes the 'Rut Auth Realm' to be added to the 'Active' realms in the 'Realms' configuration 
-described in <<realms>>.
+system. Typically, this value is `REMOTE_USER`, but any arbitrary value can be set. An enabled capability automatically
+causes the 'Rut Auth Realm' to be added to the 'Active' realms in the 'Realms' configuration described in <<realms>>.
 
 When an external system passes a value through the header, authentication will be granted and the value will be
 used as the user name for configured authorization scheme. For example, on a default installation with the
@@ -504,7 +516,6 @@ sign-on is integrated with the operating system sign-on for the user.
 
 [[ssl]]
 === Configuring SSL
-
 
 Using Secure Socket Layer (SSL) communication with the repository manager is an important security feature and a
 recommended best practice. Secure communication can be inbound or outbound.
@@ -751,3 +762,7 @@ credentials in plain text.
 /* ispell-personal-dictionary: "ispell.dict" */
 /* End:             */
 ////
+=======
+>>>>>>> External Changes
+=======
+>>>>>>> External Changes
