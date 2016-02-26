@@ -18,21 +18,17 @@ requirements evolve, you will likely need to customize security settings to crea
 multiple departments or development groups. {pro} and {oss} provides a security model that can adapt to any
 scenario.
 
-TIP: The default administrator user give you full control and uses the username 'admin' and the password 'admin123'.
+TIP: The default administrator user give you full control and uses the username 'admin' and the password
+'admin123'.
 
 This chapter covers all aspects of security of the repository manager including
 
 * user account and access right management related to user interface as well as to component access documented in
   <<privileges>>, <<roles>> and <<users>>,
-* selection of security backend systems documented <<realms>> including the built-in system as well as LDAP,
-////
-, Atlassian Crowd and others
-////
+* selection of security backend systems documented <<realms>> including the built-in system as well as
+  <<ldap,LDAP>> and others
 * management of SSL certificates from remote repositories, SMTP and LDAP servers documented in <<ssl>>.
 
-////
-TBD add more as applicable
-////
 
 Security-related configuration can be performed with the feature views available via the 'Security' section of the
 'Administration' main menu. Many of the features shown in this section are only available to users with the
@@ -44,10 +40,6 @@ documented in <<realms>> and designed around the following security concepts:
 Privileges:: <<privileges, Privileges>> are rights to read, update, create, or manage resources and perform
 operations related to the user interface as well as the components managed by the repository manager in the
 various repositories. The repository manager ships with a set of core privileges that cannot be modified.
-////
- and you can create new privileges to allow for fine-grained targeting of role and user permissions for specific
-repositories.
-////
 
 Roles:: Privileges can be grouped into collections called <<roles, roles>> to make it easier to define privileges
 common to certain classes of users. For example, administrative users will all have similar sets of permissions.
@@ -63,29 +55,24 @@ user interface and read, deploy, or manage repositories as well as connect from 
 
 The feature view for security realms administration displayed in <<fig-realms>> allows you to activate and prioritize
 security realms used for authentication and authorization by adding them to the 'Active' list on the right and placing
-them higher or lower on the list.
+them higher or lower on the list. It can be accessed via the 'Realms' menu item in the 'Security' submenu in the
+'Administration' main menu.
 
 [[fig-realms]]
 .Security Realms Administration
 image::figs/web/realms.png[scale=60]
 
-Effectively, this configuration determines what authentication realm is used to grant a user access and the order the
-realms are used.
+Effectively, this configuration determines what authentication realm is used to grant a user access and the order
+the realms are used.
 
 Nexus Authenticating Realm and Nexus Authorizing Realm:: These are the built-in realms used by default. They allow
 the repository manager to manage security setup without additional external systems.
 
 LDAP Realm:: This realm identifies external storage in an LDAP system including e.g., Microsoft ActiveDirectory,
-ApacheDS, OpenLDAP and many others.
-////
- with details documented in
-<<ldap>>.
-////
+ApacheDS, OpenLDAP with details documented in <<ldap>>.
 
 ////
-Crowd Realm:: This realm identifies external storage in an Atlassian Crowd system.
-
- with details documented in <<crowd>>.
+Crowd Realm:: This realm identifies external storage in an Atlassian Crowd system with details documented in <<crowd>>.
 ////
 
 Rut Auth Realm:: This realm uses an external authentication in any system with the user authorization passed to
@@ -116,7 +103,7 @@ into access to '*' (all), 'add', 'browse', 'delete', 'edit' and 'read'.
 repository-view:: privileges controlling access to the content of a specific repository separate into access to
 '*' (all), 'add', 'browse', 'delete', 'edit' and 'read'.
 
-Both 'repository-admin' as well as 'repository-view' privileges are automatically created and deleted by the
+Both 'repository-admin' as well as 'repository-view' privileges are automatically dcreated and deleted by the
 repository manager, when repositories are created or deleted.
 
 The list of privileges displayed in <<fig-privileges-list>> displays an icon for the privilege 'Type' as the first
@@ -152,8 +139,8 @@ like LDAP.
 .Viewing the List of Defined Roles
 image::figs/web/roles-list.png[scale=60]
 
-To create a new role, click on the 'Create role' button, select 'Nexus Role' and fill out the Role creation feature 
-view shown in <<fig-roles-create>>.
+To create a new role, click on the 'Create role' button, select 'Nexus Role' and fill out the Role creation 
+feature view shown in <<fig-roles-create>>.
 
 [[fig-roles-create]]
 .Creating a New Role
@@ -249,6 +236,256 @@ anonymous users to access the server' checkbox. The 'Username' and 'Realm' contr
 details for the anonymous user. E.g. you might have a 'guest' account defined in your LDAP system and desire to
 use that user for anonymous access.
 
+
+[[ldap]]
+=== LDAP
+{inall}
+
+
+[[ldap-introduction]]
+==== Introduction 
+
+{pro} and {oss} can use the Lightweight Directory Access Protocol (LDAP) for authentication via external systems
+providing LDAP support such as Microsoft Exchange/Active Directory, http://www.openldap.org/[OpenLDAP],
+https://directory.apache.org/apacheds/[ApacheDS] and others.
+
+Configuring LDAP can be achieved in a few simple steps:
+
+* Enable LDAP Authentication Realm
+* Create LDAP server configuration with connetions and user/group mapping details
+* Create external role mappings to adapt LDAP roles to repository manager specific usage
+
+In addition to handling authentication, the repository manager can be configured to map roles to LDAP user
+groups. If a user is a member of a LDAP group that matches the ID of a role, the repository manager grants that
+user the matching role. In addition to this highly configurable user and group mapping capability, the repository
+manager can augment LDAP group membership with specific user-role mapping.
+
+The repository manager can cache authentication information and supports multiple LDAP servers and user/group
+mappings. Connection details to the LDAP server and the user/group mappings as well as specific account logins can
+be tested directly from the user interface.
+
+All these feature allow you to adapt to any specific LDAP usage scenario and take advantage of the central
+authentication set up across your organization in all your repository managers.
+
+[[ldap-sect-enabling]]
+==== Enabling the LDAP Authentication Realm
+
+As seen in <<fig-realms>>, activate your 'LDAP Realm' by following these steps:
+
+- Navigate to the <<realms, Realms>> administration section
+- Select the 'LDAP Realm' and add it to the list of 'Active' realms on the right
+- Ensure that the 'LDAP Realm' is located beneath the 'Nexus Authenticating Realm' in the list
+- Press 'Save'
+
+We suggest to leave the 'Nexus Authenticating Realm' and the 'Nexus Authorizing Realm' activated so that the
+repository manager can be used by 'anonymous', 'admin' and other users configured in this realm even with LDAP
+authentication offline or unavailable. Any user account not found in the 'Nexus Authenticating Realm', will be
+passed through to LDAP authentication.
+
+[[ldap-sect-connecting]]
+==== LDAP Connection and Authentication
+
+The 'LDAP' feature view displayed in <<fig-ldap-feature>> is available via the 'LDAP' item in the 'Security'
+section of the 'Administration' main menu.
+
+[[fig-ldap-feature]]
+.LDAP Feature View
+image::figs/web/ldap-feature.png[scale=80]
+
+The 'Order' determines in which order the repository manager connects to the LDAP servers when authenticating a
+user. The 'Name' and 'URL' columns identify the configuration and clicking on a individual row provides access to
+the 'Connection' and 'User and group' configuration.
+
+The 'Create connection' button can be used to create a new LDAP server configuration. Multiple configurations can
+be created and are accessible in the list.
+
+The 'Change order' button can be used to change the order in which the repository manager queries the LDAP servers
+in a pop up dialog.
+
+Successful authentications are cached so that subsequent logins do not require a new query to the LDAP
+server each time. The 'Clear cache' button can be used to remove these cached authentications. 
+
+TIP: Contact the administrator of your LDAP server to figure out the correct parameters, as they vary between
+different LDAP server vendors, versions and individual configurations performed by the administrators.
+
+The following parameters allow you to create an LDAP connection:
+
+Name:: Enter a unique name for the new configuration.
+
+LDAP server address:: Enter 'Protocol', 'Hostname', and 'Port' of your LDAP server.
+
+Protocol;; Valid values in this drop-down are +ldap+ and +ldaps+ that correspond to the Lightweight Directory 
+Access Protocol and the Lightweight Directory Access Protocol over SSL.
+
+Hostname;; The hostname or IP address of the LDAP server.
+
+Port;; The port on which the LDAP server is listening. Port 389 is the default port for the +ldap+ protocol, and 
+port 636 is the default port for the +ldaps+.
+
+Search base:: The search base furhter qualifies the connection to the LDAP server. The search base usually
+corresponds to the domain name of an organization. For example, the search base could be +dc=example,dc=com+.
+
+You can configure one of four authentication methods to be used when connecting to the LDAP Server with the
+'Authentication method' drop-down.
+
+Simple Authentication:: Simple authentication consists of a 'Username' and 'Password'. Simple authentication is
+not recommended for production deployments not using the secure `ldaps` protocol as it sends a clear-text password
+over the network.
+
+Anonymous Authentication:: The anonymous authentication uses the server address and search base without further
+authentication.
+
+Digest-MD5:: This is an improvement on the CRAM-MD5 authentication
+method. For more information, see http://www.ietf.org/rfc/rfc2831.txt/[RFC-2831].
+
+CRAM-MD5:: The Challenge-Response Authentication Method (CRAM) is based on the HMAC-MD5 MAC algorithm. In this 
+authentication method, the server sends a challenge string to the client. The client responds with a username 
+followed by a Hex digest that the server compares to an expected value. For more information, see 
+http://www.faqs.org/rfcs/rfc2195.html/[RFC-2195].
+
+For a full discussion of LDAP authentication approaches, see
+http://www.ietf.org/rfc/rfc2829.txt/[RFC-2829] and http://www.ietf.org/rfc/rfc2251.txt/[RFC-2251].
+
+
+SASL Realm:: The Simple Authentication and Security Layer (SASL) realm used to connect to the LDAP server. It is
+only available if the authentication method is Digest-MD5 or CRAM-MD5.
+
+Username or DN:: Username or Distinguished Name DN of an LDAP user with read access to all necessary users and
+groups. It is used to connect to the LDAP server.
+
+Password:: Password for the Username or DN configured above.
+
+To test your connection to the external LDAP server, click 'Verify connection'. A successful connection is
+confirmed with notification pop up.
+
+The connection details can be further refined by configuring timeout period, retry period and number of connection
+attempts in 'Connection rules'.
+
+Click 'Next' to proceed to configure <<ldap-sect-usergroup,user and group mappings>> for the LDAP configuration.
+
+<<fig-create-ldap-connection>> shows a LDAP connection configuration for the repository manager configured to
+connect to an LDAP server running on localhost port 10389 using the search base of `ou=system`.
+
+[[fig-create-ldap-connection]]
+.Create LDAP Connection
+image::figs/web/ldap-create-connection.png[scale=50]
+
+[[ldap-sect-usergroup]]
+==== User and Group Mapping
+
+The LDAP connection panel contains a section to manage 'User and group' mappings. This configuration is the next
+step after you configure and verify the LDAP 'Connection'. It is separate panel called 'Choose Users and
+Groups'.
+
+This panel provides a 'Configuration template' drop-down, shown in <<fig-configuration-template>>. Based on your
+template selection the rest of the field inputs will adjust to the appropriate user and group template
+requirements. These templates are suggestions for typical configurations used on servers such as 'Active
+Directory', 'Generic Ldap Server', 'Posix with Dynamic Groups' and 'Posix with Static Groups'. The values are
+suggestions only and have to be adjusted to your specific needs based on your LDAP server configuration.
+
+[[fig-configuration-template]]
+.Configuration Template for Users and Groups
+image::figs/web/ldap-configuration-template.png[scale=50]
+
+The following parameters allow you to configure your user and group elements with the repository manager:
+
+Base DN:: Corresponds to the collection of distinguished names used as the base for user entries. This DN is
+relative to the Search Base. For example, if your users are all contained in +ou=users,dc=sonatype,dc=com+ and you
+specified a Search Base of +dc=sonatype,dc=com+, you use a value of +ou=users+.
+
+User subtree:: Check the box if 'True'. Uncheck if 'False'. Values are 'True' if there is a tree below the base 
+DN that can contain user entries and 'False' if all users are contain within the specified Base DN. For example, 
+if all users are in `ou=users,dc=sonatype,dc=com` this field should be 'False'. If users can appear in organizational 
+units within organizational units such as `ou=development,ou=users,dc=sonatype,dc=com`, this field should be 'True'.
+
+Object class:: This value is a standard object class defined in http://www.faqs.org/rfcs/rfc2798.html/[RFC-2798].
+and specifies the object class for users. Common values are `inetOrgPerson`, `person`, `user` or `posixAccount`.
+
+User filter:: This allows you to configure a filter to limit the search for user records. It can be used as a
+performance improvement.
+
+User ID attribute:: This is the attribute of the object class specified above, that supplies the identier for the
+user from the LDAP server. The repository manager uses this attribute as the 'User ID' value.
+
+Real name attribute:: This is the attribute of the Object class that supplies the real name of the user. The
+repository manager uses this attribute when it needs to display the real name of a user similar to usage of the
+internal 'First name' and 'Last name' attributes.
+
+Email attribute:: This is the attribute of the Object class that supplies the email address of the user. The
+repository manager uses this attribute for the 'Email' attribute of the user. It is used for email notifications
+of the user.
+
+Password attribute:: It can be used to configure the Object class, which supplies the password ("userPassword").
+If this field is blank the user will be authenticated against a bind with the LDAP server. The password attribute is
+optional. When not configured authentication will occur as a bind to the LDAP server.  Otherwise this is the
+attribute of the Object class that supplies the password of the user. The repository manager uses this attribute
+when it is authenticating a user against an LDAP server.
+
+An automatically checked box will allow you to 'Map LDAP groups as roles'. With the configuration any LDAP group
+configured for a specific users is used to query the roles in the repository manager. Identical names trigger the
+user to be granted the privileges of the roles.
+
+Groups in LDAP systems are configured to be dynamic or static. A dynamic group is a list of groups to which users
+belong. A static group contains a list of users. Select 'Dynamic Groups' or 'Static Groups' from the 'Group type'
+drop-down to proceed with the appropriate configuration.
+
+
+[[fig-group-element-mapping-static.png]]
+.Static Group Element Mapping
+image::figs/web/ldap-group-element-mapping-static.png[scale=50]
+
+Static groups with an example displayed in <<fig-group-element-mapping-static.png>>, are configured with the
+following parameters:
+
+Group base DN:: This field is similar to the 'Base DN' field described for User Element Mapping, but applies to
+groups instead of users. For example, if your groups were defined under +ou=groups,dc=sonatype,dc=com+, this field
+would have a value of +ou=groups+.
+
+Group subtree:: This field is similar to the 'User subtree' field described for User Element Mapping, but
+configures groups instead of users. If all groups are defined under the entry defined in Base DN, set the field to
+false. If a group can be defined in a tree of organizational units under the Base DN, set the field to true.
+
+Group object class:: This value in this field is a standard object class defined in
+http://www.faqs.org/rfcs/rfc2307.html/[RFC-2307]. The class is simply a collection of references to unique entries
+in an LDAP directory and can be used to associate user entries with a group. Examples are `groupOfUniqueNames`,
+`posixGroup` or custom values.
+
+Group ID attribute:: Specifies the attribute of the object class that specifies the group identifier. If the value
+of this field corresponds to the ID of a role, members of this group will have the corresponding privileges.
+
+Group member attribute:: Specifies the attribute of the object class which specifies a member of a group. An
+example value is 'uniqueMember'.
+
+Group member format:: This field captures the format of the Group Member Attribute, and is used by the repository 
+manager to extract a username from this attribute. An example values is `${dn}`.
+
+If your installation does not use static groups, you can configure the LDAP connection to refer to an attribute on 
+the user entry to derive group membership. To do this, select 'Dynamic Groups' in the 'Group type' drop down.
+
+[[fig-dynamic-group-type.png]]
+.Dynamic Group Element Mapping
+image::figs/web/ldap-group-element-mapping-dynamic.png[scale=50]
+
+Dynamic groups are configured via the 'Group member of attribute' parameter. The repository manager inspects this 
+attribute of the user entry to get a list of groups of which the user is a member. In this configuration, seen in 
+<<fig-dynamic-group-type.png>>, a user entry would have an attribute that would contain the name of a 
+group, such as 'memberOf'.
+
+Once you have configured the user and group settings on the 'Choose Users and Groups' form, you can check the
+correctness of your user mapping by pressing the 'Verify user mapping' button. A successful mapping will result in
+the retrieval of a list of user records, which will be shown in the 'User Mapping Test Result' dialog.
+
+The repository manager provides you with the ability to test a user login directly. To test a user login, go to 
+the 'Choose Users and Groups' page after all appropriate field inputs of the form are filled. Scroll to the 
+bottom and click the 'Verify login' button.
+
+The 'Verify login' button can be used to check if authentication and user/group mappings work as expected for a
+specific user account besides the global account used for the LDAP configuration.
+
+After your LDAP the successful configuration of your connection and user and group mappings, you can proceed to
+configure external role mappings. This allows you to define the repository manager specific security for a LDAP
+group. More details are available in <<roles>>.
+
 [[remote-user-token]]
 === Authentication via Remote User Token
 {inall}
@@ -270,8 +507,10 @@ is logged in by receiving the username in a HTTP header field.
 
 The HTTP header integration can be activated by adding and enabling the 'Rut Auth' capability as documented in
 <<admin-system-capabilities>> and setting the 'HTTP Header name' to the header populated by your security
-system. Typically, this value is `REMOTE_USER`, but any arbitrary value can be set. An enabled capability automatically
-causes the 'Rut Auth Realm' to be added to the 'Active' realms in the 'Realms' configuration described in <<realms>>.
+system. Typically, this value is `REMOTE_USER`, but any arbitrary value can be set. An enabled capability 
+automatically
+causes the 'Rut Auth Realm' to be added to the 'Active' realms in the 'Realms' configuration described in 
+<<realms>>.
 
 When an external system passes a value through the header, authentication will be granted and the value will be
 used as the user name for configured authorization scheme. For example, on a default installation with the
@@ -524,9 +763,3 @@ credentials in plain text.
 
 . Restart Nexus. Verify plain HTTP requests are no longer serviced.
 
-
-////
-/* Local Variables: */
-/* ispell-personal-dictionary: "ispell.dict" */
-/* End:             */
-////
