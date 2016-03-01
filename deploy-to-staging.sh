@@ -8,7 +8,7 @@ set -u
 # load properties to be able to use them in here
 source nexus-book.properties
 
-echo "nexus_version set to $nexus_version"
+echo "version set to $version"
 
 # can we get rid of this? 
 ./assemble.sh
@@ -29,10 +29,10 @@ if [ $publish_master == "true" ]; then
     rsyncToDest site/other/ other --delete
 fi
 
-rsyncToDest site/$nexus_version/reference/ $nexus_version/reference --delete
-rsyncToDest site/$nexus_version/pdf/ $nexus_version/pdf --delete
-rsyncToDest site/$nexus_version/other/ $nexus_version/other --delete
-rsyncToDest site/$nexus_version/index.html $nexus_version --delete
+rsyncToDest site/$version/reference/ $version/reference --delete
+rsyncToDest site/$version/pdf/ $version/pdf --delete
+rsyncToDest site/$version/other/ $version/other --delete
+rsyncToDest site/$version/index.html $version --delete
 
 if [ $publish_index == "true" ]; then
     rsyncToDest site/index.html  "" --delete

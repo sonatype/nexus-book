@@ -8,7 +8,7 @@ set -u
 # load properties to be able to use them in here
 source nexus-book.properties
 
-echo "nexus_version set to $nexus_version"
+echo "version set to $version"
 
 if [ $publish_master == "true" ]; then
     echo "Preparing for master deployment"
@@ -21,13 +21,13 @@ if [ $publish_master == "true" ]; then
     mkdir -p target/site/other
 fi
 
-echo "Preparing for version $nexus_version deployment"
-rm -rf target/site/$nexus_version/reference
-rm -rf target/site/$nexus_version/pdf
-rm -rf target/site/$nexus_version/other
-mkdir -p target/site/$nexus_version/reference
-mkdir -p target/site/$nexus_version/pdf
-mkdir -p target/site/$nexus_version/other
+echo "Preparing for version $version deployment"
+rm -rf target/site/$version/reference
+rm -rf target/site/$version/pdf
+rm -rf target/site/$version/other
+mkdir -p target/site/$version/reference
+mkdir -p target/site/$version/pdf
+mkdir -p target/site/$version/other
 
 if [ $publish_master == "true" ]; then
     echo "Copying for master deployment"
@@ -37,26 +37,25 @@ if [ $publish_master == "true" ]; then
     cp target/book-nexus.epub target/site/other/nexus-book.epub
 fi
 
-echo "Copying for version $nexus_version deployment"
+echo "Copying for version $version deployment"
 
 # NOT copying the overall index into version specific directories since links would be broken and 
 # it is an overall index
-cp -r target/book-nexus.chunked/* target/site/$nexus_version/reference
-cp target/book-nexus.pdf target/site/$nexus_version/pdf/nxbook-pdf.pdf
-cp target/sonatype-nexus-eval-guide.pdf target/site/$nexus_version/pdf/sonatype-nexus-eval-guide.pdf
-cp target/book-nexus.epub target/site/$nexus_version/other/nexus-book.epub
+cp -r target/book-nexus.chunked/* target/site/$version/reference
+cp target/book-nexus.pdf target/site/$version/pdf/nxbook-pdf.pdf
+cp target/sonatype-nexus-eval-guide.pdf target/site/$version/pdf/sonatype-nexus-eval-guide.pdf
+cp target/book-nexus.epub target/site/$version/other/nexus-book.epub
 echo "Copying redirector"
-cp -v site/global/index.html target/site/$nexus_version/
+cp -v site/global/index.html target/site/$version/
 
 
 if [ $publish_master == "true" ]; then
 echo "Invoking templating process for master"
-
-../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/reference "Nexus Documentation" "searchID" "block" "$nexus_version" "../"
+../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/reference ../nexus-book/nexus-book.properties "block" "../"
 fi
 
-echo "Invoking templating process for $nexus_version "
-../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/$nexus_version/reference "Nexus Documentation" "searchID" "block" "$nexus_version" "../../"
+echo "Invoking templating process for $version "
+../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/$version/reference ../nexus-book/nexus-book.properties "block" "../../"
 
 #if [ $publish_index == "true" ]; then
 #    echo "Preparing root index for deployment"
@@ -65,7 +64,7 @@ echo "Invoking templating process for $nexus_version "
 #    cp -r site/css target/site
 #    cp -r site/js target/site
 #    cp -r site/images target/site
-#    python template.py -p 'target/site/' -b '<body class="article">' -t "./" -v "$nexus_version"
+#    python template.py -p 'target/site/' -b '<body class="article">' -t "./" -v "$version"
 #    cp -rv site/global/sitemap*.xml target/site
 #    echo "... done"
 #fi
