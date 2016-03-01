@@ -51,20 +51,19 @@ cp -v site/global/index.html target/site/$version/
 
 if [ $publish_master == "true" ]; then
 echo "Invoking templating process for master"
-../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/reference ../nexus-book/nexus-book.properties "block" "../"
+../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/reference ../nexus-book/nexus-book.properties "block" "../../" "book"
 fi
 
 echo "Invoking templating process for $version "
-../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/$version/reference ../nexus-book/nexus-book.properties "block" "../../"
+../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/$version/reference ../nexus-book/nexus-book.properties "block" "../../../" "book"
 
-#if [ $publish_index == "true" ]; then
-#    echo "Preparing root index for deployment"
-#    echo "  Copying content and resources"
-#    cp target/index.html target/site
-#    cp -r site/css target/site
-#    cp -r site/js target/site
-#    cp -r site/images target/site
+if [ $publish_index == "true" ]; then
+    echo "Preparing root index for deployment"
+    echo "  Copying content and resources"
+    cp target/index.html target/site
+
+../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/ ../nexus-book/nexus-book.properties "none" "../../" "article"
 #    python template.py -p 'target/site/' -b '<body class="article">' -t "./" -v "$version"
-#    cp -rv site/global/sitemap*.xml target/site
-#    echo "... done"
-#fi
+    cp -rv site/global/sitemap*.xml target/site
+    echo "... done"
+fi
