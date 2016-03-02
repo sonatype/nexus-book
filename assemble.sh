@@ -62,7 +62,8 @@ if [ $publish_index == "true" ]; then
     echo "  Copying content and resources"
     cp target/index.html target/site
 
-../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/ ../nexus-book/nexus-book.properties "none" "../../" "article"
+echo "Invoking templating for index page"
+../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/ ../nexus-book/nexus-book.properties "none" "../" "article"
 #    python template.py -p 'target/site/' -b '<body class="article">' -t "./" -v "$version"
     cp -rv site/global/sitemap*.xml target/site
     echo "... done"
