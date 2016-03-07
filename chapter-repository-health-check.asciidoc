@@ -5,19 +5,15 @@
 
 Repository Health Check is a feature of {pro} and {oss} that integrates data from the {ds}.
 
-Repository health check provides access to a limited subset of the available data right in your repository
-manager. The {ds} expose data about the components in the http://central.sonatype.org[Central Repository] and
-other public repositories, including license information, security vulnerability data, and other statistics like
-relative usage popularity and age. Repository health check allows you to examine the available security and
-license data about components in a repository.
+Repository Health Check provides access to a limited subset of the available data right in your repository 
+manager. The {ds} expose information about the components, including license, vulnerability, and other statistics 
+such as relative usage popularity and age.
 
-Repository health check analyzes all components found in a proxy
-repository of any format. Maven 2 format repositories need to have a
-release policy configured. Availability of component meta data varies depending on the format and is constantly improved via updates to the {ds}. 
+Repository Health Check analyzes all components found in a proxy repository of any supported format. Repository 
+formats currently supported are NuGet, npm, and Maven2.
 
-NuGet proxy repositories support Repository Health
-Check and identification of components is performed. Some license or security
-data is provided as well. Support for NPM repositories has similar restrictions. 
+Availability of component information varies depending on the format and is constantly improved via updates to 
+the {ds}.
 
 [[rhc-config]]
 === Configuring Repository Health Check
@@ -50,7 +46,7 @@ presented with an acceptance of the Terms of Service.
 
 Once enabled, a scheduled task that performs the initial analysis is created and started. This task uses the
 identifier of the repository and the prefix 'Health Check:' as a name and is configured to run regularly. New
-component data is supplied by the {ds} to {pro} daily. The recurrence frequency can be
+component infomation is supplied by the {ds} to {pro} daily. The recurrence frequency can be
 changed in the scheduled task administration described in <<scheduled-tasks>>. Disabling health check for a
 specific repository removes this scheduled task automatically.
 
@@ -104,11 +100,11 @@ security and license information at the top displayed in
 .Summary of the Detailed Repository Health Check Panel
 image::figs/web/rhc-detail-summary.png[scale=50]
 
-Below this overview, as visible in <<fig-rhc-detail-security-list>>, a drop-down for security and license information 
-allows you to toggle between two lists displaying further details. Select 'View By: Vulnerabilities' to inspect the 
-security issues and 'View By: Artifacts' to review the license information. Both lists have a filter for each column 
-at the bottom of the list that allows you to narrow down the number of rows in the table and find specific entries 
-easily.
+Below this overview, as visible in <<fig-rhc-detail-security-list>>, a drop-down for security and license 
+information allows you to toggle between two lists displaying further details. Select 'View By: Vulnerabilities' 
+to inspect the security issues and 'View By: Artifacts' to review the license information. Both lists have a 
+filter for each column at the bottom of the list that allows you to narrow down the number of rows in the table 
+and find specific entries easily.
 
 The security list as visible in <<fig-rhc-detail-security-list>>
 contains columns for 'Threat Level', 'Problem Code' and the GAV parameters
@@ -129,12 +125,12 @@ threat. 'Critical' values (noted in red) range from 8 to 10. 'Severe'
 values (noted in orange) range from 4-7, and 'Moderate' values 
 (noted in yellow) range from 1 to 3.
 
-The license list as visible in <<fig-rhc-detail-license-list>> shows a derived threat in the 'License Threat' column. The 
-'Declared License' column details the license information found in POM file. The 'Observed Licenses in Source' columns 
-lists all the licenses found in the actual source code of the library in the form of file headers and license files. This 
-data is based on source code scanning performed and provided by the {ds}. The next columns for the GAV parameters allow 
-you to identify the component. The last column 'Security Issues' displays an indicator for potentially existing security 
-issue for the same component.
+The license list as visible in <<fig-rhc-detail-license-list>> shows a derived threat in the 'License Threat' 
+column. The 'Declared License' column details the license information found in POM file. The 'Observed Licenses 
+in Source' columns lists all the licenses found in the actual source code of the library in the form of file 
+headers and license files. This data is based on source code scanning performed and provided by the {ds}. The
+next columns for the GAV parameters allow you to identify the component. The last column 'Security Issues' 
+displays an indicator for potentially existing security issue for the same component.
 
 [[fig-rhc-detail-license-list]]
 .The License Data in the Detailed Repository Health Check Report
@@ -158,12 +154,12 @@ Copyleft' classification and yellow as notification color.
 commercial products use blue and include licenses such as
 Apache-2.0, MIT or BSD.
 
-A general description about the implications of the different licenses is available when hovering over the specific 
-category in the 'License Analysis Summary'. Further information about the different licenses can be obtained from the 
-http://opensource.org/licenses[Open Source Initiative]. Mixed license scenarios like a mixture of licenses such as 
-Apache-1.1, Apache-2.0, LGPL and LGPL-2.1 can be complicated to assess in its impact and might be legally invalid 
-depending on the combination of licenses observed.  Detailed implications to your business and software are best
-discussed with your lawyers.
+A general description about the implications of the different licenses is available when hovering over the 
+specific category in the 'License Analysis Summary'. Further information about the different licenses can be 
+obtained from the http://opensource.org/licenses[Open Source Initiative]. Mixed license scenarios like a mixture 
+of licenses such as Apache-1.1, Apache-2.0, LGPL and LGPL-2.1 can be complicated to assess in its impact and 
+might be legally invalid depending on the combination of licenses observed.  Detailed implications to your 
+business and software are best discussed with your lawyers.
 
 {pro} reports all components in the local storage of the respective repository in the detail panel. This means
 that at some stage a build running against your repository manager required these components and caused a download
