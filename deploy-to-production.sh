@@ -39,7 +39,7 @@ fi
 rsyncToDest site/$version/reference/ $version/reference --delete
 rsyncToDest site/$version/pdf/ $version/pdf --delete
 rsyncToDest site/$version/other/ $version/other --delete
-rsyncToDest site/$version/index.html $version --delete
+rsyncToDest site/$version/index.html $version
 
 # Important to use separate rsync run WITHOUT --delete since its an archive! and we do NOT want old archives to be deleted
 #rsyncToDest archive/ archive
