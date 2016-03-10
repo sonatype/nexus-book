@@ -31,10 +31,7 @@ if [ $publish_master == "true" ]; then
 >>>>>>> 3bccd70... fixed func name
 fi
 
-rsyncToDest site/$version/reference/ $version/reference --delete
-rsyncToDest site/$version/pdf/ $version/pdf --delete
-rsyncToDest site/$version/other/ $version/other --delete
-rsyncToDest site/$version/index.html $version --delete
+rsyncToDest site/$version/ $version --delete
 
 if [ $publish_index == "true" ]; then
     rsyncToDest site/index.html  "" --delete
