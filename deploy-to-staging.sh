@@ -21,14 +21,8 @@ function rsyncToDest {
 }
 
 if [ $publish_master == "true" ]; then
-<<<<<<< HEAD
-    rsyncToStage site/reference/ reference --delete
-    rsyncToStage site/pdf/ pdf --delete
-=======
     rsyncToDest site/reference/ reference --delete
     rsyncToDest site/pdf/ pdf --delete
-    rsyncToDest site/other/ other --delete
->>>>>>> 3bccd70... fixed func name
 fi
 
 rsyncToDest site/$version/ $version --delete
