@@ -10,9 +10,6 @@ source nexus-book.properties
 
 echo "version set to $version"
 
-# can we get rid of this? 
-./assemble.sh
-
 function rsyncToDest {
     source=$1
     target=/var/www/domains/sonatype.com/www/shared/books/nexus-book/$2
