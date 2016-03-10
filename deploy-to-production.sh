@@ -43,7 +43,7 @@ rsyncToDest site/$version/index.html $version --delete
 
 
 # Important to use separate rsync run WITHOUT --delete since its an archive! and we do NOT want old archives to be deleted
-#rsyncToProduction archive/ archive
+#rsyncToDest archive/ archive
 
 
 

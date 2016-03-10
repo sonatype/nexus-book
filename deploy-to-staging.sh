@@ -43,5 +43,5 @@ if [ $publish_index == "true" ]; then
 fi
 
 # Important to use separate rsync run WITHOUT --delete since its an archive! and we do NOT want old archives to be deleted
-#rsyncToStage archive/ archive
+#rsyncToDest archive/ archive
 
