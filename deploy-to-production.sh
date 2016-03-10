@@ -8,7 +8,7 @@ set -u
 # load properties to be able to use them in here
 source nexus-book.properties
 
-echo "nexus_version set to $nexus_version"
+echo "version set to $version"
 
 # can we get rid of this? 
 ./assemble.sh
@@ -28,8 +28,20 @@ if [ $publish_master == "true" ]; then
     rsyncToProduction site/pdf/ pdf --delete
 fi
 
-rsyncToProduction site/$nexus_version/reference/ $nexus_version/reference --delete
-rsyncToProduction site/$nexus_version/pdf/ $nexus_version/pdf --delete
+if [ $publish_index == "true" ]; then
+    rsyncToDest site/index.html  "" --delete
+    rsyncToDest site/sitemap.xml  "" --delete
+    rsyncToDest site/sitemap-nexus-2.xml  "" --delete
+    rsyncToDest site/sitemap-nexus-3.xml  "" --delete
+    rsyncToDest site/js/ js --delete
+    rsyncToDest site/images/ images --delete
+    rsyncToDest site/css/ css --delete
+fi
+
+rsyncToDest site/$version/reference/ $version/reference --delete
+rsyncToDest site/$version/pdf/ $version/pdf --delete
+rsyncToDest site/$version/other/ $version/other --delete
+rsyncToDest site/$version/index.html $version --delete
 
 # Important to use separate rsync run WITHOUT --delete since its an archive! and we do NOT want old archives to be deleted
 #rsyncToProduction archive/ archive
