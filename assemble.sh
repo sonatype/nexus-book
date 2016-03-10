@@ -57,10 +57,8 @@ cp -r target/book-nexus.chunked/* target/site/$version/reference
 cp target/book-nexus.pdf target/site/$version/pdf/nxbook-pdf.pdf
 cp target/sonatype-nexus-eval-guide.pdf target/site/$version/pdf/sonatype-nexus-eval-guide.pdf
 cp target/book-nexus.epub target/site/$version/other/nexus-book.epub
-if [ $publish_index == "true" ]; then
-    echo "Copying redirector"
-    cp -v site/global/index.html target/site/$version/
-fi
+echo "Copying redirector"
+cp -v site/global/index.html target/site/$version/
 
 if [ $publish_master == "true" ]; then
 echo "Invoking templating process for master"
