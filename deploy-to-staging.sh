@@ -29,7 +29,7 @@ fi
 rsyncToDest site/$version/reference/ $version/reference --delete
 rsyncToDest site/$version/pdf/ $version/pdf --delete
 rsyncToDest site/$version/other/ $version/other --delete
-rsyncToDest site/$version/index.html $version
+rsyncToDest site/$version/index.html $version ""
 
 if [ $publish_index == "true" ]; then
     rsyncToDest site/index.html  "" --delete
