@@ -10,7 +10,7 @@ source nexus-book.properties
 
 echo "version set to $version"
 
-function rsyncToStage {
+function rsyncToDest {
     source=$1
     target=/var/www/domains/sonatype.com/www/shared/books/nexus-book/$2
     options=$3
@@ -21,8 +21,14 @@ function rsyncToStage {
 }
 
 if [ $publish_master == "true" ]; then
+<<<<<<< HEAD
     rsyncToStage site/reference/ reference --delete
     rsyncToStage site/pdf/ pdf --delete
+=======
+    rsyncToDest site/reference/ reference --delete
+    rsyncToDest site/pdf/ pdf --delete
+    rsyncToDest site/other/ other --delete
+>>>>>>> 3bccd70... fixed func name
 fi
 
 rsyncToDest site/$version/reference/ $version/reference --delete
@@ -42,5 +48,5 @@ if [ $publish_index == "true" ]; then
 fi
 
 # Important to use separate rsync run WITHOUT --delete since its an archive! and we do NOT want old archives to be deleted
-#rsyncToStage archive/ archive
+#rsyncToDest archive/ archive
 
