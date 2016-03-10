@@ -7,7 +7,7 @@ set -u
 
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 # last folder needs to be nexus-book to reflect production setup
-dest=/opt/dev/sonatype/nexus-documentation/nexus-book
+dest=$NEXUS_DOCUMENTATION/nexus-book
 mkdir -p $dest
 
 # load properties to be able to use them in here

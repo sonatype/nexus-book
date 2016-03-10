@@ -1,14 +1,27 @@
 #!/bin/bash
 
+# assemble.sh processes the output files created by build.sh and prepares
+# the folders target/site and target/archive for rsync runs to
+# staging and production
+
+# see build.sh
+# see deploy-to-prodcution.sh
+# see deploy-to-staging.sh
+# see deploy-locally.sh
+
 # fail if anything errors
 set -e
 # fail if a function call is missing an argument
 set -u
 
-# load properties to be able to use them in here
-source nexus-book.properties
+dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+echo "Processing in ${dir}"
 
-echo "version set to $version"
+templateScript=../nexus-documentation-wrapper/apply-template.sh
+docProperties=$dir/nexus-book.properties
+source $docProperties
+
+echo "Nexus Repository Manager Version $version"
 
 if [ $publish_master == "true" ]; then
     echo "Preparing for master deployment"
@@ -51,20 +64,18 @@ cp -v site/global/index.html target/site/$version/
 
 if [ $publish_master == "true" ]; then
 echo "Invoking templating process for master"
-../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/reference ../nexus-book/nexus-book.properties "block" "../../" "book"
+$templateScript ../nexus-book/target/site/reference $docProperties "block" "../../" "book"
 fi
 
 echo "Invoking templating process for $version "
-../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/$version/reference ../nexus-book/nexus-book.properties "block" "../../../" "book"
+$templateScript ../nexus-book/target/site/$version/reference $docProperties "block" "../../../" "book"
 
 if [ $publish_index == "true" ]; then
     echo "Preparing root index for deployment"
     echo "  Copying content and resources"
     cp target/index.html target/site
-
-echo "Invoking templating for index page"
-../nexus-documentation-wrapper/apply-template.sh ../nexus-book/target/site/ ../nexus-book/nexus-book.properties "none" "../" "article"
-#    python template.py -p 'target/site/' -b '<body class="article">' -t "./" -v "$version"
+    echo "Invoking templating for index page"
+    $templateScript ../nexus-book/target/site/ $docProperties "none" "../" "article"
     cp -rv site/global/sitemap*.xml target/site
     echo "... done"
 fi
