@@ -76,8 +76,51 @@ often called a self-signed certificate. Using a self-signed certificate requires
 ensure that Docker provides full functionality.
 
 To generate a self-signed server certificate for the repository manager use Java keytool, a utlity that lets you 
-manage your own private key pairs and certificates. These steps are recommended to configure Docker to explicitly 
-trust the connection to {pro}.
+manage your own private key pairs and certificates. First identify the host name and IP address of the repository 
+manager that Docker will use. The host name and IP address will be embedded in certificate so verification will 
+not fail. Before you generate the certificate see <<enable-https>> to configure the repository manager to accept 
+HTTPS connections.
+
+Next, make sure the +SSLContextFactory+ is configured to point to the generated keystore. Edit 
++KeyStorePassword+, +KeyManagerPassword+, and TrustStorePassword+ in the +jetty-https.xml+ with the same password. Here's an example:
+
+----
+<Set name="KeyStorePath"><Property name="karaf.etc"/>/ssl/server-keystore.jks</Set>
+    <Set name="KeyStorePassword">changeit</Set>
+    <Set name="KeyManagerPassword">changeit</Set>
+    <Set name="TrustStorePassword">changeit</Set>
+----
+
+Save the file, then restart the repository manager to recognize the changes.
+
+With the keytool utility generate a public or private key pair for the repository manager to use for any HTTPS 
+connector. Follow these steps to configure Docker to explicitly trust the HTTPS connection.
+
+In the command below:
+
+* Replace ${NEXUS_DOMAIN} with the DNS name of your repository manager host. The hostname must be resolvable from 
+the host running the Docker daemon.
+
+* Replace ${NEXUS_IP_ADDRESS} with the IP address of your Nexus host. The IP address must be routable to Nexus 
+from the host running Docker daemon.
+
+Also, make sure the +storepass+ and +keypass+ values are consistent with +KeyStorePassword+, 
++KeyManagerPassword+, and TrustStorePassword+ in the +jetty-https.xml+ file.
+
+----
+keytool -genkeypair -keystore server-keystore.jks -storepass changeit -keypass changeit -alias jetty -keyalg RSA -keysize 2048 -validity 5000 -dname "CN=*.${NEXUS_DOMAIN}, OU=Example, O=Sonatype, L=Unspecified, ST=Unspecified, C=US" -ext "SAN=DNS:${NEXUS_DOMAIN},IP:${NEXUS_IP_ADDRESS}" -ext "BC=ca:true"
+----
+
+Now that you have the minimal requirements to run an SSL connection, print the server certificate for the 
+repository manager. See the example:
+
+----
+keytool -printcert -sslserver ${NEXUS_DOMAIN}:${SSL_PORT} -rfc
+----
+
+* Replace ${NEXUS_DOMAIN} with the DNS name of your repository manager host.
+
+* Replace ${SSL_PORT} with the port you designated to expose the HTTPS connector (e.g. 8443).
 
 [[docker-registry-api]]
 === Support for Docker Registry API
