@@ -64,67 +64,63 @@ instead of the default root context http://localhost:8081/, the URLs for your Do
 use the configured port for the repository and omit the context path in the URL. This is a side-effect of the the 
 fact that Docker does not support context paths in the registry API.
 
-==== Tips for SSL Certificate Usage
+==== SSL Certificate Usage
 
-The requirement of Docker to use HTTPS forces the usage of SSL certificates. By default, Docker looks up the
-validity of the certificate by checking with certificate authorities. If you purchased a certificate
-that is registered with these authorities, all functionality works as desired. However, if you are creating a
-certificate yourself with tools such as `openssl`, it is not registered. This is often called a self-signed
-certificate. Using a self-signed certificate requires further configuration steps to ensure that Docker provides
-full functionality.
+To authenticate users to publish Docker images, a Docker Daemon should be implemented. The daemon forces the 
+registry connection to use HTTPS. 
 
-TIP: SSL certificates are not expensive and we recommend buying a certicate for your {pro} to simplify Docker
-usage and increase security.
+By default, Docker looks up the validity of the certificate by checking with certificate authorities. If you 
+purchased a certificate that is registered with these authorities, all functionality works as desired. 
+Alternately, if you create a certificate yourself with tools such as `openssl`, it is not registered. This is 
+often called a self-signed certificate. Using a self-signed certificate requires further configuration steps to 
+ensure that Docker provides full functionality.
 
-Docker can be configured to skip certificate validation, which effectively allows usage of self-signed
-certificates, with the `--insecure-registry` flag. Each repository in the repository manager accessed from Docker
-has to be configured. An example set for docker accessing a {pro} running on `localhost` with a hosted repository
-on port `18444` and a repository group on port `18443` is:
+To generate a self-signed server certificate for the repository manager use Java keytool, a utlity that lets you 
+manage your own private key pairs and certificates. First identify the host name and IP address of the repository 
+manager that Docker will use. The host name and IP address will be embedded in certificate so verification will 
+not fail. Before you generate the certificate see <<enable-https>> to configure the repository manager to accept 
+HTTPS connections.
 
-----
---insecure-registry localhost:18843 --insecure-registry localhost:18444
-----
-
-The specific syntax of the start for the Docker daemon changed between versions of Docker. A manual start of
-Docker version 1.6.2, for example, looks like this:
+Next, make sure the +SSLContextFactory+ is configured to point to the generated keystore. Edit 
++KeyStorePassword+, +KeyManagerPassword+, and TrustStorePassword+ in the +jetty-https.xml+ with the same password. Here's an example:
 
 ----
-docker -d -D --insecure-registry localhost:18443 
+<Set name="KeyStorePath"><Property name="karaf.etc"/>/ssl/server-keystore.jks</Set>
+    <Set name="KeyStorePassword">changeit</Set>
+    <Set name="KeyManagerPassword">changeit</Set>
+    <Set name="TrustStorePassword">changeit</Set>
 ----
 
-On newer versions `-d` is replaced with `daemon`.
+Save the file, then restart the repository manager to recognize the changes.
 
-If Docker is configured to start up as a service on a Linux distribution, the configuration varies based on
-the distribtuion, its version as well as the startup system in use.
+With the keytool utility generate a public or private key pair for the repository manager to use for any HTTPS 
+connector. Follow these steps to configure Docker to explicitly trust the HTTPS connection.
 
-For example on Ubuntu 15.10, a customized startup can be configured in the file
-`/etc/systemd/system/docker.service.d/custom.conf`. The customized start can be set up with:
+In the command below:
 
-----
-[Service]
-ExecStart=
-ExecStart=/usr/bin/docker daemon -H fd:// --insecure-registry localhost:80183 --insecure-registry localhost:80184
-----
+* Replace ${NEXUS_DOMAIN} with the DNS name of your repository manager host. The hostname must be resolvable from 
+the host running the Docker daemon.
 
-Red Hat Enterprise Linux/CentOS 7 uses the configuration file `etc/sysconfig/docker`. It contains a configuration
-line for the insecure registry setup that you can uncomment and edit as needed:
+* Replace ${NEXUS_IP_ADDRESS} with the IP address of your Nexus host. The IP address must be routable to Nexus 
+from the host running Docker daemon.
 
-----
-INSECURE-REGISTRY='--insecure-registry localhost:18843 --insecure-registry localhost:18444'
-----
-
-Reloading the configuration and restarting the docker daemon activates the new settings and can be performed with
+Also, make sure the +storepass+ and +keypass+ values are consistent with +KeyStorePassword+, 
++KeyManagerPassword+, and TrustStorePassword+ in the +jetty-https.xml+ file.
 
 ----
-systemctl daemon-reload
-systemcttl restart docker
+keytool -genkeypair -keystore server-keystore.jks -storepass changeit -keypass changeit -alias jetty -keyalg RSA -keysize 2048 -validity 5000 -dname "CN=*.${NEXUS_DOMAIN}, OU=Example, O=Sonatype, L=Unspecified, ST=Unspecified, C=US" -ext "SAN=DNS:${NEXUS_DOMAIN},IP:${NEXUS_IP_ADDRESS}" -ext "BC=ca:true"
 ----
 
+Now that you have the minimal requirements to run an SSL connection, print the server certificate for the 
+repository manager. See the example:
 
-Alternatively you can configure Docker to accept your self-signed certificate `ca.cert` by copying the certificate into
-`/etc/docker/certs.d/localhost:18443/ca.crt` and respective other directories for each repository.
+----
+keytool -printcert -sslserver ${NEXUS_DOMAIN}:${SSL_PORT} -rfc
+----
 
-Further information can be found in the https://docs.docker.com/registry/insecure/[official documentation].
+* Replace ${NEXUS_DOMAIN} with the DNS name of your repository manager host.
+
+* Replace ${SSL_PORT} with the port you designated to expose the HTTPS connector (e.g. 8443).
 
 [[docker-registry-api]]
 === Support for Docker Registry API
