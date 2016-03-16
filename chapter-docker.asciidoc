@@ -68,19 +68,16 @@ fact that Docker does not support context paths in the registry API.
 
 The requirement of Docker to use HTTPS forces the usage of SSL certificates. By default, Docker looks up the
 validity of the certificate by checking with certificate authorities. If you purchased a certificate
-that is registered with these authorities, all functionality works as desired. However, if you are creating a
-certificate yourself with tools such as `openssl`, it is not registered. This is often called a self-signed
-certificate. Using a self-signed certificate requires further configuration steps to ensure that Docker provides
-full functionality.
+that is registered with these authorities, all functionality works as desired. 
 
-TIP: SSL certificates are not expensive and we recommend buying a certicate for your {pro} to simplify Docker
-usage and increase security.
+If you create a certificate yourself with tools such as `openssl`, it is not registered. This is 
+often called a self-signed certificate. Using a self-signed certificate requires further configuration steps to 
+ensure that Docker can explicitly trust it.
 
-Docker can be configured to skip certificate validation, which effectively allows usage of self-signed
-certificates, with the `--insecure-registry` flag. Each repository in the repository manager accessed from Docker
-has to be configured. An example set for docker accessing a {pro} running on `localhost` with a hosted repository
-on port `18444` and a repository group on port `18443` is:
+WARNING: Docker can be configured to skip certificate validation, which effectively allows usage of self-signed
+certificates, with the `--insecure-registry` flag. Sonatype does not support the flag.
 
+////
 ----
 --insecure-registry localhost:18843 --insecure-registry localhost:18444
 ----
@@ -119,6 +116,7 @@ Reloading the configuration and restarting the docker daemon activates the new s
 systemctl daemon-reload
 systemcttl restart docker
 ----
+////
 
 
 Alternatively you can configure Docker to accept your self-signed certificate `ca.cert` by copying the certificate into
@@ -258,6 +256,13 @@ access in an authenticated manner.
 TIP: Specifically when planning to push to a repository a preemptive login operation is advisable as it removes
 the need for use interaction and is therefore suitable for continuous integration server setups and the
 automations scenarios.
+
+////
+=== Configuration
+Each repository in the repository manager accessed from Docker
+has to be configured. An example set for docker accessing a {pro} running on `localhost` with a hosted repository
+on port `18444` and a repository group on port `18443` is:
+////
 
 === Accessing Repositories 
 
