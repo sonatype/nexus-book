@@ -94,13 +94,14 @@ including any administrative access and has to be avoided.
 
 Privileges can be assigned to a role for both {pro} and {oss} users.
 
-To start the process click 'Privileges' in the left sidebar, nested under 'Security'. In <<fig-privileges-list>> 
-the 'Privileges' panel shows a list of built-in permissions you can assign to a role and, ultimately, apply to a 
-user.
+To access 'Privileges' go to the 'Security' section, where it's listed as a sub-section. An extensive list of 
+privileges for roles are already built in the repository manager, partially depicted in 
+<<fig-privileges-partial-list>>. This feature also allows your to create custom privileges for roles within the 
+repository manager.
 
-[[fig-privileges-list]]
+[[fig-privileges-partial-list]]
 .Partial List of Security Privileges
-image::figs/web/privileges-list.png[scale=35]
+image::figs/web/privileges-partial-list.png[scale=45]
 
 The list of privileges displays an icon for the privilege Type as the first column, followed by:
 
@@ -114,51 +115,53 @@ Permission:: the internal permission definition as used by the embedded security
 
 Further details are available after pressing on a specific row in the detail view.
 
-Click the 'Create privilege' button to view a list of privilege types you can customize for your roles, as seen 
-in <<fig-privileges-types>>.
+Click the 'Create privilege' button to view a list of privilege types, as seen in <<fig-privileges-types>>.
 
 [[fig-privileges-types]]
 .Choosing Privilege Types
-image::figs/web/privileges-types.png[scale=35]
+image::figs/web/privileges-types.png[scale=45]
 
 Select the privilege type corresponding to the area of the repository manager you wish to grant permissions. The 
 privilege types are as follows:
 
-Application:: privileges related to a defined aspect of an application.
-Repository Admin:: privileges related to the administration and configuration of a specific repository.
-Repository View:: privileges controlling access to the content of a specific repository.
-Script:: privileges related to scripted commands capable of executing permissions granted.
-Wildcard:: privileges related to search that can match any sequence of permissions.
+Application:: These are privileges related to a defined aspect of an application.
+Repository Admin:: These are privileges related to the administration and configuration of a specific repository.
+Repository View:: These are privileges controlling access to the content of a specific repository.
+Script:: These are privileges related to scripted commands capable of executing permissions granted.
+Wildcard:: These are privileges related to search that can match any sequence of permissions.
 
 In all 'Privilege Types', above, the variables assigned to a role are defined as 'Actions'. 'Actions' can 
-either be CRUD (create, read, update, and delele) or BREAD (browse, read, edit, add, and delete) storage 
+either be exclusively or a combination of add, browse, create, delete, edit, read and * (all) storage 
 functions.
 
 To save a new custom privilege click the 'Create privilege' button. The privilege can be found listed 
 among the default privileges on the main 'Privileges' screen.
 
-Below are some sample privileges you may assign to roles. The examples will show 'Application' and 
+Below are some sample privileges you can create. The examples will show 'Application' and 
 'Repository View' privilege types. 
 
 In this example, we create an Application privilege type.
 
 [[fig-privileges-application]]
 .Creating an Application Privilege
-image::figs/web/privileges-application.png[scale=35]
+image::figs/web/privileges-application.png[scale=45]
 
 The form provides 'Name', 'Description', 'Domain', and 'Actions'. In <<fig-privileges-application>>, above, the 
-form is completed for a privilege only allowed read access to an LDAP domain.
+form is completed for a privilege only allowed read access to an LDAP domain. If assigned this privilege, a user 
+would be able to view LDAP administration configuration but not edit it, create a new LDAP 
+configuration, nor delete any existing LDAP configurations.
 
 In another example, we create a Repository View privilege type.
 
 [[fig-privileges-repository-view]]
 .Creating a Repository View Privilege
-image::figs/web/privileges-repository-view.png[scale=35]
+image::figs/web/privileges-repository-view.png[scale=45]
 
 The form provides 'Name', 'Description', 'Format', 'Repository', and 'Actions'. In 
 <<fig-privileges-repository-view>>, above, the form is completed for a privilege allowing only read and edit 
-privileges for a Docker hosted repository.
-
+privileges for a Docker hosted repository. If assigned this privilege, a user would be able to view and edit 
+Docker images in the docker-internal repository; however, they could not delete them, add them, or even browse 
+them via the user interface.
 
 [[roles]]
 === Roles
@@ -206,11 +209,11 @@ privileges and roles in the repository manager.
 For example, assume that you have a group in LDAP named +scm+ and you want to make sure that everyone in the +scm+
 group has administrative privileges.
 
-Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick the
-desired 'scm' group and confirm by pressing 'Create mapping'.
+Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick 
+the desired 'scm' group and confirm by pressing 'Create mapping'.
 
-TIP: For faster access or if you cannot see your group name, you can also type in a portion or the whole name of the
-group and it will limit the dropdown to the selected text.
+TIP: For faster access or if you cannot see your group name, you can also type in a portion or the whole name of 
+the group and it will limit the dropdown to the selected text.
 
 Once the external role has been selected, creates a linked  role. You can then assign other roles and privileges 
 to this new externally mapped role like you would do for any other role.
