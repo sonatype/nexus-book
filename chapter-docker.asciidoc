@@ -66,6 +66,9 @@ fact that Docker does not support context paths in the registry API.
 
 ==== Tips for SSL Certificate Usage
 
+{pro} and {oss} are not configured with HTTPS connectors by default as it requires an SSL certificate 
+to be generated and configured manually.
+
 The requirement of Docker to use HTTPS forces the usage of SSL certificates. By default, Docker looks up the
 validity of the certificate by checking with certificate authorities. If you purchased a certificate
 that is registered with these authorities, all functionality works as desired. 
@@ -74,55 +77,15 @@ If you create a certificate yourself with tools such as `openssl`, it is not reg
 often called a self-signed certificate. Using a self-signed certificate requires further configuration steps to 
 ensure that Docker can explicitly trust it.
 
-WARNING: Docker can be configured to skip certificate validation, which effectively allows usage of self-signed
-certificates, with the `--insecure-registry` flag. Sonatype does not support the flag.
+WARNING: Adminstrators may attempt a work-around with the `--insecure-registry` flag. Docker Daemon does not 
+validate it as trustworthy. We recommend you avoid using the flag as it leads to errors impacting certificate 
+validation.
 
-////
-----
---insecure-registry localhost:18843 --insecure-registry localhost:18444
-----
+To generate a self-signed server certificate for the repository manager use Java keytool, a utility that lets you 
+manage your own private key pairs and certificates. See our 
+https://support.sonatype.com/hc/en-us/articles/217542177[knowledge base article] to set up this more trustworthy 
+solution.
 
-The specific syntax of the start for the Docker daemon changed between versions of Docker. A manual start of
-Docker version 1.6.2, for example, looks like this:
-
-----
-docker -d -D --insecure-registry localhost:18443 
-----
-
-On newer versions `-d` is replaced with `daemon`.
-
-If Docker is configured to start up as a service on a Linux distribution, the configuration varies based on
-the distribtuion, its version as well as the startup system in use.
-
-For example on Ubuntu 15.10, a customized startup can be configured in the file
-`/etc/systemd/system/docker.service.d/custom.conf`. The customized start can be set up with:
-
-----
-[Service]
-ExecStart=
-ExecStart=/usr/bin/docker daemon -H fd:// --insecure-registry localhost:80183 --insecure-registry localhost:80184
-----
-
-Red Hat Enterprise Linux/CentOS 7 uses the configuration file `etc/sysconfig/docker`. It contains a configuration
-line for the insecure registry setup that you can uncomment and edit as needed:
-
-----
-INSECURE-REGISTRY='--insecure-registry localhost:18843 --insecure-registry localhost:18444'
-----
-
-Reloading the configuration and restarting the docker daemon activates the new settings and can be performed with
-
-----
-systemctl daemon-reload
-systemcttl restart docker
-----
-////
-
-
-Alternatively you can configure Docker to accept your self-signed certificate `ca.cert` by copying the certificate into
-`/etc/docker/certs.d/localhost:18443/ca.crt` and respective other directories for each repository.
-
-Further information can be found in the https://docs.docker.com/registry/insecure/[official documentation].
 
 [[docker-registry-api]]
 === Support for Docker Registry API
