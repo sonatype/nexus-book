@@ -73,18 +73,17 @@ The requirement of Docker to use HTTPS forces the usage of SSL certificates. By 
 validity of the certificate by checking with certificate authorities. If you purchased a certificate
 that is registered with these authorities, all functionality works as desired. 
 
-If you create a certificate yourself with tools such as `openssl`, it is not registered. This is 
-often called a self-signed certificate. Using a self-signed certificate requires further configuration steps to 
-ensure that Docker can explicitly trust it.
+If you create a certificate yourself with tools such as `openssl`, it is self-signed and not registered. Using a 
+self-signed certificate requires further configuration steps to ensure that Docker can explicitly trust it.
+ 
+WARNING: Docker Daemon can stand up instances with the `--insecure-registry` flag to skip validation of 
+a self-signed certificate. But the repository manager does not support the use of the flag, as it generates known 
+bugs and other implementation issues.
 
-WARNING: Adminstrators may attempt a work-around with the `--insecure-registry` flag. Docker Daemon does not 
-validate it as trustworthy. We recommend you avoid using the flag as it leads to errors impacting certificate 
-validation.
-
-To generate a self-signed server certificate for the repository manager use Java keytool, a utility that lets you 
-manage your own private key pairs and certificates. See our 
-https://support.sonatype.com/hc/en-us/articles/217542177[knowledge base article] to set up this more trustworthy 
-solution.
+To generate a trustworthy self-signed certificate for the repository manager use keytool, a utility that 
+lets you manage your own private key pairs and certificates. See our 
+https://support.sonatype.com/hc/en-us/articles/217542177[knowledge base article] to learn how to configure the 
+utlilty.
 
 
 [[docker-registry-api]]
