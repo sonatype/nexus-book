@@ -92,22 +92,18 @@ including any administrative access and has to be avoided.
 === Privileges
 {inall}
 
-You can access the configuration of privileges via the 'Privileges' menu item in the 'Security' submenu in the
-'Administration' main menu.
+Privileges can be assigned to a role for both {pro} and {oss} users.
 
-The repository manager uses a number of types of privileges:
+To access 'Privileges' go to the 'Security' section, where it's listed as a sub-section. An extensive list of 
+privileges for roles are already built in the repository manager, partially depicted in 
+<<fig-privileges-partial-list>>. This feature also allows your to create custom privileges for roles within the 
+repository manager.
 
-application:: privileges related to the user interface and related functionality.
-repository-admin:: privileges related to the administration and configuration of a specific repository separated
-into access to '*' (all), 'add', 'browse', 'delete', 'edit' and 'read'.
-repository-view:: privileges controlling access to the content of a specific repository separate into access to
-'*' (all), 'add', 'browse', 'delete', 'edit' and 'read'.
+[[fig-privileges-partial-list]]
+.Partial List of Security Privileges
+image::figs/web/privileges-partial-list.png[scale=45]
 
-Both 'repository-admin' as well as 'repository-view' privileges are automatically dcreated and deleted by the
-repository manager, when repositories are created or deleted.
-
-The list of privileges displayed in <<fig-privileges-list>> displays an icon for the privilege 'Type' as the first
-column and then adds:
+The list of privileges displays an icon for the privilege Type as the first column, followed by:
 
 Name:: the internal identifier for the privilege
 
@@ -119,9 +115,53 @@ Permission:: the internal permission definition as used by the embedded security
 
 Further details are available after pressing on a specific row in the detail view.
 
-[[fig-privileges-list]]
-.List of Security Privileges
-image::figs/web/privileges-list.png[scale=60]
+Click the 'Create privilege' button to view a list of privilege types, as seen in <<fig-privileges-types>>.
+
+[[fig-privileges-types]]
+.Choosing Privilege Types
+image::figs/web/privileges-types.png[scale=45]
+
+Select the privilege type corresponding to the area of the repository manager you wish to grant permissions. The 
+privilege types are as follows:
+
+Application:: These are privileges related to a defined aspect of an application.
+Repository Admin:: These are privileges related to the administration and configuration of a specific repository.
+Repository View:: These are privileges controlling access to the content of a specific repository.
+Script:: These are privileges related to scripted commands capable of executing permissions granted.
+Wildcard:: These are privileges related to search that can match any sequence of permissions.
+
+In all 'Privilege Types', above, the variables assigned to a role are defined as 'Actions'. 'Actions' can 
+either be exclusively or a combination of add, browse, create, delete, edit, read and * (all) storage 
+functions.
+
+To save a new custom privilege click the 'Create privilege' button. The privilege can be found listed 
+among the default privileges on the main 'Privileges' screen.
+
+Below are some sample privileges we created. The examples will show 'Application' and 
+'Repository View' privilege types. 
+
+In this example, we create an Application privilege type.
+
+[[fig-privileges-application]]
+.Creating an Application Privilege
+image::figs/web/privileges-application.png[scale=45]
+
+The form provides 'Name', 'Description', 'Domain', and 'Actions'. In <<fig-privileges-application>>, above, the 
+form is completed for a privilege only allowed read access to an LDAP domain. If assigned this privilege, a user 
+would be able to view LDAP administration configuration but not edit it, create a new LDAP 
+configuration, nor delete any existing LDAP configurations.
+
+In another example, we create a Repository View privilege type.
+
+[[fig-privileges-repository-view]]
+.Creating a Repository View Privilege
+image::figs/web/privileges-repository-view.png[scale=45]
+
+The form provides 'Name', 'Description', 'Format', 'Repository', and 'Actions'. In 
+<<fig-privileges-repository-view>>, above, the form is completed for a privilege allowing only read and edit 
+privileges for a Docker hosted repository. If assigned this privilege, a user would be able to view and edit 
+Docker images in the docker-internal repository; however, they could not delete them, add them, or even browse 
+them via the user interface.
 
 [[roles]]
 === Roles
@@ -169,11 +209,11 @@ privileges and roles in the repository manager.
 For example, assume that you have a group in LDAP named +scm+ and you want to make sure that everyone in the +scm+
 group has administrative privileges.
 
-Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick the
-desired 'scm' group and confirm by pressing 'Create mapping'.
+Select 'External Role Mapping' and 'LDAP' to see a list of roles managed by that external realm in a dialog. Pick 
+the desired 'scm' group and confirm by pressing 'Create mapping'.
 
-TIP: For faster access or if you cannot see your group name, you can also type in a portion or the whole name of the
-group and it will limit the dropdown to the selected text.
+TIP: For faster access or if you cannot see your group name, you can also type in a portion or the whole name of 
+the group and it will limit the dropdown to the selected text.
 
 Once the external role has been selected, creates a linked  role. You can then assign other roles and privileges 
 to this new externally mapped role like you would do for any other role.
@@ -189,18 +229,18 @@ allowed to perform.
 The repository manager ships with two users: 'admin' and 'anonymous'. The 'admin' user has all privileges and the
 'anonymous' user has read-only privileges. The default password for the 'admin' user is 'admin123'.
 
-The 'Users' feature view displayed in <<fig-users-list>> can be accessed via the 'Users' item in the 'Security' section
-of the 'Administration' menu. The list shows the users 'User ID', 'First Name', 'Last Name' and 'Email' as well as what
-security 'Realm' is used and if the accounts 'Status' is 'active' or 'disabled'.
+The 'Users' feature view displayed in <<fig-users-list>> can be accessed via the 'Users' item in the 'Security' 
+section of the 'Administration' menu. The list shows the users 'User ID', 'First Name', 'Last Name' and 'Email' 
+as well as what security 'Realm' is used and if the accounts 'Status' is 'active' or 'disabled'.
 
 [[fig-users-list]]
 .Feature View with List of Users
 image::figs/web/users-list.png[scale=50]
 
-Clicking on a user in the list or clicking on the 'Create user' button displays the details view to edit or create the
-account shown in <<fig-users-create>>. The 'ID' can be defined upon initial creation and remains fixed thereafter. In
-addition you can specify the users 'First Name', 'Last Name' and 'Email' address. The 'Status' allows you to set an
-account to be 'Disabled' or 'Active'.
+Clicking on a user in the list or clicking on the 'Create user' button displays the details view to edit or 
+create the account shown in <<fig-users-create>>. The 'ID' can be defined upon initial creation and remains fixed 
+thereafter. In addition you can specify the users 'First Name', 'Last Name' and 'Email' address. The 'Status' 
+allows you to set an account to be 'Disabled' or 'Active'.
 
 The 'Roles' control allows you to add and remove defined <<roles, roles>> to the user and therefore control the
 <<privileges,privileges>> assigned to the user. A user can be assigned one or more roles that in turn can include
@@ -210,8 +250,8 @@ references to other roles or to individual privileges.
 .Creating or Editing a User
 image::figs/web/users-create.png[scale=60]
 
-The 'More' button in the allows you to select the 'Change Password' item in the drop down. The password can be changed
-in a dialog, provided the user is managed by the built-in security realm.
+The 'More' button in the allows you to select the 'Change Password' item in the drop down. The password can be 
+changed in a dialog, provided the user is managed by the built-in security realm.
 
 IMPORTANT: Ensure to change the password of the 'admin' user to avoid security issues. Alternatively create
 other users with administrative rights and disable the default 'admin' user.
