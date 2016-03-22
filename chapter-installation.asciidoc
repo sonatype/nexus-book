@@ -246,6 +246,55 @@ this practice poses serious security risks to the host operating system unnecess
 follow system administration best practice and use a service specific user with the minimum required access rights
 only.
 
+
+====  Running as a Service on Mac OS X
+
+The standard way to run a service on Mac OS X is to use +launchd+, a program that starts, stops and manages 
+daemons and scripts in Apple OS X environments. To run the service you need to create an XML document 
+(specifically a +.plist+) to define its properties. An example plist file for the repository manager installed in 
++/opt+ is shown <<ex-nexus-plist>>.
+
+[[ex-nexus-plist]]
+.A sample com.sonatype.nexus.plist file
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" 
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.sonatype.nexus</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/nexus/bin/nexus</string>
+        <string>start</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>
+----
+
+After saving the file as +com.sonatype.nexus.plist+ in
++/Library/LaunchDaemons/+ you have to change the ownership and access
+rights.
+
+----
+sudo chown root:wheel /Library/LaunchDaemons/com.sonatype.nexus.plist
+sudo chmod 644 /Library/LaunchDaemons/com.sonatype.nexus.plist
+----
+
+
+TIP: Consider setting up a different user to run the repository manager and adapt
+permissions and the RUN_AS_USER setting in the `nexus` startup script.
+ 
+With this setup the repository managers, starts as a service at boot time. To
+manually start it after the configuration you can use
+
+----
+sudo launchctl load /Library/LaunchDaemons/com.sonatype.nexus.plist
+----
+
 [[access]]
 === Accessing the User Interface
 
