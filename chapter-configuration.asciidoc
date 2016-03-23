@@ -374,7 +374,35 @@ for supporting search and browse actions.
 Remove Maven indexes:: This task is the counter-part to the task 'Publish Maven indexes' and
 can remove the index.
 
-Remove Snapshots from Maven Repository:: This task can be scheduled to remove Maven Snapshots..
+Remove Snapshots from Maven Repository:: This task can be scheduled to remove Maven Snapshots. Often, you will 
+want to remove snapshots from a snapshot repository to preserve storage space. This task supports this deletion 
+for time stamped snapshots as created by Maven 3.x in a deployment repository. Note that configuring and
+running this job is not enough to reclaim disk space.  You will also need to configure a scheduled job to empty 
+the trash folder. Files are not deleted by the 'Remove Snapshots' job. They are only moved into
+the trash folder. When you create a scheduled task to remove snapshots, you can specify the 'Repository/Group' to 
+affect as well as:
++
+'Minimum snapshot count';; This configuration option allows you to specify a minimum number of snapshots to
+preserve per component.  For example, if you configured this option with a value of 2, the repository manager will
+always preserve at least two snapshot components. A value of -1 indicates that all snapshots should be preserved.
++
+'Snapshot retention (days)';; This configuration option allows you to
+specify the number of days to retain snapshot components.  For example,
+if you want to make sure that you are always keeping the last three
+day's worth of snapshot components, configure this option with a value
+of 3. The minimum count overrides this setting.
++
+'Remove if released';; The checked 'Remove if released' box causes snapshots to be deleted as soon 
+as the scheduled task is executed. 
+
+NOTE: Checking this box enabled and a released component with the same
+GAV coordinates is detected all snapshots will be removed.
++ 
+'Grace period after release (days)';; This can lead to builds that still reference the snapshot
+dependency to fail. This grace period parameter allows you to specify a number of days to delay the deletion, 
+giving the respective projects referencing the snapshot dependency time to upgrade to the release component or 
+the next snapshot version.
++
 
 Beyond these tasks any plugin can provide additional scheduled tasks, which will appear once you have installed 
 the plugin.
