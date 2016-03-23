@@ -196,15 +196,16 @@ If you selected to start the application, your web-browser will be started and t
 
 {inall}
 
-When installing {pro} or {oss} for production usage you should configure it to run as a service, so it starts 
-back up after server reboots. It is good practice to run that service or daemon as a specific user that has only 
-the required access righs. The following sections provide instructions for configuring the repository manager as 
-a service or daemon on various operating systems.
+When installing {pro} or {oss} for production usage you should configure it to run as a service, so it the 
+repository manager restarts after the server reboots. It is good practice to run that service or daemon as a 
+specific user that has only the required access rights. The following sections provide instructions for 
+configuring the repository manager as a service or daemon on various operating systems. 
 
-==== Running as a Service on Linux
+[[service-linux]]
+==== Running as a Service on Ubuntu and CentOS
 
 You can configure the repository manager to start automatically by copying the +nexus+ script to the +/etc/init.d+
-directory. On a Linux system perform the following operations as the root user:
+directory. On a Linux system perform the operations as the root user listed below.
 
 . Create a +nexus+ user with sufficient access rights to run the service
 
@@ -217,14 +218,31 @@ chmod 755 /etc/init.d/nexus
 chown root /etc/init.d/nexus
 ----
 
-. Edit this script changing the following variables:
+Change +NEXUS_HOME+ to the absolute folder location in your +.bashrc+ file, then save
+----
++NEXUS_HOME="/usr/local/nexus"+
+----
 
-.. Change +NEXUS_HOME+ to the absolute folder location (e.g., 
-+NEXUS_HOME="/usr/local/nexus"+)
+Locate the startup script and change the following variables. Go to the +bin+ directory, where you will find two 
+files: +nexus+ and +nexus.rc+ that need to be edited.
 
-.. Set the +RUN_AS_USER+ to +nexus+ or any other user with restricted
-  rights that you want to use to run the service. You should not be
-  running the repository manager as `root`.
+In the +bin/nexus+ script revome the line below.
+
+----
++INSTALL4J_JAVA_PREFIX=""+ 
+----
+
+Replace the entry link with this line:
+
+----
+exec su - $run_as_user "$prg_dir/$progname" $@
+----
+
+In +bin/nexus.rc+ assign a user between the quotes in the line below (e.g. +run_as_user="nexus")
+
+----
++run_as_user=""+
+----
 
 .. Change +PIDDIR+ to a directory where this user has read/write
 permissions. In most Linux distributions, +/var/run+ is only writable by
@@ -233,20 +251,16 @@ file location is +wrapper.pidfile+. For more information about this
 property and how it would be configured in wrapper.conf, see:
 http://wrapper.tanukisoftware.com/doc/english/properties.html[http://wrapper.tanukisoftware.com/doc/english/properties.html].
 
-
-. Change the owner and group of the directories used by the repository manager, including +nexus-work+ configured
-in +nexus.properties+ defaulting to +sonatype-work/nexus+, to the +nexus+ user that will run the application.
-
 . If Java is not on the default path for the user running the repository manager, add a +JAVA_HOME+ variable which
 points to your local Java installation and add a +$JAVA_HOME/bin+ to the +PATH+.
 
 [[nonrootuser]]
 WARNING: We recommend to avoid running the repository manager as the `root` user or a similar privileged user, as
-this practice poses serious security risks to the host operating system unnecessarily. Instead we suggest to
+this practice poses serious, unnecessary security risks to the host operating system. Instead we suggest to
 follow system administration best practice and use a service specific user with the minimum required access rights
 only.
 
-
+[[service-osx]]
 ====  Running as a Service on Mac OS X
 
 The standard way to run a service on Mac OS X is to use +launchd+, a program that starts, stops and manages 
@@ -286,7 +300,7 @@ sudo chmod 644 /Library/LaunchDaemons/com.sonatype.nexus.plist
 
 
 TIP: Consider setting up a different user to run the repository manager and adapt
-permissions and the RUN_AS_USER setting in the `nexus` startup script.
+permissions and the RUN_AS_USER setting in the +nexus+ startup script.
  
 With this setup the repository managers, starts as a service at boot time. To
 manually start it after the configuration you can use
