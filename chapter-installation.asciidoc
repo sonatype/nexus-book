@@ -199,7 +199,10 @@ If you selected to start the application, your web-browser will be started and t
 When installing {pro} or {oss} for production usage you should configure it to run as a service, so it the 
 repository manager restarts after the server reboots. It is good practice to run that service or daemon as a 
 specific user that has only the required access rights. The following sections provide instructions for 
-configuring the repository manager as a service or daemon on various operating systems. 
+configuring the repository manager as a service or daemon on various operating systems.
+
+NOTE: If Java is not on the default path for the user running the repository manager, add a +JAVA_HOME+ variable 
+which points to your local Java installation and add a +$JAVA_HOME/bin+ to the +PATH+.
 
 [[service-linux]]
 ==== Running as a Service on Ubuntu and CentOS
@@ -238,21 +241,19 @@ Replace the entry link with this line:
 exec su - $run_as_user "$prg_dir/$progname" $@
 ----
 
-In +bin/nexus.rc+ assign a user between the quotes in the line below (e.g. +run_as_user="nexus")
+In +bin/nexus.rc+ assign a user between the quotes in the line below (e.g. +run_as_user="nexus").
 
 ----
 +run_as_user=""+
 ----
 
-.. Change +PIDDIR+ to a directory where this user has read/write
-permissions. In most Linux distributions, +/var/run+ is only writable by
-root. The property you need to add to customize the PID
-file location is +wrapper.pidfile+. For more information about this
-property and how it would be configured in wrapper.conf, see:
-http://wrapper.tanukisoftware.com/doc/english/properties.html[http://wrapper.tanukisoftware.com/doc/english/properties.html].
+After changes to the files above, symlink +$NEXUS_HOME/bin/nexus+ to +/etc/init.d/nexus+:
 
-. If Java is not on the default path for the user running the repository manager, add a +JAVA_HOME+ variable which
-points to your local Java installation and add a +$JAVA_HOME/bin+ to the +PATH+.
+----
+sudo ln -s $NEXUS_HOME/bin/nexus /etc/init.d/nexus
+----
+
+At this point you can install and run the service.
 
 [[nonrootuser]]
 WARNING: We recommend to avoid running the repository manager as the `root` user or a similar privileged user, as
