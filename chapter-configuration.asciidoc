@@ -385,22 +385,25 @@ affect as well as:
 preserve per component.  For example, if you configured this option with a value of 2, the repository manager will
 always preserve at least two snapshot components. A value of -1 indicates that all snapshots should be preserved.
 
-'Snapshot retention (days)';; This configuration option allows you to
-specify the number of days to retain snapshot components.  For example,
-if you want to make sure that you are always keeping the last three
-day's worth of snapshot components, configure this option with a value
-of 3. The minimum count overrides this setting.
+'Snapshot retention (days)';; This configuration option allows you to specify the number of days to retain 
+snapshot components.  For example, if you want to make sure that you are always keeping the last three
+day's worth of snapshot components, configure this option with a value of 3. The 'Minimum snapshot count' 
+configuration overrides this setting.
 
-'Remove if released';; The checked 'Remove if released' will delete/remove all corresponding snapshot releases.
+'Remove if released';; If checked, all snapshots that match any released component found with the same GAV 
+coordinates will be removed.
 
-'Grace period after release (days)';; This can lead to builds that still reference the snapshot
-dependency to fail. This grace period parameter allows you to specify a number of days to delay the deletion, 
-giving the respective projects referencing the snapshot dependency time to upgrade to the release component or 
-the next snapshot version.
+'Grace period after release (days)';; This grace period parameter allows you to specify a number of days before 
+released snapshots are purged. If a release associated to a snapshot has an updated timestamp and falls 
+within the set grace period, it will not be purged. However, the next time the task runs it will be removed
+since the timestamp will be expired.
 
-CAUTION: The deletion of Maven snapshots when a release occurs takes precedence over the number you select 
-in the 'Minimum snapshot count' dropdown. Also, it is possible to configure the task in such a 
-way that the results are unexpected. For example, if configured to keep 0 minimum snapshots older than 0 days, 
+This setting will give the respective project that references the snapshot dependency time to 
+upgrade to the release component or the next snapshot version.
+
+CAUTION: The deletion of Maven snapshots when 'Remove if released' is checked takes precedence over the number 
+you select in the 'Minimum snapshot count' field. Also, it is possible to configure the task in such a 
+way that the results may be unexpected. For example, if configured to keep 0 minimum snapshots older than 0 days, 
 all snapshots everywhere will be deleted, despite whether or not a grace period is configured for releases.
 
 Beyond these tasks any plugin can provide additional scheduled tasks, which will appear once you have installed 
