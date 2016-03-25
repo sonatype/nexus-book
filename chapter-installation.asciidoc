@@ -189,6 +189,10 @@ directory'. More details can be found in <<directories>>.
 
 If you selected to start the application, your web-browser will be started and the user interface detailed in
 <<access>> will be accessible.
+
+NOTE: The installer includes a feature you can configure to run the repository manager as a service. To run on a
+Linux operating machine, see <<service-linux>>. To run on Mac OS X, see <<service-osx>>. To run on Windows, see 
+<<service-windows>>.
 	
 [[configure-service]]
 === Configuring {pro} as a Service
@@ -209,18 +213,7 @@ which points to your local Java installation and add a +$JAVA_HOME/bin+ to the +
 You can configure the repository manager to start automatically by copying the +nexus+ script to the +/etc/init.d+
 directory. On a Linux system perform the operations as the root user listed below.
 
-. Create a +nexus+ user with sufficient access rights to run the service
-
-. Copy +$NEXUS_HOME/bin/nexus+ to +/etc/init.d/nexus+
-
-. Make the +/etc/init.d/nexus+ script executable and owned by the root user -
-+
-----
-chmod 755 /etc/init.d/nexus
-chown root /etc/init.d/nexus
-----
-
-Change +NEXUS_HOME+ to the absolute folder location in your +.bashrc+ file, then save
+Change +NEXUS_HOME+ to the absolute folder location in your +.bashrc+ file, then save.
 ----
 +NEXUS_HOME="/usr/local/nexus"+
 ----
@@ -240,10 +233,17 @@ Replace the entry link with this line:
 exec su - $run_as_user "$prg_dir/$progname" $@
 ----
 
-In +bin/nexus.rc+ assign a user between the quotes in the line below (e.g. +run_as_user="nexus").
+Create a +nexus+ user with sufficient access rights to run the service. In +bin/nexus.rc+ assign the between 
+the quotes in the line below.
 
 ----
-+run_as_user=""+
++run_as_user="nexus"+
+----
+
+Make the +/etc/init.d/nexus+ script executable and owned by the root user -
+----
+chmod 755 /etc/init.d/nexus
+chown root /etc/init.d/nexus
 ----
 
 After changes to the files above, symlink +$NEXUS_HOME/bin/nexus+ to +/etc/init.d/nexus+:
