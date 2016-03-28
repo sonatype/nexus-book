@@ -42,7 +42,7 @@ nexus-{version-exact}-win64.exe
 
 Next steps, after a successful download, depend on the distribution you downloaded and the operating system and are documented in <<installation-archive>> and <<installation-installer>>.
 
-
+[[installation-java]]
 === Java Runtime Environment
 
 {pro} requires a Java 8 Runtime Environment (JRE) from Oracle. The distributions for OSX and Windows include
@@ -152,6 +152,10 @@ on the `.app`.
 Unix:: Run the `.sh` file in a command line window or double-clicking on it. This starts the installer user
 interface. Passing the `-c` option allows you to run the installer purely in the command line window.
 
+TIP: Ensure to run the installer as the user that should be used to run the application as a service. We recommend
+usage of a dedicated user account with limited access rights to the host operating system - do not use 'root' or
+'administrator'-type users.
+
 The installer guides you through multiple steps to get the repository manager installed:
 
 Welcome:: Press 'Next' after reading the instructions to proceed.
@@ -177,7 +181,9 @@ The 'JVM'  configuration includes 'Initial Heap' and 'Maximum Heap' parameters. 
 you to activate an additional setup step, that will allow you to use a specific JVM installation instead of the
 bundled JVM.
 + 
-The 'Service' configuration allows you to start the repository manager as part of the installation process.
+The 'Service' configuration allows you to start the repository manager as part of the installation process. The
+installer automatically performs the necessary configuration to run the repository manager as a service on the
+target operating system. 
 
 License Agreement::  Read and accept the license agreement with the checkbox and press 'Install' to proceed.
 
@@ -187,25 +193,34 @@ desktop icon and open the application. Press 'Finish' to complete the installati
 The two directories created and populated are referred to as the 'installation directory' and the 'data
 directory'. More details can be found in <<directories>>.
 
-If you selected to start the application, your web-browser will be started and the user interface detailed in
-<<access>> will be accessible.
-
-NOTE: The installer includes a feature you can configure to run the repository manager as a service. To run on a
-Linux operating machine, see <<service-linux>>. To run on Mac OS X, see <<service-osx>>. To run on Windows, see 
-<<service-windows>>.
+If you selected to start the application, the repository manager is started to run as a service and your
+web-browser is started and the user interface detailed in <<access>> is accessible.
 	
 [[configure-service]]
-=== Configuring {pro} as a Service
+=== Configuring as a Service
 
 {inall}
 
-When installing {pro} or {oss} for production usage you should configure it to run as a service, so it the 
-repository manager restarts after the server reboots. It is good practice to run that service or daemon as a 
-specific user that has only the required access rights. The following sections provide instructions for 
-configuring the repository manager as a service or daemon on various operating systems.
+When installing {pro} or {oss} for production usage it has to be configured it to run as a service, so it restarts
+after the server reboots. It is good practice to run that service or daemon as a specific user that has only the
+required access rights.
 
-NOTE: If Java is not on the default path for the user running the repository manager, add a +JAVA_HOME+ variable 
-which points to your local Java installation and add a +$JAVA_HOME/bin+ to the +PATH+.
+The <<installation-installer,installer>> automatically configures the service and no further configuration is
+necessary.
+
+Installation from the <<installation-archive,distribution archive>> does not include the configuration of a
+service. The following sections provide instructions for configuring the service manually. Independent of the
+operating system the steps are
+
+- Create operating sytem user with limited access rights dedicated to run the repository manager as a service 
+- Ensure suitable Java runtime environment is installed - see <<installation-java>>
+- Configure the service and ensure it starts as part of the operating sytem boot process
+
+[[nonrootuser]]
+WARNING: We recommend to avoid running the repository manager as the `root` user or a similar privileged user, as
+this practice poses serious, unnecessary security risks to the host operating system. Instead we suggest to
+follow system administration best practice and use a service specific user with the minimum required access rights
+only.
 
 [[service-linux]]
 ==== Running as a Service on Ubuntu and CentOS
@@ -221,7 +236,7 @@ NEXUS_HOME="/usr/local/nexus"
 Locate the startup script and change the following variables. Go to the +bin+ directory, where you will find two 
 files: +nexus+ and +nexus.rc+ that need to be edited.
 
-In the +bin/nexus+ script revome the line below.
+In the +bin/nexus+ script remove the line below.
 
 ----
 INSTALL4J_JAVA_PREFIX=""
@@ -252,13 +267,22 @@ After changes to the files above, symlink +$NEXUS_HOME/bin/nexus+ to +/etc/init.
 sudo ln -s $NEXUS_HOME/bin/nexus /etc/init.d/nexus
 ----
 
-At this point you can install and run the service.
+At this point the service configuration is complete and you can start it with
 
-[[nonrootuser]]
-WARNING: We recommend to avoid running the repository manager as the `root` user or a similar privileged user, as
-this practice poses serious, unnecessary security risks to the host operating system. Instead we suggest to
-follow system administration best practice and use a service specific user with the minimum required access rights
-only.
+----
+sudo service nexus start
+----
+
+TBD .. how to configure startup at boot
+
+[[service-windows]]
+==== Running as a Service on Windows
+
+The startup script that runs {pro} and {oss} on Windows platforms is +bin/nexus.bat+. The script includes standard
+commands for starting and stopping the service. It also contains commands +install+ and +uninstall+.
+
+The service is available in common console applications such as Windows Services. Open up Windows Services and
+locate the program called 'nexus', then start the service in the repository manager.
 
 [[service-osx]]
 ====  Running as a Service on Mac OS X
@@ -309,14 +333,6 @@ manually start it after the configuration you can use
 sudo launchctl load /Library/LaunchDaemons/com.sonatype.nexus.plist
 ----
 
-[[service-windows]]
-====  Running as a Service on Windows
-
-The startup script that runs {pro} and {oss} on Windows platforms is +bin/nexus.bat+. The script includes 
-standard commands for starting and stopping the service. It also contains commands +install+ and +uninstall+.
-
-The service is available in common console applications such as Windows Services. Open up Windows Services and 
-locate the program called 'nexus', then start the service in the repository manager.
 
 [[access]]
 === Accessing the User Interface
