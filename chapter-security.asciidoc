@@ -5,7 +5,7 @@
 [[security-introduction]]
 === Introduction
 
-{pro} and {oss} uses role-based access control that gives administrators very fine-grained control over user
+{pro} and {oss} use role-based access control that gives administrators very fine-grained control over user
 rights to
 
 * read from a repository or a subset of repositories,
@@ -92,16 +92,16 @@ including any administrative access and has to be avoided.
 === Privileges
 {inall}
 
-Privileges can be assigned to a role for both {pro} and {oss} users.
+Privileges control access to specific functionality of the repository manager and can be grouped as a role and
+assigned to a specific users.
 
-To access 'Privileges' go to the 'Security' section, where it's listed as a sub-section. An extensive list of 
-privileges for roles are already built in the repository manager, partially depicted in 
-<<fig-privileges-partial-list>>. This feature also allows your to create custom privileges for roles within the 
-repository manager.
+To access 'Privileges' go to the 'Security' section, where it's listed as a sub-section. An extensive list of
+privileges is already built in the repository manager and is partially depicted in
+<<fig-privileges-partial-list>>. This feature allows you inspect existing privileges and create custom privileges.
 
 [[fig-privileges-partial-list]]
 .Partial List of Security Privileges
-image::figs/web/privileges-partial-list.png[scale=45]
+image::figs/web/privileges-partial-list.png[scale=70]
 
 The list of privileges displays an icon for the privilege Type as the first column, followed by:
 
@@ -119,49 +119,46 @@ Click the 'Create privilege' button to view a list of privilege types, as seen i
 
 [[fig-privileges-types]]
 .Choosing Privilege Types
-image::figs/web/privileges-types.png[scale=45]
+image::figs/web/privileges-types.png[scale=80]
 
 Select the privilege type corresponding to the area of the repository manager you wish to grant permissions. The 
 privilege types are as follows:
 
-Application:: These are privileges related to a defined aspect of an application.
+Application:: These are privileges related to a defined aspect of the repository manager.
 Repository Admin:: These are privileges related to the administration and configuration of a specific repository.
 Repository View:: These are privileges controlling access to the content of a specific repository.
-Script:: These are privileges related to scripted commands capable of executing permissions granted.
-Wildcard:: These are privileges related to search that can match any sequence of permissions.
+Script:: These are privileges related to the execution and managment of scripts as documented in <<scripting>>.
+Wildcard:: These are privileges that use patterns to group other privileges.
 
-In all 'Privilege Types', above, the variables assigned to a role are defined as 'Actions'. 'Actions' can 
-either be exclusively or a combination of add, browse, create, delete, edit, read and * (all) storage 
+In all 'Privilege Types', above, the variables assigned to a role are defined as 'Actions'. 'Actions' can either
+be exclusive or a combination of `add`, `browse`, `create`, `delete`, `edit`, `read` and `*` (all) storage
 functions.
 
-To save a new custom privilege click the 'Create privilege' button. The privilege can be found listed 
-among the default privileges on the main 'Privileges' screen.
+To save a new custom privilege click the 'Create privilege' button. The privilege can be found listed among the
+default privileges on the main 'Privileges' screen. You can use the 'Filter' input box to find a specific
+privilege.
 
-Below are some sample privileges we created. The examples will show 'Application' and 
-'Repository View' privilege types. 
-
-In this example, we create an Application privilege type.
+In the following example, an 'Application' privilege type is created.
 
 [[fig-privileges-application]]
 .Creating an Application Privilege
-image::figs/web/privileges-application.png[scale=45]
+image::figs/web/privileges-application.png[scale=80]
 
-The form provides 'Name', 'Description', 'Domain', and 'Actions'. In <<fig-privileges-application>>, above, the 
-form is completed for a privilege only allowed read access to an LDAP domain. If assigned this privilege, a user 
-would be able to view LDAP administration configuration but not edit it, create a new LDAP 
-configuration, nor delete any existing LDAP configurations.
+The form provides 'Name', 'Description', 'Domain', and 'Actions'. In <<fig-privileges-application>> the form is
+completed for a privilege only thats allows read access to the LDAP administration. If assigned this privilege, a
+user is able to view LDAP administration configuration but not edit it, create a new LDAP configuration, nor
+delete any existing LDAP configurations.
 
-In another example, we create a Repository View privilege type.
+In another example, a 'Repository View' privilege type is created.
 
 [[fig-privileges-repository-view]]
 .Creating a Repository View Privilege
-image::figs/web/privileges-repository-view.png[scale=45]
+image::figs/web/privileges-repository-view.png[scale=80]
 
-The form provides 'Name', 'Description', 'Format', 'Repository', and 'Actions'. In 
-<<fig-privileges-repository-view>>, above, the form is completed for a privilege allowing only read and edit 
-privileges for a Docker hosted repository. If assigned this privilege, a user would be able to view and edit 
-Docker images in the docker-internal repository; however, they could not delete them, add them, or even browse 
-them via the user interface.
+The form provides 'Name', 'Description', 'Format', 'Repository', and 'Actions'. In
+<<fig-privileges-repository-view>> the form is completed for a privilege granting sufficient access to publish
+images to a specific hosted repository. A user with this privilege can view and read the contents of the
+repository as well as publish new images to it, but not delete images.
 
 [[roles]]
 === Roles
@@ -317,7 +314,7 @@ As seen in <<fig-realms>>, activate your 'LDAP Realm' by following these steps:
 - Ensure that the 'LDAP Realm' is located beneath the 'Nexus Authenticating Realm' in the list
 - Press 'Save'
 
-We suggest to leave the 'Nexus Authenticating Realm' and the 'Nexus Authorizing Realm' activated so that the
+Best practice is to leave the 'Nexus Authenticating Realm' and the 'Nexus Authorizing Realm' activated so that the
 repository manager can be used by 'anonymous', 'admin' and other users configured in this realm even with LDAP
 authentication offline or unavailable. Any user account not found in the 'Nexus Authenticating Realm', will be
 passed through to LDAP authentication.
