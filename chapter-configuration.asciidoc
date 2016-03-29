@@ -335,23 +335,20 @@ The following task types are available to perform specific maintenance:
 Compact blob store:: Content deleted from a <<admin-repository-blobstores,blob store>> is not physically deleted
 from the storage device. Instead it is only internally marked for deletion. This task performs the actual
 deletion of the relevant files, and therefore frees up the storage space.
-////
 
 Execute script:: Scripts can be provided in the 'Source' field and have to be written using the Groovy programming
 language. These scripts can use the APIs of the repository manager to perform maintenance and other modification
-tasks. Please consult the Javadoc and source for further information.
-////
+tasks. Please consult the Javadoc and source for further information. 
 
 Publish Maven indexes:: Maven indexes can be used to download an index of available components to a client
-including e.g. a developer's IDE. The task publishes the index for all or a specific 'maven2'-formatted
-repository.
+including a developer's IDE, for example. The task publishes the index for all or a specific Maven repository.
 
 Purged incomplete docker uploads:: Docker uploads to a repository can be hundreds of MB in size. It is possible to
 have incomplete uploads or orphaned files remain in temporary storage as a result of incomplete or interrupted
 uploads. The temporary storage consumed by these incomplete or orphaned uploads can be cleaned up with this
 task. You can configure the minimum age of incomplete uploads to be purged and have them deleted by the task
-execution. In addition, any incomplete uploads from docker that have been orphaned by a repository manager restart will be cleaned
-up whenever the task executes.
+execution. In addition, any incomplete uploads from docker that have been orphaned by a repository manager 
+restart will be cleaned up whenever the task executes.
 
 Purge orphaned API keys:: This scheduled tasks deletes old, unused API keys. These keys are generated, for
 example, when using the User Token feature or publishing to NuGet repositories. A key becomes unused, when the
@@ -361,10 +358,10 @@ remove these redundant keys.
 Purge unused components and assets:: This task can be used to remove components and assets in proxy repositories.
 Any component that has not been requested in the configured number of days will be purged.
 
-Purge unused Maven snapshot versions:: This task can be used to remove unused snapshots from Maven repositories. Any
-snapshot that has not been requested in the configured number of days will be purged.
+Purge unused Maven snapshot versions:: This task can be used to remove unused snapshots from Maven repositories. 
+Any snapshot that has not been requested in the configured number of days will be purged.
 
-Rebuild Maven repository metadata:: This task rebuilds the maven-metadata.xml files with the correct information
+Rebuild Maven repository metadata:: This task rebuilds the +maven-metadata.xml+ files with the correct information
 and will also validate the checksums (.md5/.sha1) for all files in the specified maven2 hosted repository. The
 'Group Id', 'Artifact Id' and 'Base Version' parameters allow you to narrow down the section of the repository
 that will be repaired. Typically this task is run manually to repair a corrupted repository.
@@ -375,6 +372,37 @@ for supporting search and browse actions.
 
 Remove Maven indexes:: This task is the counter-part to the task 'Publish Maven indexes' and
 can remove the index.
+
+Remove snapshots from Maven repository:: This task can be scheduled to remove SNAPSHOT-versioned components from a
+Maven repository. Typically this is useful to preserve storage space, as old SNAPSHOT versions are not accessed
+after deployment of a new snapshot and no longer added value.  The tasks removes all metadata about the components
+and assets affected, while it does not reclaim disk space used by the binary assets. This can be achieved by
+running a 'Compact blob store' task afterwards. When you create a scheduled task to remove snapshots, you can
+specify the 'Repository/Group' to affect, as well as:
++
+Minimum snapshot count;; This configuration option allows you to specify a minimum number of snapshots to preserve
+per component SNAPSHOT version.  For example, if you configured this option with a value of 2, the repository
+manager will always preserve at least two time-stamped SNAPSHOT versions. A value of -1 indicates that all
+snapshots should be preserved.
++
+Snapshot retention (days);; This configuration option allows you to specify the number of days to retain 
+component SNAPSHOT versions.  For example, if you want to make sure that you are always keeping the last three
+day's worth of snapshots, configure this option with a value of 3. The 'Minimum snapshot count' 
+configuration overrides this setting.
++
+Remove if released;; If checked, all SNAPSHOT versions that match any released component found with the same
+groupId and artifactId coordinates will be removed. For example, if a release version of
+'com.example:hello-world:1.0.0' is found, all 'com.example:hello-world:1.0.0-SNAPSHOT' assets are deleted.
++
+Grace period after release (days);; This parameter allows you to specify a number of days before 
+released snapshots are purged. If a release associated to a snapshot has an updated timestamp and falls 
+within the set grace period, it will not be purged. This setting will give the respective project that references 
+the snapshot dependency time to upgrade to the release component or the next snapshot version.
++
+CAUTION: The deletion of Maven snapshots when 'Remove if released' is checked takes precedence over the number 
+you select in the 'Minimum snapshot count' field. Also, it is possible to configure the task in such a 
+way that the results may be unexpected. For example, if configured to keep 0 minimum snapshots older than 0 days, 
+all snapshots everywhere will be deleted, despite whether or not a grace period is configured for releases.
 
 Beyond these tasks any plugin can provide additional scheduled tasks, which will appear once you have installed 
 the plugin.
