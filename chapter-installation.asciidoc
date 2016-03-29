@@ -223,18 +223,28 @@ follow system administration best practice and use a service specific user with 
 only.
 
 [[service-linux]]
-==== Running as a Service on Ubuntu and CentOS
+==== Setting up the Service on Linux
 
 You can configure the repository manager to start automatically by copying the +nexus+ script to the +/etc/init.d+
-directory. On a Linux system perform the operations as the root user listed below.
+directory. 
+
+You can configure the repository manager to run the +nexus+ script within +etc/init.d+. +etc/init.d+ is a 
+standard service management package for Linux, a program that contains a console of start, stop, and restart 
+commands. +/etc/init.d+ files are essentially shell scripts that load commands to manage the nexus service, 
+triggered by a symlink. On a Linux system perform the operations as the root user are listed below.
+
+Copy +nexus+ script to the +etc/init.d+ directory.
+
+----
+sudo cp nexus /etc/init.d
+----
 
 Change +NEXUS_HOME+ to the absolute folder location in your +.bashrc+ file, then save.
 ----
 NEXUS_HOME="/opt/nexus"
 ----
 
-Locate the startup script and change the following variables. Go to the +bin+ directory, where you will find two 
-files: +nexus+ and +nexus.rc+ that need to be edited.
+Go to the +bin+ directory, where you will find two files, +nexus+ and +nexus.rc+, that need to be edited.
 
 In the +bin/nexus+ script remove the line below.
 
@@ -255,7 +265,7 @@ the quotes in the line below.
 run_as_user="nexus"
 ----
 
-Make the +/etc/init.d/nexus+ script executable and owned by the root user -
+Make the +/etc/init.d/nexus+ script executable and owned by the root user.
 ----
 chmod 755 /etc/init.d/nexus
 chown root /etc/init.d/nexus
@@ -267,16 +277,41 @@ After changes to the files above, symlink +$NEXUS_HOME/bin/nexus+ to +/etc/init.
 sudo ln -s $NEXUS_HOME/bin/nexus /etc/init.d/nexus
 ----
 
-At this point the service configuration is complete and you can start it with
+===== Running as a Service on RedHat and CentOS
+
+This example script uses +chkconfig+ a utility that allows you to specify the runlevel to start the +nexus+
+service. Run these commands to activate the service: 
 
 ----
+cd /etc/init.d
+chkconfig --add nexus
+chkconfig --levels 345 nexus on
 sudo service nexus start
 ----
 
-////
-TBD .. verify above works with ubuntu and RHEL .. or find similar commands like /etc/init.d/nexus start
-TBD how to configure startup at boot, e.g. update-rc.d or whatever .. depends on Ubuntu vs Redhat
-////
+The second command adds nexus as a service to be started and stopped with the +service+ command. chkconfig 
+manages the symbolic links in +/etc/rc[0-6].d+ which control the services to be started and stopped when the 
+operating system restarts or transitions between run-levels. The third command adds nexus to run-levels 3, 4, and 
+5. Then the service command starts the repository manager.
+
+
+===== Runs as a Service on Ubuntu and Debian
+
+For Ubuntu and Debian, the equivalent to the +chkconfig+ tool is +update-rc.d+. Run a default priority to add the +nexus+ service before starting it.
+
+----
+cd /etc/init.d
+update-rc.d nexus defaults
+sudo service nexus start
+----
+
+After starting the service for any Linux-based operating systems, verify that the service started successfully.
+
+----
+tail -f /usr/opt/nexus/logs/wrapper.log
+----
+
+There will be a message notifying you the service is listening for HTTP.
 
 [[service-windows]]
 ==== Running as a Service on Windows
@@ -285,7 +320,7 @@ The startup script that runs {pro} and {oss} on Windows platforms is +bin/nexus.
 commands for starting and stopping the service. It also contains commands +install+ and +uninstall+ to create and
 delete the configuration for the service.
 
-You can create the service configuration with
+You can create the service configuration with:
 
 ----
 nexus.exe /install
@@ -524,12 +559,7 @@ to use the absolute path `/opt/repository/storage/`, you have to change to:
 
 === Uninstalling {oss}
 
-To uninstall {oss} from your system locate the +uninstall+ file in the installation directory. 
-From the command line, run the command below.
-
-----
-cd /bin/nexus
-----
+To uninstall the repository manager from your system locate +uninstall+ file in the installation directory. 
 
 Open +uninstall+ to prompt the uninstaller. The interface will ask you if you want to completely remove the 
 repository manager and its components. If yes, click 'Next'.
@@ -537,7 +567,7 @@ repository manager and its components. If yes, click 'Next'.
 The next step displays the directory of the repository manager. All configurations, components, assets, and 
 {oss}-related data will be removed from the directory if you check 'Yes, remove Nexus application data'.
 
-Click 'Next' to complete the uninstall process.
+Click 'Next', then 'Finish' to complete the uninstall process.
 
 ////
 /* Local Variables: */
