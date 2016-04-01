@@ -233,12 +233,6 @@ standard service management package for Linux, a program that contains a console
 commands. +/etc/init.d+ files are essentially shell scripts that load commands to manage the nexus service, 
 triggered by a symlink. On a Linux system perform the operations as the root user are listed below.
 
-Copy +nexus+ script to the +etc/init.d+ directory.
-
-----
-sudo cp nexus /etc/init.d
-----
-
 Change +NEXUS_HOME+ to the absolute folder location in your +.bashrc+ file, then save.
 ----
 NEXUS_HOME="/opt/nexus"
@@ -249,7 +243,7 @@ Go to the +bin+ directory, where you will find two files, +nexus+ and +nexus.rc+
 In the +bin/nexus+ script remove the line below.
 
 ----
-INSTALL4J_JAVA_PREFIX=""
+INSTALL4J_JAVA_PREFIX="su - $run_as_user -c"
 ----
 
 Replace the entry link with this line:
@@ -265,16 +259,16 @@ the quotes in the line below.
 run_as_user="nexus"
 ----
 
-Make the +/etc/init.d/nexus+ script executable and owned by the root user.
-----
-chmod 755 /etc/init.d/nexus
-chown root /etc/init.d/nexus
-----
-
 After changes to the files above, symlink +$NEXUS_HOME/bin/nexus+ to +/etc/init.d/nexus+:
 
 ----
 sudo ln -s $NEXUS_HOME/bin/nexus /etc/init.d/nexus
+----
+
+Make the +/etc/init.d/nexus+ script executable and owned by the root user.
+----
+chmod 755 /etc/init.d/nexus
+chown root /etc/init.d/nexus
 ----
 
 ===== Running as a Service on RedHat and CentOS
@@ -284,8 +278,8 @@ service. Run these commands to activate the service:
 
 ----
 cd /etc/init.d
-chkconfig --add nexus
-chkconfig --levels 345 nexus on
+sudo chkconfig --add nexus
+sudo chkconfig --levels 345 nexus on
 sudo service nexus start
 ----
 
@@ -301,7 +295,7 @@ For Ubuntu and Debian, the equivalent to the +chkconfig+ tool is +update-rc.d+. 
 
 ----
 cd /etc/init.d
-update-rc.d nexus defaults
+sudo update-rc.d nexus defaults
 sudo service nexus start
 ----
 
