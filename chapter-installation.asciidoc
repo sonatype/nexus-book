@@ -48,8 +48,9 @@ Next steps, after a successful download, depend on the distribution you download
 {pro} requires a Java 8 Runtime Environment (JRE) from Oracle. The distributions for OSX and Windows include
 suitable runtime environments for the specific operating system.
 
-If you prefer to use an external runtime or use a Unix operating system, it is recommended to use the latest version of
-Java 8 available from the http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle website].
+If you prefer to use an external runtime or use a Unix operating system, it is recommended to use the latest 
+version of Java 8 available from the http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle 
+website].
 
 You can confirm the installed Java version with the `java` command:
 
@@ -65,6 +66,26 @@ the above command as the operating system user, that is used to run the reposito
 to update the configuration to specify a specific JRE installation path.
 
 TIP: OpenJDK or other Java distributions or older Java versions are not supported.
+
+==== Configuring Java Runtime Environment for Linux and Unix
+
+Linux and Unix comes with OpenJDK, an open source implementation of the Java Platform. Since the repository 
+manager does not support OpenJDK you are required to install Java Runtime Environment (JRE) from Oracle, then 
+manually set your environment variables to point to the Java directory on your system. If you download the Java 
+Development Kit (JDK) bundle, it includes the JRE.
+
+After you download and install the preferred Java platform set the appropriate variables on your +.bashrc+. This 
+example shows configuation for +JAVA_HOME+, +JRE_HOME+, and +PATH+.
+
+----
+JAVA_HOME=/usr/local/java/jdk1.8.0_77
+PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
+JRE_HOME=/usr/local/java/jre1.7.0_79
+PATH=$PATH:$HOME/bin:$JRE_HOME/bin
+export JAVA_HOME
+export JRE_HOME
+export PATH
+----
 
 [[installation-archive]]
 ===  Installing and Running with the Distribution Archive
@@ -515,10 +536,6 @@ such as ports used for HTTP and HTTPS access, location of the data and configura
 context path and host.
 
 system.properties:: Configuration parameters used for the JVM and application start up.
-
-////
-TBD add section on JRE server config 
-////
 
 ==== Updating Memory Allocation and other JVM Paramaters
 
