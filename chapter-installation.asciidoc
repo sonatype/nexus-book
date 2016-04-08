@@ -48,8 +48,9 @@ Next steps, after a successful download, depend on the distribution you download
 {pro} requires a Java 8 Runtime Environment (JRE) from Oracle. The distributions for OSX and Windows include
 suitable runtime environments for the specific operating system.
 
-If you prefer to use an external runtime or use a Unix operating system, it is recommended to use the latest version of
-Java 8 available from the http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle website].
+If you prefer to use an external runtime or use a Unix operating system, it is recommended to use the latest 
+version of Java 8 available from the http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle 
+website].
 
 You can confirm the installed Java version with the `java` command:
 
@@ -200,52 +201,15 @@ web-browser is started and the user interface detailed in <<access>> is accessib
 === Upgrading
 
 Since the repository manager separates its configuration and data storage from the application, it is easy to 
-upgrade an existing installation. You can upgrade with the installer application or the tar.gz or zip 
-distribution file. To keep the upgrade simple be sure to schedule some downtime.
+upgrade an existing installation. There are two ways to upgrade: with the installer application or the 
+distribution file. 
+
+To keep the upgrade simple schedule downtime to preserve important directories during the process. Follow the 
+steps in the support https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base article].
 
 NOTE: Upgrading to {oss} 3.0.0 can only be performed by users who run the milestone 7 release of the repository 
-manager. Be sure to manually back up the milestone 7 data dictionary to another location. It is a crucial step to 
+manager. Be sure to manually back up the milestone 7 data directory to another location. It is a crucial step to 
 properly upgrade the application.
-
-==== Upgrade with the Installer Application
-
-To upgrade using the installer, locate the data dictionary of your previous installation, then stop the 
-repository manager. Start the installer after downloading. It will automatically detect the existing install, 
-then ask if you want to upgrade. Select the radio button 'No, install into a different directory' and click 
-'Next>'.
-
-Continue until you see the screen that displays the 'Destination Directory' field. Enter a path to a directory 
-where the repository manager application runtime files will reside.
-
-Click 'Next>' to get the screen that displays a field for 'Data Dictionary'. Enter a path to the previous
-data dictionary directory. Inside the target directory, create an empty file called +clean_cache+. Click 'Next>'.
-
-The last screen of the installer will prompt you before it overwrites any files. Choose 'Yes' or 'Yes to all' to 
-overwrite existing files.
-
-==== Upgrade with a Distribution File
-
-To upgrade using a +tar.gz+ or +zip+ file, stop the repository manager, if running. Then download the 
-distribution file applicable to your operating system. Extract the appropriate file.
-
-----
-tar xzvf nexus-installer-3.0.0-03-mac-archive.tgz
-tar xzvf nexus-installer-3.0.0-03-unix-archive.tar.gz
-7za.exe nexus-installer-3.0.0-03-win64-archive.zip
-----
-
-Edit +nexus-3.0.0-03/bin/nexus.vmoptions+. Replace the line +-Dkaraf.data=data+ to point to the previous 
-data directory. This example shows the path +/app/nexus3/data+:
-
-----
--Dkaraf.data=/app/nexus3/data
-----
-
-Inside the previous data dictionary directory, create an empty file called +clean_cache+, e.g. 
-+/app/nexus3/data/clean_cache+
-
-NOTE: To see a full example of upgrading, printing contents of the data dictionary, and more review the 
-https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base] article.
 
 [[configure-service]]
 === Configuring as a Service
