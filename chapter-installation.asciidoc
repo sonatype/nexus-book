@@ -269,38 +269,59 @@ only.
 [[service-linux]]
 ==== Setting up the Service on Linux
 
-You can configure the repository manager to run the +nexus+ script within +etc/init.d+. +etc/init.d+ is a 
-standard service management package for Linux, a program that contains a console of start, stop, and restart 
-commands. +/etc/init.d+ files are essentially shell scripts that load commands to manage the nexus service, 
-triggered by a symlink. On a Linux system perform the operations as the root user are listed below.
+You can configure the repository manager to run as a service within either +etc/init.d+ or +systemd+. 
+Both +etc/init.d+ and +systemd+ are service management packages used in Linux-based systems such as Ubuntu and 
+CentOS. Both are daemons that contain a console of start, stop, and restart commands. +/etc/init.d+ and +systemd+ 
+files are essentially shell scripts that load commands to manage the nexus service, triggered by a symlink.
+
+Before running the service configure an absolute path for your repository manager files. Then create a +nexus+ 
+user with sufficient access rights to run the service.
 
 Change +NEXUS_HOME+ to the absolute folder location in your +.bashrc+ file, then save.
 ----
 NEXUS_HOME="/opt/nexus"
 ----
 
-Go to the +bin+ directory, where you will find two files, +nexus+ and +nexus.rc+, that need to be edited.
-
-In the +bin/nexus+ script remove the line below.
-
-----
-INSTALL4J_JAVA_PREFIX="su - $run_as_user -c"
-----
-
-Replace the entire link with this line:
-
-----
-exec su - $run_as_user "$prg_dir/$progname" $@
-----
-
-Create a +nexus+ user with sufficient access rights to run the service. In +bin/nexus.rc+ assign the between 
-the quotes in the line below.
+In +bin/nexus.rc+ assign the user between the quotes in the line below.
 
 ----
 run_as_user="nexus"
 ----
 
-After changes to the files above, symlink +$NEXUS_HOME/bin/nexus+ to +/etc/init.d/nexus+:
+[[service-centos-redhat]]
+===== Running as a Service on CentOS and RedHat
+
+This example script uses +systemd+ to run the repository manager service. Create a file called 
++nexus.service+. Add the following contents then save.
+
+----
+[Unit]
+Description=nexus service
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/opt/nexus/bin/nexus start
+ExecStop=/opt/nexus/bin/nexus stop
+User=nexus
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+----
+
+Activate the service with the following commands:
+----
+sudo systemctl daemon-reload
+sudo systemctl enable nexus.service
+sudo wystemctl start nexus.service
+----
+
+[[service-ubuntu-debian]]
+===== Running as a Service on Ubuntu and Debian
+
+After you set up your absolute path and user from <<service-linux>>, symlink +$NEXUS_HOME/bin/nexus+ to 
++/etc/init.d/nexus+:
 
 ----
 sudo ln -s $NEXUS_HOME/bin/nexus /etc/init.d/nexus
@@ -312,27 +333,7 @@ chmod 755 /etc/init.d/nexus
 chown root /etc/init.d/nexus
 ----
 
-===== Running as a Service on RedHat and CentOS
-
-This example script uses +chkconfig+ a utility that allows you to specify the runlevel to start the +nexus+
-service. Run these commands to activate the service: 
-
-----
-cd /etc/init.d
-sudo chkconfig --add nexus
-sudo chkconfig --levels 345 nexus on
-sudo service nexus start
-----
-
-The second command adds nexus as a service to be started and stopped with the +service+ command. chkconfig 
-manages the symbolic links in +/etc/rc[0-6].d+ which control the services to be started and stopped when the 
-operating system restarts or transitions between run-levels. The third command adds nexus to run-levels 3, 4, and 
-5. Then the service command starts the repository manager.
-
-
-===== Runs as a Service on Ubuntu and Debian
-
-For Ubuntu and Debian, the equivalent to the +chkconfig+ tool is +update-rc.d+. Run a default priority to add the +nexus+ service before starting it.
+For Ubuntu and Debian, use +update-rc.d+. Run a default priority to add the +nexus+ service before starting it.
 
 ----
 cd /etc/init.d
