@@ -48,10 +48,6 @@ Next steps, after a successful download, depend on the distribution you download
 {pro} requires a Java 8 Runtime Environment (JRE) from Oracle. The distributions for OSX and Windows include
 suitable runtime environments for the specific operating system.
 
-If you prefer to use an external runtime or use a Unix operating system, it is recommended to use the latest 
-version of Java 8 available from the http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle 
-website].
-
 You can confirm the installed Java version with the `java` command:
 
 ----
@@ -67,25 +63,26 @@ to update the configuration to specify a specific JRE installation path.
 
 TIP: OpenJDK or other Java distributions or older Java versions are not supported.
 
-==== Configuring Java Runtime Environment for Linux and Unix
+==== Configuring Java Runtime Environment Path for Linux and Unix
 
-Linux and Unix comes with OpenJDK, an open source implementation of the Java Platform. Since the repository 
-manager does not support OpenJDK you are required to install Java Runtime Environment (JRE) from Oracle, then 
-manually set your environment variables to point to the Java directory on your system. If you download the Java 
-Development Kit (JDK) bundle, it includes the JRE.
+Linux and Unix do not come with Java Development Kit nor Java Runtime Environment (JRE). You can install the JDK 
+which includes the JRE or, install the JRE by itself. Whichever method you choose, update your +JAVA_HOME+ or 
++JDK_HOME+ in your +.bashrc+ to the path that runs the service.
 
-After you download and install the preferred Java platform set the appropriate variables on your +.bashrc+. This 
-example shows configuation for +JAVA_HOME+, +JRE_HOME+, and +PATH+.
+For example: 
 
 ----
 JAVA_HOME=/usr/local/java/jdk1.8.0_77
-PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
-JRE_HOME=/usr/local/java/jre1.7.0_79
-PATH=$PATH:$HOME/bin:$JRE_HOME/bin
-export JAVA_HOME
-export JRE_HOME
-export PATH
 ----
+
+To set the path for a specific JRE location open the +nexus+ script and locate 
+line+INSTALL4J_JAVA_HOME_OVERRIDE+. Remove the hash and corresponding 
+comment, then update the unhidden variable.
+
+----
+INSTALL4J_JAVA_HOME_OVERRIDE=/opt/nexus/java/jre1.8.0_77
+---- 
+
 
 [[installation-archive]]
 ===  Installing and Running with the Distribution Archive
