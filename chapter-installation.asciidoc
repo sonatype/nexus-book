@@ -46,11 +46,13 @@ Next steps, after a successful download, depend on the distribution you download
 === Java Runtime Environment
 
 {pro} requires a Java 8 Runtime Environment (JRE) from Oracle. The distributions for OSX and Windows include
-suitable runtime environments for the specific operating system.
+suitable runtime environments for the specific operating system. The distributions for Unix do not include the
+runtime environment.
 
 If you prefer to use an external runtime or use a Unix operating system, it is recommended to use the latest 
 version of Java 8 available from the http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle 
-website].
+website]. You can choose to install the full JDK or the JRE only.
+
 
 You can confirm the installed Java version with the `java` command:
 
@@ -62,10 +64,26 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
 ----
 
 When multiple JDK or JRE versions are installed, you need to ensure the correct version is configured by running
-the above command as the operating system user, that is used to run the repository manager. Potentially you need
-to update the configuration to specify a specific JRE installation path.
+the above command as the operating system user, that is used to run the repository manager. This allows you to
+have a dedicated runtime environment for the repository manager installed that is not on the path and not used by
+other installed applications. It allows you to separate upgrades of the Java runtime used by the repository
+manager from upgrades of the runtime used by other applications.
 
 TIP: OpenJDK or other Java distributions or older Java versions are not supported.
+
+Potentially you need to update the configuration to specify a specific JDK or JRE installation path:
+
+To set the path for a specific Java location open the +bin/nexus+ script and locate the line
++INSTALL4J_JAVA_HOME_OVERRIDE+. Remove the hash and specify the location of your JDK/JRE:
+
+----
+INSTALL4J_JAVA_HOME_OVERRIDE=/usr/lib/jvm/java-8-oracle
+---- 
+
+The startup script verifies the runtime environment by checking for the existance of the nested `bin/java` command
+as well as major and minor version of the runtime to be the required `1.8`. If the configured runtime is not
+suitable, it will proceed with a best effort to locate a suitable runtime configured on the path or via the
+`JAVA_HOME` environment variable. If successful, it will start up the repository manager with this JVM.
 
 [[installation-archive]]
 ===  Installing and Running with the Distribution Archive
