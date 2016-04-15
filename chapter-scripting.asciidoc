@@ -211,14 +211,22 @@ calls
 log.info('User jane.doe created')
 ----
 
-The result of the last script line is by default returned as a string. It can therefore be useful to add a final
-script completion log message like
+The result of the last script line is by default returned as a string. This can be a message as simple as 'Success!'
+or more complex structured data. For instance, you can easily return JSON using built-in Groovy classes like:
 
 ----
-log.info('Script security completed successfully')
+return groovy.json.JsonOutput.toJson([result: 'Success!'])
 ----
 
-Passing parameters to the script has to use JSON encoded arguments like
+which looks like
+
+----
+{
+    "result": "Success!"
+}
+----
+
+Passing parameters to the script can use JSON encoded arguments like
 
 ----
 {
@@ -240,6 +248,9 @@ def role = new JsonSlurper().parseText(args)
 
 security.addRole(role.id, role.name, role.description, role.privilegeIds, role.roleIds)
 ----
+
+You can read more about how to work with XML and JSON with Groovy on http://groovy-lang.org/processing-xml.html and
+http://groovy-lang.org/json.html. 
 
 
 
