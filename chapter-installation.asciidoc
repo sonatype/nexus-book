@@ -267,12 +267,11 @@ follow system administration best practice and use a service specific user with 
 only.
 
 [[service-linux]]
-==== Setting up the Service on Linux
+==== Setting up as a Service on Linux
 
-You can configure the repository manager to run as a service within either +etc/init.d+ or +systemd+. 
-Both +etc/init.d+ and +systemd+ are service management packages used in Linux-based systems such as Ubuntu and 
-CentOS. Both are daemons that contain a console of start, stop, and restart commands. +/etc/init.d+ and +systemd+ 
-files are essentially shell scripts that load commands to manage the nexus service, triggered by a symlink.
+You can configure the repository manager to run as a service with +systemd+. +systemd+ is a startup framework 
+used in Linux-based systems such as Ubuntu and CentOS. It is, essentially, an initscript that loads commands to 
+manage the repository manager daemon. 
 
 Before running the service configure an absolute path for your repository manager files. Then create a +nexus+ 
 user with sufficient access rights to run the service.
@@ -288,11 +287,11 @@ In +bin/nexus.rc+ assign the user between the quotes in the line below.
 run_as_user="nexus"
 ----
 
-[[service-centos-redhat]]
-===== Running as a Service on CentOS and RedHat
+[[run-service]]
+===== Running the Service
 
-This example script uses +systemd+ to run the repository manager service. Create a file called 
-+nexus.service+. Add the following contents then save.
+This example script uses +systemd+ to run the repository manager service. Create a file called +nexus.service+. 
+Add the following contents then save.
 
 ----
 [Unit]
@@ -315,30 +314,6 @@ Activate the service with the following commands:
 sudo systemctl daemon-reload
 sudo systemctl enable nexus.service
 sudo wystemctl start nexus.service
-----
-
-[[service-ubuntu-debian]]
-===== Running as a Service on Ubuntu and Debian
-
-After you set up your absolute path and user from <<service-linux>>, symlink +$NEXUS_HOME/bin/nexus+ to 
-+/etc/init.d/nexus+:
-
-----
-sudo ln -s $NEXUS_HOME/bin/nexus /etc/init.d/nexus
-----
-
-Make the +/etc/init.d/nexus+ script executable and owned by the root user.
-----
-chmod 755 /etc/init.d/nexus
-chown root /etc/init.d/nexus
-----
-
-For Ubuntu and Debian, use +update-rc.d+. Run a default priority to add the +nexus+ service before starting it.
-
-----
-cd /etc/init.d
-sudo update-rc.d nexus defaults
-sudo service nexus start
 ----
 
 After starting the service for any Linux-based operating systems, verify that the service started successfully.
