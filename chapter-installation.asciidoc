@@ -269,9 +269,9 @@ only.
 [[service-linux]]
 ==== Setting up as a Service on Linux
 
-You can configure the repository manager to run as a service with +systemd+. +systemd+ is a startup framework 
-used in Linux-based systems such as Ubuntu and CentOS. It is, essentially, an initscript that loads commands to 
-manage the repository manager daemon. 
+You can configure the repository manager to run as a service with +init.d+ or +systemd+. Both are startup 
+frameworks used in Linux-based systems such as Ubuntu and CentOS. They are, essentially, initscripts that 
+load commands to manage the repository manager daemon. 
 
 Before running the service configure an absolute path for your repository manager files. Then create a +nexus+ 
 user with sufficient access rights to run the service.
@@ -287,11 +287,49 @@ In +bin/nexus.rc+ assign the user between the quotes in the line below.
 run_as_user="nexus"
 ----
 
+If you use +init.d+ instead of +systemd+, symlink +$NEXUS_HOME/bin/nexus+ to +/etc/init.d/nexus+:
+
+----
+sudo ln -s $NEXUS_HOME/bin/nexus /etc/init.d/nexus
+----
+
 [[run-service]]
 ===== Running the Service
 
-This example script uses +systemd+ to run the repository manager service. Create a file called +nexus.service+. 
-Add the following contents, then save the file in your +usr/local/bin+ directory.
+
+*chkconfig.*
+
+This example uses +chkconfig+, a tool that targets the initscripts in +init.d+ to run the +nexus+ service. Run 
+these commands to activate the service:
+
+----
+cd /etc/init.d
+sudo chkconfig --add nexus
+sudo chkconfig --levels 345 nexus on
+sudo service nexus start
+----
+
+The second command adds nexus as a service to be started and stopped with the command. +chkconfig+ manages the 
+symbolic links in +/etc/rc[0-6].d+ which control the services to be started and stopped when the operating system 
+restarts or transitions between run-levels. The third command adds nexus to run-levels 3, 4, and 5. Then the 
+service command starts the repository manager.
+
+*update-rc.d.*
+
+This example uses +update-rc.d+, a tool similar to the +chkconfig+.
+
+----
+cd /etc/init.d
+sudo update-rc.d nexus defaults
+sudo service nexus start
+----
+
+In the second line you will run a default priority to add the +nexus+ service before starting it.
+
+*systemd.*
+
+This example is a script that uses +systemd+ to run the repository manager service. Create a file called 
++nexus.service+. Add the following contents, then save the file in the +/usr/local/bin+ directory.
 
 ----
 [Unit]
@@ -322,7 +360,8 @@ After starting the service for any Linux-based operating systems, verify that th
 tail -f /opt/nexus/data/log/nexus.log
 ----
 
-There will be a message notifying you the service is listening for HTTP.
+The tail command verifies that the service has been started successfully. If successful, you should see a message 
+notifying you that it is listening for HTTP.
 
 [[service-windows]]
 ==== Running as a Service on Windows
