@@ -400,13 +400,14 @@ where the repository manager needs to be proxied at a different base path you mu
 editing a property value. In <<admin-base-url>> follow the steps to change or update the base URL if you want an 
 alternate server name.
 
-In the following examples, refer to <<config-http-port>> to change HTTP port and context properly.
+In the following examples, review the sections on changing the <<config-http-port,HTTP port>> and 
+<<config-context-path,context path>> to properly reverse-proxy the repository manager.
 
 ==== Example: Reverse Proxy on Restricted Ports
 
 *Scenario*: You need to expose the repository manager on restricted port 80. The repository manager should not be 
 run with the root user. Instead run your reverse proxy on the restricted port 80 and the repository manager on 
-the default port 8081. End users will access the repository manager using the virtual host URL 
+the default port +8081+. End users will access the repository manager using the virtual host URL 
 http://www.example.com/nexus instead of http://localhost:8081/nexus.
 
 Ensure your external hostname (+www.example.com+) routes to your reverse proxy server. In this example use the 
@@ -422,7 +423,7 @@ ProxyPreserveHost On
   ServerName www.example.com
   ServerAdmin admin@example.com
   ProxyPass /nexus http://localhost:8081/
-  ProxyPassReverse /nexus http://localhost:8081/
+  ProxyPassReverse / http://localhost:8081/
   ErrorLog logs/www.example.com/nexus/error.log
   CustomLog logs/www.example.com/nexus/access.log common
 </VirtualHost>
