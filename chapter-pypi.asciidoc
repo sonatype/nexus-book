@@ -23,7 +23,7 @@ contents of multiple repositories in one convenient URL)
 
 To reduce time and bandwidth the repository manager can access Python packages and tools from the index. The 
 proxy repository for PyPI packages provides a nearby cache of files available on the index. This allows the local 
-network client to access files from the Python Package Index more reliably.
+network client to access components from the Python Package Index more reliably.
 
 Administrators who use the repository manager will download and run libraries to retrieve, facilitate, and manage 
 Python projects. By design, Python installs to the root directory with the version number embedded so you can 
@@ -43,7 +43,10 @@ detail. Minimal configuration steps are:
 * Define URL for 'Remote storage' e.g. https://pypi.python.org/pypi[https://pypi.python.org/pypi]
 * Select a 'Blob store' for 'Storage'
 
-A user with sufficient privileges will be able to run pip search against a proxied repository.
+The Proxy configuration for a PyPI proxy repository includes a configuration URL to access the index. The index 
+is used for requests related to searches. A user with sufficient privileges will be able to run a search, from 
+the user interface or command line, against a remote repository (e.g. https://pypi.python.org/pypi ), as 
+referenced in <<pypi-browse-search>>.
 
 ////
 [[pypi-hosted]]
@@ -96,17 +99,29 @@ installation. Run the command as follows:
 sudo pip install virtualenv
 ----
 
-////
-* use pip to install setup tools
-////
+Next install Twine. Twine is a utility that provides secure authentication to PyPI over HTTPS. It is an 
+alternative to `python setup.py upload` which is available to older version of Python. Twine's only function is 
+to support <<pypi-upload-dist, uploading distributions>>. To install with PIP, run the command as follows:
 
+----
+sudo pip install twine
+----
+
+Now activate a +virtualenv+. Change the environment name and version number as required. In the example below, an 
+environment for Python 2.6 is created, then activated:
+
+----
+virtualenv py26 --python=python2.6
+cd py26
+source ./bin/activate
+----
 
 [[pypi-configuration]]
 === Configuring PyPI Client Tools
 
-Once you have installed all necessary packages from the Python Package Index, create and configure +pip.conf+. 
-+pip.conf+ is a configuration file that allows you to set all command line option defaults in a standard ini 
-style. In the example below, add the proxy package index url:
+Once you have installed all necessary packages from the Python Package Index and active your +virtualenv+, create 
+and configure +pip.conf+. +pip.conf+ is a configuration file that allows you to set all command line option
+defaults in a standard ini style. In the example below, reference the remote index package to be proxied:
 
 ----
 [global]
@@ -114,28 +129,103 @@ index = http://localhost:8081/repository/pypi-proxy/pypi
 index-url = http://localhost:8081/repository/pypi-proxy/simple
 ----
 
+Next bootstrap your target environment with +setuptools+ using PIP. +easy_install+ is a module bundled with 
++setuptools+. +easy_install+ that gives you a quick way to install packages remotely. In the example, version 19 
+is used.
+
+----
+pip install setuptools==19
+----
+
+Now, create a +setup.cfg+ for for +easy_install+. Add the following lines, then save:
+
+----
+[easy_install]
+index-url = http://localhost:8081/repository/pypi-proxy/simple
+----
+
 ////
-* Create and active your +virtualenv+
-* use pip to install easy_install 
+for hosted add .pypirc configuration
+////
+
+[[pypi-create-dist]]
+=== Packaging and Distributing Projects
+
+To make your project installable from PyPI, you must create a source distribution, is a collection of components 
+that you can package and send to users via the repository manager. A multi-platform installer called +setup.py+ 
+is used to install Python packages. +setup.py+ is executed when you build a distribution. You can create a wheel 
+or egg, formats that carry out distribution to the target environment. To create the distribution follow this 
+syntax:
+
+----
+python setup.py sdist
+----
+
+*Build a wheel.*
+
+In this example run the following command for a Python 2.7 environment:
+
+----
+python2.7 setup.py bdist_wheel
+----
+
+The +bdist_wheel+ will detect the Python installation so that is usable with any Python instance of the same 
+version.
+
+*Build an egg.*
+
+Run the following command:
+
+////
+[[pypi-upload-dist]]
+=== Uploading Distributions
+
+----
+twine upload dist/*
+----
 ////
 
 ////
-for proxy
-Now set up your setup.cfg file for easy_install:
-nano setup.cfg
-for hosted 
-.pypirc
-////
-
 [[pypi-ssl]]
 ==== SSL Usage for PyPI Client Tools
 
-TBD
+You can secure inbound and outbound communication between the repository manager and the PyPI repository using 
+SSL. This assumes the repository manager has already been set up to use SSL. If not review SSL configuration at 
+<<ssl>>.
 
-////
-If using SSL, perform the following steps. This assumes the repository manager has already been set up to use SSL. If not review SSL configuration at <<ssl>>.
-////
+First, if you are running Python 2.7 or earlier, run the following to avoid +InsecurePlatformWarnings+ and 
+related errors:
 
+----
+pip install pyopenssl ndg-httpsclient pyasn1
+pip install --upgrade ndg-httpsclient
+pip install setuptools==19
+----
+
+NOTE: The steps to avoid +InsecurePlatformWarnings+ may change your version of setuptools, so you need to 
+reinstall your version of +setuptools+ after running the commands listed above.
+
+Next, retrieve the PEM certificate information from the repository manager:
+
+----
+openssl s_client -tls1 -connect localhost:8443
+----
+
+Copy certificate and save it to +nexus.pem+. To ensure the configuration is correct. verifying the .pem:
+
+----
+openssl verify nexus.pem
+----
+
+Update your +pip.conf+ as follows:
+
+----
+[global]
+index = https://localhost:8443/repository/pypi-proxy/pypi
+index-url = https://localhost:8443/repository/pypi-proxy/simple
+cert = nexus.pem
+----
+////
 
 [[pypi-browse-search]]
 === Browsing PyPI Repositories and Searching Packages
@@ -143,11 +233,29 @@ If using SSL, perform the following steps. This assumes the repository manager h
 You can browse PyPI repositories in the user interface inspecting the components and assets and their details, as
 described in <<search-components>>.
 
+Searching for PyPI packages can be performed in the user interface, too. It finds all packages that are currently
+stored in the repository manager that have been proxied from an upstream repository and cached in the repository 
+manager.
+
 ////
-Add section here on using pip search from the command line. Use pip search install a wheel package.
-e.g. From the command line you can search available packages with pip search. Run the command pip search [package name]. For example, if you want to install 
+Second sentence edit for hosted docs
+It finds all packages that are currently stored in the repository manager, either because they have been pushed 
+to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
 ////
 
-Searching for PyPI packages can be performed in the user interface, too. It finds all packages that are currently
-stored in the repository manager, either because they have been pushed to a hosted repository or they have been
-proxied from an upstream repository and cached in the repository manager.
+From the command line you can search available PyPI packages. To search for a package, run:
+
+----
+pip search example-package
+----
+
+[[pypi-deactivate]]
+==== Deactivating the Environment
+
+To switch back to your default environment, run the following:
+
+----
+deactivate
+----
+
+You should see the command prompt change, and your original versions of Python and PIP should be available.
