@@ -43,6 +43,8 @@ detail. Minimal configuration steps are:
 * Define URL for 'Remote storage' e.g. https://pypi.python.org/pypi[https://pypi.python.org/pypi]
 * Select a 'Blob store' for 'Storage'
 
+A user with sufficient privileges will be able to run pip search against a proxied repository.
+
 ////
 [[pypi-hosted]]
 === Hosting PyPI Repositories
@@ -73,15 +75,22 @@ version on your system.
 python --version
 ----
 
-The repository manager supports version 7 and 8 of the Pip installer. Run the following to check the Pip version:
+The repository manager supports version 7 and 8 of the PIP installer. Run the following to check the PIP version:
 
 ----
 pip --version
 ----
 
-Use Pip to install +virtualenv+, a virtual enviroment tool for Python applications. Rather than installing PyPI 
-packages globally, use +virtualenv+ to access them against different versions of the Python interpreter without 
-modifying your main Python installation. Run the command as follows:
+If you do not have PIP, run the command to install version 7 or 8. For example, install version 8:
+
+----
+pip install pip==8
+----
+
+Use PIP to install +virtualenv+, a virtual enviroment tool for Python applications. Rather than installing PyPI 
+packages globally, use +virtualenv+ to sandbox a specific running Python environment. +virtualenv+ will access a 
+selected against different versions of the Python interpreter without modifying your main Python 
+installation. Run the command as follows:
 
 ----
 sudo pip install virtualenv
@@ -95,7 +104,15 @@ sudo pip install virtualenv
 [[pypi-configuration]]
 === Configuring PyPI Client Tools
 
-Once you have install all necessary packages from the Python Package Index:
+Once you have installed all necessary packages from the Python Package Index, create and configure +pip.conf+. 
++pip.conf+ is a configuration file that allows you to set all command line option defaults in a standard ini 
+style. In the example below, add the proxy package index url:
+
+----
+[global]
+index = http://localhost:8081/repository/pypi-proxy/pypi
+index-url = http://localhost:8081/repository/pypi-proxy/simple
+----
 
 ////
 * Create and active your +virtualenv+
@@ -110,11 +127,26 @@ for hosted
 .pypirc
 ////
 
+[[pypi-ssl]]
+==== SSL Usage for PyPI Client Tools
+
+TBD
+
+////
+If using SSL, perform the following steps. This assumes the repository manager has already been set up to use SSL. If not review SSL configuration at <<ssl>>.
+////
+
+
 [[pypi-browse-search]]
 === Browsing PyPI Repositories and Searching Packages
 
 You can browse PyPI repositories in the user interface inspecting the components and assets and their details, as
 described in <<search-components>>.
+
+////
+Add section here on using pip search from the command line. Use pip search install a wheel package.
+e.g. From the command line you can search available packages with pip search. Run the command pip search [package name]. For example, if you want to install 
+////
 
 Searching for PyPI packages can be performed in the user interface, too. It finds all packages that are currently
 stored in the repository manager, either because they have been pushed to a hosted repository or they have been
