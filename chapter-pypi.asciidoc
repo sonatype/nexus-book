@@ -7,11 +7,11 @@
 
 The Python Package Index, or PyPI, is a vast repository of open-source Python packages supplied by the worldwide 
 community of Python developers. The official PyPI is available for searches at 
-https://pypi.python.org/pypi[https://pypi.python.org/pypi]. Bu
+https://pypi.python.org/pypi[https://pypi.python.org/pypi].
 
 {pro} and {oss} support the Python Package Index (PyPI) repository format for proxy repositories. This 
 allows the repository manager to take advantage of packages in the Python repository and other public registries 
-without incurring repeated downloads of packages. The PyPI website, is maintained by 
+without incurring repeated downloads of packages. The PyPI website, is maintained by the
 https://www.python.org/psf/[Python Software Foundation].
 
 ////
@@ -21,9 +21,9 @@ manager supports PyPI packages as a repository group (as in... the repository gr
 contents of multiple repositories in one convenient URL)  
 ////
 
-Administrators who use the repository manager will download and run libraries to retrieve, facilitate, and manage 
-Python projects. By design, Python installs to the root directory with the version number embedded so you can 
-maintain multiple versions of Python without conflicts.
+Repository manager user will download and run libraries to retrieve, facilitate, and manage Python projects. By 
+design, Python installs to the root directory with the version number embedded so you can maintain multiple 
+versions of Python without conflicts.
 
 [[pypi-proxy]]
 === Proxying PyPI Repositories
@@ -40,11 +40,12 @@ detail. Minimal configuration steps are:
 * Select a 'Blob store' for 'Storage'
 
 The repository manager can access Python packages and tools from the index. The proxy repository for PyPI 
-packages provides a nearby cache of files available on the index. This allows the local network client to access 
+packages provides a cache of files available on the index. This allows the local network client to access 
 components from the Python Package Index more reliably.
 
 The proxy configuration for a PyPI proxy repository includes a configuration URL to access the index. 
-Adminstrators will be able to run a search against a remote repository, as mentioned in <<pypi-browse-search>>.
+Users will be able to run a browse and search assets against a remote repository, as mentioned in 
+<<pypi-browse-search>>.
 
 ////
 [[pypi-hosted]]
@@ -63,14 +64,15 @@ TBD
 [[pypi-installation]]
 === Installing PyPI Client Tools
 
-The latest versions of such Linux distributions as CentOS and Ubuntu are already packaged with Python 2.7 and 
-pip[https://pip.pypa.io/en/stable/], a tool for installing and managing Python packages from the index. For Mac 
-OS X and Microsoft Windows, download and install the up-to-date version of Python from 
-https://www.python.org/downloads/[https://www.python.org/downloads/]. Download the Pip installer from 
+The latest versions of such Linux distributions as CentOS and Ubuntu come packaged with Python 2.7 and 
+https://pip.pypa.io/en/stable/[pip], a tool for installing and managing Python packages from the index. For Mac 
+OS X and Microsoft Windows, download and install a Python version compatible with the repository manager from 
+https://www.python.org/downloads/[https://www.python.org/downloads/]. Download the pip installer from 
 https://pip.pypa.io/en/stable/installing/[https://pip.pypa.io/en/stable/installing/].
 
-NOTE: Supported Python versions for the repository manager include 2.6, 2.7, 3.4, 3.5. For pip, the repository 
-manager supports version 7 and 8.
+NOTE: {pro} and {oss} support specific versions of Python, pip, and setuptools. For Python the repository manager 
+supports 2.6, 2.7, 3.4, 3.5. For pip versions 7 and 8 are supported. Versions 19 and 20 of setuptools, used to 
+build and distribute Python dependencies, are compatible with the repository manager. 
 
 ////
 Section for the hosted docs - re: since both twine and subsequently pip to install twine, would be hosted
@@ -84,12 +86,16 @@ sudo pip install twine
 [[pypi-configuration]]
 === Configuring PyPI Client Tools
 
-Once you have installed all necessary packages from the Python Package Index, you'll need create and configure 
-your client-side files necessary to proxy index pages for PyPI. Depending on your Python configuration you can 
-use +pip.conf+ or +setup.cfg+ to set all command line option defaults for your proxy repository,
+NOTE: Depending on your preference for either https://pypi.python.org/pypi/setuptools[setuptools] or pip your 
+proxy configuration may vary.
 
-In the example below, a +pip.conf+ is created. The +index+ specifies the index for a proxied PyPI repository 
-setup within the repository manager. +index-url+ is the base URL designated for proxy repository's index pages.
+Once you have installed all necessary client tools from the Python Package Index, create and configure your 
+client-side files necessary to proxy index pages for PyPI. Depending on your Python configuration you can use 
++pip.conf+ or +setup.cfg+ to set all command line option defaults for your proxy repository.
+
+In the example below, a +pip.conf+ is shown. The +index+ specifies the index for a proxied PyPI repository 
+setup within the repository manager. +index-url+ is the base URL designated for the cached index pages within the 
+proxy repository.
 
 ----
 [global]
@@ -114,7 +120,7 @@ password = admin123
 ////
 
 Alternately you can create a +setup.cfg+. Like the +pip.conf+ option, the +index-url+ is the tag created to 
-specify the base URL for PyPI proxy index:
+specify the base URL for the PyPI proxy index.
 
 ----
 [easy_install]
@@ -170,11 +176,11 @@ cert = nexus.pem
 === Browsing PyPI Repositories and Searching Packages
 
 You can browse PyPI repositories in the user interface inspecting the components and assets and their details, as
-described in <<search-components>>.
+described in <<browse-browse>>.
 
-Searching for PyPI packages can be performed in the user interface, too. It finds all packages that are currently
-stored in the repository manager that have been proxied from an upstream repository and cached in the repository 
-manager.
+Searching for PyPI packages can be performed in the user interface as described in <<search-components>>. It 
+finds all packages that are currently stored in the repository manager that have been proxied from an upstream 
+repository and cached in the repository manager.
 
 ////
 Second sentence edit for hosted docs
@@ -182,8 +188,8 @@ It finds all packages that are currently stored in the repository manager, eithe
 to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
 ////
 
-From the command line you can search available PyPI packages defined in your configuration file (+setup.cfg+ or 
-+pip.conf+). To search, run:
+From the command line you can search available PyPI packages defined in your configuration. This method is 
+limited to pip (+pip.conf+). To search, run:
 
 ----
 pip search example-package
