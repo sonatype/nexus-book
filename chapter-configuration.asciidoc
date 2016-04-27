@@ -64,6 +64,7 @@ typically need to configure, after successful installation. The following sectio
 * Advanced configuration with <<admin-system-capabilities,Capabilities>>
 * <<admin-system-emailserver,Email/SMTP server configuration>>
 * <<admin-system-http,HTTP/HTTPS proxy server configuration>>
+* Setting a <<admin-base-url,Base URL>> for the repository manager
 * Configuration and management of automated maintenance <<admin-system-tasks,Tasks>>
 
 [[admin-system-bundles]]
@@ -202,30 +203,16 @@ Once you have configured the parameters you can use the 'Verify email server' bu
 parameters and the successful connection to the server. You are asked to provide an email address that should
 receive a test email message. Successful sending is confirmed in a message.
 
-////
-tbd document baseUrl somewhere else
-see NEXUS-9292
 [[admin-system-general]]
 ==== General Server Settings
 {inall}
 
-The 'General' server configuration is available via the 'System' section of the 'Administration' menu and displayed in
-<<fig-admin-system-general>>.
-
-You can change the 'Base URL' for your repository manager installation, which is used when generating links in
-emails and RSS feeds. For example, the instance for Sonatype development is available at
-http://respository.sonatype.org, and it makes use of this 'Base URL' field to ensure that links in emails and RSS
-feeds point to the correct URL. Internally the repository manager is running on a different port and context than
-the public port 80 and root context.
+The 'General' server configuration is available via the 'System' section of the 'Administration' menu and 
+displayed in <<fig-admin-system-general>>.
 
 [[fig-admin-system-general]]
 .Configuration of General Server Settings
 image::figs/web/admin-system-general.png[scale=50]
-
-TIP: This configuration is especially important if the repository manager is proxied by an external proxy server
-using a different protocol like HTTPS rather than plain HTTP known to the repository manager or a different
-hostname like repository.somecompany.com instead of an IP number only.
-////
 
 [[admin-system-http]]
 ==== HTTP and HTTPS Request and Proxy Settings
@@ -275,6 +262,24 @@ the 'Hosts to exclude from HTTP/HTTPS proxy' setting. You can add a hostname in 
 
 <<fig-admin-system-http-proxy>> shows the 'HTTP Proxy' administration interface. The HTTPS configuration interface
 looks the same and is found below the HTTP configuration.
+
+[[admin-base-url]]
+==== Base URL Creation
+
+The 'Base URL' is the address end users apply when navigating to the user interface. The repository 
+manager only uses this value to construct absolute URLs to your user interface inside of email notifications.
+
+The most common reason why the address would be different for end users, is if you have a <<reverse-proxy,reverse 
+proxy>> in front of the {pro} terminating HTTP requests at a different address than where the repository manager 
+is running.
+
+To set a Base URL:
+
+* Go to the 'System' section of the 'Administration' menu and select 'Capabilities'.
+* Search for an existing 'Base URL' capability and select it if it exists or click the 'Create capability' button 
+and choose 'Base URL' from the 'Select Capability Type' list.
+* Enter a new URL value.
+* Press the 'Create capability' or 'Save' button to persist your changes.
 
 [[admin-system-tasks]]
 ==== Configuring and Executing Tasks

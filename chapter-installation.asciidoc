@@ -429,6 +429,229 @@ manually start it after the configuration you can use
 sudo launchctl load /Library/LaunchDaemons/com.sonatype.nexus.plist
 ----
 
+[[reverse-proxy]]
+=== Running Behind a Reverse Proxy
+
+{inall}
+
+{pro} is a sophisticated server application with a web-application user interface, answering 
+HTTP requests using the high-performance servlet container http://www.eclipse.org/jetty/[Eclipse Jetty].
+
+Organizations are sometimes required to run applications like {pro} or {oss} behind a 
+https://en.wikipedia.org/wiki/Reverse_proxy[reverse proxy]. Reasons may include:
+
+* security and auditing concerns
+* network administrator familiarity
+* organizational policy
+* disparate application consolidation
+* virtual hosting
+* exposing applications on restricted ports
+* SSL termination
+
+This section provides some general guidance on how to configure common reverse proxy servers to work with {pro} 
+and {oss}. Always consult your reverse proxy administrator to ensure you configuration is secure.
+
+The default webapp context path for the repository manager user interface is +8081+. In the instance 
+where the repository manager needs to be proxied at a different base path you must change the default path by 
+editing a property value. In <<admin-base-url>> follow the steps to change or update the base URL if you want an 
+alternate server name.
+
+In the following examples, review the sections on changing the <<config-http-port,HTTP port>> and 
+<<config-context-path,context path>> to properly reverse-proxy the repository manager.
+
+==== Example: Reverse Proxy on Restricted Ports
+
+*Scenario*: You need to expose the repository manager on restricted port 80. The repository manager should not be 
+run with the root user. Instead run your reverse proxy on the restricted port 80 and the repository manager on 
+the default port +8081+. End users will access the repository manager using the virtual host URL 
+http://www.example.com/nexus instead of http://localhost:8081/nexus.
+
+Ensure your external hostname (+www.example.com+) routes to your reverse proxy server. In this example use the 
+default content path (+/+)
+
+*Apache httpd.*
+
+----
+ProxyRequests Off
+ProxyPreserveHost On
+
+<VirtualHost: *:80>
+  ServerName www.example.com
+  ServerAdmin admin@example.com
+  ProxyPass /nexus http://localhost:8081/
+  ProxyPassReverse / http://localhost:8081/
+  ErrorLog logs/www.example.com/nexus/error.log
+  CustomLog logs/www.example.com/nexus/access.log common
+</VirtualHost>
+----
+
+*nginx.*
+
+----
+http {
+
+    proxy_send_timeout 120;
+	proxy_read_timeout 300;
+	proxy_buffering    off;
+	keepalive_timeout  5 5;
+	tcp_nodelay        on;
+    
+	server {
+		listen   *:80;
+		server_name  www.example.com;
+
+		# allow large uploads of files - refer to nginx documentation
+		client_max_body_size 1G
+
+		# optimize downloading files larger than 1G - refer to nginx doc before adjusting
+		#proxy_max_temp_file_size 2G
+
+		location /nexus {
+			proxy_pass http://localhost:8081/nexus;
+			proxy_set_header Host $host;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		}
+	}
+}
+----
+
+==== Example: Reverse Proxy Virtual Host at Custom Context Path
+
+*Scenario:* You need to expose the repository manager using a custom host name +repo.example.com+ on a restricted 
+port at a base path of +/nexus+.
+
+Ensure your external hostname (+repo.example.com+) routes to your reverse proxy server and edit the webapp path 
+a slash at end (+/+).
+
+*Apache httpd.*
+
+----
+ProxyRequests Off
+ProxyPreserveHost On
+
+<VirtualHost *:80>
+  ServerName repo.example.com
+  ServerAdmin admin@example.com
+  ProxyPass /nexus http://localhost:8081/nexus
+  ProxyPassReverse /nexus http://localhost:8081/nexus
+  ErrorLog logs/repo.example.com/nexus/error.og
+  CustomLog logs/repo.example.com/nexus/access.log common
+</VirtualHost>
+----
+
+*nginx.*
+
+----
+http {
+
+    proxy_send_timeout 120;
+	proxy_read_timeout 300;
+	proxy_buffering    off;
+	keepalive_timeout  5 5;
+	tcp_nodelay        on;
+
+	server {
+		listen   *:80;
+		server_name  repo.example.com;
+
+		# allow large uploads of files - refer to nginx documentation
+		client_max_body_size 1G
+
+		# optimize downloading files larger than 1G - refer to nginx doc before adjusting
+		# proxy_max_temp_file_size 2G
+
+		location / {
+			proxy_pass http://localhost:8081/nexus;
+			proxy_set_header Host $host;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		}
+	}
+)
+----
+
+==== Example: Reverse Proxy SSL Termination at Base Path
+
+*Scenario:* Your organization has standardized a reverse proxy to handle SSL certificates and termination. The 
+reverse proxy virtual host will accept HTTPS requests on the standard port +443+ and serve content from the 
+repository manager running on the default non-restricted HTTP port +8081+ transparently to end users.
+
+Ensure your external host name (+repo.example.com+) routes to your reverse proxy server and edit the webapp path 
+to be slash (+/+). 
+
+To test your configuration, review the steps to
+https://support.sonatype.com/hc/en-us/articles/213465768-SSL-Certificate-Guide[generate a self-signed SSL 
+certificate] for reverse proxy servers.
+
+*Apache httpd.* Ensure Apache httpd is loading +mod_ssl+.
+
+----
+Listen 443
+
+ProxyRequests Off
+ProxyPreserveHost On
+
+<VirtualHost *:443>
+  SSLEngine on
+
+  SSLCertificateFile "example.pem"
+  SSLCertificateKeyFile "example.key"
+
+  ServerName repo.example.com
+  ServerAdmin admin@example.com
+  ProxyPass / http://localhost:8081/
+  ProxyPassReverse / http://localhost:8081/
+  RequestHeader set X-Forwarded-Proto "https"
+
+  ErrorLog logs/repo.example.com/nexus/error.log
+  CustomLog logs/repo.example.com/nexus/access.log common
+</VirtualHost>
+----
+
+*nginx.* Make sure nginx is compiled using the +--with-http_ssl_module+ option.
+
+----
+http {
+
+	proxy_send_timeout 120;
+	proxy_read_timeout 300;
+	proxy_buffering    off;
+	keepalive_timeout  5 5;
+	tcp_nodelay        on;
+
+	server {
+		listen   *:443;
+		server_name  repo.example.com;
+
+		# allow large uploads of files - refer to nginx documentation
+		client_max_body_size 1G
+
+		# optimize downloading files larger than 1G - refer to nginx doc before adjusting
+		#proxy_max_temp_file_size 2G
+
+		ssl on
+		ssl_certificate      example.pem;
+		ssl_certificate_key  example.key;
+
+		location / {
+			proxy_pass http://localhost:8081/;
+			proxy_set_header Host $host;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header X-Forwarded-Proto "https";	
+		}
+	}
+}
+----
+
+NOTE: Reverse proxy configuration may vary per system. Always consult reverse the specific reverse proxy product 
+documentation: http://httpd.apache.org/[Apache httpd] 
+(http://httpd.apache.org/docs/current/mod/mod_proxy.html[mod_proxy], 
+http://httpd.apache.org/docs/current/mod/mod_ssl.html[mod_ssl]), http://nginx.org/en/docs/[nginx] 
+(http://nginx.org/en/docs/http/ngx_http_proxy_module.html[ngx_http_proxy_module], 
+http://nginx.org/en/docs/http/configuring_https_servers.html#compatibility[ssl compatibility])
+
 [[access]]
 === Accessing the User Interface
 
@@ -566,6 +789,7 @@ context path and host.
 
 system.properties:: Configuration parameters used for the JVM and application start up.
 
+[[config-jvm]]
 ==== Updating Memory Allocation and other JVM Paramaters
 
 The default and maximum heap sizes for the repository manager are a value of `1200M`, suitable for most usage
@@ -580,20 +804,35 @@ file `$install-dir/bin/nexus.vmoptions`. Increased memory configuration can be s
 
 Other JVM parameters such as GC algorithm can be configured in the same location.
 
-
-==== Changing HTTP Port and Context
+[[config-http-port]]
+==== Changing the HTTP Port
 
 The default value for the HTTP port used to access the repository manager user interface and resources is
-`8081`. In addition, the root context is used. The user interface is therefore available at
-e.g. `http://localhost:8081/`. Port and context are configured in `$install-dir/etc/org.sonatype.nexus.cfg`.  A
-suitable configuration to expose the user interface at `http://localhost:9081/components/` is:
+`8081`. Therefore the user interface would be available at `http://localhost:8081/`. To change or update the port 
+locate the line `application-port=8081` in `$install-dir/etc/org.sonatype.nexus.cfg`, then edit the number. Here 
+is an example where you would change the port to `9081`:
 
 ----
 application-port=9081
+----
+
+Therefore, the exposed URL will be `http://localhost:9081/`.
+
+[[config-context-path]]
+==== Changing the Context Path
+
+To change or update the context path in the instance you want point to a specific webapp or component, locate  
+the `nexus-context-path=/` line in the`$install-dir/etc/org.sonatype.nexus.cfg`. Here is an example where you 
+expose the user interface to a `components` directory.
+
+----
 nexus-context-path=/components/
 ----
 
-==== Configuring Data Storage Location
+Therefore, if the port is set to `9081`, the exposed URL will be `http://localhost:9081/components/`.
+
+[[config-data-directory]]
+==== Configuring the Data Directory Location
 
 <<installation-archive,Distribution archive installation>> of the repository manager configures the location of
 the <<data-directory, data directory>> to be nested inside the application directory. The
@@ -606,6 +845,7 @@ to use the absolute path `/opt/repository/storage/`, you have to change to:
 -Djava.io.tmpdir=/opt/repository/storage/tmp
 ----
 
+[[uninstall]]
 === Uninstalling
 
 To uninstall the repository manager from your system locate +uninstall+ file in the installation directory. 
