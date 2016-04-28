@@ -22,6 +22,8 @@ manager supports PyPI packages as a repository group (as in... the repository gr
 contents of multiple repositories in one convenient URL)  
 ////
 
+You can publish your own packages to a private PyPI hosted repository 
+
 [[pypi-proxy]]
 === Proxying PyPI Repositories
 
@@ -47,8 +49,15 @@ be able to browse and search assets against a remote repository, as mentioned in
 [[pypi-hosted]]
 === Hosting PyPI Repositories
 
-////
+Creating a PyPI hosted repository allows you to register packages in the repository manager. The hosted 
+repository acts as an authoritative location for these components. This effectively creates an asset that becomes 
+a pointer to an external URL (such as a Git repository).
 
+Minimal configuration steps are:
+
+* Define 'Name' - e.g. +pypi-all+
+* Select 'Blob store' for 'Storage'
+* Choose 'Deployment policy' for the 'Hosted' repository
 ////
 
 [[pypi-group]]
@@ -70,8 +79,7 @@ NOTE: {pro} and {oss}  support specific versions of Python, pip, and setuptools.
 manager supports 2.6, 2.7, 3.4, 3.5. For pip versions 7 and 8 are supported. Versions 19 and 20 of setuptools, 
 used to build and distribute Python dependencies, are compatible with the repository manager.
 
-////
-Section for the hosted docs - re: since both twine and subsequently pip to install twine, would be hosted
+Repository manager users might a re: since both twine and subsequently pip to install twine, would be hosted
 Next install Twine. Twine is a utility that provides secure authentication to PyPI over HTTPS. Twine's only 
 function is to upload distributions. If the user uses pip then here's a sample command:
 ////
@@ -104,9 +112,8 @@ specify the base URL for the PyPI proxy index.
 index-url = http://localhost:8081/repository/pypi-proxy/simple
 ----
 
-////
-The Python Package Index (PyPI) stores meta-data describing distributions packaged with distutils, as well as 
-package data like distribution files if a package author wishes.
+PyPI stores meta-data describing distributions packaged with distutils, as well as package data like distribution 
+files if a package author wishes.
 
 Distutils provides the register and upload commands for pushing meta-data and distribution files to PyPI, 
 respectively.  note - the configuration of tools section will need to updated to mention how PyPI interacts with 
@@ -122,7 +129,6 @@ repository = http://localhost:8081/repository/pypi-hosted/
 username = admin
 password = admin123
 ----
-////
 
 ////
 add section on uploading distributions - see twine above
@@ -136,7 +142,6 @@ SSL. This assumes the repository manager has already been set up to use SSL. If 
 <<ssl>>.
 
 Update your +pip.conf+ as follows:
-
 ----
 [global]
 index = https://localhost:8443/repository/pypi-proxy/pypi
@@ -152,14 +157,8 @@ You can browse PyPI repositories in the user interface inspecting the components
 described in <<browse-browse>>.
 
 Searching for PyPI packages can be performed in the user interface, as described in <<search-components>>. It 
-finds all packages that are currently stored in the repository manager that have been proxied from an upstream 
-repository and cached in the repository manager.
-
-////
-Second sentence edit for hosted docs
-It finds all packages that are currently stored in the repository manager, either because they have been pushed 
+finds all packages that are currently stored in the repository manager, either because they have been pushed 
 to a hosted repository or they have been proxied from an upstream repository and cached in the repository manager.
-////
 
 From the command line you can search available PyPI packages defined in your configuration. This method is 
 limited to pip (+pip.conf+). To search, run:
