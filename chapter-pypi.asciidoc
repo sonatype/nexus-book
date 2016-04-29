@@ -11,18 +11,16 @@ https://pypi.python.org/pypi[https://pypi.python.org/pypi], and the site itself 
 https://www.python.org/psf/[Python Software Foundation].
 
 {pro} and {oss} support the Python Package Index (PyPI) repository format for proxy repositories. The repository 
-manager user will download and run libraries to retrieve, facilitate, and manage Python projects. This 
-allows the repository manager to take advantage of packages in the Python repository and other public registries 
+manager user will download and run libraries to retrieve, facilitate, and manage Python projects. Furthermore, 
+it can upload and publish index-available packages as a hosted repository. This allows the 
+repository manager to take advantage of packages in the Python repository and other public registries 
 without incurring repeated downloads.
 
 ////
-In the first sentence above, include hosted (as in... {pro}, {oss} allows you to upload/publish index-available & 
-your own packages & tools as hosted repository) Also, somewhere in the paragraph include how the repository 
-manager supports PyPI packages as a repository group (as in... the repository group merges and exposes the 
-contents of multiple repositories in one convenient URL)  
-////
-
-You can publish your own packages to a private PyPI hosted repository 
+Also, somewhere in the paragraph include how the repository manager supports PyPI packages as a repository group 
+(as in... the repository group merges and exposes the contents of multiple repositories in one convenient URL)
+Another note - can repoman upload and publish your own PyPIpackages and tools? Not sure
+////  
 
 [[pypi-proxy]]
 === Proxying PyPI Repositories
@@ -45,21 +43,27 @@ components from the Python Package Index more reliably.
 The proxy configuration for a PyPI proxy repository includes a configuration URL to access the index. Users will 
 be able to browse and search assets against a remote repository, as mentioned in <<pypi-browse-search>>.
 
-////
+
 [[pypi-hosted]]
 === Hosting PyPI Repositories
 
-Creating a PyPI hosted repository allows you to register packages in the repository manager. The hosted 
+Creating a PyPI hosted repository allows you to upload packages in the repository manager. The hosted 
 repository acts as an authoritative location for these components. This effectively creates an asset that becomes 
-a pointer to an external URL (such as a Git repository).
+a pointer to an external URL (such as a Git repository). You will create a custom file called +.pypirc+ to manage 
+credentials from the hosted repository, explained in <<pypi-upload>>.
 
 Minimal configuration steps are:
 
 * Define 'Name' - e.g. +pypi-all+
 * Select 'Blob store' for 'Storage'
 * Choose 'Deployment policy' for the 'Hosted' repository
+
+////
+Note: a ticket filed - NXBOOK-947 : Consistent naming of repos was created from a community member that might 
+impact naming conventions for later examples
 ////
 
+////
 [[pypi-group]]
 === PyPI Repository Groups
 
@@ -79,6 +83,7 @@ NOTE: {pro} and {oss}  support specific versions of Python, pip, and setuptools.
 manager supports 2.6, 2.7, 3.4, 3.5. For pip versions 7 and 8 are supported. Versions 19 and 20 of setuptools, 
 used to build and distribute Python dependencies, are compatible with the repository manager.
 
+////
 Repository manager users might a re: since both twine and subsequently pip to install twine, would be hosted
 Next install Twine. Twine is a utility that provides secure authentication to PyPI over HTTPS. Twine's only 
 function is to upload distributions. If the user uses pip then here's a sample command:
@@ -87,15 +92,42 @@ function is to upload distributions. If the user uses pip then here's a sample c
 [[pypi-configuration]]
 === Configuring PyPI Client Tools
 
-NOTE: Depending on your preference for either https://pypi.python.org/pypi/setuptools[setuptools] or pip, your 
-proxy configuration may vary.
+NOTE: Depending on your preference for either https://pypi.python.org/pypi/setuptools[setuptools], 
+https://pypi.python.org/pypi/twine[twine], https://docs.python.org/2.7/library/distutils.html[distutils], or pip 
+your proxy and hosted configuration may vary.
 
 Once you have installed all necessary client tools from the Python Package Index, create and configure your 
 client-side files necessary to proxy index pages for PyPI. Depending on your Python configuration you can use 
 +pip.conf+ or +setup.cfg+ to have all commands run against your proxy repository.
 
+If you are authoring your own packages and want to distribute them to other users in your organization, you have 
+to upload them to a hosted repository on the repository manager, as explained in <<pypi-upload>>. This can be 
+done by creating a +.pypirc+ file in your root directory. +.pypirc+ holds your credentials for authentication 
+when hosting a PyPI repository.
+
+////
+In paragraph above, add section that consumers can download the registered package via the repository group
+Also, this sentence refers to registering "This establishes a metadata file in the 
+repository that links to the source code repository". Leaving it here to confirm if the pypirc does such.
+////
+
+In the +.pypirc+ specify the URL for the target hosted repository in the +repository+ value, along with the 
++username+ and +password+ to access the repository manager. The +.pypirc file contains distutils, a default 
+server used by PyPI that provides upload commands that stores assets and authentication information.
+
+----
+[distutils]
+index-servers =
+   nexus
+ 
+[nexus]
+repository = http://localhost:8081/repository/pypi-hosted/
+username = admin
+password = admin123
+----
+
 In the example below, a +pip.conf+ is shown. The index specifies the index for a proxied PyPI repository setup 
-within the repository manager. index-url is the base URL designated for the cached index pages within the proxy 
+within the repository manager. +index-url+ is the base URL designated for the cached index pages within the proxy 
 repository.
 
 ----
@@ -112,22 +144,14 @@ specify the base URL for the PyPI proxy index.
 index-url = http://localhost:8081/repository/pypi-proxy/simple
 ----
 
-PyPI stores meta-data describing distributions packaged with distutils, as well as package data like distribution 
-files if a package author wishes.
-
-Distutils provides the register and upload commands for pushing meta-data and distribution files to PyPI, 
-respectively.  note - the configuration of tools section will need to updated to mention how PyPI interacts with 
-repoman hosted support, hint pypirc configuration. Sample .pypirc:
+If you use twine, a package used to verify HTTPS connections for hosted repositories, your +pip.conf+ file 
+will contain metadata describing distribution properties present on the target system. Here is an example 
+of a +pip.conf+ file with a base URL pointing to a hosted repository:
 
 ----
-[distutils]
-index-servers =
-   nexus
- 
-[nexus]
-repository = http://localhost:8081/repository/pypi-hosted/
-username = admin
-password = admin123
+[global]
+index = http://localhost:8081/repository/pypi-hosted/pypi
+index-url = http://localhost:8081/repository/pypi-hosted/simple
 ----
 
 ////
@@ -165,4 +189,17 @@ limited to pip (+pip.conf+). To search, run:
 
 ----
 pip search example-package
+----
+
+[[pypi-upload]]
+=== Uploading PyPI Packages
+
+NOTE: The steps to upload a PyPI package will vary if your system is configured with setuptools or twine.
+
+After you configure your +.pypirc+ you can upload packages from the index to the repository manager. 
+In the example below, using twine, tells you what repository configuration file to use when uploading; the +-r+ 
+flag is used to find the +nexus+ entry in your +.pypirc+.
+
+----
+twine upload -r nexus <filename>
 ----
