@@ -6,13 +6,14 @@
 === Introduction
 
 The Python Package Index, or PyPI, is a vast repository of open-source Python packages supplied by the worldwide 
-community of Python developers. The official PyPI is available for searches at 
-https://pypi.python.org/pypi[https://pypi.python.org/pypi].
-
-{pro} and {oss} support the Python Package Index (PyPI) repository format for proxy repositories. This 
-allows the repository manager to take advantage of packages in the Python repository and other public registries 
-without incurring repeated downloads of packages. The PyPI website, is maintained by the
+community of Python developers. The official PyPI is available for searches at
+https://pypi.python.org/pypi[https://pypi.python.org/pypi], and the site itself is maintained by the
 https://www.python.org/psf/[Python Software Foundation].
+
+{pro} and {oss} support the Python Package Index (PyPI) repository format for proxy repositories. The repository 
+manager user will download and run libraries to retrieve, facilitate, and manage Python projects. This 
+allows the repository manager to take advantage of packages in the Python repository and other public registries 
+without incurring repeated downloads.
 
 ////
 In the first sentence above, include hosted (as in... {pro}, {oss} allows you to upload/publish index-available & 
@@ -21,10 +22,6 @@ manager supports PyPI packages as a repository group (as in... the repository gr
 contents of multiple repositories in one convenient URL)  
 ////
 
-Repository manager user will download and run libraries to retrieve, facilitate, and manage Python projects. By 
-design, Python installs to the root directory with the version number embedded so you can maintain multiple 
-versions of Python without conflicts.
-
 [[pypi-proxy]]
 === Proxying PyPI Repositories
 
@@ -32,7 +29,7 @@ You can set up a PyPI proxy repository to access a remote repository location, s
 https://pypi.python.org/pypi[https://pypi.python.org/pypi]. The index is maintained as the default location for  
 Python packages.
 
-To proxy a PyPI package, you simply create a new 'pypi(proxy)' as documented in <<admin-repositories>>, in 
+To proxy a PyPI package, you simply create a new 'pypi(proxy)' recipe as documented in <<admin-repositories>>, in 
 detail. Minimal configuration steps are:
 
 * Define 'Name'
@@ -43,9 +40,8 @@ The repository manager can access Python packages and tools from the index. The 
 packages provides a cache of files available on the index. This allows the local network client to access 
 components from the Python Package Index more reliably.
 
-The proxy configuration for a PyPI proxy repository includes a configuration URL to access the index. 
-Users will be able to run a browse and search assets against a remote repository, as mentioned in 
-<<pypi-browse-search>>.
+The proxy configuration for a PyPI proxy repository includes a configuration URL to access the index. Users will 
+be able to browse and search assets against a remote repository, as mentioned in <<pypi-browse-search>>.
 
 ////
 [[pypi-hosted]]
@@ -65,14 +61,14 @@ TBD
 === Installing PyPI Client Tools
 
 The latest versions of such Linux distributions as CentOS and Ubuntu come packaged with Python 2.7 and 
-https://pip.pypa.io/en/stable/[pip], a tool for installing and managing Python packages from the index. For Mac 
-OS X and Microsoft Windows, download and install a Python version compatible with the repository manager from 
+https://pip.pypa.io/en/stable/[pip], a tool for installing and managing Python packages from the index. For Mac
+OS X and Microsoft Windows, download and install a Python version compatible with the repository manager from
 https://www.python.org/downloads/[https://www.python.org/downloads/]. Download the pip installer from 
 https://pip.pypa.io/en/stable/installing/[https://pip.pypa.io/en/stable/installing/].
 
-NOTE: {pro} and {oss} support specific versions of Python, pip, and setuptools. For Python the repository manager 
-supports 2.6, 2.7, 3.4, 3.5. For pip versions 7 and 8 are supported. Versions 19 and 20 of setuptools, used to 
-build and distribute Python dependencies, are compatible with the repository manager. 
+NOTE: {pro} and {oss}  support specific versions of Python, pip, and setuptools. For Python the repository 
+manager supports 2.6, 2.7, 3.4, 3.5. For pip versions 7 and 8 are supported. Versions 19 and 20 of setuptools, 
+used to build and distribute Python dependencies, are compatible with the repository manager.
 
 ////
 Section for the hosted docs - re: since both twine and subsequently pip to install twine, would be hosted
@@ -116,8 +112,28 @@ index-servers =
 repository = http://localhost:8081/repository/pypi-hosted/
 username = admin
 password = admin123
-----
+=======
 ////
+
+[[pypi-configuration]]
+=== Configuring PyPI Client Tools
+
+NOTE: Depending on your preference for either https://pypi.python.org/pypi/setuptools[setuptools] or pip, your 
+proxy configuration may vary.
+
+Once you have installed all necessary client tools from the Python Package Index, create and configure your 
+client-side files necessary to proxy index pages for PyPI. Depending on your Python configuration you can use 
++pip.conf+ or +setup.cfg+ to have all commands run against your proxy repository.
+
+In the example below, a +pip.conf+ is shown. The index specifies the index for a proxied PyPI repository setup 
+within the repository manager. index-url is the base URL designated for the cached index pages within the proxy 
+repository.
+
+----
+[global]
+index = http://localhost:8081/repository/pypi-proxy/pypi
+index-url = http://localhost:8081/repository/pypi-proxy/simple
+----
 
 Alternately you can create a +setup.cfg+. Like the +pip.conf+ option, the +index-url+ is the tag created to 
 specify the base URL for the PyPI proxy index.
@@ -126,6 +142,22 @@ specify the base URL for the PyPI proxy index.
 [easy_install]
 index-url = http://localhost:8081/repository/pypi-proxy/simple
 ----
+
+////
+note - the configuration of tools section will need to updated to mention how PyPI interacts with repoman hosted 
+support, hint pypirc configuration. Sample .pypirc:
+
+----
+[distutils]
+index-servers =
+   nexus
+ 
+[nexus]
+repository = http://localhost:8081/repository/pypi-hosted/
+username = admin
+password = admin123
+----
+////
 
 ////
 add section on uploading distributions - see twine above
@@ -175,10 +207,10 @@ cert = nexus.pem
 [[pypi-browse-search]]
 === Browsing PyPI Repositories and Searching Packages
 
-You can browse PyPI repositories in the user interface inspecting the components and assets and their details, as
+You can browse PyPI repositories in the user interface inspecting the components and assets and their details, as 
 described in <<browse-browse>>.
 
-Searching for PyPI packages can be performed in the user interface as described in <<search-components>>. It 
+Searching for PyPI packages can be performed in the user interface, as described in <<search-components>>. It
 finds all packages that are currently stored in the repository manager that have been proxied from an upstream 
 repository and cached in the repository manager.
 

@@ -271,17 +271,19 @@ only.
 
 You can configure the repository manager to run as a service with +init.d+ or +systemd+. Both are startup 
 frameworks used in Linux-based systems such as Ubuntu and CentOS. They are, essentially, initscripts that 
-load commands to manage the repository manager daemon.
+load commands to manage the repository manager daemon. 
 
 Before running the service configure an absolute path for your repository manager files. Then create a +nexus+ 
 user with sufficient access rights to run the service.
 
 Change +NEXUS_HOME+ to the absolute folder location in your +.bashrc+ file, then save.
+
 ----
 NEXUS_HOME="/opt/nexus"
 ----
 
 In +bin/nexus.rc+ assign the user between the quotes in the line below.
+
 ----
 run_as_user="nexus"
 ----
@@ -338,6 +340,9 @@ After=network.target
 Type=forking
 ExecStart=/opt/nexus/bin/nexus start
 ExecStop=/opt/nexus/bin/nexus stop
+=======
+ExecStart=/usr/local/bin/nexus start
+ExecStop=/usr/local/bin/nexus stop
 User=nexus
 Restart=on-abort
 
@@ -350,6 +355,7 @@ Activate the service with the following commands:
 sudo systemctl daemon-reload
 sudo systemctl enable nexus.service
 sudo wystemctl start nexus.service
+sudo systemctl start nexus.service
 ----
 
 After starting the service for any Linux-based operating systems, verify that the service started successfully.
@@ -360,7 +366,6 @@ tail -f /opt/nexus/data/log/nexus.log
 
 The tail command verifies that the service has been started successfully. If successful, you should see a message 
 notifying you that it is listening for HTTP.
-
 
 [[service-windows]]
 ==== Running as a Service on Windows
@@ -644,8 +649,7 @@ http {
 }
 ----
 
-NOTE: Reverse proxy configuration may vary per system. Always consult reverse the specific reverse proxy product 
-documentation: http://httpd.apache.org/[Apache httpd] 
+NOTE: Consult your reverse proxy product documentation for details: http://httpd.apache.org/[Apache httpd]
 (http://httpd.apache.org/docs/current/mod/mod_proxy.html[mod_proxy], 
 http://httpd.apache.org/docs/current/mod/mod_ssl.html[mod_ssl]), http://nginx.org/en/docs/[nginx] 
 (http://nginx.org/en/docs/http/ngx_http_proxy_module.html[ngx_http_proxy_module], 
