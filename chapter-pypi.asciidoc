@@ -49,14 +49,12 @@ be able to browse and search assets against a remote repository, as mentioned in
 
 Creating a PyPI hosted repository allows you to upload packages in the repository manager. The hosted 
 repository acts as an authoritative location for these components. This effectively creates an asset that becomes 
-a pointer to an external URL (such as a Git repository). You will create a custom file called +.pypirc+ to manage 
-credentials from the hosted repository, explained in <<pypi-upload>>.
+a pointer to an external URL (such as a Git repository).
 
 Minimal configuration steps are:
 
-* Define 'Name' - e.g. +pypi-all+
+* Define 'Name' - e.g. +pypi-internal+
 * Select 'Blob store' for 'Storage'
-* Choose 'Deployment policy' for the 'Hosted' repository
 
 ////
 Note: a ticket filed - NXBOOK-947 : Consistent naming of repos was created from a community member that might 
@@ -93,7 +91,7 @@ function is to upload distributions. If the user uses pip then here's a sample c
 === Configuring PyPI Client Tools
 
 NOTE: Depending on your preference for either https://pypi.python.org/pypi/setuptools[setuptools], 
-https://pypi.python.org/pypi/twine[twine], https://docs.python.org/2.7/library/distutils.html[distutils], or pip 
+https://pypi.python.org/pypi/twine[twine], https://docs.python.org/2.7/library/distutils.html[distutils], and pip 
 your proxy and hosted configuration may vary.
 
 Once you have installed all necessary client tools from the Python Package Index, create and configure your 
@@ -112,7 +110,7 @@ repository that links to the source code repository". Leaving it here to confirm
 ////
 
 In the +.pypirc+ specify the URL for the target hosted repository in the +repository+ value, along with the 
-+username+ and +password+ to access the repository manager. The +.pypirc file contains distutils, a default 
++username+ and +password+ to access the repository manager. The +.pypirc+ file contains distutils, a default 
 server used by PyPI that provides upload commands that stores assets and authentication information.
 
 ----
@@ -196,9 +194,10 @@ pip search example-package
 
 NOTE: The steps to upload a PyPI package will vary if your system is configured with setuptools or twine.
 
-After you configure your +.pypirc+ you can upload packages from the index to the repository manager. 
-In the example below, using twine, tells you what repository configuration file to use when uploading; the +-r+ 
-flag is used to find the +nexus+ entry in your +.pypirc+.
+After you configure your +.pypirc+ you can upload packages from the index to the repository manager.
+
+In the example below, twine is invoked to tell your repository what server to use when uploading a package. The 
++-r+ flag is used to find the +nexus+ server in your +.pypirc+.
 
 ----
 twine upload -r nexus <filename>
