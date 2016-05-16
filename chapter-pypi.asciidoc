@@ -7,23 +7,16 @@
 
 The Python Package Index, or PyPI, is a vast repository of open-source Python packages supplied by the worldwide 
 community of Python developers. The official PyPI is available for searches at
-https://pypi.python.org/pypi[https://pypi.python.org/pypi], and the site itself is maintained by the
-https://www.python.org/psf/[Python Software Foundation].
+https://pypi.python.org/pypi[https://pypi.python.org/pypi], 
+and the site itself is maintained by the https://www.python.org/psf/[Python Software Foundation].
 
-{pro} and {oss} support the Python Package Index (PyPI) repository format for proxy and hosted repositories. This 
-allows the repository manager to take advantage of the packages in the official Python Package Index and other 
-public registries without incurring repeated downloads of packages.
+Both {pro} and {oss} support proxying the Python Package Index. This allows the repository manager to take 
+advantage of the packages in the official Python Package Index without incurring repeated downloads. This will 
+reduce time and bandwidth usage for accessing Python packages.
 
-You can download and run libraries to retrieve, facilitate, and manage Python projects. Also, you can publish 
-your own packages to a private index as a hosted repository on the repository manager. This allows you to reduce 
-time and bandwidth usage for accessing Python packages as well as share your packages within 
-your organization in a hosted repository.
-
-////
-Also, somewhere in the paragraph include how the repository manager supports PyPI packages as a repository group 
-(as in... the repository group merges and exposes the contents of multiple repositories in one convenient URL)
-Another note - can repoman upload and publish your own PyPIpackages and tools? Not sure
-////  
+Also, you can publish your own packages to a private index as a hosted repository on the repository manager, then 
+expose the remote and private repositories as a repository group, which is a repository that merges and exposes 
+the contents of multiple repositories in one convenient URL.
 
 [[pypi-proxy]]
 === Proxying PyPI Repositories
@@ -37,7 +30,7 @@ detail. Minimal configuration steps are:
 
 * Define 'Name'
 * Define URL for 'Remote storage' e.g. https://pypi.python.org/pypi[https://pypi.python.org/pypi]
-* Select a 'Blob store' for 'Storage'
+* Pick a 'Blob store' for 'Storage'
 
 The repository manager can access Python packages and tools from the index. The proxy repository for PyPI 
 packages provides a cache of files available on the index. This allows the local network client to access 
@@ -57,19 +50,24 @@ To host a PyPI package, create a new 'pypi(hosted)' recipe as documented in <<ho
 Minimal configuration steps are:
 
 * Define 'Name' - e.g. +pypi-internal+
-* Select 'Blob store' for 'Storage'
+* Pick a 'Blob store' for 'Storage'
 
-////
-Note: a ticket filed - NXBOOK-947 : Consistent naming of repos was created from a community member that might 
-impact naming conventions for later examples
-////
 
-////
 [[pypi-group]]
 === PyPI Repository Groups
 
-TBD
-////
+A repository group is the recommended way to expose all your PyPI repositories from the repository manager to 
+your users, with minimal additional client side configuration. A repository group allows you to expose the 
+aggregated content of multiple proxy and hosted repositories as well as other repository groups with one URL in 
+tool configuration. PyPI group repositories can be created with the 'pypi(group)' recipe as documented in 
+<<repository-group>>.
+
+Minimal configuration steps are:
+
+* Define 'Name' - e.g. +pypi-all+
+* Pick a 'Blob store' for 'Storage'
+* Add PyPI repositories to the 'Members' list in the desired order
+
 
 [[pypi-installation]]
 === Installing PyPI Client Tools
@@ -81,52 +79,46 @@ https://www.python.org/downloads/[https://www.python.org/downloads/]. Download t
 https://pip.pypa.io/en/stable/installing/[https://pip.pypa.io/en/stable/installing/].
 
 NOTE: {pro} and {oss} support specific versions of Python, pip, and setuptools. For Python the repository 
-manager supports 2.6, 2.7, 3.4, 3.5. For pip versions 7 and 8 are supported. Versions 19 and 20 of setuptools, 
-used to build and distribute Python dependencies, are compatible with the repository manager.
-
-////
-Repository manager users might a re: since both twine and subsequently pip to install twine, would be hosted
-Next install Twine. Twine is a utility that provides secure authentication to PyPI over HTTPS. Twine's only 
-function is to upload distributions. If the user uses pip then here's a sample command:
-////
+manager supports the latest of releases 2 and 3, as well as some earlier versions (i.e. 2.7 and earlier, 3.5 and 
+earlier). For pip versions 7 and 8 are supported. The latest two versions of setuptools, used to build and 
+distribute Python dependencies, are compatible with the repository manager.
 
 
 [[pypi-configuration]]
 === Configuring PyPI Client Tools
 
 NOTE: Depending on your preference for either https://pypi.python.org/pypi/setuptools[setuptools], 
-https://pypi.python.org/pypi/twine[twine], https://docs.python.org/2.7/library/distutils.html[distutils], and pip 
-your proxy and hosted configuration may vary.
+https://pypi.python.org/pypi/twine[twine], https://docs.python.org/2.7/library/distutils.html[distutils], and 
+pip your proxy and hosted configuration may vary.
 
 Once you have installed all necessary client tools from the Python Package Index, you can create and configure 
-a +.pypirc+ file to reference stored and proxied packages. Depending on your Python configuration you can use 
-+pip.conf+ or +setup.cfg+ to have all commands run against your project.
+a +.pypirc+ file to reference packages stored in the repository manager. Depending on your Python configuration 
+you can manage your repository groups with +pip.conf+ or +setup.cfg+ to have all commands, such as search and 
+install, run against your project.
 
-////
-This paragraph will be updated to mention pypirc behavior, interaction with PyPI repository group. 
-////
+*Configuring a proxy repository to use easy_install*
 
-If you are authoring your own packages and want to distribute them to other users in your organization, you have 
-to upload them to a hosted repository on the repository manager, as explained in <<pypi-upload>>. The +.pypirc+ 
-holds your credentials for authentication when hosting a PyPI repository.
-
-Alternately you can create a +setup.cfg+. Like the +pip.conf+ option, the +index-url+ is the tag created to 
-specify the base URL for the PyPI proxy index.
+You can create a +setup.cfg+, if using +easy_install+. The +index-url+ is the tag created to specify 
+the base URL for the PyPI package. In this example +index-url+ is set for a proxy repository:
 
 ----
 [easy_install]
 index-url = http://localhost:8081/repository/pypi-proxy/simple
 ----
 
-////
-In paragraph above, add section that consumers can download the registered package via the repository group
-Also, this sentence refers to registering "This establishes a metadata file in the repository that links to the 
-source code repository". Leaving it here to confirm if the pypirc does such.
-////
+If you prefer to configure easy_install for hosted (+pypi-internal+) or group (+pypi-all+) adjust the 
+file accordingly.
 
-In the +.pypirc+, specify the URL for the target hosted repository in the +repository+ value, along with the 
-+username+ and +password+ to access the repository manager. The +.pypirc+ file contains distutils, a default 
-server used by PyPI that provides upload commands that stores assets and authentication information.
+*Configuring your hosted repository with .pypirc*
+
+If you are authoring your own packages and want to distribute them to other users in your organization, you have 
+to upload them to a hosted repository on the repository manager. The +.pypirc+ holds your credentials for 
+authentication when hosting a PyPI repository.
+
+In the example +.pypirc+ file below, specify the URL you want to deploy to the target hosted repository in 
+the +repository+ value. Add +username+ and +password+ values to access the repository manager. The +.pypirc+ file 
+contains distutils, a default server used by PyPI that provides upload commands that stores assets and 
+authentication information.
 
 ----
 [distutils]
@@ -139,66 +131,48 @@ username = admin
 password = admin123
 ----
 
-If you use twine, a package used to verify HTTPS connections for hosted repositories, your +pip.conf+ file 
-will contain metadata describing distribution properties present on the target system. +index+ is the 
-authoritative location for hosted components in the repository manager. +index-url+ is the base URL designated 
-for the cached index pages within the proxy repository. Here is an example of a +pip.conf+ file with a base URL 
-pointing to a hosted repository:
+NOTE: If you have multiple hosted repositories, you can add them to the +.pypirc+ file, each with a different 
+name, pointing to the corresponding respository URL.
 
-----
-[global]
-index = http://localhost:8081/repository/pypi-internal/pypi
-index-url = http://localhost:8081/repository/pypi-internal/simple
-----
+After this is configured, you can upload packages to the hosted repository, as explained in <<pypi-upload>>.
 
-////
-Config will eventually be group, i.e. pypi-all
+*Global pip.conf file with a repository group*
+
+If you want your +pip.conf+ to install or search Python within a group, configure the file to include the 
+repository group URL.
 
 ----
 [global]
 index = http://localhost:8081/repository/pypi-all/pypi
 index-url = http://localhost:8081/repository/pypi-all/simple
 ----
-////
 
-Alternately you can create a +setup.cfg+, if using easy_install. Like the +pip.conf+ option, the +index-url+ is 
-the tag created to specify the base URL for hosted components from the index.
+If you prefer to configure your global +pip.conf+ for proxy (+pypi-proxy+) or hosted (+pypi-internal+) adjust the 
+file accordingly.
+
+[[pypi-ssl]]
+=== SSL Usage for PyPI Repositories
+
+You can proxy Python packages over HTTPS to ensure a secure connection with a self-signed certificate. This works 
+for proxy, hosted, and group repositories. To set up the repository manager to serve HTTPS follow the 
+configuration steps in <<ssl>>.
+
+Also, you can set up pip to use the certificate to enable SSL and fetch packages securely. Additional
+configuration is necessary for the HTTPS client implementation to work. This assumes the repository manager has 
+already been set up to use SSL, so verify your certificate works. Run the following command:
 
 ----
-[easy_install]
-index-url = http://localhost:8081/repository/pypi-internal/simple
+openssl verify <example-cerfificate>
 ----
 
-////
-Config will eventually be group, i.e. pypi-all
-
-----
-[global]
-index = http://localhost:8081/repository/pypi-all/pypi
-index-url = http://localhost:8081/repository/pypi-all/simple
-----
-////
-
-////
-add section on uploading distributions - see twine above
-Uploading Distributions
-
-add section on 
-SSL Usage for PyPI Client Tools
-
-You can secure inbound and outbound communication between the repository manager and the PyPI repository using 
-SSL. This assumes the repository manager has already been set up to use SSL. If not review SSL configuration at 
-<<ssl>>.
-
-Update your +pip.conf+ as follows:
+When your certificate is proven to work, update your +pip.conf+. Here is an example configuration file for a 
+repository group:
 ----
 [global]
-index = https://localhost:8443/repository/pypi-proxy/pypi
-index-url = https://localhost:8443/repository/pypi-proxy/simple
+index = https://localhost:8443/repository/pypi-all/pypi
+index-url = https://localhost:8443/repository/pypi-all/simple
 cert = nexus.pem
 ----
-////
-
 
 [[pypi-browse-search]]
 === Browsing PyPI Repositories and Searching Packages
