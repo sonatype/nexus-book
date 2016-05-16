@@ -10,15 +10,14 @@ community of Python developers. The official PyPI is available for searches at
 https://pypi.python.org/pypi[https://pypi.python.org/pypi], 
 and the site itself is maintained by the https://www.python.org/psf/[Python Software Foundation].
 
-{pro} and {oss} support the Python Package Index (PyPI) repository format for proxy and hosted repositories. This 
-allows the repository manager to take advantage of the packages in the official Python Package Index and other 
-public registries without incurring repeated downloads of packages.
+{pro} and {oss} support the Python Package Index (PyPI) for proxy, hosted, and group 
+repository formats, which you can share within your organization. This allows the repository manager to take 
+advantage of the packages in the official Python Package Index and other public registries without incurring 
+repeated downloads. This will reduce time and bandwidth usage for accessing Python packages.
 
-You can download and run libraries to retrieve, facilitate, and manage Python projects. Also, you can publish 
-your own packages to a private index as a hosted repository on the repository manager, then expose the remote and 
-private repositories as a repository group, which is a repository that merges and exposes the contents of 
-multiple repositories in one convenient URL. All this allows you to reduce time and bandwidth usage for accessing 
-Python packages as well as share your packages within your organization in a hosted repository.
+Also, you can publish your own packages to a private index as a hosted repository on the repository manager, then 
+expose the remote and private repositories as a repository group, which is a repository that merges and exposes 
+the contents of multiple repositories in one convenient URL.
 
 [[pypi-proxy]]
 === Proxying PyPI Repositories
@@ -61,7 +60,7 @@ Minimal configuration steps are:
 A repository group is the recommended way to expose all your PyPI repositories from the repository manager to 
 your users, with minimal additional client side configuration. A repository group allows you to expose the 
 aggregated content of multiple proxy and hosted repositories as well as other repository groups with one URL in 
-tool configuration. PyPI group repositories can be created a with the 'pypi(group)' recipe as documented in 
+tool configuration. PyPI group repositories can be created with the 'pypi(group)' recipe as documented in 
 <<repository-group>>.
 
 Minimal configuration steps are:
@@ -81,8 +80,9 @@ https://www.python.org/downloads/[https://www.python.org/downloads/]. Download t
 https://pip.pypa.io/en/stable/installing/[https://pip.pypa.io/en/stable/installing/].
 
 NOTE: {pro} and {oss} support specific versions of Python, pip, and setuptools. For Python the repository 
-manager supports 2.6, 2.7, 3.4, 3.5. For pip versions 7 and 8 are supported. Versions 19 and 20 of +setuptools+, 
-used to build and distribute Python dependencies, are compatible with the repository manager.
+manager supports the latest of releases 2 and 3, as well as some earlier versions (i.e. 2.7 and earlier, 3.5 and 
+earlier). For pip versions 7 and 8 are supported. The latest two versions of setuptools, used to build and 
+distribute Python dependencies, are compatible with the repository manager.
 
 
 [[pypi-configuration]]
@@ -107,11 +107,14 @@ the base URL for the PyPI package. In this example +index-url+ is set for a prox
 index-url = http://localhost:8081/repository/pypi-proxy/simple
 ----
 
+If you prefer to configure easy_install for hosted (+pypi-internal+) or group (+pypi-all+) adjust the 
+file accordingly.
+
+*Configuring your hosted repository with .pypirc*
+
 If you are authoring your own packages and want to distribute them to other users in your organization, you have 
 to upload them to a hosted repository on the repository manager. The +.pypirc+ holds your credentials for 
 authentication when hosting a PyPI repository.
-
-*Configuring your hosted repository with .pypirc*
 
 In the example +.pypirc+ file below, specify the URL you want to deploy to the target hosted repository in 
 the +repository+ value. Add +username+ and +password+ values to access the repository manager. The +.pypirc+ file 
@@ -145,14 +148,15 @@ index = http://localhost:8081/repository/pypi-all/pypi
 index-url = http://localhost:8081/repository/pypi-all/simple
 ----
 
-If you prefer to configure your global +pip.conf+ for (+pypi-proxy+) or hosted (+pypi-internal+) adjust the file 
-accordingly.
+If you prefer to configure your global +pip.conf+ for proxy (+pypi-proxy+) or hosted (+pypi-internal+) adjust the 
+file accordingly.
 
 [[pypi-ssl]]
 === SSL Usage for PyPI Repositories
 
-You can point your PyPI proxy repository over HTTPS to ensure a secure connection with a self-signed certificate. 
-To set up the repository manager to serve HTTPS follow the configuration steps in <<ssl>>.
+You can proxy Python packages over HTTPS to ensure a secure connection with a self-signed certificate. This works 
+for proxy, hosted, and group repositories. To set up the repository manager to serve HTTPS follow the 
+configuration steps in <<ssl>>.
 
 Also, you can set up pip to use the certificate to enable SSL and fetch packages securely. Additional
 configuration is necessary for the HTTPS client implementation to work. This assumes the repository manager has 
@@ -162,7 +166,8 @@ already been set up to use SSL, so verify your certificate works. Run the follow
 openssl verify <example-cerfificate>
 ----
 
-When your certificate is proven to work, update your +pip.conf+ as follows:
+When your certificate is proven to work, update your +pip.conf+. Here is an example configuration file for a 
+repository group:
 ----
 [global]
 index = https://localhost:8443/repository/pypi-all/pypi
