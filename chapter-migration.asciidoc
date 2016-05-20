@@ -6,46 +6,115 @@
 [[migration-introduction]]
 === Introduction
 
-You can install {oss} on a new server or even the same server and run it in parallel. This gives you 
-access to the new repository formats and features without interrupting your tested and proven {oss} 2 deployment.
+The migration tool provides a built-in supported method for migrating your {pro} 2 artifacts to {pro} 3. The tool
+gives you the ability to either install content from versions 2 to 3 on a new server or the same server and 
+run it in parallel. You will be able to initiate a migration into {pro} with a wizard available in the user 
+interface.
 
-////
-Expand intro; Topics and headers subject to change. Note below will eventually be moved to its own section in 
-configuration
-////
+This feature helps you build a migration plan which allows {pro} 3 to talk to {pro} 2 by way of a capability that 
+initiates the wizard. Migration moves repositories from version 2 to version 3, and wizard enables you to view 
+the status of the migration as it is happening. Fundamentally the decisions around migration are twofold: which 
+repositories to migrate and designating blobstore location.
 
-With the migration tool you have the option to stand up a new Nexus 3 instance on the same system as Nexus 2 and 
-enable it for migration. The instance won’t be available for serving content but should have some form of 
-migration UI for status reporting.  You will be able to initiate a migration into Nexus 3 only once, which means 
-it’s a big bang conversion. By doing this on the same system, we hope to be able to leverage Hard Links, Sym 
-Links and local file copies in that preferred order. This should reduce the amount of time for a conversion quite 
-significantly (in the hard/sym link scenarios) which makes a big bang more tolerable.
-
+With the migration tool the expectation is, {pro} 3 can migrate content from one instance of {pro} 2 at a 
+time. You can The tool migrates the repositories simultaneously, leveraging your choice of hard links, symbolic 
+links, and local file copies in that preferred order. This should reduce the amount of time for a conversion 
+quite significantly (in the hard/sym link scenarios) which makes the content transfer more tolerable.
 
 ////
 Expand intro; Topics and headers subject to change
 ////
 
+[[migration-storage]]
+=== Storage Considerations for Migration
+
+Oftentimes when you might need to move content from a file system to free up space, creating a new file system in 
+the process. There might be an impending fault with the device, or you might simply be running out of space. You 
+can do this on a live and running system where you need to ensure that the files are available during the move.
+
+In the case for migrating from {pro} 2 to {pro} 3 it could be that you need to move an application while the 
+application is running. In either case, you might have to move a system-related file system 
+(such as /usr or /var), and whether you are running in single-user mode or not, the file system might actually be 
+in active use.
+
+In any file system movement operation, you must ensure that the data has been correctly copied to the new 
+destination. If you decide to migrate repositories by hard linking you may consider the implications of storage 
+usage. Hard linking repository metadata creates another reference to the same set of bytes somewhere else. In the 
+end you get two files names that have the same content.
+
+////
+The assumption is there is in-coming traffic via reverse proxy or firewall or etc that being sent to {pro} 2. 
+That traffic is really busy on Nexus 2, then you start migration. Nexus 3 start pulling over the content with the 
+migration tool. Eventually the incoming traffic volume slows down and the admin stops any endusers from using 
+{pro} 2, and physically blocks traffic, letting the last dribble of content to come over into Nexus 3. Thats 
+done. No more migration. The enduser/admin does any necessary migration checks to validate the migration. Finish 
+Migration in the UI (NX3).
+////
+
 [[migration-configuration]]
-=== Migration Configuration
+=== Migration Agent Configuration
 
-Tbd
-////
-This section focuses on the Migration agent - the plugin used to enable migraton. This section will cover what 
-the user configures the application port as a preliminary step for the migration 
-plan. This section will also provide any commandline, system
+In order to start migration, {pro} 2 has to listen for {pro} 3 to instantiate communication. This is the core 
+property of the 'Migration Agent'. When the migration wizard in version 3 helps you build a migration plan, it 
+talks to your version 2 instance thru the migration agent to find out what repositories exist (e.g. to list them 
+in the wizard user interface). When you pick one, version 3 tells version 2 to start compiling the full list of 
+what it has that needs migrating in each of those repositories.
 
-Also mention blobstore config for migration & inode
-////
-
-[[migration-options]]
-=== Migration Options
-
-TBD
+It does this by causing NX2 to create a Migration Repository capability for each repo, which in turn creates a 
+scheduled task that walks the repo's storage folder and lists the files, storing them in the changelog database.
 
 ////
-Options include Hard Links, Sym Links and local file copies in that preferred order
+nothing happens on the Nexus 2 side right away, but {pro} 3 makes a capability on Nexus 2 for every 
+single repository that is set for migration. 
 ////
+
+When the migration is started the scheduled tasks on the {pro} 2 side beginto run.. walking the directories for 
+every single file that the migration tool finds they look at the metadata and make an entry in the changelog 
+database on the {pro} 2 side. Admins will see the scheduled migration tasks.
+
+[[migration-methods]]
+=== Migration Methods
+
+Migration occurs in three stages: preparation, synchronization, and teardown. {pro} 2 talks to {pro} 3 over 
+capability-specific REST API in version 2. It is used for three main things:
+
+* For version 3 to query and control version 2's involvement in migration (i.e. setting up, stopping migration)
+* Getting parts of the changelog, the list of files that need to be migrated.
+* Depending HTTP Download as the ingestion method, it will also fetch the bytes for the files over that REST API.
+
+Once the 'Migration Agent' is implemented and both repository manager instances are stood up and communicating, 
+you can consider 
+
+////
+If it's some other ingestion method, then it only uses the NX2 migration REST api for 1) and 2)
+////
+
+*Downloading*
+
+The first option is download, which means {pro} 3 will make HTTP requests to {pro} 2. This is the slowest option 
+for migration.
+
+
+*File System Copying*
+
+The second option is file system copying. If {pro} 2 and {pro} 3 are one the same machine (or share access to the 
+same file systems) then version 3 will copy the files from version 2. {pro} 2 will tell {pro} 3, the location of 
+the file and where to retrive the content. Assuming versions 2 and 3 are on the same machine, configured in a way 
+that the mounts are accessible by the same path (from one machine to the other) this option will work. It\'92s a 
+slightly faster process than option 1.
+
+*Hard linking*
+
+This method only works on the same files system (obviously, you can't link between two separate storage drives - 
+i.e. you cannot point to a foreign drive you have to make pointers to your own drive. If you want to hard link, 
+configure your {pro} 3 in such a way that you have a blobstore defined in an appropriate location where hard 
+linking is possible
+
+This is the fastest option because you will not have to move the bytes around. Hard linking creates an inode 
+record on the files system. For hard linking to work the files system has to be the same for Nexus 2 and Nexus 3. <This is where blobstore comes in>. As in Nexus 2 on repository by 
+repository basis you have to tell Nexus where to store the file. In Nexus 2 you would type in a directory for 
+each repository (in Nexus 3 we don't do this; just make a blob store which can store more than one repos worth of 
+stuff for each repo it'll have one and only one blobstore). 
 
 [[migration-capabililty]]
 === Enabling the Migration Capability
