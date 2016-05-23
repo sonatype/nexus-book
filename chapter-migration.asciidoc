@@ -16,12 +16,13 @@ the status of the migration as it is happening. Fundamentally the decisions arou
 repositories to migrate and, if hard linking, designating the blobstore location.
 
 The migration plan you create preserves the fidelity of the {pro} 2 instance, so that if there is a point of 
-failure, cutover tasks will not be interrupted or lost. You can migrate global types of configuration, security 
+failure, cutover tasks will not be interrupted or lost. Current repository formats supported are Maven, NuGet, 
+NPM, and static websites (raw). For each of these repository format you can migrate global settings, security 
 realm settings, and repository content.
 
 With the migration tool the expectation is that {pro} 3 can migrate content from one instance of {pro} 2 at a 
-time. The tool migrates the repositories simultaneously, leveraging your choice to download, hard linking or 
-local file copies, which are the options you are granted to execute the migration.
+time. The tool migrates the repositories simultaneously leveraging your choice to download, hard link or 
+copy local files, which are the options you are granted to execute the migration.
 
 [[migration-storage]]
 === Storage Considerations for Migration
@@ -32,8 +33,8 @@ system uses to keep track of the bytes.
 
 Before you consider migrating content from {pro} 2 to {pro} 3, be aware that hard linking may prove itself a 
 file-storage challenge. The essential nature of hard linking is that you create two file entries that point to 
-the same bytes; so you have double the inode usage, but you do not double the bytes. For this reason it is best for your administrator or organization to develop a plan for managing file 
-systems.
+the same bytes; so you have to double the inode usage, but you do not double the bytes. For this reason it is 
+best for your administrator or organization to develop a plan for managing file systems.
 
 In any file system movement operation, you must ensure that the data has been correctly copied to the new 
 destination before migration. If you decide to migrate repositories by hard linking you may consider the 
@@ -47,15 +48,16 @@ be distributed to cleared data blocks, or elsewhere.
 Though you can migrate from the same server, you can also migrate content from {pro} 2 to {pro} 3 from an 
 external reverse proxy server.
 
-In the instance you have configured your repository manager context and paths for as a reverse proxy server The assumption is there is in-coming traffic via th  reverse proxy, firewall or etc that being sent to {pro} 2. 
-That traffic is really busy on Nexus 2, then you start migration. Nexus 3 start pulling over the content with the 
-migration tool.
+In the instance you have configured your repository manager HTTP context and path as a reverse proxy server
+the traffic coming through {pro} 2 could be busy, as you start the migration steps. {pro} 3 starts pulling 
+over the content with the migration tool as content is added to {pro} 2.
 
-During the migration process you may establish a maintenance window for {pro} 2 so you can to take it down for a 
-period so the migration can persist. During that time {pro} 2 should be updated to read-only mode so it is 
-inaccessible to users who do not have administative privileges. This shuts off the flow of new changes.
+During the migration process it is a best practice to schedule a maintenance window for {pro} 2 so you can to 
+take it down for a period so the migration can persist. During that time {pro} 2 should be updated to read-only 
+mode so it is inaccessible to users who do not have administrative privileges. This shuts off the flow of new 
+changes.
 
-[[migration-configuration]]
+[[migration-agent]]
 === Migration Agent Configuration
 
 In order to start migration, {pro} 2 has to listen for {pro} 3 to instantiate communication. This is the core 
@@ -64,8 +66,8 @@ talks to your version 2 instance thru the migration agent to find out what repos
 in the wizard user interface). When you pick one, version 3 tells version 2 to start compiling the full list of 
 what it has that needs migrating in each of those repositories.
 
-It does this by causing NX2 to create a Migration Repository capability for each repo, which in turn creates a 
-scheduled task that walks the repo's storage folder and lists the files, storing them in the changelog database.
+It does this by causing {pro} 2 to create a Migration Repository capability for each repo, which in turn creates 
+a scheduled task that walks the repo's storage folder and lists the files, storing them in the changelog database.
 
 When the migration is started, scheduled tasks on the {pro} 2 side will being to run. It walks through the 
 directories for every single file that the migration tool finds they look at the metadata and make an entry in 
@@ -93,9 +95,9 @@ for migration.
 
 The second option is file system copying. If {pro} 2 and {pro} 3 are one the same machine (or share access to the 
 same file systems) then version 3 will copy the files from version 2. {pro} 2 will tell {pro} 3, the location of 
-the file and where to retrive the content. Assuming versions 2 and 3 are on the same machine, configured in a way 
-that the mounts are accessible by the same path (from one machine to the other) this option will work. It\'92s a 
-slightly faster process than option 1.
+the file and where to retrieve the content. Assuming versions 2 and 3 are on the same machine, configured in a 
+way that the mounts are accessible by the same path (from one machine to the other) this option will work. It is 
+a slightly faster process than option 1.
 
 *Hard linking*
 
@@ -111,7 +113,7 @@ tell Nexus where to store the file. In {pro} 2 you would type in a directory for
 don't do this; just make a blob store which can store more than one repos worth of stuff for each repo it'll have 
 one and only one blobstore). 
 
-[[migration-capabililty]]
+[[migration-capability]]
 === Enabling the Migration Capability
 
 To implement migration, a migration-agent capability must be activated to execute the migration plan. The 
@@ -120,20 +122,20 @@ enables the port you configured to run version 2 remotely in order to communicat
 migration plan, as a whole, is two-part process where version 2 must be set up to listen for a {oss} 3 instance 
 in order for the former to talk to the latter.
 
-[[migration-agent]]
+[[migration-configuration]]
 ==== Enabling Migration from Version 2
 
 In version 2, activate the 'Migration: Agent' capability to open the connection for the migration-agent. Follow these steps:
 
 * Click 'Administration' in the left-hand panel
-* Click 'Capabilities' under 'Adminstration' to open the 'Capabilities' panel
+* Click 'Capabilities' under 'Administration' to open the 'Capabilities' panel
 * Select 'New' to prompt the 'Create new capability' modal
 * Select 'Migration: Agent' as your capability type
 
 In the lower section of 'Capabilities' interface, the repository manager acknowledges the migration-agent as 
 'Active'. 
 
-[[migration-nexus-three]]
+[[migration-plan]]
 ==== Enabling Migration from Version 3
 
 Next, sign in to your version 3 instance. At this point, map the <<migration-agent,migration-agent>> 
@@ -148,7 +150,7 @@ steps to implement the migration plan:
 === Migrating Repositories
 
 After you establish migration capabilities for versions 2 and 3, you will activate a wizard to start your 
-migration. Go to the 'Adminstration' menu and select 'Migration', located under 'System', to open the wizard.
+migration. Go to the 'Administration' menu and select 'Migration', located under 'System', to open the wizard.
 
 *Migration Wizard*
 
@@ -186,5 +188,5 @@ phases will persist:
 * The 'Finishing' phase performs final clean up, then closes the process.
 
 Eventually the incoming traffic volume from {pro} 2 will slow down and the admin stops any endusers from using 
-nexus 2, and physically blocks traffic, letting the final bits of content to transfer to {pro} 3. Click 'Stop 
+{pro} 2, and physically blocks traffic, letting the final bits of content to transfer to {pro} 3. Click 'Stop 
 Monitoring', then 'Finish' to complete the migration.
