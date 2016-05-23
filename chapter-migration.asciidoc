@@ -2,24 +2,26 @@
 ==  Migration
 {inall}
 
-
 [[migration-introduction]]
 === Introduction
 
-The migration tool provides a built-in supported method for migrating your {pro} 2 artifacts to {pro} 3. The tool
-gives you the ability to either install content from versions 2 to 3 on a new server or the same server and 
-run it in parallel. You will be able to initiate a migration into {pro} with a wizard available in the user 
-interface.
+The migration tool provides a built-in supported method for migrating your {pro} 2 components to {pro} 3. The tool
+gives you the ability to either install content from versions 2 to 3 on an external server (e.g. reverse proxy) 
+or the same server and run it in parallel. You will be able to initiate a migration into {pro} with a wizard 
+available in the user interface.
 
 This feature helps you build a migration plan which allows {pro} 3 to talk to {pro} 2 by way of a capability that 
 initiates the wizard. Migration moves repositories from version 2 to version 3, and wizard enables you to view 
 the status of the migration as it is happening. Fundamentally the decisions around migration are twofold: which 
-repositories to migrate and designating blobstore location.
+repositories to migrate and, if hard linking, designating the blobstore location.
 
-With the migration tool the expectation is, {pro} 3 can migrate content from one instance of {pro} 2 at a 
-time. You can The tool migrates the repositories simultaneously, leveraging your choice of hard links, symbolic 
-links, and local file copies in that preferred order. This should reduce the amount of time for a conversion 
-quite significantly (in the hard/sym link scenarios) which makes the content transfer more tolerable.
+The migration plan you create preserves the fidelity of the {pro} 2 instance, so that if there is a point of 
+failure, cutover tasks will not be interrupted or lost. You can migrate global types of configuration, security 
+realm settings, and repository content.
+
+With the migration tool the expectation is that {pro} 3 can migrate content from one instance of {pro} 2 at a 
+time. The tool migrates the repositories simultaneously, leveraging your choice to download, hard linking or 
+local file copies, which are the options you are granted to execute the migration.
 
 ////
 Expand intro; Topics and headers subject to change
@@ -28,28 +30,34 @@ Expand intro; Topics and headers subject to change
 [[migration-storage]]
 === Storage Considerations for Migration
 
-Oftentimes when you might need to move content from a file system to free up space, creating a new file system in 
-the process. There might be an impending fault with the device, or you might simply be running out of space. You 
-can do this on a live and running system where you need to ensure that the files are available during the move.
+Oftentimes when you might need to move bytes from a file system to free up space, creating a new file system in 
+the process. The data structure to be mindful of are inodes, a sort of hierarchical data structure that you file 
+system uses to keep track of the bytes.
 
-In the case for migrating from {pro} 2 to {pro} 3 it could be that you need to move an application while the 
-application is running. In either case, you might have to move a system-related file system 
-(such as /usr or /var), and whether you are running in single-user mode or not, the file system might actually be 
-in active use.
+Before you consider migrating content from {pro} 2 to {pro} 3, be aware that hard linking may prove itself a 
+file-storage challenge. The essential nature of hard linking is that you create two file entries that point to 
+the same bytes; so you have double the inode usage, but you do not double the bytes. For this reason it is best for your administrator or organization to develop a plan for managing file 
+systems.
 
 In any file system movement operation, you must ensure that the data has been correctly copied to the new 
-destination. If you decide to migrate repositories by hard linking you may consider the implications of storage 
-usage. Hard linking repository metadata creates another reference to the same set of bytes somewhere else. In the 
-end you get two files names that have the same content.
+destination before migration. If you decide to migrate repositories by hard linking you may consider the 
+implications of storage usage. Hard linking repository metadata creates another reference to the same set of 
+bytes somewhere else. If the content set for migration in {pro} 2 is too large for {pro} 3, part of the data will 
+be distributed to cleared data blocks, or elsewhere.
 
-////
-The assumption is there is in-coming traffic via reverse proxy or firewall or etc that being sent to {pro} 2. 
+[[migration-support]]
+=== Supported Architecture and Performance for Migration
+
+Though you can migrate from the same server, you can also migrate content from {pro} 2 to {pro} 3 from an 
+external reverse proxy server.
+
+In the instance you have configured your repository manager context and paths for as a reverse proxy server The assumption is there is in-coming traffic via th  reverse proxy, firewall or etc that being sent to {pro} 2. 
 That traffic is really busy on Nexus 2, then you start migration. Nexus 3 start pulling over the content with the 
-migration tool. Eventually the incoming traffic volume slows down and the admin stops any endusers from using 
-{pro} 2, and physically blocks traffic, letting the last dribble of content to come over into Nexus 3. Thats 
-done. No more migration. The enduser/admin does any necessary migration checks to validate the migration. Finish 
-Migration in the UI (NX3).
-////
+migration tool.
+
+During the migration process you may establish a maintenance window for {pro} 2 so you can to take it down for a 
+period so the migration can persist. During that time {pro} 2 should be updated to read-only mode so it is 
+inaccessible to users who do not have administative privileges. This shuts off the flow of new changes.
 
 [[migration-configuration]]
 === Migration Agent Configuration
@@ -63,31 +71,22 @@ what it has that needs migrating in each of those repositories.
 It does this by causing NX2 to create a Migration Repository capability for each repo, which in turn creates a 
 scheduled task that walks the repo's storage folder and lists the files, storing them in the changelog database.
 
-////
-nothing happens on the Nexus 2 side right away, but {pro} 3 makes a capability on Nexus 2 for every 
-single repository that is set for migration. 
-////
-
-When the migration is started the scheduled tasks on the {pro} 2 side beginto run.. walking the directories for 
-every single file that the migration tool finds they look at the metadata and make an entry in the changelog 
-database on the {pro} 2 side. Admins will see the scheduled migration tasks.
+When the migration is started, scheduled tasks on the {pro} 2 side will being to run. It walks through the 
+directories for every single file that the migration tool finds they look at the metadata and make an entry in 
+the changelog database on the {pro} 2 side. You will see the scheduled migration tasks in real time.
 
 [[migration-methods]]
 === Migration Methods
 
 Migration occurs in three stages: preparation, synchronization, and teardown. {pro} 2 talks to {pro} 3 over 
-capability-specific REST API in version 2. It is used for three main things:
+capability-specific REST API in version 2. The API is mainly used:
 
-* For version 3 to query and control version 2's involvement in migration (i.e. setting up, stopping migration)
-* Getting parts of the changelog, the list of files that need to be migrated.
-* Depending HTTP Download as the ingestion method, it will also fetch the bytes for the files over that REST API.
+* for version 3 to query and control version 2's involvement in migration (i.e. setting up, stopping migration)
+* for retrieving the changelog, the list of files that need to be migrated
+* to fetch the bytes for the target files, depending on whether you choose HTTP Download as the ingestion method
 
 Once the 'Migration Agent' is implemented and both repository manager instances are stood up and communicating, 
-you can consider 
-
-////
-If it's some other ingestion method, then it only uses the NX2 migration REST api for 1) and 2)
-////
+you can consider one of three ingestion methods: HTTP download, file system copying, or hard linking.
 
 *Downloading*
 
@@ -107,20 +106,23 @@ slightly faster process than option 1.
 This method only works on the same files system. If you want to hard link, configure your {pro} 3 in such a way 
 that you have a blobstore defined in an appropriate location where hard linking is possible.
 
-This is the fastest option because you will not have to move the bytes around. Hard linking creates an inode 
-record on the files system. For hard linking to work the files system has to be the same for {pro} 2 and {pro} 3. 
-As in {pro} 2 on repository by repository basis you have to tell Nexus where to store the file. In {pro} 2 you 
-would type in a directory for each repository (in Nexus 3 we don't do this; just make a blob store which can 
-store more than one repos worth of stuff for each repo it'll have one and only one blobstore). 
+Hard links only work across the same file system. If your choose hark linking as your migration method having 
+multiple file systems will require multiple blobstores for {pro} 3. 
+
+This is the fastest option because you will not have to move the bytes around. For hard linking to work the files 
+system has to be the same for {pro} 2 and {pro} 3. As in {pro} 2 on repository by repository basis you have to 
+tell Nexus where to store the file. In {pro} 2 you would type in a directory for each repository (in Nexus 3 we 
+don't do this; just make a blob store which can store more than one repos worth of stuff for each repo it'll have 
+one and only one blobstore). 
 
 [[migration-capabililty]]
 === Enabling the Migration Capability
 
-To implement migration, a migration-agent capability must be activated for the migration plan to persist. The 
+To implement migration, a migration-agent capability must be activated to execute the migration plan. The 
 capability, essentially, finds what repositories exist and lists them in the version 3 migration wizard. It 
 enables the port you configured to run version 2 remotely in order to communicate with version 3. The 
 migration plan, as a whole, is two-part process where version 2 must be set up to listen for a {oss} 3 instance 
-in order for the former to talk to the latter
+in order for the former to talk to the latter.
 
 [[migration-agent]]
 ==== Enabling Migration from Version 2
@@ -150,41 +152,43 @@ steps to implement the migration plan:
 === Migrating Repositories
 
 After you establish migration capabilities for versions 2 and 3, you will activate a wizard to start your 
-migration. Go to the 'Adminstration' menu and select 'Migration', located under 
-'System', to open the wizard.
+migration. Go to the 'Adminstration' menu and select 'Migration', located under 'System', to open the wizard.
 
 *Migration Wizard*
 
 Overview:: The wizard will provide and overview of what is permissible for automatic migration as well as 
-warnings on what cannot be migrated. 
+warnings on what cannot be migrated. Click the 'Next' button to get from one page to the next.
 
-Agent Connection:: TBD
-////
-Explain what this is, the endpoint you configured from v2
-////
+Agent Connection:: This screen presents two fields, 'URL' and 'Access Token'. Copy over the server 
+location from version 2 and paste it to the 'URL' field so the migration of repositories will persist. The 
+'Access Token' will display the security key from your version 2 instance, after establishing your migration 
+agent settings.
 
-Content:: TBD
-////
-Explain content items
-////
+Content:: This screen present checkboxes for security features ('Security') and user-related repositories 
+('Repositories') that can be migrated. For Security have the option to choose among 'Anonymous', 'Realms', 
+'Users', 'Roles', 'Privileges', and 'LDAP Configuration'.
 
-Repository Defaults:: TBD
-////
-Destination, Method
-////
+Repository Defaults:: This screen allows you to select directory destination and migration method. If you set up 
+up more than one blobstore, choose the blobstore location from the dropdown menu. The second dropdown menu, 
+'Method', allow you to choose among hard linking, local file copying or downloading. If you want to migrate 
+repositories without duplicating all the data, hard linking is method for the transfer of existing content into 
+the new blobstore. In other words, if {pro} 2 stores files to be migrated on a particular drive a blobstore must 
+be set up for that location in {pro} 3.
 
-Repositories:: TBD
-////
-select the repositories you want to migrate, NEXT
-////
+Repositories:: This screen allows you to select which repositories you want to migrate from {pro} 2 to {pro} 3. 
+You can either select all repositories with one click, at the top of the table. Or you can click each individual 
+repository. In addition to 'Repository', the table displays information around the status of the repository. That 
+includes 'Type', 'Format', 'Supported', 'Status', 'Destination', and 'Method'.
 
-Preview:: TBD
-////
-Describe preview of the migration config; Click yes from the modal Begin Migration
-////
+Preview:: This screen displays a preview of the repositories poised for migration, selected in the previous 
+screen. Scroll thru the table to see the three phases set for the migration: 'PREPARE', 'SYNC' and 'FINISH'. 
+Click 'Begin', then confirm from the modal, that you want to start the migration. After the preview the next 
+phases will persist:
 
-Synchronizing:: TBD
-////
-Describe what this does, action taken; Finish
-////
+* The 'Preparing' phase prepares the transfer and creation of all the repositories.
+* The 'Synchronizing' phase counts up and processes all components of the repositories set for migration.
+* The 'Finishing' phase performs final clean up, then closes the process.
 
+Eventually the incoming traffic volume from {pro} 2 will slow down and the admin stops any endusers from using 
+nexus 2, and physically blocks traffic, letting the final bits of content to transfer to {pro} 3. Click 'Stop 
+Monitoring', then 'Finish' to complete the migration.
