@@ -17,7 +17,7 @@ repositories to migrate and, if hard linking, designating the blobstore location
 
 The migration plan you create preserves the fidelity of the {pro} 2 instance, so that if there is a point of 
 failure, cutover tasks will not be interrupted or lost. Current repository formats supported are Maven, NuGet, 
-NPM, and static websites (raw). For each of these repository format you can migrate global settings, security 
+NPM, and static websites ('raw'). For each of these repository format you can migrate global settings, security 
 realm settings, and repository content.
 
 With the migration tool the expectation is that {pro} 3 can migrate content from one instance of {pro} 2 at a 
@@ -95,23 +95,21 @@ for migration.
 
 The second option is file system copying. If {pro} 2 and {pro} 3 are one the same machine (or share access to the 
 same file systems) then version 3 will copy the files from version 2. {pro} 2 will tell {pro} 3, the location of 
-the file and where to retrieve the content. Assuming versions 2 and 3 are on the same machine, configured in a 
-way that the mounts are accessible by the same path (from one machine to the other) this option will work. It is 
-a slightly faster process than option 1.
+the file and where to retrieve the content. 
+
+Assuming versions 2 and 3 are on the same machine, configured in a way that the mounts are accessible by the same 
+path (from one machine to the other) this option will work. It is a slightly faster process than the download 
+method.
 
 *Hard linking*
 
-This method only works on the same files system. If you want to hard link, configure your {pro} 3 in such a way 
+This method only works on the same file system. If you want to hard link, configure your {pro} 3 in such a way 
 that you have a blobstore defined in an appropriate location where hard linking is possible.
 
 Hard links only work across the same file system. If your choose hark linking as your migration method having 
 multiple file systems will require multiple blobstores for {pro} 3. 
 
-This is the fastest option because you will not have to move the bytes around. For hard linking to work the files 
-system has to be the same for {pro} 2 and {pro} 3. As in {pro} 2 on repository by repository basis you have to 
-tell Nexus where to store the file. In {pro} 2 you would type in a directory for each repository (in Nexus 3 we 
-don't do this; just make a blob store which can store more than one repos worth of stuff for each repo it'll have 
-one and only one blobstore). 
+This is the fastest option because you will not have to move the bytes around.
 
 [[migration-capability]]
 === Enabling the Migration Capability
@@ -154,7 +152,7 @@ migration. Go to the 'Administration' menu and select 'Migration', located under
 
 *Migration Wizard*
 
-Overview:: The wizard will provide and overview of what is permissible for automatic migration as well as 
+Overview:: The wizard will provide and overview of what is allowed for automatic migration as well as 
 warnings on what cannot be migrated. Click the 'Next' button to get from one page to the next.
 
 Agent Connection:: This screen presents two fields, 'URL' and 'Access Token'. Copy over the server 
@@ -163,13 +161,13 @@ location from version 2 and paste it to the 'URL' field so the migration of repo
 agent settings.
 
 Content:: This screen present checkboxes for security features ('Security') and user-related repositories 
-('Repositories') that can be migrated. For Security have the option to choose among 'Anonymous', 'Realms', 
+('Repositories') that can be migrated. For 'Security' you have the option to choose among 'Anonymous', 'Realms', 
 'Users', 'Roles', 'Privileges', and 'LDAP Configuration'.
 
 Repository Defaults:: This screen allows you to select directory destination and migration method. If you set up 
 up more than one blobstore, choose the blobstore location from the dropdown menu. The second dropdown menu, 
-'Method', allow you to choose among hard linking, local file copying or downloading. If you want to migrate 
-repositories without duplicating all the data, hard linking is method for the transfer of existing content into 
+'Method', allows you to choose among hard linking, copying local files or downloading. If you want to migrate 
+repositories without duplicating all the data, hard linking is method to transfer existing content into 
 the new blobstore. In other words, if {pro} 2 stores files to be migrated on a particular drive a blobstore must 
 be set up for that location in {pro} 3.
 
@@ -184,7 +182,7 @@ Click 'Begin', then confirm from the modal, that you want to start the migration
 phases will persist:
 
 * The 'Preparing' phase prepares the transfer and creation of all the repositories.
-* The 'Synchronizing' phase counts up and processes all components of the repositories set for migration.
+* The 'Synchronizing' phase counts and processes all components of the repositories set for migration.
 * The 'Finishing' phase performs final clean up, then closes the process.
 
 Eventually the incoming traffic volume from {pro} 2 will slow down and the admin stops any endusers from using 
