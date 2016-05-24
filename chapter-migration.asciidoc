@@ -17,7 +17,7 @@ repositories to migrate and, if hard linking, designating the blobstore location
 
 The migration plan you create preserves the fidelity of the {pro} 2 instance, so that if there is a point of 
 failure, cutover tasks will not be interrupted or lost. Current repository formats supported are Maven, NuGet, 
-NPM, and static websites ('raw'). For each of these repository format you can migrate global settings, security 
+npm, and static websites ('raw'). For each of these repository format you can migrate global settings, security 
 realm settings, and repository content.
 
 With the migration tool the expectation is that {pro} 3 can migrate content from one instance of {pro} 2 at a 
@@ -28,13 +28,14 @@ copy local files, which are the options you are granted to execute the migration
 === Storage Considerations for Migration
 
 Oftentimes when you might need to move bytes from a file system to free up space, creating a new file system in 
-the process. The data structure to be mindful of are inodes, a sort of hierarchical data structure that you file 
-system uses to keep track of the bytes.
+the process. Be aware of the capacity of file objects across your system. For migration, keeping an inventory of 
+your inodes, the hierarchal data structure that represents the file objects, will be useful to you when keeping 
+track of bytes and metadata within your system.
 
 Before you consider migrating content from {pro} 2 to {pro} 3, be aware that hard linking may prove itself a 
 file-storage challenge. The essential nature of hard linking is that you create two file entries that point to 
 the same bytes; so you have to double the inode usage, but you do not double the bytes. For this reason it is 
-best for your administrator or organization to develop a plan for managing file systems.
+best for an administrator or the organization to develop a plan for managing file systems.
 
 In any file system movement operation, you must ensure that the data has been correctly copied to the new 
 destination before migration. If you decide to migrate repositories by hard linking you may consider the 
@@ -67,10 +68,11 @@ in the wizard user interface). When you pick one, version 3 tells version 2 to s
 what it has that needs migrating in each of those repositories.
 
 It does this by causing {pro} 2 to create a Migration Repository capability for each repo, which in turn creates 
-a scheduled task that walks the repo's storage folder and lists the files, storing them in the changelog database.
+a scheduled task that walks the repository storage folder and lists the files, storing them in the changelog 
+database.
 
-When the migration is started, scheduled tasks on the {pro} 2 side will being to run. It walks through the 
-directories for every single file that the migration tool finds they look at the metadata and make an entry in 
+When the migration is started, scheduled tasks on the {pro} 2 side will start processing. It walks through the 
+directories for every single file that the migration tool finds they look at the metadata and makes an entry in 
 the changelog database on the {pro} 2 side. You will see the scheduled migration tasks in real time.
 
 [[migration-methods]]
@@ -93,8 +95,8 @@ for migration.
 
 *File System Copying*
 
-The second option is file system copying. If {pro} 2 and {pro} 3 are one the same machine (or share access to the 
-same file systems) then version 3 will copy the files from version 2. {pro} 2 will tell {pro} 3, the location of 
+The second option is file system copying. If {pro} 2 and {pro} 3 are on the same machine (or share access to the 
+same file systems) then version 3 will copy the files from version 2. {pro} 2 will tell {pro} 3 the location of 
 the file and where to retrieve the content. 
 
 Assuming versions 2 and 3 are on the same machine, configured in a way that the mounts are accessible by the same 
@@ -106,7 +108,7 @@ method.
 This method only works on the same file system. If you want to hard link, configure your {pro} 3 in such a way 
 that you have a blobstore defined in an appropriate location where hard linking is possible.
 
-Hard links only work across the same file system. If your choose hark linking as your migration method having 
+Hard links only work across the same file system. If your choose hard linking as your migration method having 
 multiple file systems will require multiple blobstores for {pro} 3. 
 
 This is the fastest option because you will not have to move the bytes around.
@@ -117,7 +119,7 @@ This is the fastest option because you will not have to move the bytes around.
 To implement migration, a migration-agent capability must be activated to execute the migration plan. The 
 capability, essentially, finds what repositories exist and lists them in the version 3 migration wizard. It 
 enables the port you configured to run version 2 remotely in order to communicate with version 3. The 
-migration plan, as a whole, is two-part process where version 2 must be set up to listen for a {oss} 3 instance 
+migration plan, as a whole, is two-part process where version 2 must be set up to listen for a {pro} 3 instance 
 in order for the former to talk to the latter.
 
 [[migration-configuration]]
@@ -136,9 +138,9 @@ In the lower section of 'Capabilities' interface, the repository manager acknowl
 [[migration-plan]]
 ==== Enabling Migration from Version 3
 
-Next, sign in to your version 3 instance. At this point, map the <<migration-agent,migration-agent>> 
-endpoint to your version 3 instance so the migration runs on the same server as version 2. Follow these 
-steps to implement the migration plan:
+Next, sign in to your version 3 instance. You will create a 'Migration' capability to implement the tool. When 
+enabled, the 'Migration' icon appears in the 'Administration' menu, under 'System'. Follow these steps to 
+implement the migration capability:
 
 * Click 'Capabilities', located under 'System', to open the 'Capabilities' screen
 * Click 'Create capability'
@@ -148,7 +150,8 @@ steps to implement the migration plan:
 === Migrating Repositories
 
 After you establish migration capabilities for versions 2 and 3, you will activate a wizard to start your 
-migration. Go to the 'Administration' menu and select 'Migration', located under 'System', to open the wizard.
+migration. In {pro} go to the 'Administration' menu and select 'Migration', located under 'System', to open the 
+wizard.
 
 *Migration Wizard*
 
@@ -156,13 +159,14 @@ Overview:: The wizard will provide and overview of what is allowed for automatic
 warnings on what cannot be migrated. Click the 'Next' button to get from one page to the next.
 
 Agent Connection:: This screen presents two fields, 'URL' and 'Access Token'. Copy over the server 
-location from version 2 and paste it to the 'URL' field so the migration of repositories will persist. The 
-'Access Token' will display the security key from your version 2 instance, after establishing your migration 
-agent settings.
+location from version 2 and paste it to the 'URL' field so the migration of repositories will persist. 
+An example input would be: +http://localhost:8081/nexus/service/siesta/migrationagent+.
+The 'Access Token' will display the security key from your version 2 'Migration: Agent' capability details.
 
-Content:: This screen present checkboxes for security features ('Security') and user-related repositories 
-('Repositories') that can be migrated. For 'Security' you have the option to choose among 'Anonymous', 'Realms', 
-'Users', 'Roles', 'Privileges', and 'LDAP Configuration'.
+Content:: This screen presents checkboxes for security features ('Security'), server configuration ('System'), 
+and user-managed repositories ('Repositories') that can be migrated. For 'Security' you have the option to choose 
+among 'Anonymous', 'Realms', 'Users', 'Roles', and 'LDAP Configuration'. For 'System' you can migrate 'Email' and 
+'HTTP Configuration' contents.
 
 Repository Defaults:: This screen allows you to select directory destination and migration method. If you set up 
 up more than one blobstore, choose the blobstore location from the dropdown menu. The second dropdown menu, 
@@ -172,9 +176,11 @@ the new blobstore. In other words, if {pro} 2 stores files to be migrated on a p
 be set up for that location in {pro} 3.
 
 Repositories:: This screen allows you to select which repositories you want to migrate from {pro} 2 to {pro} 3. 
-You can either select all repositories with one click, at the top of the table. Or you can click each individual 
-repository. In addition to 'Repository', the table displays information around the status of the repository. That 
-includes 'Type', 'Format', 'Supported', 'Status', 'Destination', and 'Method'.
+You can either select all repositories with one click, at the top of the table. Alternatively, you can click each 
+individual repository. In addition to 'Repository', the table displays information around the status of the 
+repository. The table includes 'Type', 'Format', 'Supported', 'Status', 'Destination', and 'Method'.
+
+NOTE: The faded text of a repository format on your system will indicate it is not available for migration.
 
 Preview:: This screen displays a preview of the repositories poised for migration, selected in the previous 
 screen. Scroll thru the table to see the three phases set for the migration: 'PREPARE', 'SYNC' and 'FINISH'. 
