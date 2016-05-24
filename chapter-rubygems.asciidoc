@@ -39,6 +39,7 @@ available to everyone else in your organization.  Using the repository manager a
 teams and individual developers having to repeatedly download components or share components in a haphazard and
 disorganized manner.
 
+//this should be updated before we go live
 IMPORTANT: Gem repository support is a feature of version 2.11 and
 higher, and is available in {pro} and {oss} editions.
 
@@ -52,7 +53,7 @@ The following features are included as part of the Gem repository support:
   repositories and easily exposing them as one URL to all users
 
 TIP: None of this functionality requires Ruby (or any extra tooling) to be installed on the operating system
-running the repository manager. Ruby specific details are implemented using a bundled http://jruby.org/[JRuby].
+running the repository manager.
 
 [[rubygems-proxy]]
 === Proxying Gem Repositories
@@ -62,27 +63,21 @@ developers, continuous integration servers and other systems using
 +gem+, you should proxy the RubyGems repository and any other
 repositories you require.
 
-To proxy an external Gem repository, like RubyGems, simply create
-a new 'Proxy Repository'. The 'Provider' has to be set to
-+Rubygems+. The 'Remote Storage Location' has to be set to the URL of
-the remote repository you want to proxy. The official URL for
-Rubygems.org is
+To proxy an external Gem repository, like RubyGems, you simply create a new repository using the recipe 
+'rubygems (proxy)' as documented in <<admin-repositories>>.
 
-----
-https://rubygems.org
-----
+Minimal configuration steps are:
 
-This main configuration for proxying RubyGems is visible in. Further configuration details are available in
+- Define 'Name'
+- Define URL for 'Remote storage' e.g. `https://rubygems.org` (the official URL for RubyGems.org)
+- Select a 'Blob store' for 'Storage'
+
+Further configuration details are available in <<admin-repository-repositories>>.
+
 ////
-insert image
-add configuration section
-////
-
-If you are using {pro} and are proxying a repository via HTTPS, you can get the certificate added to the
-repository manager truststore to simplify management using the SSL tab of the repository configuration.
-
 Scheduled tasks can be used to purge broken metadata of a proxy gem repository as well as to synchronize the
 metadata files of a proxy gem repository.
+////
 
 [[rubygems-hosted-private]]
 === Private Hosted Gem Repositories
