@@ -1,5 +1,5 @@
 [[migrating]]
-== Migrating to {pro}
+== Migrating to {nxrm}
 
 {inall}
 
@@ -11,7 +11,7 @@ Depending on your repository managers, you will have to use different approaches
 Maven 2 format on disk.
 
 {pro} and {oss} store its components in standard Maven 2 layout, and they are served directly from disk, and can
-therefore be easily integrated into an existing {pro} instance as a new hosted repository.
+therefore be easily integrated into an existing {nxrm} instance as a new hosted repository.
 
 
 [[archiva]]
@@ -21,22 +21,22 @@ therefore be easily integrated into an existing {pro} instance as a new hosted r
 ==== Introduction
 
 This appendix walks you through the process of migrating an existing http://archiva.apache.org/[Archiva]
-installation to a new {pro} installation.
+installation to a new {nxrm} installation.
 
 [[archiva-sect-migrepo]]
 ==== Migrating Archiva Repositories
 
 Archiva uses the file system to store hosted repositories and proxied repositories, making migration from Archiva
-to {pro} very simple. The following sections outline the process for migrating existing Archiva repositories to a
-new {pro} instance.
+to {nxrm} very simple. The following sections outline the process for migrating existing Archiva repositories to a
+new {nxrm} instance.
 
 [[archiva-sect-migrating-managed]]
 ==== Migrating an Archiva Managed Repository
 
 Archiva 'Managed Repositories' are the equivalent of hosted repositories. To migrate a Managed Repository from
-Archiva to {pro}, do the following:
+Archiva to {nxrm}, do the following:
 
-* Create a New Hosted Repository in {pro}.
+* Create a New Hosted Repository in {nxrm}.
 
 * Copy the Contents of the Archiva Managed Repository to the Storage Directory of the newly-created Hosted
 Repository.
@@ -66,7 +66,7 @@ Take note of the file path for Directory. The file path shown in <<fig-archiva-m
 directory `/usr/local/archiva-1.2.1/data/repositories/internal`.  You will use this path later in this section to
 copy the contents of your old Archiva Managed Repository to your new Hosted Repository.
 
-Next, create a new hosted repository in {pro} with the same identifier and Name as the old Archiva Managed
+Next, create a new hosted repository in {nxrm} with the same identifier and Name as the old Archiva Managed
 Repository. To do this, log into the user interface as an administrative user, click on Repositories in the
 left-hand main navigation menu, and then click on the Add drop-down as shown in
 <<fig-archiva-new-nexus-hosted>>. Select "Hosted Repository" and then fill out the Repository ID and Repository
@@ -77,9 +77,9 @@ Repository Policy of Snapshot, and if you are migrating a Release repository sel
 .Creating a Hosted Repository
 image::figs/web/archiva-new-nexus-hosted.png[scale=60]
 
-Now, you'll need to copy the Archiva repository to the repository in the {pro}. You can do this by copying the
+Now, you'll need to copy the Archiva repository to the repository in the {nxrm}. You can do this by copying the
 contents of the Archiva repository directory to the repository storage directory. If we assume that Archiva is
-installed in /usr/local/archiva-1.2.1, {pro} is installed in /usr/local/nexus, and the Sonatype Work directory is
+installed in /usr/local/archiva-1.2.1, {nxrm} is installed in /usr/local/nexus, and the Sonatype Work directory is
 /usr/local/sonatype-work. You can copy the contents of the Archiva managed repository to the new hosted repository
 by executing the following command:
 
@@ -115,15 +115,15 @@ repository.
 ==== Migrating an Archiva Proxy Connector
 
 Archiva allows you to define remote repositories and repository connectors to proxy remote repositories and cache
-remote components from remote repositories in Archiva Managed Repositories.  While {pro} also provides Proxy
-repositories, there is one major difference between {pro} and Archiva. Where {pro} maintains a separate local
+remote components from remote repositories in Archiva Managed Repositories.  While {nxrm} also provides Proxy
+repositories, there is one major difference between {nxrm} and Archiva. Where {nxrm} maintains a separate local
 storage directory for each proxy repository, Archiva combines cached remote components into a single file system
 with the contents of a managed repository. In other words, there is no good way to transfer an existing local
-cache of components between Archiva and {pro} without manually manipulating the contents of Archiva's Managed
+cache of components between Archiva and {nxrm} without manually manipulating the contents of Archiva's Managed
 Repository directory.
 
-To recreate an Archiva repository connector in {pro} as a Proxy repository and to preserve the local cache of
-components from this repository. You'll need to create a Proxy repository in {pro}, copy the contents of the
+To recreate an Archiva repository connector in {nxrm} as a Proxy repository and to preserve the local cache of
+components from this repository. You'll need to create a Proxy repository in {nxrm}, copy the contents of the
 existing proxy repository to the storage location for you new Proxy repository, and then rebuild the metadata of
 your new repository.
 
@@ -157,13 +157,13 @@ Click on the edit icon (or pencil) next to second Proxy Connector
 listed in <<fig-archiva-proxy-connectors>>, to load the settings 
 form for this proxy connector shown in <<fig-archiva-proxy-connector-settings>>. 
 You should use the settings for this proxy connect to configure 
-your new {pro}xy repository.
+your new proxy repository.
 
 [[fig-archiva-proxy-connector-settings]]
 .Archiva Proxy Connector Settings
 image::figs/web/archiva-proxy-connector-settings.png[scale=60]
 
-To create a Proxy repository that will correspond to the Proxy Connector in Archiva, log into {pro} as an
+To create a Proxy repository that will correspond to the Proxy Connector in Archiva, log into {nxrm} as an
 administrative user, and click on Repositories in the left-hand main menu. Once you can see a list of
 repositories, click on Add... and select Proxy Repository from the drop-down of repository types. In the New Proxy
 Repository form (shown in <<fig-archiva-nx-create-proxy>>) populate the repository ID, repository Name, and use
@@ -171,20 +171,20 @@ the remote URL that was displayed in <<fig-archiva-browsing-remote>>. You will n
 for every proxy connector that was defined in Archiva.
 
 [[fig-archiva-nx-create-proxy]]
-.Creating a {pro}xy Repository
+.Creating a Proxy Repository
 image::figs/web/archiva-nx-proxy-create.png[scale=60]
 
 To expose this new Proxy repository in a Repository Group, create a new Repository Group or select an existing
 group by clicking on Repositories in the left-hand main menu. Click on a repository group and then select the
 Configuration tab to display the form shown in <<fig-archiva-proxy-to-group>>. In the Configuration tab you will
-see a list of Order Group Repositories and Available Repositories.  Click and drag your new {pro}xy repository to
+see a list of Order Group Repositories and Available Repositories.  Click and drag your new proxy repository to
 the list of Ordered Group Repositories, and click Save.
 
 [[fig-archiva-proxy-to-group]]
 .Adding a Proxy Repository to a Repository Group
 image::figs/web/archiva-nx-repo-group-proxy.png[scale=60]
 
-Next, you will need to define repository groups that will tell {pro} to only locate certain components in the
+Next, you will need to define repository groups that will tell {nxrm} to only locate certain components in the
 newly created proxy repository. In , Archiva defined three patterns that were used to filter components available
 from the proxy connector. These three patterns were "javax/**", "com/sun/**", and "org/jvnet/**". To recreate this
 behavior, define three Routes which will be applied to the group you configured in <<fig-archiva-proxy-to-group>>.
@@ -199,10 +199,10 @@ image::figs/web/archiva-nx-repo-routes.png[scale=60]
 [[artifactory]]
 === Migrating from Artifactory
 
-This appendix provides a guideline for migrating a Maven repository from Artifactory to {pro}.
+This appendix provides a guideline for migrating a Maven repository from Artifactory to {nxrm}.
 
 Typically migrating from Artifactory revolves around migrating hosted repositories only, since any proxy
-repositories configured in Artifactory can just be set up with the same configuration in {pro}, and all data will
+repositories configured in Artifactory can just be set up with the same configuration in {nxrm}, and all data will
 be retrieved from the upstream repositories again.
 
 Hosted repositories on the other hand have to be migrated. The best
@@ -211,7 +211,7 @@ Artifactory and migrate one hosted repository after another. Please
 consult the Artifactory documentation for step-by-step instructions on
 how to export a repository.
 
-After the export, you have to create a hosted repository in {pro} e.g., with the name +old-releases+ as documented
+After the export, you have to create a hosted repository in {nxrm} e.g., with the name +old-releases+ as documented
 in <<config-sect-new-repo>>. This will create a folder in sonatype-work/nexus/storage/old-releases.
 
 Now you are ready to take the exported repository and copy it into the
