@@ -21,8 +21,8 @@ extracted. E.g. the different versions and the specific JAR files for `org.sonat
 are available in versioned directories at `http://repo1.maven.org/maven2/org/sonatype/nexus/nexus-core/`.
 
 This manual process can be simplified and improved by the usage of a Maven project declaring the relevant
-components as dependencies. An example project with this setup and a few scripts is available in the
-https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[documentation examples project].
+components as dependencies. An example project with this setup called `nexus-script-example` and a few scripts are
+available in the https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[documentation examples project].
 
 .Maven Project pom.xml Declaring the API Dependencies for Scripting
 ----
@@ -101,11 +101,6 @@ and therefore invocations.
 [[scripting-configuration]]
 === Managing and Running Scripts
 
-////
-Note: A number of useful scripts and more are available at
-https://gist.github.com/kellyrob99/ea0294433448e72ed64d
-////
-
 Once you have completed the creation of your script, you need to publish it to the repository manager for execution.
 This is done by REST API invocations against the endpoint:
 
@@ -173,24 +168,55 @@ mentioned above. In the following section you can find some further detailed exa
 === Examples
 
 The API for scripts is capable of a number of different tasks. This section provides examples for script writing,
-publishing and executing them. Since scripts are typically longer than a single line and creating them in a
-separate file in the IDE is recommended, using a helper script that formats a `.groovy` file into a JSON file and
-submits it to the repository manager can be a convenient approach.
+publishing and executing them.
+
+The `simple-shell-example` project in the https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[scripting
+section of the documentation examples project] includes a number of JSON file with simple scripts:
+
+maven.json:: simplest script to create a hosted Maven repository
+npm.json:: simple script to create a hosted and proxy repository as well as a repository group for npm usage
+bower.json:: simple script to create a hosted and proxy repository as well as a repository group for bower usage
+anonymous:json:: parameterized script to enable or disable anonymous access
+
+Simple shell scripts are added to contain the curl invocations to manage scripts via the REST API:
+
+create.sh:: Upload a specified JSON file 
+delete.sh:: Delete a script specified by its name
+list:sh:: List all deployed scripts
+run.sh:: Run a script specified by its name
+setAnonymous.sh:: Run the anonymous script on the server with the parameter `true` or `false`
+update.sh:: Update an existing script by specifying the name and the JSON file to use for the update
+
+And example sequence of creating and running a script is:
+
+----
+./create.sh maven.json
+./run.sh maven
+----
+
+Subsequently you could list all scripts and delete the maven script with
+
+----
+./list.sh
+./delete.sh maven
+----
+
+Since scripts are typically longer than a single line and creating them in a separate file in the IDE is
+recommended, using a helper script that formats a `.groovy` file into a JSON file and submits it to the repository
+manager can be a convenient approach.
 
 The `complex-script` project in the https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x[scripting
 section of the documentation examples project] includes an example implementation using Groovy invoked from a
-shell script. All scripts in this folder can be published and executed via the `provision.sh` file or
-individually:
+shell script. All scripts in this folder can be published and executed via the `provision.sh` file. This results
+in the download of all required dependencies and the upload and execution of the referenced script. Alternative
+you can provision the scripts individually:
 
 ----
-groovy addUpdateScript.groovy -u "admin" -p "admin123" -n "docker" -f "dockerRepositories.groovy" -h "http://localhost:8081"
-curl -v -X POST -u admin:admin123 --header "Content-Type: text/plain" "http://localhost:8081/service/siesta/rest/v1/script/docker/run"
+groovy addUpdateScript.groovy -u "admin" -p "admin123" -n "raw" -f "rawRepositories.groovy" -h "http://localhost:8081"
+curl -v -X POST -u admin:admin123 --header "Content-Type: text/plain" "http://localhost:8081/service/siesta/rest/v1/script/raw/run"
 ----
 
 The following scripts are available:
-
-dockerRepositories.groovy:: configures a proxy repository of DockerHub, a hosted repository and a group, includes
-imports of a few classes and more complex method invocation
 
 npmAndBowerRepositories.groovy:: configures a set of proxy and hosted repositories as well as repository groups
 for NPM and Bower repositories suitable for server-side and client JavaScript-based development
@@ -201,8 +227,7 @@ security.groovy:: disables anonymous access, creates a new administrator account
 expansion to anonymous user role and a user, creates a new role with publishing access to all repositories and a
 user
 
-core.groovy:: configures the base URL capability and configures a proxy server
-
+core.groovy:: configures the base URL capability and a proxy server
 
 Logging from your scripts into the repository manager logs is automatically available and performed with the usual
 calls
