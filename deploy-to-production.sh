@@ -35,6 +35,12 @@ if [ $publish_index == "true" ]; then
     rsyncToDest site/images/ images --delete
     rsyncToDest site/css/ css --delete
     rsyncToDest site/fonts/ fonts --delete
+
+    rsyncToDest site/nexus-documentation/index.html  "../" --delete
+    rsyncToDest site/js/ "../js" --delete
+    rsyncToDest site/images/ "../images" --delete
+    rsyncToDest site/css/ "../css" --delete
+    rsyncToDest site/fonts/ "../fonts" --delete
 fi
 
 rsyncToDest site/$version/ $version --delete
