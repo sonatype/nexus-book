@@ -25,7 +25,6 @@ echo "Nexus Repository Manager Version $version"
 
 if [ $publish_master == "true" ]; then
     echo "Preparing for master deployment"
-    
     rm -rf target/site/reference
     rm -rf target/site/pdf
     rm -rf target/site/other
@@ -71,11 +70,20 @@ echo "Invoking templating process for $version "
 $templateScript ../nexus-book/target/site/$version/reference $docProperties "block" "../../../" "book"
 
 if [ $publish_index == "true" ]; then
-    echo "Preparing root index for deployment"
-    echo "  Copying content and resources"
-    cp target/index.html target/site
-    echo "Invoking templating for index page"
-    $templateScript ../nexus-book/target/site/ $docProperties "none" "../" "article"
-    cp -rv site/global/sitemap*.xml target/site
-    echo "... done"
+  echo "Preparing Nexus Repository and Nexus Documentation index for deployment"
+  rm -rf target/site/nexus-documentation
+  mkdir -p target/site/nexus-documentation
+
+  echo "  Copying content and resources"
+  cp target/index.html target/site
+  echo "Invoking templating for index page"
+  $templateScript ../nexus-book/target/site/ $docProperties "none" "../" "article"
+  cp -rv site/global/sitemap*.xml target/site
+  echo "... done"
+
+  echo "Preparing Nexus Documentation index for deployment"
+  cp target/nexus-documentation.html target/site/nexus-documentation/index.html
+  echo "Invoking templating for index page"
+  $templateScript ../nexus-book/target/site/nexus-documentation/ "nexus-documentation.properties" "none" "" "article"
+  echo "... done"
 fi
