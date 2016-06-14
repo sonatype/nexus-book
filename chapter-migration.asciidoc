@@ -9,50 +9,64 @@ The migration tool provides a built-in supported method for migrating components
 manager to version 3. You will be able to initiate a migration into {pro} with a wizard available in the user 
 interface.
 
-This feature helps you build a migration plan which allows {pro} 3 to talk to {pro} 2 by way of a capability that 
-initiates the wizard. Migration moves repositories from version 2 to version 3, and wizard enables you to view 
-the status of the migration as it is happening. Fundamentally the decisions around migration are twofold: which 
-repositories to migrate and, if hard linking, designating the blobstore location.
+This feature helps you build a migration plan which allows {pro} {version} to talk to {pro} 2 by way of a 
+capability that initiates the wizard. Migration moves repositories from version 2 to version 3, and wizard 
+enables you to view the status of the migration as it is happening. Fundamentally the decisions around migration 
+are twofold: which repositories to migrate and, if hard linking, designating the blobstore location.
 
-The migration plan you create preserves the fidelity of the {pro} 2 instance, so that if there is a point of 
-failure, cutover tasks will not be interrupted or lost. Current repository formats supported are Maven, NuGet, 
-npm, and static websites ('raw'). For each of these repository format you can migrate global settings, security 
-realm settings, and repository content.
+Migration is a feature that should be distinguished from upgrading. 
 
-With the migration tool the expectation is that {pro} 3 can migrate content from one instance of {pro} 2 at a 
-time. The tool migrates the repositories simultaneously leveraging your choice to download, hard link or 
-copy local files, which are the options you are granted to execute the migration.
+Current repository formats supported are Maven, NuGet, npm, and static websites ('raw'). For each of these 
+repository formats you can migrate global settings, security realm settings, and repository content.
+
 
 [[migration-prep]]
 === Preparing for Migration
 
-Migration is a feature that should be distinguished from upgrading. 
+The critical decision you or your organization must make is a plan for where they want their files to be 
+transferred to when the migration is complete. You will need to consider how your system storage is structured 
+and what ingestion methods are available to them. In some cases, for exa
 
+The minimum version you will need to run your migration plan is {pro} 2.14. You can download from the Sonatype 
+home page or upgrade 
+
+With the migration tool the expectation is that {pro} 3 can migrate content from one instance of {pro} 2 at a 
+time. The tool can migrate content from your choice of download, hard linking, or copying local files. 
+
+Migration is the process of replacing your use of {pro} 2 with {pro} 3 architecture. 
+
+==== Performance Considerations for Migration
+
+Section will cover processes that may slow migration
+
+////
+How long does migration actually take? 1Gb/min (not the real number) - HTTP download, depends on network
+Scheduled Tasks(ST)
+Considerations:
+Running scheduled tasks on NX2 may slow migration performance
+Processes of note:
+ST: Rebuild maven metadata (this is performance intensive and will generate additional work for migration)
+ST: Repair index (performance considerations - uses a lot of file handles and lots of temporary disk space)
+Smart proxy - if you have this on
+Increasing the file handles may be necessary if NX2 and NX3 are on the same box
+////
 
 [[migration-storage]]
 === Storage Considerations for Migration
 
-Oftentimes when you might need to move bytes from a file system to free up space, creating a new file system in 
-the process. Be aware of the capacity of file objects across your system. For migration, keeping an inventory of 
-your inodes, the hierarchal data structure that represents the file objects, will be useful to you when keeping 
-track of bytes and metadata within your system.
-
-Before you consider migrating content from {pro} 2 to {pro} 3, be aware that hard linking may prove itself a 
-file-storage challenge. The essential nature of hard linking is that you create two file entries that point to 
-the same bytes; so you have to double the inode usage, but you do not double the bytes. For this reason it is 
-best for an administrator or the organization to develop a plan for managing file systems.
-
-In any file system movement operation, you must ensure that the data has been correctly copied to the new 
-destination before migration. If you decide to migrate repositories by hard linking you may consider the 
-implications of storage usage. Hard linking repository metadata creates another reference to the same set of 
-bytes somewhere else. If the content set for migration in {pro} 2 is too large for {pro} 3, part of the data will 
-be distributed to cleared data blocks, or elsewhere.
+When migrating, make sure you have enough storage capacity in the destination filesystem(s). If you are using 
+hard-link ingestion, the bytes themselves are not duplicated (saving space), but you must ensure there are enough 
+free inodes for the content being migrated.
 
 [[migration-support]]
-=== Supported Architecture and Performance for Migration
+=== Supported Architecture for Migration
 
-There are two architectures you can build to support a migration. You can either move components from versions 2 
-to 3 on an external server (e.g. reverse proxy) or the same server and run it in parallel.
+Section to be updated.
+
+////
+There are two available architectures that support migration. You can either move content from a running 
+instance of versions 2 to 3 on an external server, or you can use the same server and run it in parallel. If you 
+choose the latter architecture, you 
 
 In the instance you have configured your repository manager HTTP context and path as a reverse proxy server
 the traffic coming through {pro} 2 could be busy, as you start the migration steps. {pro} 3 starts pulling 
@@ -62,29 +76,26 @@ During the migration process it is a best practice to schedule a maintenance win
 take it down for a period so the migration can persist. During that time {pro} 2 should be updated to read-only 
 mode so it is inaccessible to users who do not have administrative privileges. This shuts off the flow of new 
 changes.
+////
 
-[[migration-agent]]
-=== Migration Agent Configuration
+
+[[migration-methods]]
+=== Migration Methods
 
 In order to start migration, {pro} 2 has to listen for {pro} 3 to instantiate communication. This is the core 
 property of the 'Migration Agent'. When the migration wizard in version 3 helps you build a migration plan, it 
 talks to your version 2 instance thru the migration agent to find out what repositories exist (e.g. to list them 
 in the wizard user interface). When you pick one, version 3 tells version 2 to start compiling the full list of 
-what it has that needs migrating in each of those repositories.
+what it has that needs migrating in each of those repositories. Then it looks at component metadata to make 
+entries in the changelog database on the {pro} 2 side.
 
 It does this by causing {pro} 2 to create a Migration Repository capability for each repo, which in turn creates 
 a scheduled task that walks the repository storage folder and lists the files, storing them in the changelog 
 database.
 
-When the migration is started, scheduled tasks on the {pro} 2 side will start processing. It walks through the 
-directories for every single file that the migration tool finds they look at the metadata and makes an entry in 
-the changelog database on the {pro} 2 side. You will see the scheduled migration tasks in real time.
-
-[[migration-methods]]
-=== Migration Methods
-
 Once the 'Migration Agent' is enabled and both repository manager instances are stood up and communicating, 
-you can consider one of three ingestion methods: HTTP download, file system copying, or hard linking.
+you can consider one of three ingestion methods: HTTP download, file system copying, or hard linking. The choice 
+of ingestion method can be made on a repository-by-repository basis, but there is a migration-wide default.
 
 *Downloading*
 
@@ -102,7 +113,7 @@ the file and where to retrieve the content.
 
 Assuming versions 2 and 3 are on the same machine, configured in a way that the mounts are accessible by the same 
 path (from one machine to the other) this option will work. It is a slightly faster process than the download 
-method.
+method and has less impact on the performance of {pro} 2
 
 *Hard linking*
 
@@ -113,7 +124,25 @@ Hard links only work across the same file system. If your choose hard linking as
 that the {pro} 3 blobstore to be used for the repository is on the same file system as the {pro} 2 storage 
 location for that repository.
 
+////
+In any file system movement operation, you must ensure that the data has been correctly copied to the new 
+destination before migration. If you decide to migrate repositories by hard linking you may consider the 
+implications of storage usage. Hard linking repository metadata creates another reference to the same set of 
+bytes somewhere else. If the content set for migration in {pro} 2 is too large for {pro} 3, part of the data will 
+be distributed to cleared data blocks, or elsewhere.
+////
+
 This is the fastest option because you will not have to move the bytes around.
+
+=== Getting Started
+
+There are only a few steps necessary to get ready and start the migration:
+
+* Upgrade Nexus Repository to latest 2.14 and configure the included migration capability that allows you to sync 
+from version 2 to {version}.
+* Install Nexus Repository 3.1 on the same server, ensure it runs on a different port and start it up.
+* Configure the migration agent and start the migration
+  
 
 [[migration-capability]]
 === Enabling the Migration Capability
