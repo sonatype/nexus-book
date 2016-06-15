@@ -14,6 +14,10 @@ capability that initiates the wizard. Migration moves repositories from version 
 enables you to view the status of the migration as it is happening. Fundamentally the decisions around migration 
 are twofold: which repositories to migrate and, if hard linking, designating the blobstore location.
 
+During a migration, {pro} 2 should remain functioning at high capacity during the majority of the migration 
+process. You or your organization should put strong emphasis on performance and stability when designing the 
+migration process.
+
 Current repository formats supported are Maven, NuGet, npm, and static websites ('raw'). For each of these 
 repository formats you can migrate global settings, security realm settings, and repository content.
 
@@ -24,9 +28,6 @@ repository formats you can migrate global settings, security realm settings, and
 The critical decision you or your organization must make is a plan for where they want their files to be 
 transferred to when the migration is complete. You will need to consider how your system storage is structured 
 and what ingestion methods are available to them. 
-
-The minimum version of the repository manager you will need to run your migration plan is {pro} 2.14. You can 
-download this version from the Sonatype home page. If you have older version of upgrade from an older version of 
 
 With the migration tool the expectation is that {pro} 3 can migrate content from one instance of {pro} 2 at a 
 time. The tool can migrate content from your choice of download, hard linking, or copying local files.
@@ -47,8 +48,9 @@ instance. Depending on your {pro} 2 instance configuration you can optimize the 
 * disabling repair tasks
 * reviewing and disabling Rebuild Maven Metadata files
 * reviewing Custom Metadata
-* reviewing or removing snapshots
-* 
+* removing unused snapshots
+* dropping stale staging repositories
+* remove old release tasks not in use
 
 
 How long does migration actually take? 1Gb/min (not the real number) - HTTP download, depends on network
@@ -59,37 +61,28 @@ Processes of note:
 Rebuild maven metadata (this is performance intensive and will generate additional work for migration)
 ST: Repair index (performance considerations - uses a lot of file handles and lots of temporary disk space)
 Smart proxy - if you have this on
-Increasing the file handles may be necessary if NX2 and NX3 are on the same box
+Increasing the file handles may be necessary if version 2 and 3 are on the same system.
 
 Additionally, the speed of your network will arbitrarily impact ingestion methods (e.g HTTP download).
+
 
 In the instance you have configured your repository manager HTTP context and path as a reverse proxy server
 the traffic coming through {pro} 2 could be busy, as you start the migration steps. {pro} 3 starts pulling 
 over the content with the migration tool as content is added to {pro} 2.
 
-HTTP download puts more load on the NX2 instance than other ingestion methods, because NX2 has to serve the 
-bytes. Copying and hard-linking only have to be told where the file is, and they obtain it from the filesystem 
-directly.
-
-[[migration-storage]]
-==== Storage Considerations for Migration
-
 When migrating, make sure you have enough storage capacity in the destination filesystem(s). If you are using 
 hard-link ingestion, the bytes themselves are not duplicated (saving space), but you must ensure there are enough 
 free inodes for the content being migrated.
 
+NOTE: HTTP download puts more load on the NX2 instance than other ingestion methods, because NX2 has to serve the 
+bytes. Copying and hard-linking only have to be told where the file is, and they obtain it from the filesystem 
+directly.
 
 [[migration-support]]
 === Supported Architecture for Migration
 
-Section to be updated.
-
-////
 There are two available architectures that support migration. You can either move content from a running 
-instance of versions 2 to 3 on an external server, or you can use the same server and run it in parallel. If you 
-choose the latter architecture, you 
-////
-
+instance of versions 2 to 3 on an external server, or you can use the same server and run it in parallel.
 
 [[migration-methods]]
 === Migration Methods
@@ -114,7 +107,7 @@ The first option is download, which means {pro} 3 will make HTTP requests to {pr
 for migration. 
 
 If {pro} 2 and {pro} 3 are on different machines and do not share access to the same file system storage, you 
-must use HTTP Download
+must use the HTTP download method.
 
 *File System Copying*
 
@@ -138,12 +131,6 @@ data blocks, or elsewhere.
 Hard links only work across the same file system. If your choose hard linking as your migration method make sure 
 that the {pro} 3 blob store to be used for the repository is on the same file system as the {pro} 2 storage 
 location for that repository.
-
-////
-In any file system movement operation, you must ensure that the data has been correctly copied to the new 
-destination before migration. If you decide to migrate repositories by hard linking you may consider the 
-implications of storage usage.
-////
 
 This is the fastest option because you will not have to move the bytes around.
 
@@ -170,7 +157,7 @@ from version 2 to {version}.
   
 
 [[migration-capability]]
-=== Enabling the Migration Capability
+==== Enabling the Migration Capability
 
 To implement migration, a migration-agent capability must be activated to execute the migration plan. The 
 capability, essentially, finds what repositories exist and lists them in the version 3 migration wizard. It 
@@ -202,12 +189,12 @@ implement the migration capability:
 * Click 'Create capability'
 * Select 'Migration', then click 'Create capability' to enable migration
 
-[[migration-steps]]
-=== Migrating Repositories
+[[migration-content]]
+==== Migrating Content
 
 After you establish migration capabilities for versions 2 and 3, you will activate a wizard to start your 
-migration. In {pro} go to the 'Administration' menu and select 'Migration', located under 'System', to open the 
-wizard.
+migration. In {pro}{version} go to the 'Administration' menu and select 'Migration', located under 'System', to 
+open the wizard.
 
 *Migration Wizard*
 
@@ -221,11 +208,11 @@ The 'Access Token' will display the security key from your version 2 'Migration:
 
 Content:: This screen presents checkboxes for security features ('Security'), server configuration ('System'), 
 and user-managed repositories ('Repositories') that can be migrated. For 'Security' you have the option to choose 
-among 'Anonymous', 'Realms', 'Users', 'Roles', and 'LDAP Configuration'. For 'System' you can migrate 'Email' and 
-'HTTP Configuration' contents.
+among 'Anonymous', 'Realms', 'Users', 'User Tokens', Roles', 'LDAP Configuration', 'SSL Certificates', and 'NuGet 
+API-Key'. For 'System' you can migrate 'Email' and 'HTTP Configuration' contents.
 
 Repository Defaults:: This screen allows you to select directory destination and migration method. If you set up 
-up more than one blobstore, choose the blobstore location from the dropdown menu. The second dropdown menu, 
+up more than one blob store, choose the blob store location from the dropdown menu. The second dropdown menu, 
 'Method', allows you to choose among hard linking, copying local files or downloading.
 
 Repositories:: If 'User-related repositories' is one of your selections from the 'Content' screen, the 
@@ -236,10 +223,10 @@ addition to 'Repository', the table displays information around the status of th
 
 NOTE: The faded text of a repository format on your system will indicate it is not available for migration.
 
-Preview:: This screen displays a preview of the content poised for migration, selected in the previous 
-screen. Scroll thru the table to see the three phases set for the migration: 'PREPARE', 'SYNC' and 'FINISH'. 
-Click 'Begin', then confirm from the modal, that you want to start the migration. After the preview 'Preparing', 
-'Synchonizing', and 'Finishing will persist.
+Preview:: This screen displays a preview of the content set for migration, selected in the previous screen. 
+Scroll thru the table to see the three phases set for the migration: 'PREPARE', 'SYNC' and 'FINISH'. Click 
+'Begin', then confirm from the modal, that you want to start the migration. After the preview 'Preparing', 
+'Synchronizing', and 'Finishing will persist.
 
 ////
 Temporary placeholder... will likely omit
@@ -248,6 +235,11 @@ Temporary placeholder... will likely omit
 * The 'Finishing' phase performs final clean up, then closes the process.
 ////
 
-Eventually the incoming traffic volume from {pro} 2 will slow down. The administrator should stop all end users 
-from using {pro} 2, to let the final bits of content to transfer to {pro} 3. Click 'Stop Monitoring', then 
-'Finish' to complete the migration.
+While version 2 is still in stood up repository content is being added, updated, and deleted as the migration is 
+executed. {pro}{version} will pick up these changes. However, configuration changes such as new repositories, 
+realm settings, permissions, roles and role assignments, HTTP config, and ssl certificates should not be changed. 
+After at the migration starts such changes may not be picked up by version 3 and may result in failure.
+
+Eventually the incoming traffic volume from {pro} 2 will slow down. If your are the administrator you should stop 
+all end users from using {pro} 2, to let the final bits of content to transfer to {pro} 3. Click 'Stop 
+Monitoring', then 'Finish' to complete the migration.
