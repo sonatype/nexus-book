@@ -12,15 +12,17 @@ interface.
 This feature helps you build a migration plan which allows {pro} {version} to talk to {pro} 2 by way of a 
 capability that initiates the wizard. Migration moves repositories from version 2 to version 3, and wizard 
 enables you to view the status of the migration as it is happening. Fundamentally the decisions around migration 
-are twofold: which repositories to migrate and, if hard linking, designating the blobstore location.
+are twofold: which repositories to migrate and, if hard linking, designating the blob store location.
 
 During a migration, {pro} 2 should remain functioning at high capacity during the majority of the migration 
 process. You or your organization should put strong emphasis on performance and stability when designing the 
 migration process.
 
-Current repository formats supported are Maven, NuGet, npm, and static websites ('raw'). For each of these 
-repository formats you can migrate global settings, security realm settings, and repository content.
+[[migration-support]]
+=== Supported Architecture for Migration
 
+There are two available architectures that support migration. You can either move content from a running 
+instance of versions 2 to 3 on an external server, or you can use the same server and run it in parallel.
 
 [[migration-prep]]
 === Preparing for Migration
@@ -35,7 +37,7 @@ time. The tool can migrate content from your choice of download, hard linking, o
 Migration is the process of replacing your use of {pro} 2 with {pro} 3 architecture.
 
 [[migration-performance]]
-==== Storage Considerations to Improve Performance
+==== Performance and Tuning for Migration
 
 During the migration process it is a best practice to schedule a maintenance window for {pro} 2 so you can 
 take it down for a period, and the migration can persist. Further, you should review your current {pro} 2 
@@ -52,37 +54,34 @@ instance. Depending on your {pro} 2 instance configuration you can optimize the 
 * dropping stale staging repositories
 * remove old release tasks not in use
 
-
-How long does migration actually take? 1Gb/min (not the real number) - HTTP download, depends on network
-Scheduled Tasks(ST)
-Considerations:
-Running scheduled tasks on NX2 may slow migration performance
-Processes of note:
-Rebuild maven metadata (this is performance intensive and will generate additional work for migration)
-ST: Repair index (performance considerations - uses a lot of file handles and lots of temporary disk space)
-Smart proxy - if you have this on
-Increasing the file handles may be necessary if version 2 and 3 are on the same system.
+To remedy the burden of certain tasks, such as "repair index" and "Rebuild maven metadata", can be 
+If you have administrator access to your system you could change the maximum of the open files count per process. 
+In addition to reducing scheduled tasks that may burden migration performance, increasing the file handles is 
+necessary if version 2 and 3 are on the same system.
 
 Additionally, the speed of your network will arbitrarily impact ingestion methods (e.g HTTP download).
 
+[[migration-file-systems]]
+==== File System Considerations
 
-In the instance you have configured your repository manager HTTP context and path as a reverse proxy server
-the traffic coming through {pro} 2 could be busy, as you start the migration steps. {pro} 3 starts pulling 
-over the content with the migration tool as content is added to {pro} 2.
+{pro} {version} uses blob store to store artifacts; these are still files on the file system (they're not in a 
+database), but the format on disk no longer mirrors the same format you'd expect to see through the web interface
+
+Components in {pro} 2 are stored as individual files on disk. {pro} {version} stores components as blobs. 
+The conversion process requires Nexus to iterate over every component in your storage and this will take the bulk 
+of the time required for migration.
 
 When migrating, make sure you have enough storage capacity in the destination filesystem(s). If you are using 
 hard-link ingestion, the bytes themselves are not duplicated (saving space), but you must ensure there are enough 
 free inodes for the content being migrated.
 
+In the instance you have configured your repository manager HTTP context and path as a reverse proxy server
+the traffic coming through {pro} 2 could be busy, as you start the migration steps. {pro} 3 starts pulling 
+over the content with the migration tool as content is added to {pro} 2.
+
 NOTE: HTTP download puts more load on the NX2 instance than other ingestion methods, because NX2 has to serve the 
 bytes. Copying and hard-linking only have to be told where the file is, and they obtain it from the filesystem 
 directly.
-
-[[migration-support]]
-=== Supported Architecture for Migration
-
-There are two available architectures that support migration. You can either move content from a running 
-instance of versions 2 to 3 on an external server, or you can use the same server and run it in parallel.
 
 [[migration-methods]]
 === Migration Methods
@@ -134,15 +133,34 @@ location for that repository.
 
 This is the fastest option because you will not have to move the bytes around.
 
+[[migration-process-expectations]]
+=== Migration Process and Expectations
+
+While version 2 is still stood up repository content is being added, updated, and deleted as the migration is 
+executed. {pro}{version} will pick up these changes. However, configuration changes such as new repositories, 
+realm settings, permissions, roles and role assignments, HTTP config, and ssl certificates should not be changed. 
+After at the migration starts such changes may not be picked up by version 3 and may result in failure.
+
 
 [[migration-repo-support]]
 === Repository Format Support
 
-TBD
+Current repository formats supported are Maven, NuGet, npm, and static websites ('raw'). For each of these 
+repository formats you can migrate global settings, security realm settings, and repository content.
 
 ////
 insert a table here
 ////
+
+.An example table
+[width="40%",frame="topbot",options="header,footer"]
+|======================================
+|Format   |2.x        | 3.x Support
+|1        |Item 1     | 3.0 and greater
+|2        |Item 2	  | 3.0 and greater
+|3        |Item 3     | 3.0 and greater
+|6        |Three items| 3.0 and greater
+|======================
 
 
 [[migration-start]]
@@ -235,11 +253,7 @@ Temporary placeholder... will likely omit
 * The 'Finishing' phase performs final clean up, then closes the process.
 ////
 
-While version 2 is still in stood up repository content is being added, updated, and deleted as the migration is 
-executed. {pro}{version} will pick up these changes. However, configuration changes such as new repositories, 
-realm settings, permissions, roles and role assignments, HTTP config, and ssl certificates should not be changed. 
-After at the migration starts such changes may not be picked up by version 3 and may result in failure.
-
 Eventually the incoming traffic volume from {pro} 2 will slow down. If your are the administrator you should stop 
 all end users from using {pro} 2, to let the final bits of content to transfer to {pro} 3. Click 'Stop 
-Monitoring', then 'Finish' to complete the migration.
+Monitoring', then 'Finish' to complete the migration. When the final migration of ends shut down version 2 and 
+reboot to see your components from in version 3.
