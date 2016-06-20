@@ -20,26 +20,25 @@ service supporting the Ruby community. Here, a large variety of open source Ruby
 download to all users.
 
 Ruby has been a successful platform for developers for a long time now. The popularity of Ruby and therefore the 
-usage of gems and Gem repositories means that lots of teams are downloading and exchanging lots of components on 
+usage of gems and gem repositories means that lots of teams are downloading and exchanging lots of components on 
 a regular basis. Obviously, this can (and does) become a crunch on resources, not to mention a pain to manage.
 
-Luckily {pro} and {oss} support Gem repositories. A user can connect to the repositry manager to downloads gems
+Luckily {pro} and {oss} support gem repositories. A user can connect to the repositry manager to downloads gems
 from RubyGems, create proxies to other repositories, and host their own or third-party gems. Any gem downloaded
 via the repository manager needs to be downloaded from the remote repository, like RubyGems, only once and is then
 available internally from the repository manager. Gems pushed to the repository manager automatically become
 available to everyone else in your organization.  Using the repository manager as a proxy avoids the overhead of
 teams and individual developers having to repeatedly download components or share components in a haphazard and
 disorganized manner.
-//this should be updated before we go live
-IMPORTANT: Gem repository support is a feature of version 2.11 and higher, and is available in {pro} and {oss} 
-editions.
 
-The following features are included as part of the Gem repository support:
+IMPORTANT: Gem repository support is a feature of version 3.1 and higher
 
-* Proxy repository for connecting to remote Gem repositories and caching gems on the repository manager to avoid
+The following features are included as part of the gem repository support:
+
+* Proxy repository for connecting to remote gem repositories and caching gems on the repository manager to avoid
   duplicate downloads and wasted bandwidth and time
 * Hosted repository for hosting gems package and providing them to your users
-* Repository groups for merging multiple hosted and proxy Gem repositories and easily exposing them as one URL to 
+* Repository groups for merging multiple hosted and proxy gem repositories and easily exposing them as one URL to 
   all users
 
 TIP: None of this functionality requires Ruby (or any extra tooling) to be installed on the operating system
@@ -51,7 +50,7 @@ running the repository manager.
 To reduce duplicate downloads and improve download speeds for your developers, continuous integration servers and 
 other systems using +gem+, you should proxy the RubyGems repository and any other repositories you require.
 
-To proxy an external Gem repository, like RubyGems, you simply create a new repository using the recipe 
+To proxy an external gem repository, like RubyGems, you simply create a new repository using the recipe 
 'rubygems (proxy)' as documented in <<admin-repositories>>.
 
 Minimal configuration steps are:
@@ -70,11 +69,11 @@ metadata files of a proxy gem repository.
 [[rubygems-hosted-private]]
 === Private Hosted Gem Repositories
 
-A private Gem repository can be used as a target to push your own gems as well as third-party gems and 
-subsequently provide them to your users. It is a good practice to create two separate hosted Gem repositories for 
+A private gem repository can be used as a target to push your own gems as well as third-party gems and 
+subsequently provide them to your users. It is a good practice to create two separate hosted gem repositories for 
 internal and third-party gems.
 
-To create a hosted Gem repository, create a new repository using the recipe  'rubygems (hosted)' as documented in 
+To create a hosted gem repository, create a new repository using the recipe 'rubygems (hosted)' as documented in 
 <<admin-repositories>>.
 
 Minimal configuration steps are:
@@ -82,7 +81,7 @@ Minimal configuration steps are:
 - Define 'Name'
 - Select a 'Blob store' for 'Storage'
 
-The Gem repository information is immediately updated as gems are pushed to the repository or deleted from it.
+The gem repository information is immediately updated as gems are pushed to the repository or deleted from it.
 
 ////
 A scheduled task can be used to rebuild the metadata of a hosted gem
@@ -92,39 +91,39 @@ repository and can be configured as documented in Scheduled Tasks.
 [[rubygems-group]]
 === Grouping Gem Repositories
 
-A repository group is the recommended way to expose all your Gem repositories to your users, without needing any
+A repository group is the recommended way to expose all your gem repositories to your users, without needing any
 further client side configuration after initial setup. A repository group allows you to expose the aggregated
-content of multiple proxy and hosted Gem repositories with one URL to +gem+ and other tools.
+content of multiple proxy and hosted gem repositories with one URL to +gem+ and other tools.
 
-To create a RubyGems group repository, create a new repository using the recipe 'rubygems (group)' as documented 
+To create a gem group repository, create a new repository using the recipe 'rubygems (group)' as documented 
 in <<admin-repositories>>.
 
 Minimal configuration steps are:
 
-- Define Name
-- Select Blob store for Storage
-- Add RubyGems repositories to the Members list in the desired order
+- Define 'Name'
+- Select 'Blob store' for Storage
+- Add RubyGems repositories to the 'Members' list in the desired order
 
 A typical, useful example would be to group the proxy repository that
-proxies the RubyGems repository, a hosted Gem repository with
-internal software gems, and another hosted Gem repository with
+proxies the RubyGems repository, a hosted gem repository with
+internal software gems, and another hosted gem repository with
 third-party gems.
 
-Using the repository 'URL' of the repository group as your Gem
+Using the repository 'URL' of the repository group as your gem
 repository URL in your client tool gives you access to the gems in
 all member repositories with one URL.
 
-Any new gem added to any hosted Gem repository or proxied becomes immediately available to all users of the Gem 
-repository group. Adding a new proxy Gem repository to the group makes all gems immediately available to the users 
-as well.
+Any new gem added to any hosted gem repository or proxied becomes immediately available to all users of the gem 
+repository group. Adding a new proxy gem repository to the group makes all gems in that proxy immediately 
+available to the users as well.
 
 [[rubygems-config]]
 === Using Gem Repositories
 
-Once you have configured the repository manager with the Gem repository group, you can add it to your
+Once you have configured the repository manager with the gem repository group, you can add it to your
 configuration for the +gem+ command line tool.
 
-You can add the URL of a RubyGems repository or group using the 'URL' from the repository list with a command like
+You can add the URL of a gem repository or group using the 'URL' from the repository list with a command like
 
 ----
 $ gem sources --add http://localhost:8081/repository/rubygems-group/
@@ -152,7 +151,7 @@ $ gem sources
 http://localhost:8081/repository/rubygems-group/
 ----
 
-With this setup completed any installation of new gems with +gem install GEMNAME+ e.g., +gem install rake+ will
+With this setup completed any installation of new gems with +gem install gemname+ e.g., +gem install rake+ will
 download from the repository manager.
 
 By default read access is available to anonymous access and no further configuration is necessary. If your
@@ -181,7 +180,7 @@ Done installing documentation for bundle, bundler after 4 seconds
 2 gems installed
 ----
 
-To use the repository manager with Bundler, you have to configure the Gem repository group as a mirror:
+To use the repository manager with Bundler, you have to configure the gem repository group as a mirror:
 
 ----
 $ bundle config mirror.http://rubygems.org
@@ -197,20 +196,20 @@ mirror.http://rubygems.org
 Set for the current user (/Users/manfred/.bundle/config): "http://localhost:8081/repository/rubygems-group"
 ----
 
-With this configuration completed, you can create a Gemfile and run
+With this configuration completed, you can create a +Gemfile+ and run
 +bundle install+ as usual and any downloads of gem files will be using
-the Gem repository group configured as a mirror.
+the gem repository group configured as a mirror.
 
 [[rubygems-deploy]]
 === Pushing Gems
 
-At this point you have set up the various Gem repositories on the repository manager (proxy, hosted, and group),
+At this point you have set up the various gem repositories on the repository manager (proxy, hosted and group),
 and are successfully using them for installing new gems on your systems. A next step can be to push gems to hosted
-Gem repositories to provide them to other users. All this can be achieved on the command line with the features of
+gem repositories to provide them to other users. All this can be achieved on the command line with the features of
 the +nexus+ gem.
 
 The +nexus+ gem is available at RubyGems and provides features to interact with {pro} including pushing gems to a
-hosted Gem repository including the necessary authentication.
+hosted gem repository including the necessary authentication.
 
 You can install the nexus gem with
 
@@ -225,13 +224,13 @@ Done installing
 ----
 
 After successful installation you can push your gem to a desired repository. The initial invocation will request
-the URL for the GEM repository and the credentials needed for deployment. Subsequent pushes will use the cached
+the URL for the gem repository and the credentials needed for deployment. Subsequent pushes will use the cached
 information.
 
 ----
 $ gem nexus example-1.0.0.gem
 Enter the URL of the rubygems repository on a Nexus server
-URL:   http://localhost:8081/nexus/content/repositories/gems-internal
+URL:   http://localhost:8081/repository/rubygems-hosted
 The Nexus URL has been stored in ~/.gem/nexus
 Enter your Nexus credentials
 Username:   admin
@@ -242,7 +241,7 @@ Created
 ----
 
 By default pushing an identical version to the repository, known as
-redeployment, is not allowed in a hosted Gem repository. If desired
+redeployment, is not allowed in a hosted gem repository. If desired
 this configuration can be changed, although we suggest to change the
 version for each new deployment instead.
 
