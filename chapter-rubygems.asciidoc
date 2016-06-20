@@ -15,7 +15,7 @@ really find success, a development community needs to exists. At the heart of ev
 especially those like Ruby, where open source projects are one of the most critical elements, the community needs 
 a place to host and share their projects.
 
-Enter link:https://rubygems.org[RubyGems hosted at rubygems.org] - the most popular and leading gem hosting 
+Enter RubyGems hosted at link:https://rubygems.org[rubygems.org] - the most popular and leading gem hosting 
 service supporting the Ruby community. Here, a large variety of open source Ruby projects supply their gems for 
 download to all users.
 
@@ -70,52 +70,53 @@ metadata files of a proxy gem repository.
 [[rubygems-hosted-private]]
 === Private Hosted Gem Repositories
 
-A private Gem repository on repository manager can be used as target to push your own gems as well as third-party
-gems and subsequently provide them to your users. It is good practice to create two separate hosted Gem
-repositories for internal and third-party gems.
+A private Gem repository can be used as a target to push your own gems as well as third-party gems and 
+subsequently provide them to your users. It is a good practice to create two separate hosted Gem repositories for 
+internal and third-party gems.
 
-To create a hosted Gem repository, simply create a new 'Hosted
-Repository' and set the 'Provider' to +Rubygems+. A sample configuration for an internal
-hosted Gem repository is displayed in Rubygems hosted.
+To create a hosted Gem repository, create a new repository using the recipe  'rubygems (hosted)' as documented in 
+<<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name'
+- Select a 'Blob store' for 'Storage'
+
+The Gem repository information is immediately updated as gems are pushed to the repository or deleted from it.
 
 ////
-Add link to hosted, insert image
-////
-
-The Gem repository information is immediately updated as gems are
-pushed to the repository or deleted from it.
-
 A scheduled task can be used to rebuild the metadata of a hosted gem
 repository and can be configured as documented in Scheduled Tasks.
+////
 
 [[rubygems-group]]
 === Grouping Gem Repositories
 
 A repository group is the recommended way to expose all your Gem repositories to your users, without needing any
 further client side configuration after initial setup. A repository group allows you to expose the aggregated
-content of multiple proxy and hosted Gem repositories with one URL to +gem+ and other tools.  This is possible for
-Gem repositories by creating a new 'Repository Group' with the 'Provider' set to +Rubygems+ as documented in
-Repository Groups.
+content of multiple proxy and hosted Gem repositories with one URL to +gem+ and other tools.
+
+To create a RubyGems group repository, create a new repository using the recipe 'rubygems (group)' as documented 
+in <<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define Name
+- Select Blob store for Storage
+- Add RubyGems repositories to the Members list in the desired order
 
 A typical, useful example would be to group the proxy repository that
 proxies the RubyGems repository, a hosted Gem repository with
 internal software gems, and another hosted Gem repository with
-third-party gems. The configuration for such a setup is displayed in
-insert image.
+third-party gems.
 
-////
-add an image
-////
-
-Using the 'Repository Path' of the repository group as your Gem
+Using the repository 'URL' of the repository group as your Gem
 repository URL in your client tool gives you access to the gems in
-all three repositories with one URL.
+all member repositories with one URL.
 
-Any new gem added to the remote proxy Gem repositories or the hosted
-Gem repositories becomes immediately available to all users of the Gem
-repository group. Adding a new proxy Gem repository to the group makes
-all gems immediately available to the users as well.
-
+Any new gem added to any hosted Gem repository or proxied becomes immediately available to all users of the Gem 
+repository group. Adding a new proxy Gem repository to the group makes all gems immediately available to the users 
+as well.
 
 [[rubygems-config]]
 === Using Gem Repositories
@@ -123,26 +124,23 @@ all gems immediately available to the users as well.
 Once you have configured the repository manager with the Gem repository group, you can add it to your
 configuration for the +gem+ command line tool.
 
-You can add the URL gems repository or better the Gem repository group using the 'Repository Path' from the
-repository list with a command like
+You can add the URL of a RubyGems repository or group using the 'URL' from the repository list with a command like
 
 ----
-gem sources --add http://localhost:8081/nexus/content/groups/gems-all/
+$ gem sources --add http://localhost:8081/repository/rubygems-group/
 ----
 
 In order to take full advantage of the repository manager and the proxying of gems, you should remove any other
-sources. By default +https://rubygems.org/+ is configured and this can be removed with
+sources. By default +https://rubygems.org/+ is configured in +gem+ and this can be removed with
 
 ----
 $ gem sources --remove https://rubygems.org/
-https://rubygems.org/ removed from sources
 ----
 
 Subsequently you should clear the local cache with
 
 ----
 $ gem sources -c
-*** Removed specs cache ***
 ----
 
 To check a successful configuration you can run 
@@ -151,7 +149,7 @@ To check a successful configuration you can run
 $ gem sources
 *** CURRENT SOURCES ***
 
-http://localhost:8081/nexus/content/groups/gems-all/
+http://localhost:8081/repository/rubygems-group/
 ----
 
 With this setup completed any installation of new gems with +gem install GEMNAME+ e.g., +gem install rake+ will
@@ -163,7 +161,7 @@ configuration:
 
 ----
 $ gem sources --add
-http://myuser:mypassword@localhost:8081/nexus/content/repositories/gems-all/
+http://myuser:mypassword@localhost:8081/repository/rubygems-group/
 ----
 
 If you are using the popular http://bundler.io/[Bundler] tool for tracking and installing
@@ -187,24 +185,21 @@ To use the repository manager with Bundler, you have to configure the Gem reposi
 
 ----
 $ bundle config mirror.http://rubygems.org
-http://localhost:8081/nexus/content/repositories/gems-all
+http://localhost:8081/repository/rubygems-group/
 ----
 
 You can confirm the configuration succeeded by checking the configuration:
 
 ----
 $ bundle config
-Settings are listed in order of priority. 
-The top value will be used.
+Settings are listed in order of priority. The top value will be used.
 mirror.http://rubygems.org
-Set for the current user (/Users/manfred/.bundle/config): 
-"http://localhost:8081/nexus/content/repositories/gems-all"
+Set for the current user (/Users/manfred/.bundle/config): "http://localhost:8081/repository/rubygems-group"
 ----
 
 With this configuration completed, you can create a Gemfile and run
 +bundle install+ as usual and any downloads of gem files will be using
 the Gem repository group configured as a mirror.
-
 
 [[rubygems-deploy]]
 === Pushing Gems
@@ -230,11 +225,11 @@ Done installing
 ----
 
 After successful installation you can push your gem to a desired repository. The initial invocation will request
-the URL for the GEM repository and the credentials needed for deployment. Subsequent pushes will used the cached
+the URL for the GEM repository and the credentials needed for deployment. Subsequent pushes will use the cached
 information.
 
 ----
-$gem nexus example-1.0.0.gem
+$ gem nexus example-1.0.0.gem
 Enter the URL of the rubygems repository on a Nexus server
 URL:   http://localhost:8081/nexus/content/repositories/gems-internal
 The Nexus URL has been stored in ~/.gem/nexus
@@ -246,7 +241,7 @@ Uploading gem to Nexus...
 Created
 ----
 
-By default pushing an identical version to the repository, as known as
+By default pushing an identical version to the repository, known as
 redeployment, is not allowed in a hosted Gem repository. If desired
 this configuration can be changed, although we suggest to change the
 version for each new deployment instead.
@@ -261,10 +256,9 @@ $ gem help nexus
 E.g. you can access a list of all configured repositories with
 
 ----
-$gem nexus --all-repos
+$ gem nexus --all-repos
 
-DEFAULT:
-http://localhost:8081/nexus/content/repositories/gems-internal
+DEFAULT: http://localhost:8081/repository/rubygems-hosted
 ----
 
 ////
