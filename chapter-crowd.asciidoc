@@ -3,10 +3,6 @@
 
 {inrmonly}
 
-////
-This is new chapter - NEXUS-10335
-////
-
 http://www.atlassian.com/software/crowd/[Atlassian Crowd] is a single sign-on and identity management product that
 many organizations use to consolidate user accounts and control which users and groups have access to which
 applications. {nxrm} contains a security realm that allows you to configure the repository manager to authenticate
@@ -20,34 +16,30 @@ The following steps are necessary to configure Crowd-based authentication:
 . <<crowd-sect-mapping,Configure Nexus Crowd Security>>
 . <<crowd-sect-realm,Activate the Nexus Crowd Realm>>
 
-[[crowd-sect-nexus-prepare]]
+[[crowd-nexus-prepare]]
 === Prepare Nexus for Atlassian Crowd
 
-Atlassian Crowd support is preinstalled and ready to configure in {pro} 2.7+.
-
-In older versions, Crowd support is implemented as an optional plugin that comes as part of any {pro} download.
-The directory containing the plugin code is called either enterprise-crowd-plugin-X.Y.Z or
-nexus-crowd-plugin-X.Y.Z. Install the plugin following the instructions in <<install-additional-plugins>>.
+Atlassian Crowd support is an option feature preinstalled and ready to configure in {pro} 3.1+.
 
 WARNING: *Using LDAP and Crowd Realms together in the repository manager may work, but this is not supported.* If
 you already use LDAP support, we recommend adding your LDAP server as a Crowd directory accessible to the Crowd
 'nexus' application instead of using both LDAP and Crowd realms in the repository manager.
 
-[[crowd-sect-crowd-prepare]]
+[[crowd-application-prepare]]
 === Prepare Atlassian Crowd
 
-[[crowd-sect-crowd-compat]]
+[[crowd-compatibility]]
 ==== Compatibility
 
 Always use the latest version of Crowd available at the time your version of {pro} was released. When upgrading to
 a newer Crowd server, carefully review the Crowd server release notes for REST API backwards compatibility issues.
 
-Crowd support in {pro} 2.7 and greater only works in Crowd versions (2.1+) that support the Crowd
+Crowd support in {pro} 2.1 and greater only works in Crowd versions (3.1+) that support the Crowd
 REST API. Older versions use a deprecated SOAP-based API and are less reliable and performant.
 
 Crowd support is actively tested with the highest available version of Crowd at the time {pro} is released.
 
-[[crowd-sect-crowd-setup]]
+[[crowd-setup]]
 ==== Configure a {pro} Application in the Atlassian Crowd Server
 
 NOTE: These instructions are a general guide to adding an
@@ -55,13 +47,12 @@ application to Crowd. For current detailed instructions, visit the
 https://confluence.atlassian.com/display/CROWD/Adding+an+Application[official
 Crowd documentation].
 
-To connect {pro} to Atlassian's Crowd, you will need to configure {pro} as an application in Crowd.
+To connect {pro} to Crowd, you will need to configure {pro} as an application in Crowd.
 
 . Login to Crowd as a user with administrative rights.
 . Click on the 'Applications' tab.
-. Click 'Add Application' to display the form shown in
-<<fig-crowd-app>>, and create a new application with the following
-values in the 'Details' tab of the Add Application form:
+. Click 'Add Application' to display the form and create a new application with the following values in the 
+'Details' tab of the Add Application form:
 
 * Application Type: Generic Application
 
@@ -70,7 +61,7 @@ values in the 'Details' tab of the Add Application form:
 * Description: {pro}
 
 . Choose a password for this application. Nexus will use this password
-to authenticate with the Crowd server. Click on the Next button.
+to authenticate with the Crowd server. Confirm the password, then click the 'Next' button.
 
 [[fig-crowd-app]]
 .Creating a Nexus Crowd Application
@@ -108,11 +99,11 @@ that contains only developers and administrators.
 .Creating a Nexus Crowd Application Authorization
 image::figs/web/crowd_new-app-authorization.png[scale=60]
 
-[[crowd-sect-config]]
+[[crowd-configuration]]
 === Configure {pro} Crowd Integration
 
 
-[[crowd-sect-ssl]]
+[[crowd-ssl]]
 ==== Configure {pro} to Trust Crowd’s Secure URL (Optional)
 
 Although optional, we advise the connection from {pro} to your Crowd server to use the HTTPS protocol.
@@ -131,7 +122,7 @@ the HTTPS url>>
 NOTE: The 'SSL: Crowd' capability is only available in {pro} 2.7+. Older versions must manually configure trust
 using an explicit truststore specified with JRE system properties.
 
-[[crowd-sect-ssl-capability]]
+[[crowd-ssl-capability]]
 ===== Enabling the SSL: Crowd Capability
 
 . Login to Nexus as an Administrator.
@@ -145,14 +136,14 @@ click the 'Save' button.
 .SSL: Crowd Capability
 image::figs/web/crowd_capability-ssl.png[scale=60]
 
-[[crowd-sect-ssl-trust]]
+[[crowd-ssl-trust]]
 ===== Adding the Crowd Server Certificate to the Truststore
 
 In order to add the server certificate of your Crowd server to the truststore, locate the HTTPS 'Crowd Server URL'
  and follow the 'Load from server' instructions in <<ssl-sect-client-cert-mgt>>.
 
 
-[[crowd-sect-config-connection]]
+[[crowd-config-connection]]
 ==== Configure Nexus Crowd Connection
 
 The Crowd Configuration screen displayed in <<fig-crowd-config>> can be accessed by users with administrative
@@ -273,15 +264,15 @@ icon, will cause the repository manager to search for a user ID +brian+ in all k
 
 Once you locate the Crowd user, use 'Add' button to add roles to the Crowd User. *You must map at least one role
 to the Crowd managed user* in order to 'Save'.  <<fig-crowd-assign-user-role>> displays the 'brian' Crowd realm
-user as a member of the 'dev' Crowd group and the mapped role called 'Nexus Administator Role'. External groups
-like +dev+ are bolded in the 'Role Managment' list.
+user as a member of the 'dev' Crowd group and the mapped role called 'Nexus Administrator Role'. External groups
+like +dev+ are bolded in the 'Role Management' list.
 
 [[fig-crowd-assign-user-role]]
 .Mapped External Crowd User Example
 image::figs/web/crowd_ext-user-mapped.png[scale=60]
 
 
-[[crowd-sect-realm]]
+[[crowd-realm]]
 === Activate {pro} Crowd Realm
 
 The final step to allow Crowd users to authenticate against {pro} is to activate the Crowd authorization realm in
