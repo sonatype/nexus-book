@@ -462,6 +462,13 @@ alternate server name.
 In the following examples, review the sections on changing the <<config-http-port,HTTP port>> and 
 <<config-context-path,context path>> to properly reverse-proxy the repository manager.
 
+NOTE: Consult your reverse proxy product documentation for details: http://httpd.apache.org/[Apache httpd]
+(http://httpd.apache.org/docs/current/mod/mod_proxy.html[mod_proxy], 
+http://httpd.apache.org/docs/current/mod/mod_ssl.html[mod_ssl]), http://nginx.org/en/docs/[nginx] 
+(http://nginx.org/en/docs/http/ngx_http_proxy_module.html[ngx_http_proxy_module], 
+http://nginx.org/en/docs/http/configuring_https_servers.html#compatibility[ssl compatibility])
+
+
 ==== Example: Reverse Proxy on Restricted Ports
 
 *Scenario*: You need to expose the repository manager on restricted port 80. The repository manager should not be 
@@ -472,8 +479,8 @@ http://www.example.com/nexus instead of http://localhost:8081/nexus.
 Ensure your external hostname (+www.example.com+) routes to your reverse proxy server. In this example use the 
 default content path (+/+)
 
-*Apache httpd.*
 
+.Apache httpd
 ----
 ProxyRequests Off
 ProxyPreserveHost On
@@ -488,34 +495,33 @@ ProxyPreserveHost On
 </VirtualHost>
 ----
 
-*nginx.*
-
+.nginx
 ----
 http {
 
-    proxy_send_timeout 120;
-	proxy_read_timeout 300;
-	proxy_buffering    off;
-	keepalive_timeout  5 5;
-	tcp_nodelay        on;
-    
-	server {
-		listen   *:80;
-		server_name  www.example.com;
+  proxy_send_timeout 120;
+  proxy_read_timeout 300;
+  proxy_buffering    off;
+  keepalive_timeout  5 5;
+  tcp_nodelay        on;
 
-		# allow large uploads of files - refer to nginx documentation
-		client_max_body_size 1G
+  server {
+    listen   *:80;
+    server_name  www.example.com;
 
-		# optimize downloading files larger than 1G - refer to nginx doc before adjusting
-		#proxy_max_temp_file_size 2G
+    # allow large uploads of files
+    client_max_body_size 1G
 
-		location /nexus {
-			proxy_pass http://localhost:8081/nexus;
-			proxy_set_header Host $host;
-			proxy_set_header X-Real-IP $remote_addr;
-			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		}
-	}
+    # optimize downloading files larger than 1G
+    #proxy_max_temp_file_size 2G
+
+    location /nexus {
+      proxy_pass http://localhost:8081/nexus;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+  }
 }
 ----
 
@@ -527,8 +533,8 @@ port at a base path of +/nexus+.
 Ensure your external hostname (+repo.example.com+) routes to your reverse proxy server and edit the webapp path 
 a slash at end (+/+).
 
-*Apache httpd.*
 
+.Apache httpd
 ----
 ProxyRequests Off
 ProxyPreserveHost On
@@ -538,39 +544,39 @@ ProxyPreserveHost On
   ServerAdmin admin@example.com
   ProxyPass /nexus http://localhost:8081/nexus
   ProxyPassReverse /nexus http://localhost:8081/nexus
-  ErrorLog logs/repo.example.com/nexus/error.og
+  ErrorLog logs/repo.example.com/nexus/error.log
   CustomLog logs/repo.example.com/nexus/access.log common
 </VirtualHost>
 ----
 
-*nginx.*
 
+.nginx
 ----
 http {
 
-    proxy_send_timeout 120;
-	proxy_read_timeout 300;
-	proxy_buffering    off;
-	keepalive_timeout  5 5;
-	tcp_nodelay        on;
+  proxy_send_timeout 120;
+  proxy_read_timeout 300;
+  proxy_buffering    off;
+  keepalive_timeout  5 5;
+  tcp_nodelay        on;
 
-	server {
-		listen   *:80;
-		server_name  repo.example.com;
+  server {
+    listen   *:80;
+    server_name  repo.example.com;
 
-		# allow large uploads of files - refer to nginx documentation
-		client_max_body_size 1G
+    # allow large uploads of files
+    client_max_body_size 1G
 
-		# optimize downloading files larger than 1G - refer to nginx doc before adjusting
-		# proxy_max_temp_file_size 2G
+    # optimize downloading files larger than 1G 
+    # proxy_max_temp_file_size 2G
 
-		location / {
-			proxy_pass http://localhost:8081/nexus;
-			proxy_set_header Host $host;
-			proxy_set_header X-Real-IP $remote_addr;
-			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		}
-	}
+    location / {
+      proxy_pass http://localhost:8081/nexus;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+  }
 )
 ----
 
@@ -587,8 +593,8 @@ To test your configuration, review the steps to
 https://support.sonatype.com/hc/en-us/articles/213465768-SSL-Certificate-Guide[generate a self-signed SSL 
 certificate] for reverse proxy servers.
 
-*Apache httpd.* Ensure Apache httpd is loading +mod_ssl+.
 
+.Apache httpd - ensure Apache httpd is loading +mod_ssl+.
 ----
 Listen 443
 
@@ -612,47 +618,40 @@ ProxyPreserveHost On
 </VirtualHost>
 ----
 
-*nginx.* Make sure nginx is compiled using the +--with-http_ssl_module+ option.
-
+.nginx - make sure nginx is compiled using the +--with-http_ssl_module+ option.
 ----
 http {
 
-	proxy_send_timeout 120;
-	proxy_read_timeout 300;
-	proxy_buffering    off;
-	keepalive_timeout  5 5;
-	tcp_nodelay        on;
+  proxy_send_timeout 120;
+  proxy_read_timeout 300;
+  proxy_buffering    off;
+  keepalive_timeout  5 5;
+  tcp_nodelay        on;
 
-	server {
-		listen   *:443;
-		server_name  repo.example.com;
+  server {
+    listen   *:443;
+    server_name  repo.example.com;
 
-		# allow large uploads of files - refer to nginx documentation
-		client_max_body_size 1G
+    # allow large uploads of files
+    client_max_body_size 1G
 
-		# optimize downloading files larger than 1G - refer to nginx doc before adjusting
-		#proxy_max_temp_file_size 2G
+    # optimize downloading files larger than 1G
+    #proxy_max_temp_file_size 2G
 
-		ssl on
-		ssl_certificate      example.pem;
-		ssl_certificate_key  example.key;
+    ssl on
+    ssl_certificate      example.pem;
+    ssl_certificate_key  example.key;
 
-		location / {
-			proxy_pass http://localhost:8081/;
-			proxy_set_header Host $host;
-			proxy_set_header X-Real-IP $remote_addr;
-			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-			proxy_set_header X-Forwarded-Proto "https";	
-		}
-	}
+    location / {
+      proxy_pass http://localhost:8081/;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto "https";
+    }
+  }
 }
 ----
-
-NOTE: Consult your reverse proxy product documentation for details: http://httpd.apache.org/[Apache httpd]
-(http://httpd.apache.org/docs/current/mod/mod_proxy.html[mod_proxy], 
-http://httpd.apache.org/docs/current/mod/mod_ssl.html[mod_ssl]), http://nginx.org/en/docs/[nginx] 
-(http://nginx.org/en/docs/http/ngx_http_proxy_module.html[ngx_http_proxy_module], 
-http://nginx.org/en/docs/http/configuring_https_servers.html#compatibility[ssl compatibility])
 
 [[access]]
 === Accessing the User Interface
@@ -746,7 +745,8 @@ TBD... should this be documented or is it needed or should it be removed from th
 ==== Data Directory
 
 The data directory contains subdirectories such as `blobs`, `db`, `elasticsearch` and others. These contain all
-the components, repository, configuration and other data presented by the repository manager.
+the components, repository, configuration and other data presented by the repository manager. Follow the
+instructions in <<config-data-directory>> to customize the location.
 
 [[configure-runtime]]
 === Configuring the Runtime Environment
