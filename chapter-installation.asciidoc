@@ -462,6 +462,13 @@ alternate server name.
 In the following examples, review the sections on changing the <<config-http-port,HTTP port>> and 
 <<config-context-path,context path>> to properly reverse-proxy the repository manager.
 
+NOTE: Consult your reverse proxy product documentation for details: http://httpd.apache.org/[Apache httpd]
+(http://httpd.apache.org/docs/current/mod/mod_proxy.html[mod_proxy], 
+http://httpd.apache.org/docs/current/mod/mod_ssl.html[mod_ssl]), http://nginx.org/en/docs/[nginx] 
+(http://nginx.org/en/docs/http/ngx_http_proxy_module.html[ngx_http_proxy_module], 
+http://nginx.org/en/docs/http/configuring_https_servers.html#compatibility[ssl compatibility])
+
+
 ==== Example: Reverse Proxy on Restricted Ports
 
 *Scenario*: You need to expose the repository manager on restricted port 80. The repository manager should not be 
@@ -503,10 +510,10 @@ http {
     listen   *:80;
     server_name  www.example.com;
 
-    # allow large uploads of files - refer to nginx documentation
+    # allow large uploads of files
     client_max_body_size 1G
 
-    # optimize downloading files larger than 1G - refer to nginx doc before adjusting
+    # optimize downloading files larger than 1G
     #proxy_max_temp_file_size 2G
 
     location /nexus {
@@ -559,11 +566,9 @@ http {
     server_name  repo.example.com;
 
     # allow large uploads of files
-    # refer to nginx documentation
     client_max_body_size 1G
 
     # optimize downloading files larger than 1G 
-    # refer to nginx doc before adjusting
     # proxy_max_temp_file_size 2G
 
     location / {
@@ -630,11 +635,9 @@ http {
     server_name  repo.example.com;
 
     # allow large uploads of files
-    # refer to nginx documentation
     client_max_body_size 1G
 
     # optimize downloading files larger than 1G
-    # refer to nginx doc before adjusting
     #proxy_max_temp_file_size 2G
 
     ssl on
@@ -651,12 +654,6 @@ http {
   }
 }
 ----
-
-NOTE: Consult your reverse proxy product documentation for details: http://httpd.apache.org/[Apache httpd]
-(http://httpd.apache.org/docs/current/mod/mod_proxy.html[mod_proxy], 
-http://httpd.apache.org/docs/current/mod/mod_ssl.html[mod_ssl]), http://nginx.org/en/docs/[nginx] 
-(http://nginx.org/en/docs/http/ngx_http_proxy_module.html[ngx_http_proxy_module], 
-http://nginx.org/en/docs/http/configuring_https_servers.html#compatibility[ssl compatibility])
 
 [[access]]
 === Accessing the User Interface
