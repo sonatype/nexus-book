@@ -493,29 +493,29 @@ ProxyPreserveHost On
 ----
 http {
 
-    proxy_send_timeout 120;
-	proxy_read_timeout 300;
-	proxy_buffering    off;
-	keepalive_timeout  5 5;
-	tcp_nodelay        on;
-    
-	server {
-		listen   *:80;
-		server_name  www.example.com;
+  proxy_send_timeout 120;
+  proxy_read_timeout 300;
+  proxy_buffering    off;
+  keepalive_timeout  5 5;
+  tcp_nodelay        on;
 
-		# allow large uploads of files - refer to nginx documentation
-		client_max_body_size 1G
+  server {
+    listen   *:80;
+    server_name  www.example.com;
 
-		# optimize downloading files larger than 1G - refer to nginx doc before adjusting
-		#proxy_max_temp_file_size 2G
+    # allow large uploads of files - refer to nginx documentation
+    client_max_body_size 1G
 
-		location /nexus {
-			proxy_pass http://localhost:8081/nexus;
-			proxy_set_header Host $host;
-			proxy_set_header X-Real-IP $remote_addr;
-			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		}
-	}
+    # optimize downloading files larger than 1G - refer to nginx doc before adjusting
+    #proxy_max_temp_file_size 2G
+
+    location /nexus {
+      proxy_pass http://localhost:8081/nexus;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+  }
 }
 ----
 
@@ -548,29 +548,31 @@ ProxyPreserveHost On
 ----
 http {
 
-    proxy_send_timeout 120;
-	proxy_read_timeout 300;
-	proxy_buffering    off;
-	keepalive_timeout  5 5;
-	tcp_nodelay        on;
+  proxy_send_timeout 120;
+  proxy_read_timeout 300;
+  proxy_buffering    off;
+  keepalive_timeout  5 5;
+  tcp_nodelay        on;
 
-	server {
-		listen   *:80;
-		server_name  repo.example.com;
+  server {
+    listen   *:80;
+    server_name  repo.example.com;
 
-		# allow large uploads of files - refer to nginx documentation
-		client_max_body_size 1G
+    # allow large uploads of files
+    # refer to nginx documentation
+    client_max_body_size 1G
 
-		# optimize downloading files larger than 1G - refer to nginx doc before adjusting
-		# proxy_max_temp_file_size 2G
+    # optimize downloading files larger than 1G 
+    # refer to nginx doc before adjusting
+    # proxy_max_temp_file_size 2G
 
-		location / {
-			proxy_pass http://localhost:8081/nexus;
-			proxy_set_header Host $host;
-			proxy_set_header X-Real-IP $remote_addr;
-			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		}
-	}
+    location / {
+      proxy_pass http://localhost:8081/nexus;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+  }
 )
 ----
 
@@ -617,34 +619,36 @@ ProxyPreserveHost On
 ----
 http {
 
-	proxy_send_timeout 120;
-	proxy_read_timeout 300;
-	proxy_buffering    off;
-	keepalive_timeout  5 5;
-	tcp_nodelay        on;
+  proxy_send_timeout 120;
+  proxy_read_timeout 300;
+  proxy_buffering    off;
+  keepalive_timeout  5 5;
+  tcp_nodelay        on;
 
-	server {
-		listen   *:443;
-		server_name  repo.example.com;
+  server {
+    listen   *:443;
+    server_name  repo.example.com;
 
-		# allow large uploads of files - refer to nginx documentation
-		client_max_body_size 1G
+    # allow large uploads of files
+    # refer to nginx documentation
+    client_max_body_size 1G
 
-		# optimize downloading files larger than 1G - refer to nginx doc before adjusting
-		#proxy_max_temp_file_size 2G
+    # optimize downloading files larger than 1G
+    # refer to nginx doc before adjusting
+    #proxy_max_temp_file_size 2G
 
-		ssl on
-		ssl_certificate      example.pem;
-		ssl_certificate_key  example.key;
+    ssl on
+    ssl_certificate      example.pem;
+    ssl_certificate_key  example.key;
 
-		location / {
-			proxy_pass http://localhost:8081/;
-			proxy_set_header Host $host;
-			proxy_set_header X-Real-IP $remote_addr;
-			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-			proxy_set_header X-Forwarded-Proto "https";	
-		}
-	}
+    location / {
+      proxy_pass http://localhost:8081/;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto "https";
+    }
+  }
 }
 ----
 
