@@ -122,10 +122,33 @@
                                         or ($next and $navig.showtitles != 0)"/>
         <xsl:if test="$suppress.navigation = '0' and $suppress.footer.navigation = '0'">
             <xsl:if test="$row1 or $row2">
-                
                 <xsl:if test="$row1">
-                    <div id="nav-sub-block"> <a class="hide" name="nav-sub-a"></a> 
-                        <ul id="nav-sub"> 
+                    <div class="nav-sub">
+                        <xsl:choose>
+                            <xsl:when test="$home != . or $nav.context = 'toc'">
+                                <div class="nav-toc"><a accesskey="h">
+                                        <xsl:attribute name="href">
+                                            <xsl:call-template name="href.target">
+                                                <xsl:with-param name="object" select="$home"/>
+                                            </xsl:call-template>
+                                        </xsl:attribute>TOC</a></div>
+                                <xsl:if test="$chunk.tocs.and.lots != 0 and $nav.context != 'toc'">
+                                    <xsl:text>&#160;|&#160;</xsl:text>
+                                </xsl:if>
+                            </xsl:when>
+                            <xsl:otherwise>&#160;</xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:if test="$chunk.tocs.and.lots != 0 and $nav.context != 'toc'">
+                            <div class="nav-toc"><a accesskey="t">
+                                    <xsl:attribute name="href">
+                                        <xsl:apply-templates select="/*[1]" mode="recursive-chunk-filename">
+                                            <xsl:with-param name="recursive" select="true()"/>
+                                        </xsl:apply-templates>
+                                        <xsl:text>-toc</xsl:text>
+                                        <xsl:value-of select="$html.ext"/>
+                                    </xsl:attribute>TOC</a></div>
+                        </xsl:if>
+                        <ul>
                             <xsl:if test="count($prev)>0">
                                 <li class="first"><a accesskey="p">
                                         <xsl:attribute name="href">
@@ -133,35 +156,7 @@
                                                 <xsl:with-param name="object" select="$prev"/>
                                             </xsl:call-template>
                                         </xsl:attribute>
-                                        <span><xsl:text>Prev : </xsl:text><xsl:apply-templates select="$prev" mode="object.title.markup"/></span>
-                                </a></li>
-                            </xsl:if> 
-                            <xsl:choose>
-                                <xsl:when test="$home != . or $nav.context = 'toc'">
-                                    <li><a accesskey="h">
-                                            <xsl:attribute name="href">
-                                                <xsl:call-template name="href.target">
-                                                    <xsl:with-param name="object" select="$home"/>
-                                                </xsl:call-template>
-                                            </xsl:attribute>
-											<span>TOC</span>
-                                    </a></li>
-                                    <xsl:if test="$chunk.tocs.and.lots != 0 and $nav.context != 'toc'">
-                                        <xsl:text>&#160;|&#160;</xsl:text>
-                                    </xsl:if>
-                                </xsl:when>
-                                <xsl:otherwise>&#160;</xsl:otherwise>
-                            </xsl:choose>                             
-                            <xsl:if test="$chunk.tocs.and.lots != 0 and $nav.context != 'toc'">
-                                <li><a accesskey="t">
-                                        <xsl:attribute name="href">
-                                            <xsl:apply-templates select="/*[1]" mode="recursive-chunk-filename">
-                                                <xsl:with-param name="recursive" select="true()"/>
-                                            </xsl:apply-templates>
-                                            <xsl:text>-toc</xsl:text>
-                                            <xsl:value-of select="$html.ext"/>
-                                        </xsl:attribute>
-									    <span>TOC</span>
+                                        <xsl:text>Prev : </xsl:text><xsl:apply-templates select="$prev" mode="object.title.markup"/>
                                 </a></li>
                             </xsl:if>
                             <xsl:if test="count($next)>0">
@@ -171,11 +166,11 @@
                                                 <xsl:with-param name="object" select="$next"/>
                                             </xsl:call-template>
                                         </xsl:attribute>
-                                        <span><xsl:text>Next : </xsl:text><xsl:apply-templates select="$next" mode="object.title.markup"/></span>
+                                        <xsl:text>Next : </xsl:text><xsl:apply-templates select="$next" mode="object.title.markup"/>
                                 </a></li>
                             </xsl:if>
-                        </ul> 
-                    </div> 
+                        </ul>
+                    </div>
                 </xsl:if>
             </xsl:if>
         </xsl:if>
@@ -201,8 +196,32 @@
             </xsl:if>
             <xsl:if test="$row1 or $row2">
                 <xsl:if test="$row1">
-                    <div id="nav-sub-block"> <a class="hide" name="nav-sub-a"></a> 
-                        <ul id="nav-sub"> 
+                    <div class="nav-sub">
+                         <xsl:choose>
+                             <xsl:when test="$home != . or $nav.context = 'toc'">
+                                 <div class="nav-toc"><a accesskey="h">
+                                         <xsl:attribute name="href">
+                                             <xsl:call-template name="href.target">
+                                                 <xsl:with-param name="object" select="$home"/>
+                                             </xsl:call-template>
+                                         </xsl:attribute>TOC</a></div>
+                                 <xsl:if test="$chunk.tocs.and.lots != 0 and $nav.context != 'toc'">
+                                     <xsl:text>&#160;|&#160;</xsl:text>
+                                 </xsl:if>
+                             </xsl:when>
+                             <xsl:otherwise>&#160;</xsl:otherwise>
+                         </xsl:choose>
+                         <xsl:if test="$chunk.tocs.and.lots != 0 and $nav.context != 'toc'">
+                             <div class="nav-toc"><a accesskey="t">
+                                     <xsl:attribute name="href">
+                                         <xsl:apply-templates select="/*[1]" mode="recursive-chunk-filename">
+                                             <xsl:with-param name="recursive" select="true()"/>
+                                         </xsl:apply-templates>
+                                         <xsl:text>-toc</xsl:text>
+                                         <xsl:value-of select="$html.ext"/>
+                                     </xsl:attribute>TOC</a></div>
+                         </xsl:if>
+                        <ul class="nav-sub">
                             <xsl:if test="count($prev)>0">
                                 <li class="first"><a accesskey="p">
                                         <xsl:attribute name="href">
@@ -210,35 +229,7 @@
                                                 <xsl:with-param name="object" select="$prev"/>
                                             </xsl:call-template>
                                         </xsl:attribute>
-                                        <span><xsl:text>Prev : </xsl:text><xsl:apply-templates select="$prev" mode="object.title.markup"/></span>
-                                </a></li>
-                            </xsl:if> 
-                            <xsl:choose>
-                                <xsl:when test="$home != . or $nav.context = 'toc'">
-                                    <li><a accesskey="h">
-                                            <xsl:attribute name="href">
-                                                <xsl:call-template name="href.target">
-                                                    <xsl:with-param name="object" select="$home"/>
-                                                </xsl:call-template>
-                                            </xsl:attribute>
-											<span>TOC</span>
-                                    </a></li>
-                                    <xsl:if test="$chunk.tocs.and.lots != 0 and $nav.context != 'toc'">
-                                        <xsl:text>&#160;|&#160;</xsl:text>
-                                    </xsl:if>
-                                </xsl:when>
-                                <xsl:otherwise>&#160;</xsl:otherwise>
-                            </xsl:choose>                             
-                            <xsl:if test="$chunk.tocs.and.lots != 0 and $nav.context != 'toc'">
-                                <li><a accesskey="t">
-                                        <xsl:attribute name="href">
-                                            <xsl:apply-templates select="/*[1]" mode="recursive-chunk-filename">
-                                                <xsl:with-param name="recursive" select="true()"/>
-                                            </xsl:apply-templates>
-                                            <xsl:text>-toc</xsl:text>
-                                            <xsl:value-of select="$html.ext"/>
-                                        </xsl:attribute>
-									    <span>TOC</span>
+                                        <xsl:text>Prev : </xsl:text><xsl:apply-templates select="$prev" mode="object.title.markup"/>
                                 </a></li>
                             </xsl:if>
                             <xsl:if test="count($next)>0">
@@ -248,11 +239,11 @@
                                                 <xsl:with-param name="object" select="$next"/>
                                             </xsl:call-template>
                                         </xsl:attribute>
-                                        <span><xsl:text>Next : </xsl:text><xsl:apply-templates select="$next" mode="object.title.markup"/></span>
+                                        <xsl:text>Next : </xsl:text><xsl:apply-templates select="$next" mode="object.title.markup"/>
                                 </a></li>
                             </xsl:if>
-                        </ul> 
-                    </div> 
+                        </ul>
+                    </div>
                 </xsl:if>
             </xsl:if>
         </xsl:if>
