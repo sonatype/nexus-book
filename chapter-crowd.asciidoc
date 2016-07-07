@@ -3,23 +3,11 @@
 
 {inrmonly}
 
-http://www.atlassian.com/software/crowd/[Atlassian Crowd] is a single sign-on and identity management product that
+https://www.atlassian.com/software/crowd[Atlassian Crowd] is a single sign-on and identity management product that
 many organizations use to consolidate user accounts and control which users and groups have access to which
-applications. {nxrm} contains a security realm that allows you to configure the repository manager to authenticate
+applications. Atlassian Crowd support is an feature preinstalled and ready to configure in {pro}. {nxrm} contains 
+a security realm that allows you to configure the repository manager to authenticate
 against an Atlassian Crowd instance.
-
-The following steps are necessary to configure Crowd-based authentication:
-
-. <<crowd-nexus-prepare,Prepare Nexus>>
-. <<crowd-application-prepare,Prepare Atlassian Crowd>>
-. <<crowd-configuration,Configure the Nexus Crowd Connection>>
-. <<crowd-sect-mapping,Configure Nexus Crowd Security>>
-. <<crowd-realm,Activate the Nexus Crowd Realm>>
-
-[[crowd-nexus-prepare]]
-=== Prepare {pro} for Atlassian Crowd
-
-Atlassian Crowd support is an option feature preinstalled and ready to configure in {pro} 3.1+.
 
 WARNING: *Using LDAP and Crowd Realms together in the repository manager may work, but this is not supported.* If
 you already use LDAP support, we recommend adding your LDAP server as a Crowd directory accessible to the Crowd
@@ -31,16 +19,17 @@ you already use LDAP support, we recommend adding your LDAP server as a Crowd di
 [[crowd-compatibility]]
 ==== Compatibility
 
-Always use the latest version of Crowd available at the time your version of {pro} was released. When upgrading to
-a newer Crowd server, carefully review the Crowd server release notes for REST API backwards compatibility issues.
+Always use the latest version of Crowd available at the time your version of {pro} was installed or upgraded. 
+If upgrading to a newer Crowd server, carefully review the Crowd server release notes for REST API backwards 
+compatibility issues.
 
-Crowd support in {pro} 2.1 and greater only works in Crowd versions (3.1+) that support the Crowd
-REST API. Older versions use a deprecated SOAP-based API and are less reliable and performant.
+Crowd support in {pro} and greater only works in Crowd versions that support the Crowd REST API. Older versions 
+use a deprecated SOAP-based API and are less reliable and performant.
 
 Crowd support is actively tested with the highest available version of Crowd at the time {pro} is released.
 
 [[crowd-setup]]
-==== Configure a {pro} Application in the Atlassian Crowd Server
+==== Add New Application to the Atlassian Crowd Server
 
 NOTE: These instructions are a general guide to adding an application to Crowd. For current detailed 
 instructions, visit the https://confluence.atlassian.com/display/CROWD/Adding+an+Application[official
@@ -48,33 +37,33 @@ Crowd documentation].
 
 To connect {pro} to Crowd, you will need to configure {pro} as an application in Crowd.
 
-. Login to Crowd as a user with administrative rights.
-. Click on the 'Applications' tab.
-. Click 'Add application', shown in <<fig-crowd-add-application>>, to display the form and create a new 
-application with the following values in the 'Details' tab of the Add Application form:
+* Login to Crowd as a user with administrative rights.
+* Click on the 'Applications' tab.
+* Click 'Add application' to display a form, shown in <<fig-crowd-add-application>>
+
+Next, create the new application with the following values in the 'Details' section:
 
 * Application Type: Generic Application
 
-* Name: nexus
+* Name: demo
 
 * Description: (optional)
 
-. Choose a password for this application. Nexus will use this password
-to authenticate with the Crowd server. Confirm the password, then click the 'Next' button.
+Choose a password for the application. The repository manager will use this password to authenticate with the 
+Crowd server. Confirm the password, then click the 'Next' button.
 
 [[fig-crowd-add-application]]
-.Adding a New Application
+.Adding a New Crowd Application
 image::figs/web/crowd-add-application.png[scale=50]
 
 Click 'Next' to advance to the 'Connection' breadcrumb. On this screen you need to supply the URL of your 
-application instance and the remote IP address for {pro}. It shows the Connection form 
-configured for a local instance of {pro}. If you were configuring Crowd and {pro} in a production environment, 
-you would supply the URL that users would use to load the repository manager user interface in a web browser and 
-you would supply the IP address that the repository manager will be connecting from.  Once you have completed the 
+application instance and the remote IP address for {pro}. The form shows the 'Connection' configured for a local 
+instance of {pro}. If you were configuring Crowd and {pro} in a production environment, you would supply the URL 
+that users would use to load the repository manager user interface in a web browser and you would supply the IP 
+address that the repository manager will be connecting from.  Once you have completed the 
 'Connection' form, click on 'Next' to advance to the 'Directories' form.
 
-The 'Directories' form allows you to select the user directory used for {pro} authentication. In this example, 
-the default 'User Management' directory will be used.
+The 'Directories' form allows you to select the user directory used for authentication.
 
 Clicking on the 'Next' button in the 'Directories' form advances to the 'Authorisation' form. If any of the 
 directories selected in the previous form contain groups, each group is displayed on this form next to a 
