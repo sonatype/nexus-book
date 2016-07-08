@@ -79,6 +79,21 @@ settings. Click 'Add application' to confirm the settings.
 [[crowd-configuration]]
 === Configure {pro} Crowd Integration
 
+[[crowd-capability]]
+===== Enable the Crowd Capability
+
+To enable 'Crowd' locate the 'Create Crowd Capability' form to activate the connection between the external 
+server with the repository manager. Go to 'Capabilities' located under 'System' in the 'Administration' menu. 
+Perform the following steps:
+
+* Select 'Capabilities' to open the 'Capabilities' panel, located in the 'Administration' menu
+* Click the 'Create capability' button to get to the 'Select Capability Type' table
+* Select 'Crowd' to open the 'Create Crowd Capability' panel
+* Complete the form by checking the 'Enable this capability', entering the 'Crowd Server URL', and identifying 
+the 'Application Name' and 'Application Password' that corresponds to your Crowd application.
+
+This form also includes an option to 'Use the Nexus truststore'. You would check this box if you configured and 
+want to manage Crowd with the HTTPS protocol, mentioned in <<crowd-ssl>>.
 
 [[crowd-ssl]]
 ==== Configure {pro} to Trust Crowd’s Secure URL (Optional)
@@ -89,30 +104,16 @@ If the Crowd certificate is not signed by a public certificate authority, you ma
 the server certificate as explained in <<ssl-proxy-repo>>. A common symptom observed are +peer not authenticated+
 messages, when trying to connect to the untrusted Crowd server.
 
-////
-move to top
-////
-[[crowd-capability]]
-===== Enable the Crowd Capability
-
-To enable 'Crowd' go to 'Capabilities' located under 'System' in the 'Administration' menu. Perform the following 
-steps:
-
-* Click the 'Create capability' button to get to the 'Select Capability Type' table
-* Select 'Capabilities' to open the 'Capabilities' panel located in the 'Administration' menu
-* Select 'Crowd' to open the 'Create Crowd Capability' panel
-* Click the 'Add' button in the panel toolbar. Select 'SSL: Crowd' in the 'Type' field. Make sure the 'Enabled' 
-checkbox is checked, and click the 'Save' button.
 
 [[crowd-ssl-trust]]
 ===== Adding the Crowd Server Certificate to the Truststore
 
 In order to add the server certificate of your Crowd server to the truststore, go to 'SSL Certificates', located 
 under 'Security' in the 'Administration' menu. In the 'SSL Certificates' panel click the 'Load Certificate' 
-button, prompts a dropdown menu with two options:
+button, which prompts a dropdown menu with two options:
 
-. 'Load from server', where you can enter the full +https://+ URL from the Crowd server
-. 'Paste PEM', where you can enter an encoded, remote certificate generated from Crowd
+* 'Load from server': where you can enter the full +https://+ URL from the Crowd server
+* 'Paste PEM': where you can enter an encoded, remote certificate generated from Crowd
 
 NOTE: Read more about centralizing <<ssl-certificates,ssl certificates>> to the {nxrm} in the Security chapter.
 
@@ -126,61 +127,58 @@ administrative privileges in {pro} by selecting 'Atlassian Crowd' in the 'Securi
 From this screen you can access your Crowd roles through a running instance of {nxrm}. To manage a Crowd 
 server connection within the repository manager you can activate the following:
 
-. Check the 'Enable Crowd' box to activate the capability
-. Check 'Enable Crowd Realm for Authentication' to allow prioritization of you available security realms
+* Check the 'Enable Crowd' box to activate the capability
+* Check 'Enable Crowd Realm for Authentication' to allow prioritization of you available security realms
 
 [[fig-manage-crowd-config]]
 .Crowd Configuration Panel
 image::figs/web/manage-crowd-config.png[scale=50]
 
-This panel contains the following fields:
+In this form copy the respective values you attributed to the 'Details' section of the Crowd menu you created in 
+<<crowd-setup>>. The fields are as follows:
 
-Application Name:: This field contains the application name of a Crowd application. This value should match the 
-value in the Name field of the form.
-
-Application Password:: This field contains the application password of a Crowd application. This value should 
-match the value in the Password field of the form.
-
-Crowd Server URL:: This is the URL used to connect to the Crowd Server.  Both 'http://' and 'https://' URLs are 
+Crowd Server URL:: Enter the URL used to connect to the Crowd Server.  Both 'http://' and 'https://' URLs are 
 accepted. You may need to <<crowd-ssl-trust,trust the crowd server certificate>> if a 'https://' URL is used.
 
-HTTP Timeout:: The HTTP Timeout specifies the number of milliseconds the repository manager will wait for a
-response from Crowd. A value of zero indicates that there is no timeout limit. Leave the field blank to use the
-default HTTP timeout.
+Crowd application name:: Enter the name of the Crowd application created in the Crowd server.
+
+Crowd application Password:: Enter the password you applied to your Crowd application.
+
+Connection timeout:: Use the dropdown or enter a value that specifies the number of milliseconds the repository 
+manager will wait for a response from Crowd. A value of zero indicates that there is no timeout limit. Leave the 
+field blank to use the default timeout.
 
 You can use the 'Verify Connection' button to validate if your connection to Crowd is working. Once you have a 
-working connection, press 'Save' to confirm the configuration. Use 'Cancel' to abort saving any changes.
+working connection, press 'Save' to confirm the configuration.
 
 [[crowd-sect-mapping]]
 === Configure {pro} Crowd Security
 
-There are two approaches available to manage what privileges a Crowd user has when they login to {pro}.
+There are two approaches available to manage what privileges a Crowd user has when they login to {pro}. You can 
+map Crowd groups to roles or map Crowd users to roles.
 
-. Mapping Crowd Groups to Roles
-. Mapping Crowd Users to Roles
-
-NOTE: Mapping Crowd Groups to {pro} Roles is preferable because there is less configuration is involved overall in
+NOTE: Mapping Crowd Groups to {pro} Roles is preferable because there is less configuration involved overall in
 {pro} and assigning users to Crowd groups can be centrally managed inside of Crowd by your security team after the
 initial repository manager setup.
 
 [[crowd-sect-mapping-group]]
 ==== Mapping a Crowd Group to Roles
 
-When mapping a Crowd group to a {pro} role, you are specifying the permissions ( via roles ) that users within the
+When mapping a Crowd group to a {pro} role, you are specifying the permissions (via roles) that users within the
 Crowd group will have after they authenticate.
 
 To map a Crowd group to a {pro} role, open the 'Roles' panel by clicking on the 'Roles' link under 'Security'
 in the 'Administration panel. Click on 'Create role' button, select 'External Role Mapping', then click 'Crowd'. 
 This will take you 'Create Role' panel, as mentioned in <<roles>>.
 
-After choosing the 'Crowd' realm, the 'Role' drop-down should list all the Crowd groups the 'demo' Crowd 
-application has access to. Select the group you would like to map in the 'Role' field and click 'Create Mapping'.
+After choosing the 'Crowd' realm, the 'Role' drop-down should list all the Crowd groups to which the generic 
+Crowd application has access. Select the group you would like to map in the 'Role' field.
 
-NOTE: If you have two or more groups in Crowd accessible to the 'demo' application with the same name but in
-different directories, the repository manager will only list the first one that Crowd finds. Therefore, Crowd
-administrators should avoid identically named groups in Crowd directories.
+NOTE: If you have two or more groups in Crowd accessible to the 'General Application' ('demo') with the 
+same name but in different directories, the repository manager will only list the first one that Crowd finds. 
+Therefore, Crowd administrators should avoid identically named groups in Crowd directories.
 
-Before saving the group-to-role mapping, *you 'must' add at least one {pro} role to the mapped group*. After you
+Before you save, *you 'must' add at least one {pro} role or privilege to the mapped group*. After you
 have added the roles using the 'Add' button, click the 'Save' button.
 
 Saved mappings will appear in the list of roles with a mapping value of 'Crowd'.
@@ -206,16 +204,6 @@ glass icon, will prompt the repository manager to search for a user ID +johnsmit
 
 When the name you entered appears, click the ID to grant roles to the Crowd user. This will take you 
 to a form where you can assign available roles. *You must map at least one role
-to the Crowd managed user* in order to 'Save'. The external Crowd User Example displays the s+johnsmith+
+to the Crowd managed user* in order to 'Save'. The external Crowd User Example displays the +johnsmith+
 Crowd realm user as a member of the 'dev' Crowd group and the mapped role called 'Nexus Administrator Role'. 
 External groups like +dev+ are bolded in the 'Roles' table.
-
-[[crowd-realm]]
-=== Activate {pro} Crowd Realm
-
-The final step to allow Crowd users to authenticate against {pro} is to activate the Crowd authorization realm 
-from the 'Security' menu. Do the following:
-
-. Select 'Realms' from the 'Administration' sidebar menu.
-. Drag 'Crowd Realm' from the list of 'Available' realms to the end of the 'Active' realms list.
-. 'Save' the server settings.
