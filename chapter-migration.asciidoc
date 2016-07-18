@@ -1,12 +1,12 @@
-[[upgrade]]
-==  Upgrade Tool
+[[upgrading]]
+==  Upgrading Nexus Repository Manager
 {inall}
 
 [[upgrade-introduction]]
 === Introduction
 
-The upgrade tool provides a built-in supported method for migrating components from {pro} 2.14 and higher to 
-{pro} {version} and higher. You will be able to initiate an upgrade into {pro} {version}, and later versions, 
+The upgrade tool provides a built-in supported method for migrating components from {nxrm} 2.14 or later to 3.1 
+or later. You will be able to initiate an upgrade into {pro} {version}, and later versions, 
 with a wizard available in the application.
 
 This feature helps you build an upgrade plan which allows {pro} {version} to talk to {pro} 2 by way of a 
@@ -16,17 +16,33 @@ wizard that guides you through the upgrade from the latest version of 2.x or hig
 During an upgrade, {pro} 2 should remain functioning at high capacity during the majority of the upgrade process. 
 You or your organization should put strong emphasis on performance and stability when designing the upgrade plan.
 
+////
+From installation chapter, adapt into chapter
+=== Upgrading
+
+Since the repository manager separates its configuration and data storage from the application, it is easy to 
+upgrade an existing installation. There are two ways to upgrade: with the installer application or the 
+distribution file. 
+
+To keep the upgrade simple schedule downtime to preserve important directories during the process. Follow the 
+steps in the support https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base article].
+
+NOTE: Upgrading to {oss} 3.0.0 can only be performed by users who run the milestone 7 release of the repository 
+manager. Be sure to manually back up the milestone 7 data directory to another location. It is a crucial step to 
+properly upgrade the application.
+////
+
 [[upgrade-support]]
 === Supported Architecture for Upgrading
 
-There are two available architectures that support upgrading. You can either migrate content from a {pro} 2.14 
+There are two available architectures that support upgrading. You can either upgrade content from a {pro} 2.14 
 server to an {pro} {version} server. The other option is you set both instances to run the upgrade on the same 
 server; this requires that you create two separate service locations for your server.
  
 [[upgrade-prep]]
 === Preparing for an Upgrade
 
-If you decide to update versions 2.x and 3.x to the latest instances that allow you to migrate, the most critical 
+If you decide to update versions 2.x and 3.x to the latest instances that allow you to upgrade, the most critical 
 decisions you or your organization make around the upgrade plan should include: 
 
 * where they want their components to be transferred to when the migration is complete
@@ -94,17 +110,21 @@ team] to learn on how to do this safely.
 
 *User Token*
 
-The upgrade tool can only migrate user tokens from version 2 if the 'Enabled' box is checked. From the 
+The upgrade tool can only upgrade user tokens from version 2 if the 'Enabled' box is checked. From the 
 'Administration' panel click the 'User Token' tab and enable the setting. This automatically activates 'Realms' 
 in the version 3 panel, even if it is inactive.
+
+////
+link to user token chapter
+////
 
 *NuGet API Key*
 
 Though your account has only one associated NuGet API key, they are visible per repository.
 
-The upgrade tool will migrate all keys that are present in version 2 when asked, even if the NuGet API Key 
-Realm is not active in version 2. This is because there is no explicit on or off setting for NuGet keys. You can 
-locate 'Selected Realms' under 'Administration' -> 'Server' -> 'Security Settings'.
+The upgrade tool will add all keys to {nxrm} 3, that are present in {nxrm} 2.14 when asked even if the NuGet API 
+Key Realm is not active in version 2. This is because there is no explicit on or off setting for NuGet keys. You 
+can locate 'Selected Realms' under 'Administration' -> 'Server' -> 'Security Settings'.
 
 ////
 [[upgrade-security]]
@@ -172,7 +192,7 @@ repositories, realm settings, permissions, roles and role assignments, HTTP conf
 should not be changed. After the migration starts such changes will not be picked up by version 3 and may result 
 in failure.
 
-If you are an administrator who manages the migration plan consider updating the {pro} 2 instance to read-only 
+If you are an administrator who manages the upgrade plan consider updating the {pro} 2 instance to read-only 
 mode so it is inaccessible to users without administrative privileges. This shuts off the flow of new 
 changes, and allows {pro} {version} to catch up with any outstanding content changes made on version 2.
 
@@ -180,7 +200,7 @@ changes, and allows {pro} {version} to catch up with any outstanding content cha
 === Repository Format Support
 
 Below is a list of repositories available in version 2 and 3 and which are supported by migration. For each of 
-these formats you can migrate server-wide settings, security realm settings, and repository content.
+these formats you can upgrade server-wide settings, security realm settings, and repository content.
 
 .Repository Format Support
 [width="60%",frame="topbot",options="header,footer"]
@@ -270,7 +290,7 @@ The 'Access Token' will display the security key from your version 2 'Migration:
 Content:: This screen presents checkboxes for security features ('Security'), server configuration ('System'), 
 and user-managed repositories ('Repositories') that can be upgraded. For 'Security' you have the option to choose 
 among 'Anonymous', 'LDAP Configuration', 'NuGet API-Key', 'Realms', 'Roles', 'SSL Certificates' 'Users', and 
-'User Tokens'. For 'System' you can migrate 'Email' and 'HTTP Configuration' contents.
+'User Tokens'. For 'System' you can upgrade 'Email' and 'HTTP Configuration' contents.
 
 NOTE: Some 'Content' items can only be accessed and upgraded by {pro} users. 
 
@@ -280,14 +300,14 @@ menu, 'Destination' gives your option to pick a blob store name different than t
 menu, 'Method', allows you to choose among hard linking, copying local files or downloading.
 
 Repositories:: If 'User-related repositories' is one of your selections from the 'Content' screen, the 
-'Repositories' screen allows you to select which repositories you want to migrate. You can either select all 
+'Repositories' screen allows you to select which repositories you want to upgrade. You can either select all 
 repositories with one click, at the top of the table. Alternatively, you can click each individual repository. In 
 addition to 'Repository', the table displays information around the status of the repository. The table includes 
 'Type', 'Format', 'Supported', 'Status', 'Destination', and 'Method'.
 
-Preview:: This table displays a preview of the content set for migration, selected in the previous screen. 
+Preview:: This table displays a preview of the content set for upgrade, selected in the previous screen. 
 Click 'Begin', then confirm from the modal, that you want to start the upgrade. After the preview 'Preparing', 
 'Synchronizing', and 'Finishing' will persist.
 
-When the final migration of content ends, shut down version 2 and reboot to see your content, now replicated in 
+When the final content upgrade ends, shut down version 2 and reboot to see your content, now replicated in 
 version 3.
