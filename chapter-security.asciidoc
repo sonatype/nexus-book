@@ -523,26 +523,15 @@ After your LDAP the successful configuration of your connection and user and gro
 configure external role mappings. This allows you to define the repository manager specific security for a LDAP
 group. More details are available in <<roles>>.
 	
-[[usertoken]]
+[[user-token]]
 === Security Setup with User Tokens
-
-////
-rewrite of this section in progress
-////
 
 {inrmonly}
 
+[[user-token-intro]]
 ==== Introduction
 
-When using Apache Maven with {pro} or {oss}, the user credentials for accessing the repository manager have to be
-stored in clear text in the user's settings.xml file. Maven has the ability to encrypt passwords in +setting.xml+,
-but the need for it to be reversible in order to be used, limits its security. In addition, the general setup and
-use is cumbersome, and the potential need for regular changes due to strong security requirements e.g., with
-regular, required password changes triggers the need for a simpler and more secure solution.
-
-Other build systems use similar approaches and can benefit from the usage of User Token as well.
-
-The User Token feature of {pro} fills that need for Apache Maven as well as other build systems and users. It
+{pro}'s user token feature fills the need for Apache Maven as well as other build systems and users. It
 introduces a two-part token for the user, replacing the username and password with a user code and a pass code
 that allows no way of recovering the username and password from the user code and pass code values; yet can be
 used for authentication with the repository manager from the command line via Maven as well as in the UI.
@@ -554,46 +543,43 @@ against the repository manager and other systems and the plain text username and
 User token usage is integrated in the Maven settings template feature of {pro} documented in 'maven-settings' to
 further simplify its use.
 
+[[enable-reset-token]]
 ==== Enabling and Resetting User Tokens
 
-The user token-based authentication can be activated by an administrator or user with the role +usertoken-admin+
-or +usertoken-all+ by accessing the 'User Token' item in the 'Security' submenu on the left-hand main menu.
+User token-based authentication can be activated by an administrator or user by clicking the 'User Token' menu 
+item under 'Security' in the 'Administration' menu. Check the 'Enable user tokens' box, then press 'Save' to 
+activate the feature. You can access the user token from the 'Profile' mode toggle, explained in <<access-token>>.
 
-Once user token is 'Enabled' by activating the checkbox in the administration tab and pressing 'Save',  the 
-feature is activated and the additional section to Reset All User Tokens is available as well.
+Additionally, you can check the 'Require user tokens for repository authentication' box to allow the repository 
+manager to require a user token for any access to the repository and group content URLs. This affects read and 
+write access for deployments from a build execution or a manual upload, but the user interface will not change.
 
-Selecting the 'Protect Content' feature configures the repository manager to require a user token for any access
-to the content URLs that includes all repositories and groups. This affects read access as well as write access
-e.g., for deployments from a build execution or a manual upload.
-
-'Activating User Token' as a feature automatically adds the 'User Token Realm' as a 'Selected Realm' in the 
-'Security Settings' section and available in the 'Server' section of the left-hand 'Administration' menu. If 
-desired, you can reorder the security realms used, although the default settings with the 'User Token Realm' as a 
-first realm is probably the desired setup. This realm is not removed when the User Token feature is disabled; 
-however, it will cleanly pass through to the next realm and with the realm remaining any order changes stay 
-persisted in case the feature is reactivated at a later stage.
+When you activate the user token, the feature automatically adds the 'User Token Realm' to the 'Active Realms' 
+list. To see the results, go to 'Realms' located under 'Security' in the 'Administration' menu. If desired, you 
+can reorder the security realms used, although the default settings with the 'User Token Realm' as a first realm 
+is probably the desired setup. This realm is not removed when the User Token feature is disabled; however, it 
+will cleanly pass through to the next realm. The realm remain in active bin in your 'Realms' in case the feature 
+is reactivated at a later stage.
 
 Besides resetting all user tokens, an administrator can reset the token of an individual user by selecting the 
-'User Token' tab in the 'Users' administration from the 'Security' menu in the left-hand navigation. The password 
-requested for this action to proceed is the password for the currently logged in administrator resetting the 
-token(s).
+'User Token' tab in the 'Users' administration from the 'Security' menu. The password requested for the action to 
+proceed is the password for the authenticated administrator who resets the token(s).
 
 WARNING: Resetting user tokens forces the users to update the `settings.xml` with the newly created tokens and 
 potentially breaks any command line builds using the tokens until this change is carried out. This specifically 
 also applies to continuous integration servers using user tokens or any other automated build executions.
 
+[[access-token]]
 ==== Accessing and Using Your User Tokens
 
-With user token enabled, any user can access his/her individual tokens via their 'Profile' panel. To access the
-panel, select 'Profile' when clicking on the user name in the top right-hand corner of the user interface. Then
-select 'User Token' in the drop-down to get access to the 'User Token' screen in the 'Profile panel'.
+With user token enabled, you can access your individual tokens in your 'Accounts' panel. To access the panel, 
+select the 'Profile' menu toggle, on the top right-hand corner of the user interface.
 
 In order to be able to see this 'User Token' panel the user has to have the +usertoken-basic+ role or the 
 +usertoken:current+ privilege. To access or reset the token you have to press the respective button in the panel
 and then provide your username and password in the dialog.
 
-Resetting the token will show and automatically hide a dialog with a success message and accessing the token will 
-show the dialog.
+Resetting the token will show a dialog with a success message and accessing the token will show the dialog.
 
 The User Token dialog displays the user code and pass code tokens in separate fields in the top level section as
 well as a server section ready to be used in a Maven settings.xml file. When using the server section you simply
