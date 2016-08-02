@@ -533,15 +533,13 @@ group. More details are available in <<roles>>.
 ==== Introduction
 
 When using Apache Maven with {pro} or {oss}, the user credentials for accessing the repository manager have to be 
-stored in the user’s +settings.xml+ file. Like a +pom.xml+ your +settings.xml+ is file that contains your user 
-preferences. The file lives in +$HOME/.m2+, your main Maven directory. This file contains listings for 
+stored in the user’s `settings.xml` file. Like a `pom.xml` your `settings.xml` is file that contains your user 
+preferences. The Maven framework has the ability to encrypt passwords within the +setting.xml+, but the need for 
+it to be reversible in order to be used limits its security.
+
+The +settings.xml+ lives in `$HOME/.m2`, your main Maven directory. This file contains listings for 
 personalized client or build-tool configurations such as repositories. This file is not exclusive to 
 Maven-specific repositories.
-
-The general setup and use is cumbersome, and the potential need for regular changes due to strong security 
-requirements e.g., with regular, required password changes triggers the need for a simpler, more secure solution. 
-The Maven framework has the ability to encrypt passwords within the +setting.xml+, but the need for it to be 
-reversible in order to be used, limits its security.
 
 Other build systems use similar approaches and can benefit from the usage of user tokens as well. {pro}'s user 
 token feature establishes a two-part token for the user. Usage of the token acts as a substitute method for 
@@ -549,7 +547,7 @@ authentication that would normally require passing your username and password in
 
 This is especially useful for scenarios where single sign-on solutions like LDAP are used for authentication
 against the repository manager and other systems and the plain text username and password cannot be stored in the
-+settings.xml+ following security policies. In this scenario the generated user tokens can be used instead.
+`settings.xml` following security policies. In this scenario the generated user tokens can be used instead.
 
 [[enable-reset-token]]
 ==== Enabling and Resetting User Tokens
@@ -566,6 +564,11 @@ write access for deployments from a build execution or a manual upload, but the 
 Besides resetting all user tokens, you can reset the token of an individual user by selecting the 'User Token' 
 tab in the 'Users' administration from the 'Security' menu. The password requested for the action to proceed is 
 the password for the authenticated administrator who resets the token(s).
+
+////
+currently a bug 
+Above true assuming we fix https://issues.sonatype.org/browse/NEXUS-10305 first.
+////
 
 WARNING: Resetting user tokens forces users to update the `settings.xml` with the newly created tokens, and 
 could potentially break any command line builds using the tokens until this change is carried out. This also 
@@ -604,7 +607,7 @@ the user token. The dialog will close automatically after one minute or simply c
 The user code and pass code values can be used as replacements for username and password in the login dialog. It
 is also possible to use the original username and the pass code to log in to the user interface.
 
-Upon activation of user tokens for repository authentication you can access the repository manager with the user 
+Upon activation of user tokens for repository authentication you must access the repository manager with the user 
 token, from the command line. For example, your username-password credentials access with
 
 ----
@@ -617,8 +620,11 @@ has to be replaced with the usage of user code and pass code separated by colon 
 curl -v --user N+ZBiTlF:76xSi+HAQvYHZH8kgyJldWD7aJnPgCrHG/Zu7mkpWmZZ http://localhost:2468/repository/bower-all/
 ----
 
+////
+Commented out because uncertain this feature exists in the app yet
 User token values can be accessed as part of the Maven settings template feature automating updates as mentioned 
 in <<maven-sect-single-group>>.
+////
 
 [[remote-user-token]]
 === Authentication via Remote User Token
