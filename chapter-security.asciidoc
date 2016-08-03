@@ -475,7 +475,7 @@ image::figs/web/ldap-group-element-mapping-static.png[scale=50]
 Static groups with an example displayed in <<fig-group-element-mapping-static.png>>, are configured with the
 following parameters:
 
-Group base DN:: This field is similar to the 'Base DN' field described for User Element Mapping, but applies to
+Group Base DN:: This field is similar to the 'Base DN' field described for User Element Mapping, but applies to
 groups instead of users. For example, if your groups were defined under +ou=groups,dc=sonatype,dc=com+, this field
 would have a value of +ou=groups+.
 
@@ -532,14 +532,14 @@ group. More details are available in <<roles>>.
 [[user-token-intro]]
 ==== Introduction
 
-When using Apache Maven with {pro} or {oss}, the user credentials for accessing the repository manager have to be 
+When using Apache Maven with {pro}, the user credentials for accessing the repository manager have to be 
 stored in the user’s `settings.xml` file. Like a `pom.xml` your `settings.xml` is file that contains your user 
 preferences. The Maven framework has the ability to encrypt passwords within the +setting.xml+, but the need for 
 it to be reversible in order to be used limits its security.
 
-The +settings.xml+ lives in `$HOME/.m2`, your main Maven directory. This file contains listings for 
-personalized client or build-tool configurations such as repositories. This file is not exclusive to 
-Maven-specific repositories.
+The default location of settings file is `~/.m2/settings.xml`. This file contains listings for personalized 
+client or build-tool configurations such as repositories. This file is not exclusive to Maven-specific 
+repositories.
 
 Other build systems use similar approaches and can benefit from the usage of user tokens as well. {pro}'s user 
 token feature establishes a two-part token for the user. Usage of the token acts as a substitute method for 
@@ -553,17 +553,16 @@ against the repository manager and other systems and the plain text username and
 ==== Enabling and Resetting User Tokens
 
 User token-based authentication can be activated by an administrator or user with the +nx-usertoken-settings+ 
-privilege. If given that privilege click the 'User Token' menu item under 'Security' in the 'Administration' 
-menu. Check the 'Enable user tokens' box, then press 'Save' to activate the feature. You can access the user 
-token from the 'Profile' mode toggle, explained in <<access-token>>.
+privilege. Users with that privilege must click the 'User Token' menu item under 'Security' in the 
+'Administration' menu. Check the 'Enable user tokens' box, then press 'Save' to activate the feature.
 
 Additionally, you can check the 'Require user tokens for repository authentication' box to allow the repository 
 manager to require a user token for any access to the repository and group content URLs. This affects read and 
 write access for deployments from a build execution or a manual upload, but the user interface will not change.
 
-Besides resetting all user tokens, you can reset the token of an individual user by selecting the 'User Token' 
-tab in the 'Users' administration from the 'Security' menu. The password requested for the action to proceed is 
-the password for the authenticated administrator who resets the token(s).
+You can also reset the token of an individual user by selecting the 'User Token' tab in the 'Users' 
+administration from the 'Security' menu. The password requested for the action to proceed is the password for the 
+authenticated administrator who resets the token(s).
 
 ////
 currently a bug 
@@ -587,34 +586,35 @@ the feature is reactivated at a later stage.
 [[access-token]]
 ==== Accessing and Using Your User Token
 
-With enabled, you can access your individual token on your 'Account' panel. To access the panel, select the 
-'admin' mode toggle, on the top right-hand corner of the user interface.
+When enabled, you can access your individual token on your account menu. To access the menu, select the 
+username, on the top right-hand corner of the user interface. In the 'User' menu, to the left, you will see the 
+'User Token' icon appear.
 
 In order to see the 'User Token' click the 'Access user token' button. This will prompt the 'Authenticate' dialog 
 where you are required to re-enter your credentials. After clicking 'Authenticate' in the completed dialog, 
 another dialog will appear with the user token.
 
 Below the 'Access your token' section is another section that allows you to reset your token. Click the 'Reset 
-user token' button, which prompts an 'Authenticate' dialog. Enter your credentials panel to complete the user 
-token reset. Resetting the token will show a dialog with a success message, and accessing the token will show the 
-dialog.
+user token' button, which prompts an 'Authenticate' dialog. Enter your credentials to complete the user 
+token reset. Resetting the token will show a dialog with a success message, but you must access the user token 
+again to see the new value..
 
-The 'User Token' dialog displays user code and pass code tokens in separate fields. Below the token, is your 
-Maven +settings.xml+ server file. When using the server section you simply have to replace the `${server}` 
-placeholder with the repository id that references your repository manager you want to authenticate against with 
-the user token. The dialog will close automatically after one minute or simply click the 'Close' button.
+The 'User Token' dialog displays user code and pass code tokens in separate fields. Below the token, is the 
+server section of your +settings.xml+. When using the server section you can replace the `${server}` placeholder 
+with the repository id that references your repository manager you want to authenticate against with the user 
+token. The dialog will close automatically after one minute or simply click the 'Close' button.
 
-The user code and pass code values can be used as replacements for username and password in the login dialog. It
-is also possible to use the original username and the pass code to log in to the user interface.
+The user code and pass code values can be used as replacements for username and password in the login dialog. 
+You can still to use the original username and the pass code to log in to the user interface.
 
-Upon activation of user tokens for repository authentication you must access the repository manager with the user 
-token, from the command line. For example, your username-password credentials access with
+In order to utilize your user tokens for repository authentication you must access the repository manager with 
+the user token, from the command line. For example, your username-password credentials access with
 
 ----
 curl -v --user admin:admin123 http://localhost:2468/repository/bower-all/
 ----
 
-has to be replaced with the usage of user code and pass code separated by colon in the curl command line like this
+can be replaced with the usage of user code and pass code separated by colon in the curl command line like this
 
 ----
 curl -v --user N+ZBiTlF:76xSi+HAQvYHZH8kgyJldWD7aJnPgCrHG/Zu7mkpWmZZ http://localhost:2468/repository/bower-all/
