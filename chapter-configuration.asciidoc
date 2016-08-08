@@ -888,7 +888,7 @@ side resolution done by Maven each time.
 Content selectors is a set of regular expressions used to match characters on the path of components in a 
 repository. Content selectors allow you to select specific content, with regular expressions that are defined by 
 you from all our your content. The regular expressions are implemented with JEXL, a scripting language, that 
-allows filtering and querying on component metadata.
+allows filtering and querying on component patterns.
 
 ////
 expand this section
@@ -906,6 +906,7 @@ To create a new selector...
 See demo video https://drive.google.com/a/sonatype.com/file/d/0B3bXeD4zjEu7bnAwc1ctaWgzUHc/view?pli=1
 ////
 
+
 ===== Creating and Managing Content Selector Privileges
 
 Once you have created a content selector, you can utilize it as part of your security setup. You can add a new 
@@ -917,8 +918,42 @@ I think BREAD, too
 ////
 
 
-With this setup you can delegate all control of components in org.apache.maven to a "Maven" team. In this way, 
+With this setup you can delegate all control of components in +org.apache.maven+ to a "Maven" team. In this way, 
 you don’t need to create separate repositories for each logical division of your components.
+
+===== Content Selector Reference
+
+Below are the allowable attributes for content selectors
+
+[width="60%",frame="topbot",options="header,footer"]
+|=====================================================================
+|Attribute  |Allowed Values
+|path       |The path under a repository where your content is exposed
+|format     |The format of the content for which you query
+|coordinate |A map of attributes that differ by content format
+|=====================================================================
+
+[width="60%",frame="topbot",options="header,footer"]
+|===============================
+|Format   |Coordinate Attributes
+|Bower    |name, version
+|Docker   |name, version
+|Maven2   |group, name, version
+|npm      |group, name, version
+|NuGet    |name, version
+|PyPI     |name, version
+|Raw      |name
+|RubyGems |name, version
+|===============================
+
+===== Upgrading Repository Targets to Content Selectors
+
+TBD
+
+////
+From Eric B's demo
+////
+
 
 [[admin-license]]
 === License Management
