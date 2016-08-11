@@ -1,0 +1,158 @@
+[[r]]
+== R Repositories
+{inall}
+
+[[r-introduction]]
+=== Introduction
+
+http://[R] is a lanuage used for statistical analysis and many machine learning uses. for front-end web development.
+R and R Studio both allow you to install packages from repositories, allowing convenient access to a large amount of 
+packages from the remote Comprehensive R Archive Network (CRAN). This reduces the complexity of their development 
+efforts and improves the resulting applications.
+
+{pro} and {oss} support the R repository format for hosted and proxy repositories. This allows the repository
+manager to take advantage of the packages in the official CRAN repository and other public repositories without
+incurring repeated downloads of packages.
+
+The official CRAN repository is available for browsing at https://cran.r-project.org/[https://cran.r-project.org/] and for
+package retrieval via the URL http://bower.herokuapp.com/[http://bower.herokuapp.com].
+
+You can publish your own packages to a private R repository as a hosted repository on the repository manager and
+then expose the remote and private repositories to R as a repository group, which is a repository that merges
+and exposes the contents of multiple repositories in one convenient URL. This allows you to reduce time and
+bandwidth usage for accessing R packages as well as share your packages within your organization in
+a hosted repository.
+
+[[r-proxy]]
+=== Proxying R Repositories
+
+You can set up a R proxy repository to access a remote repository location, for example the official R
+registry at https://cran.r-project.org/[https://cran.r-project.org/] that is configured as the default in R.
+
+To proxy a Bower registry, you simply create a new 'r (proxy)' as documented in <<admin-repositories>> in
+details. Minimal configuration steps are:
+
+- Define 'Name'
+- Define URL for 'Remote storage' e.g. https://cran.r-project.org/[https://cran.r-project.org/]
+- Select a 'Blob store' for 'Storage'
+
+[[r-hosted]]
+=== Hosting R Repositories
+
+Creating a R hosted repository allows you to register packages in the repository manager. The hosted
+repository acts as an authoritative location for these components.
+
+To add a hosted R repository, create a new repository with the recipe 'r (hosted)' as 
+documented in <<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name' - e.g. `r-internal`
+- Select 'Blob store' for 'Storage'
+
+
+[[r-group]]
+=== R Repository Groups
+
+A repository group is the recommended way to expose all your R repositories from the repository manager to
+your users, with minimal additional client side configuration. A repository group allows you to expose the
+aggregated content of multiple proxy and hosted repositories as well as other repository groups with one URL in
+tool configuration. This is possible for R repositories by creating a new repository with the 'r (group)'
+recipe as documented in <<admin-repositories>>.
+
+Minimal configuration steps are:
+
+- Define 'Name' - e.g. `r-all`
+- Select 'Blob store' for 'Storage'
+- Add R repositories to the 'Members' list in the desired order
+
+[[r-installation]]
+=== Installing R
+
+R is typically installed either as just R itself, or R with R Studio. R can be obtained from CRAN at 
+https://cran.r-project.org/[https://cran.r-project.org/], and R Studio can be obtained from 
+https://www.rstudio.com/products/rstudio/download2/[https://www.rstudio.com/products/rstudio/download2/]. You
+will need to install R before you can install and run R Studio, if you choose to do so.
+
+[[r-download]]
+=== Configuring R Package Download
+
+Once you have set up your repositories for R packages, and installed R, you can
+create a  file to access repository URLs.
+----
+
+----
+
+IMPORTANT: The .bowerrc file can be located in various locations. For global configuration for a specific
+developer working on multiple projects the users home directory is a suitable location. If multiple files exist,
+they are merged. Details can be found in http://bower.io/docs/config/[the documentation].
+
+With this configuration in place, any further Bower command invocations trigger package downloads via the
+repository manager.
+
+Running an `install` command logs the download via the repository manager:
+
+----
+$ bower install jquery
+bower jquery#*
+  not-cached nexus+http://localhost:8081/repository/bower-all/jquery#*
+bower jquery#*
+  resolve nexus+http://localhost:8081/repository/bower-all/jquery#*
+bower jquery#*
+  resolved nexus+http://localhost:8081/repository/bower-all/jquery#2.2.0
+bower jquery#^2.2.0  install jquery#2.2.0
+
+jquery#2.2.0 bower_components/jquery
+----
+
+If anonymous access to the repository manager is disabled, you have to specify the credentials for the accessing
+the repository manager as part of the URL like `http://username:password@host:port/repository/bower-all` as well 
+as add a `nexus` section to your `.bowerrc` file.
+
+----
+{
+  "nexus" : {
+    "username" : "myusername",
+    "password" : "mypassword"
+  }
+}
+----
+
+Downloaded packages are cached, do not have to be retrieved from the remote repositories again and can be
+inspected in the user interface.
+
+
+
+[[r-browse-search]]
+=== Browsing R Repositories and Searching Packages
+
+You can browse R repositories in the user interface inspecting the components and assets and their details, as
+described in <<search-components>>.
+
+Searching for R packages can be performed in the user interface, too. It finds all packages that are currently
+stored in the repository manager, either because they have been pushed to a hosted repository or they have been
+proxied from an upstream repository and cached in the repository manager.
+
+
+[[r-publish]]
+=== Publishing R Packages
+
+If you are authoring your own packages and want to distribute them to other users in your organization, you have
+to upload them to a hosted repository on the repository manager. The consumers can then download it via the 
+repository group as documented in <<r-download>>.
+
+Authentication is managed in the same manner as for proxying with anonymous access disabled as documented in
+<<r-download>>.
+
+With this configuration you can run a command such as
+
+----
+curl -v --user 'admin:admin123' --upload-file example_1.0.0.tar.gz http://localhost:8081/repository/r-hosted/src/contrib/example_1.0.0.tar.gz
+----
+
+The package will now be contained within your hosted repository and consumers can install the package using a 
+command similar to
+
+----
+install.packages("example", repos="http://localhost:8081/repository/r-all")
+----
