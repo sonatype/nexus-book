@@ -76,11 +76,19 @@ will need to install R before you can install and run R Studio, if you choose to
 [[r-download]]
 === Configuring R Package Download
 
-Once you have set up your repositories for R packages, and installed R, you can create a 
-file to access repository URLs.
+Once you have set up your repositories for R packages, and installed R, you can adjust your R startup script to use
+ your repository URLs. A suggested way to do so is to create a +.Rprofile+ file, and include a snippet similar to the
+following in it.
+----
+## Default repo
+local({r <- getOption("repos")
+       r["Nexus"] <- "http://host:port/repository/r-all" 
+       options(repos=r)
+})
 ----
 
-----
+This will set your default R repository as the group repository. For more information on adjusting R startup files, please 
+visit https://www.r-bloggers.com/fun-with-rprofile-and-customizing-r-startup/[https://www.r-bloggers.com/fun-with-rprofile-and-customizing-r-startup/].
 
 If anonymous access to the repository manager is disabled, you have to specify the credentials for the accessing
 the repository manager as part of the URL like `http://username:password@host:port/repository/r-all`
