@@ -887,32 +887,45 @@ side resolution done by Maven each time.
 
 Content selectors is a set of regular expressions used to match characters on the path of components in a 
 repository. Content selectors allow you to select specific content, with regular expressions that are defined by 
-you from all our your content. The regular expressions are implemented with JEXL, a scripting language, that 
-allows filtering and querying on component patterns.
+you from all our your content. The regular expressions are implemented with 
+https://commons.apache.org/proper/commons-jexl/[JEXL], a scripting language, that allows filtering and querying 
+on component patterns.
 
+Content selectors allow you to define, for example, a selector called Apache Maven with a pattern of 
+`^/org/apache/maven/.*`. This would match all components with the groupId `org.apache.maven` and any components 
+within nested within the 'Group' such as `org.apache.maven.plugins`.
+
+[[selector-create]]
 ===== Creating a New Content Selector
 
-To create a new selector click 'Content Selectors' located in 'Administration' menu to get to the form. 
+To create a new selector query, click 'Content Selectors' located in 'Administration' menu to get to the form. In 
+the 'Selector ID' section enter a 'Name' and 'Description' (optional) of your selector in the corresponding 
+fields. In the 'Specification' section use the 'Search expression' field to enter your JEXL query. 
 
 ////
-See demo video https://drive.google.com/a/sonatype.com/file/d/0B3bXeD4zjEu7bnAwc1ctaWgzUHc/view?pli=1
+The As documented in <<selector-reference>>
 ////
 
+A pattern that would capture more components like all components with any part of the path containing the format 
+'maven2' could be defined as +format == 'maven'+.
 
-===== Creating and Managing Content Selector Privileges
+[[selector-security]]
+===== Managing Security with Content Selectors
 
 Once you have created a content selector, you can utilize it as part of your security setup. You can add a new 
-privilege that relates to the target and controls the CRUD (Create, Read, Update and Delete) operations for 
-artifacts matching that path. The privilege can even span multiple repositories.
+privilege that relates to the target and controls the BREAD (Browse, Read, Edit, Add, and Delete) operations for 
+components matching that path. The privilege can even span multiple repositories.
 
 ////
-I think BREAD, too
+Joes summary: 1) create the content selector telling you what data/components you want your user to have 
+permission to see 2) create a privilege to define of the permissible data what your want the user to be able to 
+do to it 3) then you assign a role 4) give it to the user
 ////
 
+With this setup you can delegate all control of components in +org.apache.commons+ to a "Maven" team. This 
+way, you will not need to create separate repositories for each logical division of your components.
 
-With this setup you can delegate all control of components in +org.apache.maven+ to a "Maven" team. In this way, 
-you don’t need to create separate repositories for each logical division of your components.
-
+[[selector-reference]]
 ===== Content Selector Reference
 
 Below are the allowable attributes for content selectors
@@ -938,13 +951,10 @@ Below are the allowable attributes for content selectors
 |RubyGems |name, version
 |===============================
 
-===== Upgrading Repository Targets to Content Selectors
+[[selector-examples]]
+===== Content Selector Examples
 
 TBD
-
-////
-From Eric B's demo
-////
 
 
 [[admin-license]]
