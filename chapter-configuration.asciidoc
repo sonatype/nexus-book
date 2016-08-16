@@ -902,16 +902,28 @@ To create a new selector query, click 'Content Selectors' located in 'Administra
 the 'Selector ID' section enter a 'Name' and 'Description' (optional) of your selector in the corresponding 
 fields. In the 'Specification' section use the 'Search expression' field to enter your JEXL query.
 
-A pattern that would capture more components like all components with any part of the path containing the format 
-'maven2' could be defined as 'format == 'maven''.
-
 Creating a new content selector allows you to identify what components or assets you want your user to have 
 permission to access.
 
 [[selector-examples]]
 ===== Content Selector Examples
 
-TBD
+If, for example, you want to create a pattern that would capture all components with any part of the path 
+containing the format 'maven2' you can define it in place of the variable 'format'. You can use the syntax 
+available in https://commons.apache.org/proper/commons-jexl/reference/syntax.html[Apache Commons] as a reference 
+to create your queries.
+
+Other JEXL examples may include:
+
+*Selecting all 'raw' format content*
+format == 'raw'
+
+*Selecting all 'maven2' content with a group that starts with 'org.sonatype.nexus'*
+format == 'maven' and coodinate.group =^'org.sonatype.nexus'
+
+*Selecting all 'nuget' content in the 'mycompany' namespace*
+format == 'nuget' and path =^'/MyCompany'.
+
 
 [[selector-security]]
 ===== Managing Security with Content Selectors
@@ -931,7 +943,7 @@ Click 'Repository Content Selector' to get to a form that displays the following
 * 'Actions':: Grant read, edit, delete, or '*' (all) privileges for user access control.
  
 After you create content selector privileges, regulating what permissible data you want the user to access, you 
-can assign a role as documented in <<roles>>. When roles are defined, assign a user, aa mentiones in <<users>>.
+can assign a role as documented in <<roles>>. When roles are defined, assign a user, aa mentioned in <<users>>.
 
 With this setup you can delegate all control of components in +org.apache.commons+ to a "Maven" team. This 
 way, you will not need to create separate repositories for each logical division of your components.
@@ -939,8 +951,8 @@ way, you will not need to create separate repositories for each logical division
 [[selector-reference]]
 ===== Content Selector Reference
 
-Below are the allowable attributes for content selectors. In this table the 'path', 'format', and 'coordinate' 
-variables for formats supported by {nxrm}, and their corresponding ""
+Below are the allowable attributes for content selectors. The table below defines 'path', 'format', and 
+'coordinate' as values supported by {nxrm}.
 
 [width="60%",frame="topbot",options="header,footer"]
 |=====================================================================
@@ -949,6 +961,8 @@ variables for formats supported by {nxrm}, and their corresponding ""
 |format     |The format of the content for which you query
 |coordinate |A map of attributes that differ by content format
 |=====================================================================
+
+This table contains a list of formats containing variables for coordinate name, group name, and format version.
 
 [width="60%",frame="topbot",options="header,footer"]
 |===============================
