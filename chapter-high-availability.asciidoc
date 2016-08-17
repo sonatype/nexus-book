@@ -5,24 +5,49 @@
 [[ha-introduction]]
 === Introduction
 
+The component fabric of {pro} acts as a private binary cloud storage and backend for all your components.
+
+Component Fabric is an integral part of {pro} reduces deployment and infrastructure complexity, while at the same 
+time improving performance and scalability as well as user experience. Run as many repository managers connected 
+to your component fabric as you like and move your infrastructure to the next level.
+
+
+[[ha-node-performance]]
+=== Performance Considerations
+
+The individual nodes are aware of their setup parameters such as:
+
+Memory availability and processor performance
+Network connectivity performance
+Characteristics of local storage in terms of size and performance
+
+They are connected to the component fabric and as such are aware of other nodes and can be configured to fulfill a specific purpose such as:
+
+High performance node in CI cluster 
+Slow backup node for potential disaster recovery
+Failover-node sitting in active standby mode
+Load-balanced node
+
+The knowledge of the component fabric about deployment topology and performance allows nodes to choose the fastest route to fetch the component data from the fabric.  The specified purpose of a node can configure prefetching of components from the fabric even before a client tool requests it as a performance enhancement.
+
+
 TBD
 
-[[ha-architecture]]
-=== Supported Architecture for High Availability
+[[ha-scheduled-tasks]]
+=== Scheduled Tasks
 
 TBD
- 
+
 [[ha-prep]]
 === Preparing for an HA Configuration
-
-TBD
-
-[[ha-performance]]
-==== Performance and Tuning for High Availability
 
 TBD
 
 [[ha-config]]
 === HA Configuration
 
-TBD
+In two distinct folders, unpackage the tar.gz.
+In the `nexus` folder, edit the `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file. Change the `application-port={port 
+number}` in your first instance of {nxrm}. Then remove the `#` before `nexus.clustered = true`, enabling 
+Hazelcast usage on start. Go to you the second `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file and repeat the same 
+steps.
