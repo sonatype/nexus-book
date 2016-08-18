@@ -1,53 +1,81 @@
 [[high-availability]]
-==  Upgrading {nxrm}
+==  High Availability for {nxrm}
 {inall}
 
 [[ha-introduction]]
 === Introduction
 
-The component fabric of {pro} acts as a private binary cloud storage and backend for all your components.
+High availability for {nxrm} sets the standard for a continuously operational application to reduce points of 
+failure among features and components within your repository manager. The component fabric in {pro}, which 
+enables high availability, acts as a private binary cloud storage and backend for all your components.
 
-Component Fabric is an integral part of {pro} reduces deployment and infrastructure complexity, while at the same 
-time improving performance and scalability as well as user experience. Run as many repository managers connected 
-to your component fabric as you like and move your infrastructure to the next level.
-
+Component Fabric is an integral part of {pro} reduces the complexity of deployment and infrastructure, while 
+simultaneously improving performance, scalability, and user experience. You can activate as many repository 
+managers connected to your component fabric as you like and move your infrastructure to the next level.
 
 [[ha-node-performance]]
-=== Performance Considerations
+=== Node Performance Considerations
 
-The individual nodes are aware of their setup parameters such as:
+The individual nodes are aware of their setup conditions such as:
 
-Memory availability and processor performance
-Network connectivity performance
-Characteristics of local storage in terms of size and performance
+* Memory availability and processor performance
+* Network connectivity performance
+* Characteristics of local storage in terms of size and performance
 
-They are connected to the component fabric and as such are aware of other nodes and can be configured to fulfill a specific purpose such as:
+Nodes are connected to the component fabric and as such are aware of other nodes and can be configured to fulfill 
+a specific purpose such as:
 
-High performance node in CI cluster 
-Slow backup node for potential disaster recovery
-Failover-node sitting in active standby mode
-Load-balanced node
+* High performance node in CI cluster 
+* Slow backup node for potential disaster recovery
+* Failover-node sitting in active standby mode
+* Load-balanced node
 
-The knowledge of the component fabric about deployment topology and performance allows nodes to choose the fastest route to fetch the component data from the fabric.  The specified purpose of a node can configure prefetching of components from the fabric even before a client tool requests it as a performance enhancement.
+The knowledge of the component fabric about deployment topology and performance allows nodes to choose the 
+fastest route to fetch the component data from the fabric. The specified purpose of a node can configure 
+pre-fetching of components from the fabric even before a client tool requests it as a performance enhancement.
 
+[[ha-config]]
+=== HA Configuration and Startup
 
-TBD
+{nxrm} installation consists of very few simple steps:
+
+* Install binary on server
+* Register and authenticate with the component fabric feature
+* Declare minimal local node configuration such as storage and node performance (e.g. prefetch rules)
+
+Any further work is done automatically by the interactions of the new repository manager with the data and 
+configuration in the component fabric.
+
+To start your configuration, download a binary as explained in <<install-sect-downloading>>. Create two distinct 
+folders to store duplicate instances of the repository manager. For example, you can create two directories 
+`nexus` and `nexus2`. However, you have not yet installed {pro}, review the installation steps from the 
+beginning, as explained in <<install-introduction>>.
+
+In each distinct folders, unpackage the `tar.gz`.
+In the `nexus` folder, edit the `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file. Change the `application-port={port 
+number}` in your first instance of {nxrm}. Then remove the `#` before `nexus.clustered = true`, enabling 
+Hazelcast usage on start. Go to you the second `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file and repeat the same 
+steps.
+
+TIP:: Log in to your accouunt and go to the 'Administration' menu. Click 'Nodes' under the 'System' category.  
+You should see two nodes. Each machine should have a different node enabled as "true".
+
+On startup in review your log. You should see connection messages via Hazelcast similar to this, below:
+
+----
+2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
+ 
+Members [2] {
+    Member [192.168.99.1]:5701
+    Member [192.168.99.1]:5702 this
+}
+----
 
 [[ha-scheduled-tasks]]
 === Scheduled Tasks
 
 TBD
 
-[[ha-prep]]
-=== Preparing for an HA Configuration
-
-TBD
-
-[[ha-config]]
-=== HA Configuration
-
-In two distinct folders, unpackage the tar.gz.
-In the `nexus` folder, edit the `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file. Change the `application-port={port 
-number}` in your first instance of {nxrm}. Then remove the `#` before `nexus.clustered = true`, enabling 
-Hazelcast usage on start. Go to you the second `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file and repeat the same 
-steps.
+////
+In case, there might be more schedule task to configure/tweak for better high availability
+////
