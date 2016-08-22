@@ -885,33 +885,33 @@ side resolution done by Maven each time.
 ==== Content Selectors
 {inall}
 
-Content selectors are a set of regular expressions used to match characters on the path of components in a 
-repository. Content selectors allow you to select specific content, with regular expressions that are defined by 
-you, from all of your content. The regular expressions are implemented with 
-https://commons.apache.org/proper/commons-jexl/[JEXL], a scripting language, that allows filtering and querying 
-on component patterns.
+Content selectors provide a means to select specific content, defined by you, from all of your content. You can 
+create a content selector filter to match characters on the path of components in a repository. The content you 
+select is evaluated against a https://commons.apache.org/proper/commons-jexl/[JEXL] expression. JEXL is a 
+scripting library that provides the language for you to filter and query paths and coordinates available within 
+your repository manager content.
 
-Creating content selectors allow you to identify what selector privilege you can assign (or limit) to a 
-user. You can define, in a simplified example, a selector named Apache Maven with a search expression of 
-`^/org/apache/maven/.*`. This would match all components with the groupId `org.apache.maven` and any components 
-within nested within the 'Group' such as `org.apache.maven.plugins`.
+Creating content selectors allow you to identify what selector privilege you can assign to a user. You can 
+define, in a simplified example, a selector named Apache Maven with a search expression of `path =~ 
+^/org/apache/maven/.*`. This would match all components within the designated component path. You can refer to 
+more examples in <<selector-examples>>.
 
 [[selector-create]]
 ===== Creating a New Content Selector
 
-To create a new selector query, click 'Content Selectors' located in 'Repository', from the 
-'Administration' menu. Alternately, click the 'Content Selectors' button located within the 'Repository' section. 
-In the 'Selector ID' section enter a 'Name' and (optional) 'Description' of your selector in the corresponding 
-fields. In the 'Specification' section use the 'Search expression' field to enter your JEXL query.
+To identify a new selector privilege, create the query first. Click 'Content Selectors' located in 'Repository', 
+from the 'Administration' menu. Alternately, click the 'Content Selectors' button located within the 'Repository' 
+section. In the 'Selector ID' section enter a 'Name' and (optional) 'Description' of your selector in the 
+corresponding fields. In the 'Specification' section use the 'Search expression' field to enter your JEXL query.
 
 [[selector-security]]
 ===== Managing Security with Content Selectors
 
 Once you have created a content selector, you can utilize it as part of your security setup. You can add a new 
-privilege that relates to the target and controls operations such as read, edit, delete, and '*' (all), for 
-components matching that path. The privilege can even span multiple repositories.
+privilege that controls operations such as read, edit, delete, and '*' (all), for components matching that path. 
+The privilege can even span multiple repositories.
 
-As explained in <<privileges>>, create a new custom content selector privilege. Then choose 'Repository Content 
+As explained in <<privileges>>, create a new content selector privilege. Then choose 'Repository Content 
 Selector' to get to a form that displays the following:
 
 * 'Name':: Create a name for the content selector privilege.
@@ -964,9 +964,9 @@ JEXL examples may include:
 
 'format == "raw"'
 
-*Selecting all 'maven2' content with a group that starts with 'org.apache.commons'*
+*Selecting all 'maven2' content with a groupId that starts with 'org.apache.commons'*
 
-'format == "maven" && coordinate.groupId =^ 'org.apache.commons.''
+'format == "maven2" && coordinate.groupId =^ 'org.apache.commons.''
 
 *Selecting all 'nuget' package versions of EntityFramework*
 
