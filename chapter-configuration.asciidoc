@@ -881,6 +881,101 @@ repositories are made available to your development team. In addition the perfor
 across multiple repositories will be handled by the repository manager and therefore be much faster than client
 side resolution done by Maven each time.
 
+[[content-selectors]]
+==== Content Selectors
+{inall}
+
+Content selectors provide a means for you to select specific content from all of your content. The content you 
+select is evaluated against a JEXL expression. JEXL is an expression library used to script queries along 
+specific paths and coordinates available to your repository manager formats.
+
+Content selectors allow you to identify what selector privilege you can assign to a user. You can 
+define, in a simplified example, a selector named Apache Maven with a search expression of 'path =^ 
+"/org/apache/maven/"'. This would match all components that 'start with' the designated component path.
+
+[[selector-create-query]]
+===== Creating a Query
+
+Before you identify user permissions for your selector, create the query first. Click 'Content Selectors' located 
+in 'Repository', from the 'Administration' menu. Click 'Create selector' to open a new form. In the 'Selector ID' 
+section enter a 'Name' and (optional) 'Description' of your selector in the corresponding fields. In the 
+'Specification' section use the 'Search expression' field to build your query using JEXL syntax. All saved 
+selector queries you create will be listed in the 'Content Selectors' screen.
+
+////
+Add a section to talk about the selector preview feature in https://issues.sonatype.org/browse/NEXUS-10377
+////
+
+[[selector-permissions]]
+===== Managing Selector Permissions
+
+As part of your security setup, you can create user permissions to manage the filters you built in the 'Create 
+Selector' form. You can add a new privilege that controls operations such as read, edit, delete, and '*' 
+(all), for components matching that selector. The privilege can even span multiple repositories.
+
+To create a new content selector privilege, click 'Privileges' in the 'Security' section of the 'Administration' 
+panel. Then click the 'Create Privilege' button. Locate and click 'Repository Content Selector' from the list of 
+options in 'Select Privilege Type'. You will see a form that displays the following:
+
+* 'Name':: Create a name for the content selector privilege.
+* 'Description':: Add a brief description for the privilege.
+* 'Content Selector':: Use this dropdown to select from a list of selectors you created.
+* 'Repository':: Use this dropdown to select from either a range of all repository contents, all repository 
+contents of an individual format, or repositories created by you.
+* 'Actions':: Grant read, edit, delete, or '*' (all) privileges for user access control.
+ 
+To complete the form, save the new privilege by clicking 'Create privilege'. You can use your new privilege to 
+regulate what permissible data you want the user to access. You could group all related privileges into a 
+role as documented in <<roles>>. Ultimately, you could assign your roles to a user, as mentioned in <<users>>.
+
+A practical example might be where you delegate all control of components in 'org.apache.maven' to a "Maven" 
+team. This way, you would not need to create separate repositories for each logical division of your components.
+
+[[selector-reference]]
+===== Content Selector Reference
+
+Below are the allowable attributes for content selectors that define 'path', 'format', and 'coordinate' as values 
+supported by {nxrm}.
+
+[width="60%",frame="topbot",options="header,footer"]
+|=============================================================
+|Attribute  |Allowed Values
+|path       |The path of your repository content
+|format     |The format of the content for which you query
+|coordinate |A map of attributes that differ by content format
+|=============================================================
+
+This table contains a description of attributes that can affect the respective formats. See the <<selector-examples,examples> below, for sample format queries against specific coordinates.
+
+[width="60%",frame="topbot",options="header,footer"]
+|==========================================================================================================
+|Available Formats   |Coordinate Attributes
+|maven2              |coordinate.groupId, coordinate.artifactId, coordinate.version, coordinate.classifier, coordinate.extension
+|nuget               |coordinate.id, coordinate.version
+|raw                 |(No coordinates)
+|==========================================================================================================
+
+[[selector-examples]]
+===== Content Selector Examples
+
+If, for example, you want to create a pattern that would capture all components within the format 'maven2' you 
+can define it utilizing the variable 'format'. You can use the syntax available in this
+https://commons.apache.org/proper/commons-jexl/reference/syntax.html[JEXL guide] as a reference to create 
+your queries.
+
+JEXL examples may include:
+
+*Select all 'raw' format content*
+
+'format == "raw"'
+
+*Select all 'maven2' content along a path that starts with 'org.apache.commons'*
+
+'format == "maven2" && path =^ "org/apache/commons/"'
+
+*Select all 'jquery' packages in the 'nuget' format*
+
+'format == "nuget" && coordinate.id == "jquery"'
 
 [[admin-license]]
 === License Management
