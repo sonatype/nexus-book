@@ -886,14 +886,13 @@ side resolution done by Maven each time.
 {inall}
 
 Content selectors provide a means for you to select specific content from all of your content. You can 
-create a content selector filter to match characters on the path of components in a repository. The content you 
-select is evaluated against a JEXL expression. https://commons.apache.org/proper/commons-jexl/[JEXL] is a 
-expression library used to script queries along specific paths and coordinates available to your 
-repository manager formats.
+create a selector to match characters on the path of components in a repository. The content you select is 
+evaluated against a JEXL expression. JEXL is an expression library used to script queries along specific 
+paths and coordinates available to your repository manager formats.
 
-Creating content selectors allow you to identify what selector privilege you can assign to a user. You can 
-define, in a simplified example, a selector named Apache Maven with a search expression of 'path =^ "/org/apache/maven/*"'. This would match all components within the designated component path. You can refer to 
-more examples in <<selector-examples>>.
+Content selectors allow you to identify what selector privilege you can assign to a user. You can 
+define, in a simplified example, a selector named Apache Maven with a search expression of 'path =^ 
+"/org/apache/maven/*"'. This would match all components that 'start with' the designated component path.
 
 [[selector-create-query]]
 ===== Creating a Query
@@ -930,7 +929,7 @@ To complete the form, save the new privilege by clicking 'Create privilege'. You
 regulate what permissible data you want the user to access. You could group all related privileges into a 
 role as documented in <<roles>>. Ultimately, you could assign your roles to a user, as mentioned in <<users>>.
 
-A practical example might be where you delegate all control of components in 'org.apache.commons' to a "Maven" 
+A practical example might be where you delegate all control of components in 'org.apache.maven' to a "Maven" 
 team. This way, you would not need to create separate repositories for each logical division of your components.
 
 [[selector-reference]]
@@ -947,15 +946,16 @@ supported by {nxrm}.
 |coordinate |A map of attributes that differ by content format
 |=============================================================
 
-This table contains a description of attributes that can affect the respective formats.
+This table contains a description of attributes that can affect the respective formats. You can review some 
+simple JEXL queries that call the listed attributes, against specific formats in <<selector-examples>>.
 
 [width="60%",frame="topbot",options="header,footer"]
-|===============================================================================================
-|Format   |Coordinate Attributes
-|Maven2   |coordinate.groupId, coordinate.artifactId, coordinate.version, coordinate.classifier, coordinate.extension
-|NuGet    |coordinate.id, coordinate.version
-|Raw      |(No coordinates)
-|===============================================================================================
+|==========================================================================================================
+|Available Formats   |Coordinate Attributes
+|maven2              |coordinate.groupId, coordinate.artifactId, coordinate.version, coordinate.classifier, coordinate.extension
+|nuget               |coordinate.id, coordinate.version
+|raw                 |(No coordinates)
+|==========================================================================================================
 
 [[selector-examples]]
 ===== Content Selector Examples
@@ -967,17 +967,17 @@ your queries.
 
 JEXL examples may include:
 
-*Selecting all 'raw' format content*
+*Select all 'raw' format content*
 
 'format == "raw"'
 
-*Selecting all 'maven2' content with a groupId that starts with 'org.apache.commons'*
+*Select all 'maven2' content along a path that starts with 'org.apache.commons'*
 
-'format == "maven2" && coordinate.groupId =^ "org.apache.commons."'
+'format == "maven2" && path =^ "org/apache/commons/*"'
 
-*Selecting all 'nuget' package versions of EntityFramework*
+*Select all 'jquery' packages in the 'nuget' format*
 
-'format == "nuget" && path =~ "/packages/EntityFramework/*"'
+'format == "nuget" && coordinate.id == "jquery"'
 
 [[admin-license]]
 === License Management
