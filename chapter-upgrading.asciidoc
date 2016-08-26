@@ -5,8 +5,9 @@
 [[upgrade-introduction]]
 === Introduction
 
-The upgrade feature provides a built-in supported method for replicating components from {nxrm} versions 2.14 to 
-3.1. Future iterations of this feature will be available for versions beyond both 2.14 and 3.1, alike.
+The upgrade feature provides a built-in supported method for replicating components and configurations from 
+{nxrm} versions 2.14 to 3.1. Future iterations of this feature will be available for versions beyond both 2.14 
+and 3.1, alike.
 
 This tool helps you build an upgrade plan which allows version 3 to talk to version 2 by way of a 
 capability that communicates with the upgrade tool. The plan you create with version 3 will provide a 
@@ -20,6 +21,10 @@ manager provides alternative methods to upgrade if you are currently running old
 back to milestone 7. See our support knowledge base to walk you through the steps to upgrade from 
 https://support.sonatype.com/hc/en-us/articles/222159808[milestone 7 of version 3 to 3.0.0 final] or 
 https://support.sonatype.com/hc/en-us/articles/217967608[version 3.0.0 to a later version].
+
+////
+Expand this intro to give readers a 10-foot view of the upgrade tool
+////
 
 [[upgrade-architecture]]
 === Supported Architecture for Upgrading
@@ -55,13 +60,17 @@ performance of the application by:
 
 * disabling system feeds
 * disabling repair tasks
-* reviewing Custom Metadata capability enabled
+* reviewing the enabled Custom Metadata capability
 * removing unused snapshots
 * removing old scheduled tasks not in use
 * removing repositories no longer supported by the repository manager (e.g. 
 https://support.sonatype.com/hc/en-us/articles/217611787-codehaus-org-Repositories-Should-Be-Removed-From-Your-Nexus-Instance[Codehaus repositories])
 * disabling 'Rebuild Maven Metadata Files' scheduled tasks
 * increasing your file size limit
+
+////
+This section can be expanded; each bullet point can attributed to real-life scenarios
+////
 
 Another factor, the quality of your network, will arbitrarily impact the speed of ingestion methods 
 (e.g HTTP download).
@@ -94,11 +103,10 @@ the file is, and they obtain it from the file system, directly.
 
 {inrmonly}
 
-If upgrading your {iq} integration, ensure that your licenses for both versions 2 and 3 have the capability 
-enabled. Your configuration for 'IQ Server URL', 'Username', 'Password', and 'Request Timeout' will be included 
-in the upgrade. Additionally, scanner properties, trust store usage, and enabled {iq} connection can be 
-replicated from versions 2 to 3. As as best practice, be sure to encrypt your {iq} password before initiating 
-the upgrade.
+If upgrading {iq}, ensure that your licenses include the integration for both versions 2 and 3. Your 
+configuration for 'IQ Server URL', 'Username', 'Password', and 'Request Timeout' will be included in the upgrade. 
+Additionally, if configured, scanner properties, trust store usage, and the enabled {iq} connection itself will 
+be replicated from versions 2 to 3.
 
 *NuGet API Key*
 
@@ -276,17 +284,13 @@ base URL (including context path) of your version 2 server (e.g. +http://localho
 Token' field should contain the security key from your version 2 'Migration: Agent' capability details.
 
 Content:: This screen displays checkboxes for compatible component formats ('Repositories'), security features 
-('Security'), and server configuration ('System'). For 'Repositories' you can select 'User-Managed Repositories'  
-and 'Repository Targets', the latter of which are regular expressions that upgrade to JEXL format, used for 
-content selectors. For 'Security' you can choose from 'Anonymous', 'LDAP Configuration', 'NuGet API-Key', 
-'Realms', 'Roles', 'SSL Certificates', 'Target Privileges', 'Users', and 'User Tokens'. For 'System' you can 
-select 'Email' and 'HTTP Configuration' contents.
+('Security'), and server configuration ('System'). For 'Repositories' you can select 'User-Managed Repositories', 
+'Repository Targets', and 'Health Check'. For 'Security' you can choose from 'Anonymous', 'LDAP Configuration', 
+'NuGet API-Key', 'Realms', 'Roles', 'SSL Certificates', 'Target Privileges', 'Users', and 'User Tokens'. For 
+'System' you can select 'Email', 'HTTP Configuration', and 'IQ Server' configurations.
 
-////
-Link the section above to content selectors chapter when created
-'Repository Targets' are regular expressions that match component paths; the upgrade 
-transfers the regular expression format to JEXL, used for content selector in version 3.
-////
+NOTE: Repository targets, which use regular expressions to match and filter specific content will upgrade to JEXL 
+syntax, used for <<content-selectors,content selectors>>.
 
 Repository Defaults:: If 'User-managed repositories' is one of your selections from the 'Content' screen, the 
 'Repository Defaults' screen allows you to select directory destination and upgrade method. The first dropdown 
