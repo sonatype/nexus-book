@@ -5,33 +5,27 @@
 [[upgrade-introduction]]
 === Introduction
 
-{nxrm} provides an upgrade tool with built-in functionality for replicating components and configurations from
-{nxrm} version 2.14 to 3.1. The core feature of this tool allows {nxrm} version 3 to talk to version 2 as part of
-facilitating the upgrade.
+{nxrm} provides an upgrade tool with built-in functionality allowing you to replicate components and
+configurations from {nxrm} version 2.14 to 3.1. The core feature of this tool allows {nxrm} version 3 to talk to
+version 2, and assists in walking you through the creation of a customized upgrade plan.
 
-The actual features of the upgrade tool are accessed via a capability that communicates directly with the upgrade
-tool, and walks you through a customized upgrade method (i.e. plan). The plan you create with version 3 will
-provide a wizard-like approach that guides you through an upgrade from {nxrm} 2.14 or higher to {nxrm} 3.1 or
-higher.
-
-In this chapter, we've isolated the most common path for upgrade. However, it's important to keep in mind that
-there may be specific items unique to your installation and upgrade needs. As with any major system upgrade, your
-organization should put strong emphasis on performance and stability. For specific help outside this more
-standard path please consult our
+In this chapter, we've isolated the most common path for upgrade from {nxrm} 2.14 to 3.1 only. It's important to
+keep in mind that there may be specific items unique to your installation and upgrade needs. As with any major
+system upgrade, your organization should put strong emphasis on performance and stability. For specific help
+outside this more standard path please consult our
 https://support.sonatype.com/hc/en-us/sections/204911768-Installation-Upgrade-and-Compatibility[Support Knowledge
-Base articles], as well as contacting support directly (available for {pro} customers).
+Base articles], or contact support directly (available for {pro} customers).
 
 ////
 Add 'should I upgrade' section here
 ////
 
-
+////
 [[upgrade-types]]
 === Distinguishing Between Upgrade Types
 
 TBD
 
-////
 Could be merged into should I upgrade
 Per comment by Peter clarify and distinguish upgrades from 2.x to 2.x, 2.x to 3.x, and 3.x. to 3.x are different
 
@@ -59,19 +53,18 @@ properly upgrade the application.
 
 ////
 
-[[what-is-upgraded]]
-=== What Is Upgraded?
+[[what-will-be-upgraded]]
+=== What Will Be Upgraded?
 
-Upgrading versions of {nxrm} represents a shift in design that was needed to support a wider set of requirements
+{nxrm} 3 represents a shift in design that was needed to support a wider set of features
 customers have requested. As such, a number of changes occur as part of the upgrade process. This includes:
 
-* Converting Component Files to Blobs - Components (artifacts) in Nexus 2 are stored as individual files on disk.
-  Nexus 3 stores components as blobs. The conversion process requires Nexus to iterate over every component in
-  your storage and this will take the bulk of the time required for upgrade.
-* Moving Settings and Metadata to a Database - Settings and some component metadata in {nxrm} 2.x are stored
-  across many files. Conversely, {nxrm} 3.x loads equivalent settings into an OrientDB database.
-* Replacing Settings in the target {nxrm} 3.x installation - The upgrade process does not merge settings, instead
-  it completely replaces the related settings in {nxrm} 3.
+* *Component Storage Format (Files to Blobs)* - Components (artifacts) in {nxrm} 2 are stored as individual files
+  on disk. {nxrm} 3 stores components as <<admin-repository-blobstores,blobs>>. The conversion process requires
+  {nxrm} to iterate over every component in stored in {nxrm}. This will take the bulk of the time required for
+  upgrade.
+* *Settings and Metadata* - Settings and some component metadata in {nxrm} 2.x are stored across many files.
+  Conversely, {nxrm} 3.x loads equivalent settings into an OrientDB database.
 
 [[upgrade-repo-support]]
 ==== Repository Format Support
@@ -101,8 +94,9 @@ There are two supported scenarios for upgrading:
 
 While the upgrade process is underway, you can continue to use version 2. Any repository content that’s added,
 updated, or deleted is picked up by version 3. However, configuration changes are not. You should not make
-changes to realm settings, permissions, roles, role assignments, HTTP configuration, SSL certificates, or add new
-repositories. These types of configuration settings can cause the upgrade process to fail.
+changes to items such as realm settings, permissions, roles, role assignments, HTTP configuration, SSL
+certificates, or add new repositories. These types of configuration settings can cause the upgrade process to
+fail.
 
 [[upgrade-methods]]
 ==== Upgrade Methods
