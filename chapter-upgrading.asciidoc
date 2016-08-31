@@ -234,8 +234,8 @@ In addition, the following items and settings should be considered:
 
 *Repository IDs*
 
-Before migrating repositories to version 3, find the repository IDs in version 2 and plan how you will 
-rename any conflicting repositories in version 3. Contact our https://support.sonatype.com/hc/en-us[support 
+Before upgrading repositories to version 3, find the repository IDs in version 2 and plan how you will 
+rename any conflicting repositories in version 3. Contact our https://support.sonatype.com/hc/en-us[support
 team] to learn on how to do this safely.
 
 *Repository Groups*
@@ -268,10 +268,32 @@ The upgrade tool will add all keys to {nxrm} 3 that are present in {nxrm} 2.14 w
 NuGet API Key Realm is not active. This is because there is no explicit on or off setting for NuGet keys.
 
 ////
+Add intro here 
+////
 
 When upgrading, other configurations may be of consideration...
 
-TBD
+[[upgrade-methods]]
+=== Upgrade Methods
+
+In order to start an upgrade, version 2 has to listen for version 3 to initiate communication. This is the core
+property of the 'Upgrade: Agent'. When the upgrade wizard in version 3 helps you build an upgrade plan, it
+talks to your version 2 instance through the upgrade-agent to find out what repositories exist (e.g. to list
+them in the wizard user interface). When you pick them, version 3 tells version 2 to start compiling a full list
+of what it has that needs replicating in each of those repositories. Ultimately, this creates a scheduled task
+that walks through the repository storage folder, lists the files, then synchronizes them, storing the metadata
+in the changelog database.
+
+On the version 3 side, components are stored as blobs. The conversion process requires version 3 to iterate over 
+every component in your storage.
+
+Once the 'Upgrade: Agent' capability, mentioned in <<upgrade-start>>, is enabled and both repository
+manager instances are stood up and communicating, you can consider one of three ingestion methods: HTTP download,
+file system copying, or hard linking. The choice of ingestion method can be made on a repository-by-repository
+basis, but there is an upgrade-wide default.
+
+////
+Expand on what types of architectures might benefit from the listed options
 ////
 
 
@@ -297,7 +319,7 @@ to start the upgrade:
 * Upgrade the {nxrm} 2.x to version 2.14 or higher, and configure the upgrade capability that allows 
 you to synchronize that instance with {nxrm} 3.1 or later.
 * Run 2.14 or later on one server, and version 3.1 or later on another non-conflicting server.
-* Configure the migration-agent in version 2 and start the upgrade wizard in version 3.
+* Configure the upgrade-agent in version 2 and start the upgrade wizard in version 3.
 
 {nxrm} 3.1 provides a tool to instruct you through upgrading in three phases:
 
@@ -313,41 +335,42 @@ version 2 must be set up to listen for a version 3 instance in order for the for
 [[upgrade-configuration]]
 ==== Enabling Upgrade in Version 2
 
-In version 2, activate the 'Migration: Agent' capability to open the connection for the migration-agent. Follow 
+In version 2, activate the 'Upgrade: Agent' capability to open the connection for the upgrade-agent. Follow
 these steps:
 
 * Click 'Administration' in the left-hand panel
 * Open the 'Capabilities' screen
 * Select 'New' to prompt the 'Create new capability' modal
-* Select 'Migration: Agent' as your capability 'Type'
+* Select 'Upgrade: Agent' as your capability 'Type'
 * Click 'Add' to close the modal
 
-In the lower section of the 'Capabilities' interface, the repository manager acknowledges the migration-agent as 
-'Active'. 
+In the lower section of the 'Capabilities' interface, the repository manager acknowledges the upgrade-agent as
+'Active'.
 
 [[upgrade-plan]]
 ==== Enabling Upgrade in Version 3
 
-Next, sign in to your version 3 instance. You will create a 'Migration' capability to enable the feature. When 
-enabled, the 'Migration' item appears in the 'Administration' menu, under 'System'. Follow these steps to 
+Next, sign in to your version 3 instance. You will create a 'Upgrade' capability to enable the feature. When
+enabled, the 'Upgrade' item appears in the 'Administration' menu, under 'System'. Follow these steps to
 activate the capability:
 
 * Click 'System', to open the 'Capabilities' screen
 * Click 'Create capability'
-* Select 'Migration', then click 'Create capability' to enable the upgrade
+* Select 'Upgrade', then click 'Create capability' to enable the upgrade
 
 [[upgrade-content]]
 ==== Upgrading Content
 
-After you establish upgrade capabilities for versions 2 and 3, you will activate the tool to start your 
-upgrade. In version 3 go to the 'Administration' menu and select 'Migration', located under 'System'.
+After you establish upgrade capabilities for versions 2 and 3, you will activate the wizard to start your
+upgrade. In version 3 go to the 'Administration' menu and select 'Upgrade', located under 'System', to
+open the wizard.
 
 Overview:: The tool provides an overview of what is allowed for an upgrade as well as warnings on what 
 cannot be upgraded.
 
 Agent Connection:: This screen presents two fields, 'URL' and 'Access Token'. The 'URL' field should contain the
-base URL (including context path) of your version 2 server (e.g. +http://localhost:8081/nexus/+). The 'Access 
-Token' field should contain the security key from your version 2 'Migration: Agent' capability details.
+base URL (including context path) of your version 2 server (e.g. +http://localhost:8081/nexus/+). The 'Access
+Token' field should contain the security key from your version 2 'Upgrade: Agent' capability details.
 
 Content:: This screen displays checkboxes for compatible component formats ('Repositories'), security features 
 ('Security'), and server configuration ('System'). For 'Repositories' you can select 'User-Managed Repositories', 
