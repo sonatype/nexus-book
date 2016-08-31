@@ -53,11 +53,12 @@ properly upgrade the application.
 
 ////
 
+
 [[what-will-be-upgraded]]
 === What Will Be Upgraded?
 
-{nxrm} 3 represents a shift in design that was needed to support a wider set of features
-customers have requested. As such, a number of changes occur as part of the upgrade process. This includes:
+{nxrm} represents a shift in design that was needed to support a wider set of requirements customers have
+requested. As such, a number of changes occur as part of the upgrade process. This includes:
 
 * *Component Storage Format (Files to Blobs)* - Components (artifacts) in {nxrm} 2 are stored as individual files
   on disk. {nxrm} 3 stores components as <<admin-repository-blobstores,blobs>>. The conversion process requires
@@ -80,6 +81,26 @@ these formats you can upgrade server-wide settings, security realm settings, and
 ////
 * RubyGems
 ////
+
+[[not-upgraded]]
+=== What {nxrm} Will Not Upgrade
+
+The file structures within your repository manager environment will differ between version 2 and 3. Consider 
+re-evaluating any configurations that will not be included in your upgrade plan. Therefore you should review all
+system configurations before <<upgrade-prep,preparing>> your upgrade, specifically from 2.14 to 3.1. Here is a 
+list of known settings will not automatically be upgraded:
+
+* custom branding
+* Java VM Settings, including custom system properties or variables
+* operating system `nexus` service scripts
+* operating system optimizations, such as increasing allowable open file handles
+* environment variables affecting values used to control the repository manager
+* third-party or custom-developed plugins develop 
+* Jetty Server XML Configuration Files
+* unimplemented repository formats
+* manual edits to other files under the `nexus` installation directory, such as edits to `nexus/WEB-INF/classes/ehcache.xml`
+* custom log levels or edits to `logback.xml` configuration files (e.g.. custom log file rotation, file naming, log patterns)
+
 
 [[upgrade-architecture]]
 ==== Supported Installation Scenarios for Upgrading
@@ -198,14 +219,16 @@ If upgrading your Repository Targets from version 2 to version 3, it is recommen
 Privileges and vice versa.  If you do not upgrade both, you may find that you need to make further adjustments to 
 version 3 configuration to have things work as they did in version 2.
 
-////
+
 [[upgrade-security]]
 ==== Security and Upgrade
 
-TBD
+*{nxrm} 2 Roles*
+Roles which are migrated from Nexus 2 will have a role id in Nexus 3 that starts with nx2- . Role descriptions created during the upgrade process will have the word (legacy) in their description.
 
-potential new section
-////
+Nexus 2 Repository Targets
+Repository Targets from Nexus 2 will be converted to Content Selectors in Nexus 3. Content Selector names must not contain special characters, therefore the upgrade process will replace adjacent unsupported characters with underscores ( _ ). For example a repository target in Nexus 2 named “All (Any Repository)”  will be converted to a content selector named “All_Any_Repository” in Nexus 3.
+
 
 *NuGet API Key*
 
