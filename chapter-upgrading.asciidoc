@@ -122,7 +122,7 @@ If you decide to upgrade, the most critical decisions you, or your organization,
 * Which of the two installation scenarios is best for your upgrade method
 * Required system storage
 * What upgrade methods are available to you
-* Where components will be transferred when the upgrade is complete
+* Where content will be transferred when the upgrade is complete
 
 [[upgrade-architecture]]
 ==== Supported Installation Scenarios for Upgrading
@@ -152,23 +152,23 @@ this method requires version 2 to serve all of the content. Copying and hard lin
 the file is, and they obtain it from the file system, directly.
 
 [[upgrade-methods]]
-==== Upgrade Methods
+=== Upgrade Methods
 
-In order to start an upgrade, version 2 has to listen for version 3 to initiate communication. When the upgrade
-tool in version 3 helps you build an upgrade plan, it talks to your version 2 instance in order to find out what
-repositories exist (e.g. to list them in the wizard user interface). 
-
-When you pick the repositories to be upgraded, version 3 uses these selections to tell version 2 to start
-compiling a full list of what it has that needs replicating in each of those repositories. Ultimately, this
-creates a scheduled task that walks through the repository storage folder, lists the files, then synchronizes
-them, storing the metadata in the changelog database.
+In order to start an upgrade, version 2 has to listen for version 3 to initiate communication. This is the core
+property of the 'Upgrade: Agent'. When the upgrade wizard in version 3 helps you build an upgrade plan, it
+talks to your version 2 instance through the upgrade-agent to find out what repositories exist (e.g. to list
+them in the wizard user interface). When you pick them, version 3 tells version 2 to start compiling a full list
+of what it has that needs replicating in each of those repositories. Ultimately, this creates a scheduled task
+that walks through the repository storage folder, lists the files, then synchronizes them, storing the metadata
+in the changelog database.
 
 On the version 3 side, components are stored as blobs. The conversion process requires version 3 to iterate over 
 every component in your storage.
 
-Once both repository manager instances are stood up and communicating, you can consider one of three ingestion
-methods (listed below). The choice of ingestion method can be made on a repository-by-repository basis, but there
-is an upgrade-wide default.
+Once the 'Upgrade: Agent' capability, mentioned in <<upgrade-start>>, is enabled and both repository
+manager instances are stood up and communicating, you can consider one of three ingestion methods: HTTP download,
+file system copying, or hard linking. The choice of ingestion method can be made on a repository-by-repository
+basis, but there is an upgrade-wide default.
 
 ////
 Expand on what types of architectures might benefit from the listed options
@@ -202,10 +202,15 @@ This is the fastest option because you will not have to move the bytes around.
 [[upgrade-security]]
 ==== Security and Upgrade
 
-*{nxrm} 2 Roles*
-Roles which are migrated from Nexus 2 will have a role id in Nexus 3 that starts with nx2- . Role descriptions created during the upgrade process will have the word (legacy) in their description.
+////
+Add intro here
+////
 
-Nexus 2 Repository Targets
+*{nxrm} 2 Roles*
+Roles which are migrated from {nxrm} 2 will have a role id in {nxrm} 3 that starts with `nx2-` (privilegs) . Role 
+descriptions created during the upgrade process will have the word (legacy) in their description.
+
+*{nxrm} 2 Repository Targets*
 Repository Targets from Nexus 2 will be converted to Content Selectors in Nexus 3. Content Selector names must
 not contain special characters, therefore the upgrade process will replace adjacent unsupported characters with
 underscores ( _ ). For example a repository target in Nexus 2 named “All (Any Repository)” will be converted to a
@@ -214,12 +219,15 @@ content selector named “All_Any_Repository” in Nexus 3.
 [[upgrade-performance]]
 ==== Performance and Tuning
 
-When considering upgrade time and speed, take into account all enabled scheduled tasks on your version 2 instance
-that you may not need. Depending on your configuration of version 2 you could optimize the performance of the
-upgrade process by:
+When considering upgrade time and speed, take into account all enabled scheduled tasks and additional settings on 
+your version 2 instance that you may not need. Depending on your configuration of version 2 you could optimize 
+the performance of you upgrade by either turning off or deleting obsolete content and jobs. Consider these 
+actions to improve the speed of your repository manager:
 
-* Disabling system feeds
-* Disabling repair tasks
+* *System feeds* - If your organization does not rely on system feeds, often used for in-app team communication, 
+learn how to 
+https://support.sonatype.com/hc/en-us/articles/213464998-How-to-disable-the-System-Feeds-nexus-timeline-plugin-feature-to-improve-Nexus-performance[disable] them within your timeline plugin file
+* *Disabling repair tasks*
 * Removing unused snapshots
 * Removing old scheduled tasks not in use
 * Removing repositories no longer supported by the repository manager (e.g. 
@@ -268,36 +276,6 @@ The upgrade tool will add all keys to {nxrm} 3 that are present in {nxrm} 2.14 w
 NuGet API Key Realm is not active. This is because there is no explicit on or off setting for NuGet keys.
 
 ////
-Add intro here 
-////
-
-When upgrading, other configurations may be of consideration...
-
-[[upgrade-methods]]
-=== Upgrade Methods
-
-In order to start an upgrade, version 2 has to listen for version 3 to initiate communication. This is the core
-property of the 'Upgrade: Agent'. When the upgrade wizard in version 3 helps you build an upgrade plan, it
-talks to your version 2 instance through the upgrade-agent to find out what repositories exist (e.g. to list
-them in the wizard user interface). When you pick them, version 3 tells version 2 to start compiling a full list
-of what it has that needs replicating in each of those repositories. Ultimately, this creates a scheduled task
-that walks through the repository storage folder, lists the files, then synchronizes them, storing the metadata
-in the changelog database.
-
-On the version 3 side, components are stored as blobs. The conversion process requires version 3 to iterate over 
-every component in your storage.
-
-Once the 'Upgrade: Agent' capability, mentioned in <<upgrade-start>>, is enabled and both repository
-manager instances are stood up and communicating, you can consider one of three ingestion methods: HTTP download,
-file system copying, or hard linking. The choice of ingestion method can be made on a repository-by-repository
-basis, but there is an upgrade-wide default.
-
-////
-Expand on what types of architectures might benefit from the listed options
-////
-
-
-////
 NO IQ Server capability in 3.1
 
 *IQ Server*
@@ -328,9 +306,10 @@ you to synchronize that instance with {nxrm} 3.1 or later.
  * 'Finishing', the phase that performs final clean up, then closes the process.
 
 To execute the upgrade plan you must open the connection between version 2 and 3. The connection finds what 
-repositories exist and lists them in the upgrade wizard. It enables the port you configured to run version 2 
-remotely in order to communicate with version 3. The upgrade plan, as a whole, is a two-part process where 
-version 2 must be set up to listen for a version 3 instance in order for the former to talk to the latter.
+repositories and configurations exist and lists them in the upgrade wizard. It enables the port you configured to 
+run version 2 remotely in order to communicate with version 3. The upgrade plan, as a whole, is a two-part 
+process where version 2 must be set up to listen for a version 3 instance in order for the former to talk to the 
+latter.
 
 [[upgrade-configuration]]
 ==== Enabling Upgrade in Version 2
