@@ -12,43 +12,29 @@ help outside this more standard path please consult our
 https://support.sonatype.com/hc/en-us/sections/204911768-Installation-Upgrade-and-Compatibility[Support Knowledge
 Base articles], or contact support directly (available for {pro} customers).
 
-
 ////
 Add 'should I upgrade' section here
 ////
 
-////
 [[upgrade-types]]
-=== Distinguishing Between Upgrade Types
+=== Upgrading Within Specific Versions of {nxrm}
 
-TBD
+Since you need 2.14 (or later) and 3.1 (or later) to upgrade from one version to the other, ensure your instances 
+of versions 2 and 3 are updated. To upgrade from an older version of <<upgrade-version-two,2.x to 2.14>> or from a
+milestone instance of <<upgrade-version-three,3.x to 3.x>> refer to the specific sections, below.
 
-Could be merged into should I upgrade
-Per comment by Peter clarify and distinguish upgrades from 2.x to 2.x, 2.x to 3.x, and 3.x. to 3.x are different
+[[upgrade-version-two]]
+==== Upgrading from 2.x to 2.14
+Adapt, link to 
 
-Upgrading versions
+[[upgrade-version-three]]
+==== Upgrading from 3.x to 3.x
 
-2.x to 2.x
-Adapt, link to https://books.sonatype.com/nexus-book/reference/upgrading.html
+Upgrading to {nxrm} 3.x can only be performed by users who run the milestone 7 release of the repository 
+manager. There are two ways to upgrade the milestone to newer version of 3.x: with the installer application or 
+the distribution file. Before execution of this type of upgrade be sure to manually back up the milestone 7 data 
+directory to another location. This is crucial step when upgrading to a new 3.x. Follow the steps in the support https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base article].
 
-2.x to 3.x
-Adapt, link KB articles
-
-https://support.sonatype.com/hc/en-us/articles/217967608
-
-3.x. to 3.x
-The repository manager separates its configuration and data storage from the application, it is easy to 
-upgrade an existing installation. There are two ways to upgrade: with the installer application or the 
-distribution file.
-
-To keep the upgrade simple schedule downtime to preserve important directories during the process. Follow the 
-steps in the support https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base article].
-
-NOTE: Upgrading to {oss} 3.0.0 can only be performed by users who run the milestone 7 release of the repository 
-manager. Be sure to manually back up the milestone 7 data directory to another location. It is a crucial step to 
-properly upgrade the application.
-
-////
 
 [[upgrade-process-expectations]]
 === Upgrade Process and Expectations
@@ -67,7 +53,7 @@ requested. As such, a number of changes occur as part of the upgrade process. Th
 
 * *Component Storage Format (Files to Blobs)* - Components (artifacts) in {nxrm} 2 are stored as individual files
   on disk. {nxrm} 3 stores components as <<admin-repository-blobstores,blobs>>. The conversion process requires
-  {nxrm} to iterate over every component in stored in {nxrm}. This will take the bulk of the time required for
+  {nxrm} to iterate over every component stored in {nxrm}. This will take the bulk of the time required for
   upgrade.
 * *Settings and Metadata* - Settings and some component metadata in {nxrm} 2.x are stored across many files.
   Conversely, {nxrm} 3.x loads equivalent settings into an link:http://http://orientdb.com/[OrientDB] database.
@@ -76,11 +62,12 @@ requested. As such, a number of changes occur as part of the upgrade process. Th
 ==== What Will Not Be Upgraded
 
 The file structures within your repository manager environment will differ between version 2 and 3. Consider 
-re-evaluating any configurations that will not be included in your upgrade plan. Therefore you should review all
-system configurations before <<upgrade-prep,preparing>> your upgrade, specifically from 2.14 to 3.1. Here is a 
-list of known settings will not automatically be upgraded:
+re-evaluating any support tools and configurations that will not be included in your upgrade, specifically 
+from 2.14 to 3.1. So, before <<upgrade-prep,preparing>> your upgrade develop a plan to replicate (or reconfigure) 
+the settings listed, as they will not be upgraded automatically:
 
 * custom branding
+* virtual repositories
 * Java VM Settings, including custom system properties or variables
 * operating system `nexus` service scripts
 * operating system optimizations, such as increasing allowable open file handles
@@ -111,18 +98,18 @@ NOTE: For a complete list of formats supported across {nxrm} versions, please se
 link:https://support.sonatype.com/hc/en-us/articles/226495428-Nexus-Repository-Manager-Format-Language-Supportasso
 ciated[KB article].
 
-NOTE: The quality of your network, can impact the speed of ingestion methods (e.g HTTP download).
-
 [[upgrade-prep]]
 === Preparing for an Upgrade
 
 If you decide to upgrade, the most critical decisions you, or your organization, make should include:
 
 * Identification of a maintenance window for version 2, allowing the upgrade to proceed without interruption
-* Which of the two installation scenarios is best for your upgrade method
+* Which of the two installation scenarios is best for your upgrade plan
 * Required system storage
 * What upgrade methods are available to you
-* Where content will be transferred when the upgrade is complete
+* How to optimize version 2 to clear disk space, making the upgrade more performant
+* Where content will be transfered when the upgrade is complete
+* Understanding security setting differences between, specifically between 2.14 and 3.1
 
 [[upgrade-architecture]]
 ==== Supported Installation Scenarios for Upgrading
@@ -152,7 +139,7 @@ this method requires version 2 to serve all of the content. Copying and hard lin
 the file is, and they obtain it from the file system, directly.
 
 [[upgrade-methods]]
-=== Upgrade Methods
+==== Upgrade Methods
 
 In order to start an upgrade, version 2 has to listen for version 3 to initiate communication. This is the core
 property of the 'Upgrade: Agent'. When the upgrade wizard in version 3 helps you build an upgrade plan, it
@@ -199,94 +186,49 @@ such a way that you have a blob store defined in an appropriate location where h
 
 This is the fastest option because you will not have to move the bytes around.
 
-[[upgrade-security]]
-==== Security and Upgrade
-
-////
-Add intro here
-////
-
-*{nxrm} 2 Roles*
-Roles which are migrated from {nxrm} 2 will have a role id in {nxrm} 3 that starts with `nx2-` (privilegs) . Role 
-descriptions created during the upgrade process will have the word (legacy) in their description.
-
-*{nxrm} 2 Repository Targets*
-Repository Targets from Nexus 2 will be converted to Content Selectors in Nexus 3. Content Selector names must
-not contain special characters, therefore the upgrade process will replace adjacent unsupported characters with
-underscores ( _ ). For example a repository target in Nexus 2 named “All (Any Repository)” will be converted to a
-content selector named “All_Any_Repository” in Nexus 3.
-
 [[upgrade-performance]]
 ==== Performance and Tuning
 
 When considering upgrade time and speed, take into account all enabled scheduled tasks and additional settings on 
 your version 2 instance that you may not need. Depending on your configuration of version 2 you could optimize 
-the performance of you upgrade by either turning off or deleting obsolete content and jobs. Consider these 
-actions to improve the speed of your repository manager:
+the performance of you upgrade by either turning off or deleting obsolete content and tasks. As discussed in the 
+https://support.sonatype.com/hc/en-us/articles/213465138-How-can-I-configure-Nexus-to-reduce-disk-space-[article 
+about performance and tuning for {nxrm} 2], identify then reduce your list of tasks in version 2 to 
+improve the speed of your repository manager. See some highlights, below:
 
-* *System feeds* - If your organization does not rely on system feeds, often used for in-app team communication, 
+* *System feeds* - If your organization does not rely on system feeds, often used for team communication, 
 learn how to 
 https://support.sonatype.com/hc/en-us/articles/213464998-How-to-disable-the-System-Feeds-nexus-timeline-plugin-feature-to-improve-Nexus-performance[disable] them within your timeline plugin file
-* *Disabling repair tasks*
-* Removing unused snapshots
-* Removing old scheduled tasks not in use
-* Removing repositories no longer supported by the repository manager (e.g. 
-https://support.sonatype.com/hc/en-us/articles/217611787-codehaus-org-Repositories-Should-Be-Removed-From-Your-Nexus-Instance[Codehaus repositories])
-* Disabling 'Rebuild Maven Metadata Files' scheduled tasks
-* Increasing your file size limit
+* *Repair index tasks* - These task support search in the repository manager user interface. Since these tasks do not need to be rebuilt that often, consider disabling them across all repositories
+* *Snapshot removal tasks* - Enable both 'Remove Snapshots from Repository' and 'Remove Unused Snapshots From Repository', which deletes old component states no longer needed
+* *Repositories no longer supported by the {nxrm}* - Remove any deprecated repositories, or other content. For example, if your repository manager contains any Maven 2 proxy repository with the domain name 'codehaus.org' 
+should be deleted. See
+https://support.sonatype.com/hc/en-us/articles/217611787-codehaus-org-Repositories-Should-Be-Removed-From-Your-Nexus-Instance[Codehaus repositories], for more information
+* *'Rebuild Maven Metadata Files'* - This scheduled task should only be run if you need to repair a corrupted 
+Maven repository storage on disk. If run infrequently, you can disable it completely to reserve more space needed 
+for your upgrade
 ////
 * Reviewing the Custom Metadata capability (when enabled)
 ////
 
-In addition, the following items and settings should be considered:
+To help you make deeper decisions around reducing scheduled tasks to improve the performance of your upgrade, see 
+the knowledge base article https://support.sonatype.com/hc/en-us/articles/213465208-What-do-the-scheduled-tasks-in-Nexus-do-and-how-often-should-I-run-them-['What do the scheduled tasks in Nexus do, and how often should I run them?'].
 
-*Repository IDs*
+[[upgrade-security]]
+==== Understanding Security for Upgrades from {nxrm} 2.14 to 3.1
 
-Before upgrading repositories to version 3, find the repository IDs in version 2 and plan how you will 
-rename any conflicting repositories in version 3. Contact our https://support.sonatype.com/hc/en-us[support
-team] to learn on how to do this safely.
+During the upgrade from {nxrm} 2.14 to 3.1 
 
-*Repository Groups*
+*{nxrm} 2 Roles*
+Roles upgraded from {nxrm} 2 will be assigned a Role ID that starts with `nx2-` (privileges) in {nxrm} 3. 
+Role descriptions created during the upgrade process will have the word (legacy) in their description.
 
-Review the contents of your repository groups. If empty, the upgrade plan will not permit transfer, as validation 
-will fail.
-
-*User Tokens*
-
-The upgrade tool can only replicate pre-existing user tokens from version 2 to 3 if the 'Enabled' box in version 
-2 is checked. In version 2, click the 'User Token' tab, in the 'Administration' menu, and enable the setting. 
-
-*Repository Health Check and SSL Health Check*
-
-You can include both your existing {rhc} and its corresponding SSL trust store configuration when you upgrade 
-from version 2 to version 3. If you are a {oss} user you only have the ability to upgrade your settings from the 
-'Health Check: Configuration' capability. If you run {pro}, you can also upgrade your existing 'SSL: Health 
-Check' settings in version 2 to version 3. After the upgrade is complete settings for both 'Health Check: 
-Configuration' and 'SSL: Health Check' capabilities will be enabled in version 3, as they were in version 2.
-
-*Repository Targets and Target Privileges*
-
-If upgrading your Repository Targets from version 2 to version 3, it is recommended you also upgrade your Target 
-Privileges and vice versa.  If you do not upgrade both, you may find that you need to make further adjustments to 
-version 3 configuration to have things work as they did in version 2.
-
-*NuGet API Key*
-
-The upgrade tool will add all keys to {nxrm} 3 that are present in {nxrm} 2.14 when asked, even if the version 2 
-NuGet API Key Realm is not active. This is because there is no explicit on or off setting for NuGet keys.
-
-////
-NO IQ Server capability in 3.1
-
-*IQ Server*
-
-{inrmonly}
-
-If upgrading {iq} settings and configuration, ensure that your licenses include the integration for both versions 
-2 and 3. Your configuration for 'IQ Server URL', 'Username', 'Password', and 'Request Timeout' will be included 
-in the upgrade. Additional configuration, such as analysis properties, trust store usage, and the enabled {iq} 
-connection itself will be replicated from versions 2 to 3.
-////
+*{nxrm} 2 Repository Targets*
+Repository targets from {nxrm} 2 will be converted to content selectors in {nxrm} 3. In contrast to repository 
+targets, which rely on regular expressions for user permissions, content selectors use a syntax called JEXL 
+perform similar restrictions.  Content selector do not contain special characters, therefore the upgrade process 
+will replace adjacent unsupported characters with underscores (`_`). For example, a repository target in version 
+2 named “All (Any Repository)” will be converted to a selector permission named “All_Any_Repository” in version 3.
 
 [[upgrade-start]]
 === Starting the Upgrade
@@ -294,8 +236,8 @@ connection itself will be replicated from versions 2 to 3.
 After considerations around system performance and storage are taken into account, there are a few basic steps 
 to start the upgrade:
 
-* Upgrade the {nxrm} 2.x to version 2.14 or higher, and configure the upgrade capability that allows 
-you to synchronize that instance with {nxrm} 3.1 or later.
+* Upgrade the {nxrm} 2.x to version 2.14 or higher (see <<upgrade-version-two>>).
+* Configure the upgrade capability that allows you to synchronize that instance with {nxrm} 3.1 or later.
 * Run 2.14 or later on one server, and version 3.1 or later on another non-conflicting server.
 * Configure the upgrade-agent in version 2 and start the upgrade wizard in version 3.
 
@@ -376,3 +318,55 @@ Click 'Begin', then confirm from the modal, that you want to start the upgrade. 
 'Synchronizing', and 'Finishing' will follow.
 
 When the final content upgrade ends, go to your version 3 instance to see all your content replicated there.
+
+[[upgrade-repositories]]
+=== Repository Feature Support of Upgrade
+In addition, the following items and settings should b
+
+*Repository IDs*
+
+Before upgrading repositories to version 3, find the repository IDs in version 2 and plan how you will 
+rename any conflicting repositories in version 3. Contact our https://support.sonatype.com/hc/en-us[support
+team] to learn on how to do this safely.
+
+*Repository Groups*
+
+Review the contents of your repository groups. If empty, the upgrade plan will not permit transfer, as validation 
+will fail.
+
+*User Tokens*
+
+The upgrade tool can only replicate pre-existing user tokens from version 2 to 3 if the 'Enabled' box in version 
+2 is checked. In version 2, click the 'User Token' tab, in the 'Administration' menu, and enable the setting. 
+
+*Repository Health Check and SSL Health Check*
+
+You can include both your existing {rhc} and its corresponding SSL trust store configuration when you upgrade 
+from 2.14 to 3.1. If you are a {oss} user you only have the ability to upgrade your settings from the 
+'Health Check: Configuration' capability. If you run {pro}, you can also upgrade your existing 'SSL: Health 
+Check' settings in version 2 to version 3. After the upgrade is complete settings for both 'Health Check: 
+Configuration' and 'SSL: Health Check' capabilities will be enabled in version 3, as they were in version 2.
+
+*Repository Targets and Target Privileges*
+
+If upgrading your Repository Targets from 2.14 to version 3.1, it is recommended you also upgrade your Target 
+Privileges and vice versa.  If you do not upgrade both, you may find that you need to make further adjustments to 
+version 3 configuration to have things work as they did in version 2.
+
+*NuGet API Key*
+
+The upgrade tool will add all keys to {nxrm} 3.1 that are present in {nxrm} 2.14 when asked, even if the version 
+2 NuGet API Key Realm is not active. This is because there is no explicit on or off setting for NuGet keys.
+
+////
+NO IQ Server capability in 3.1
+
+*IQ Server*
+
+{inrmonly}
+
+If upgrading {iq} settings and configuration, ensure that your licenses include the integration for both versions 
+2 and 3. Your configuration for 'IQ Server URL', 'Username', 'Password', and 'Request Timeout' will be included 
+in the upgrade. Additional configuration, such as analysis properties, trust store usage, and the enabled {iq} 
+connection itself will be replicated from versions 2 to 3.
+////
