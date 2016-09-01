@@ -32,7 +32,9 @@ Adapt, link to
 
 Upgrading to {nxrm} 3.x can only be performed by users who run the milestone 7 release of the repository 
 manager. There are two ways to upgrade the milestone to newer version of 3.x: with the installer application or 
-the distribution file. Before execution of this type of upgrade be sure to manually back up the milestone 7 data 
+the distribution file. 
+
+Before execution of this type of upgrade be sure to manually back up the milestone 7 data 
 directory to another location. This is crucial step when upgrading to a new 3.x. Follow the steps in the support https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base article].
 
 
@@ -200,13 +202,18 @@ improve the speed of your repository manager. See some highlights, below:
 learn how to 
 https://support.sonatype.com/hc/en-us/articles/213464998-How-to-disable-the-System-Feeds-nexus-timeline-plugin-feature-to-improve-Nexus-performance[disable] them within your timeline plugin file
 * *Repair index tasks* - These task support search in the repository manager user interface. Since these tasks do not need to be rebuilt that often, consider disabling them across all repositories
-* *Snapshot removal tasks* - Enable both 'Remove Snapshots from Repository' and 'Remove Unused Snapshots From Repository', which deletes old component states no longer needed
+* *Snapshot removal tasks* - Enable both 'Remove Snapshots from Repository' and 'Remove Unused Snapshots From Repository', which deletes old component states no longer needed.
 * *Repositories no longer supported by the {nxrm}* - Remove any deprecated repositories, or other content. For example, if your repository manager contains any Maven 2 proxy repository with the domain name 'codehaus.org' 
 should be deleted. See
 https://support.sonatype.com/hc/en-us/articles/217611787-codehaus-org-Repositories-Should-Be-Removed-From-Your-Nexus-Instance[Codehaus repositories], for more information
 * *'Rebuild Maven Metadata Files'* - This scheduled task should only be run if you need to repair a corrupted 
 Maven repository storage on disk. If run infrequently, you can disable it completely to reserve more space needed 
 for your upgrade
+* *Staging rules* - If you are a {pro} user that use the application for staging releases, redefine or reduce the 
+number of configured rules to free up space.
+* *Scheduled task for releases* - If you find empty 'Use Index' checkboxes under 'Task Settings', use the
+opportunity to disable or remove those specific tasks for releases.
+
 ////
 * Reviewing the Custom Metadata capability (when enabled)
 ////
@@ -217,18 +224,19 @@ the knowledge base article https://support.sonatype.com/hc/en-us/articles/213465
 [[upgrade-security]]
 ==== Understanding Security for Upgrades from {nxrm} 2.14 to 3.1
 
-During the upgrade from {nxrm} 2.14 to 3.1 
+Before you upgrade from {nxrm} 2.14 to 3.1 review the differences in security settings along the upgrade path. 
+Known changes may affect roles and repository targets, that latter of which will no longer exist in {nxrm} 3.
 
 *{nxrm} 2 Roles*
-Roles upgraded from {nxrm} 2 will be assigned a Role ID that starts with `nx2-` (privileges) in {nxrm} 3. 
+Roles upgraded from {nxrm} 2 will be assigned a Role ID that starts with `nx2-` in {nxrm} 3 (see <<privileges>>). 
 Role descriptions created during the upgrade process will have the word (legacy) in their description.
 
 *{nxrm} 2 Repository Targets*
 Repository targets from {nxrm} 2 will be converted to content selectors in {nxrm} 3. In contrast to repository 
 targets, which rely on regular expressions for user permissions, content selectors use a syntax called JEXL 
-perform similar restrictions.  Content selector do not contain special characters, therefore the upgrade process 
-will replace adjacent unsupported characters with underscores (`_`). For example, a repository target in version 
-2 named “All (Any Repository)” will be converted to a selector permission named “All_Any_Repository” in version 3.
+perform similar restrictions. If characters are not translatable the upgrade process will replace unsupported 
+characters with underscores (`_`). For example, a repository target in version 2 named 'All (Any Repository)'
+will be converted to a selector permission named 'All_Any_Repository' in version 3.
 
 [[upgrade-start]]
 === Starting the Upgrade
