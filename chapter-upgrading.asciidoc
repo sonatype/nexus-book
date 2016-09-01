@@ -111,7 +111,8 @@ If you decide to upgrade, the most critical decisions you, or your organization,
 * What upgrade methods are available to you
 * How to optimize version 2 to clear disk space, making the upgrade more performant
 * Where content will be transfered when the upgrade is complete
-* Understanding security setting differences between, specifically between 2.14 and 3.1
+* How security settings differ between 2.14 and 3.1
+* Which components and configurations will comply with the upgrade
 
 [[upgrade-architecture]]
 ==== Supported Installation Scenarios for Upgrading
@@ -188,6 +189,58 @@ such a way that you have a blob store defined in an appropriate location where h
 
 This is the fastest option because you will not have to move the bytes around.
 
+[[upgrade-repositories]]
+=== Repository Feature Support of Upgrade
+In addition, the following items and settings should b
+
+*Repository IDs*
+
+Before upgrading repositories to version 3, find the repository IDs in version 2 and plan how you will 
+rename any conflicting repositories in version 3. Contact our https://support.sonatype.com/hc/en-us[support
+team] to learn on how to do this safely.
+
+*Repository Groups*
+
+Review the contents of your repository groups. If empty, the upgrade plan will not permit transfer, as validation 
+will fail.
+
+*User Tokens*
+
+The upgrade tool can only replicate pre-existing user tokens from version 2 to 3 if the 'Enabled' box in version 
+2 is checked. In version 2, click the 'User Token' tab, in the 'Administration' menu, and enable the setting. 
+
+*Repository Health Check and SSL Health Check*
+
+You can include both your existing {rhc} and its corresponding SSL trust store configuration when you upgrade 
+from 2.14 to 3.1. If you are a {oss} user you only have the ability to upgrade your settings from the 
+'Health Check: Configuration' capability. If you run {pro}, you can also upgrade your existing 'SSL: Health 
+Check' settings in version 2 to version 3. After the upgrade is complete settings for both 'Health Check: 
+Configuration' and 'SSL: Health Check' capabilities will be enabled in version 3, as they were in version 2.
+
+*Repository Targets and Target Privileges*
+
+If upgrading your Repository Targets from 2.14 to version 3.1, it is recommended you also upgrade your Target 
+Privileges and vice versa.  If you do not upgrade both, you may find that you need to make further adjustments to 
+version 3 configuration to have things work as they did in version 2.
+
+*NuGet API Key*
+
+The upgrade tool will add all keys to {nxrm} 3.1 that are present in {nxrm} 2.14 when asked, even if the version 
+2 NuGet API Key Realm is not active. This is because there is no explicit on or off setting for NuGet keys.
+
+////
+NO IQ Server capability in 3.1
+
+*IQ Server*
+
+{inrmonly}
+
+If upgrading {iq} settings and configuration, ensure that your licenses include the integration for both versions 
+2 and 3. Your configuration for 'IQ Server URL', 'Username', 'Password', and 'Request Timeout' will be included 
+in the upgrade. Additional configuration, such as analysis properties, trust store usage, and the enabled {iq} 
+connection itself will be replicated from versions 2 to 3.
+////
+
 [[upgrade-performance]]
 ==== Performance and Tuning
 
@@ -213,7 +266,7 @@ for your upgrade
 number of configured rules to free up space.
 * *Scheduled task for releases* - If you find empty 'Use Index' checkboxes under 'Task Settings', use the
 opportunity to disable or remove those specific tasks for releases.
-
+* *Smart Proxy* - 
 ////
 * Reviewing the Custom Metadata capability (when enabled)
 ////
@@ -326,55 +379,3 @@ Click 'Begin', then confirm from the modal, that you want to start the upgrade. 
 'Synchronizing', and 'Finishing' will follow.
 
 When the final content upgrade ends, go to your version 3 instance to see all your content replicated there.
-
-[[upgrade-repositories]]
-=== Repository Feature Support of Upgrade
-In addition, the following items and settings should b
-
-*Repository IDs*
-
-Before upgrading repositories to version 3, find the repository IDs in version 2 and plan how you will 
-rename any conflicting repositories in version 3. Contact our https://support.sonatype.com/hc/en-us[support
-team] to learn on how to do this safely.
-
-*Repository Groups*
-
-Review the contents of your repository groups. If empty, the upgrade plan will not permit transfer, as validation 
-will fail.
-
-*User Tokens*
-
-The upgrade tool can only replicate pre-existing user tokens from version 2 to 3 if the 'Enabled' box in version 
-2 is checked. In version 2, click the 'User Token' tab, in the 'Administration' menu, and enable the setting. 
-
-*Repository Health Check and SSL Health Check*
-
-You can include both your existing {rhc} and its corresponding SSL trust store configuration when you upgrade 
-from 2.14 to 3.1. If you are a {oss} user you only have the ability to upgrade your settings from the 
-'Health Check: Configuration' capability. If you run {pro}, you can also upgrade your existing 'SSL: Health 
-Check' settings in version 2 to version 3. After the upgrade is complete settings for both 'Health Check: 
-Configuration' and 'SSL: Health Check' capabilities will be enabled in version 3, as they were in version 2.
-
-*Repository Targets and Target Privileges*
-
-If upgrading your Repository Targets from 2.14 to version 3.1, it is recommended you also upgrade your Target 
-Privileges and vice versa.  If you do not upgrade both, you may find that you need to make further adjustments to 
-version 3 configuration to have things work as they did in version 2.
-
-*NuGet API Key*
-
-The upgrade tool will add all keys to {nxrm} 3.1 that are present in {nxrm} 2.14 when asked, even if the version 
-2 NuGet API Key Realm is not active. This is because there is no explicit on or off setting for NuGet keys.
-
-////
-NO IQ Server capability in 3.1
-
-*IQ Server*
-
-{inrmonly}
-
-If upgrading {iq} settings and configuration, ensure that your licenses include the integration for both versions 
-2 and 3. Your configuration for 'IQ Server URL', 'Username', 'Password', and 'Request Timeout' will be included 
-in the upgrade. Additional configuration, such as analysis properties, trust store usage, and the enabled {iq} 
-connection itself will be replicated from versions 2 to 3.
-////
