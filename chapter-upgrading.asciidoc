@@ -25,7 +25,10 @@ milestone instance of <<upgrade-version-three,3.x to 3.x>> refer to the specific
 
 [[upgrade-version-two]]
 ==== Upgrading from 2.x to 2.14
-Adapt, link to 
+If you have a version of 2.x that is not 2.14, you can upgrade to the latter version. This requires that you 
+redirect the contents of the existing instance (2.x) to a newly downloaded version of the latest instance (2.14). 
+See the https://books.sonatype.com/nexus-book/reference/upgrading.html[Upgrading] chapter in the version 2 book 
+for instructions.
 
 [[upgrade-version-three]]
 ==== Upgrading from 3.x to 3.x
@@ -41,10 +44,13 @@ directory to another location. This is crucial step when upgrading to a new 3.x.
 [[upgrade-process-expectations]]
 === Upgrade Process and Expectations
 
-While the upgrade process is underway, you can continue to use version 2. Any repository content that’s added,
-updated, or deleted is picked up by version 3. However, configuration changes are not. You should not make
-changes to items such as realm settings, permissions, roles, role assignments, HTTP configuration, SSL
-certificates, or add new repositories. These types of configuration settings can cause the upgrade process to
+The process of upgrading components and configurations is rolled into an upgrade plan. The upgrade plan is the  
+interdependency of all the steps required to perform the upgrade from {nxrm} 2.14 to {nxrm} 3.1. 
+
+While the upgrade process is underway, you can continue to use version 2. Any repository content that’s added, 
+updated, or deleted is picked up by version 3. However, configuration changes are not. You should not make 
+changes to items such as realm settings, permissions, roles, role assignments, HTTP configuration, SSL 
+certificates, or add new repositories. These types of configuration settings can cause the upgrade process to 
 fail.
 
 [[upgraded]]
@@ -112,7 +118,7 @@ If you decide to upgrade, the most critical decisions you, or your organization,
 * How to optimize version 2 to clear disk space, making the upgrade more performant
 * Where content will be transfered when the upgrade is complete
 * How security settings differ between 2.14 and 3.1
-* Which components and configurations will comply with the upgrade
+* Which configurations may result in failure, preventing upgrade of certain components
 
 [[upgrade-architecture]]
 ==== Supported Installation Scenarios for Upgrading
@@ -189,15 +195,18 @@ such a way that you have a blob store defined in an appropriate location where h
 
 This is the fastest option because you will not have to move the bytes around.
 
-[[upgrade-repositories]]
-=== Repository Feature Support of Upgrade
-In addition, the following items and settings should b
+[[upgrade-support]]
+==== Configuration Details for Upgrading
+
+Due to fundamental changes in file structure between 2.14 and 3.1 you should review their differences to prevent 
+any failures.
 
 *Repository IDs*
 
 Before upgrading repositories to version 3, find the repository IDs in version 2 and plan how you will 
-rename any conflicting repositories in version 3. Contact our https://support.sonatype.com/hc/en-us[support
-team] to learn on how to do this safely.
+rename any conflicting repositories in version 3. Your repository IDs in version 2 may differ by letter case; 
+thusly, you may have to manually edit the IDs in before upgrade. Contact our 
+https://support.sonatype.com/hc/en-us[support team] to learn on how to do this safely.
 
 *Repository Groups*
 
@@ -216,12 +225,6 @@ from 2.14 to 3.1. If you are a {oss} user you only have the ability to upgrade y
 'Health Check: Configuration' capability. If you run {pro}, you can also upgrade your existing 'SSL: Health 
 Check' settings in version 2 to version 3. After the upgrade is complete settings for both 'Health Check: 
 Configuration' and 'SSL: Health Check' capabilities will be enabled in version 3, as they were in version 2.
-
-*Repository Targets and Target Privileges*
-
-If upgrading your Repository Targets from 2.14 to version 3.1, it is recommended you also upgrade your Target 
-Privileges and vice versa.  If you do not upgrade both, you may find that you need to make further adjustments to 
-version 3 configuration to have things work as they did in version 2.
 
 *NuGet API Key*
 
@@ -265,8 +268,10 @@ for your upgrade
 * *Staging rules* - If you are a {pro} user that use the application for staging releases, redefine or reduce the 
 number of configured rules to free up space.
 * *Scheduled task for releases* - If you find empty 'Use Index' checkboxes under 'Task Settings', use the
-opportunity to disable or remove those specific tasks for releases.
-* *Smart Proxy* - 
+opportunity to disable or remove those specific tasks for releases
+* *Smart Proxy Preemptive Fetch* -  The most notable performance benefit is that hidden caches are utilized more 
+efficiently
+
 ////
 * Reviewing the Custom Metadata capability (when enabled)
 ////
@@ -285,6 +290,11 @@ Roles upgraded from {nxrm} 2 will be assigned a Role ID that starts with `nx2-` 
 Role descriptions created during the upgrade process will have the word (legacy) in their description.
 
 *{nxrm} 2 Repository Targets*
+
+If upgrading your Repository Targets from 2.14 to version 3.1, it is recommended you also upgrade your Target 
+Privileges and vice versa.  If you do not upgrade both, you may find that you need to make further adjustments to 
+version 3 configuration to have things work as they did in version 2.
+
 Repository targets from {nxrm} 2 will be converted to content selectors in {nxrm} 3. In contrast to repository 
 targets, which rely on regular expressions for user permissions, content selectors use a syntax called JEXL 
 perform similar restrictions. If characters are not translatable the upgrade process will replace unsupported 
