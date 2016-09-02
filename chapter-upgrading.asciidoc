@@ -1,5 +1,5 @@
 [[upgrading]]
-==  Upgrading {nxrm} 3.1 or Later
+==  Upgrading {nxrm} to 3.1 or Later
 {inall}
 
 [[upgrade-introduction]]
@@ -19,10 +19,12 @@ Knowledge Base articles], or contact support directly (available for {pro} custo
 [[why-upgrade]]
 === Why Upgrade?
 
-As of version 3.1 (or later) (or later) there is now wider feature and functionality equivalency to {nxrm} 2.
+As of version 3.1 (or later) there is now wider feature and functionality equivalency to {nxrm} 2.
 Highlights of new functionality available in version 3.1 (or later) include:
 
+////
 * Component Fabric (High Availability)
+////
 * Expanded Format Support
 * Enhanced Metadata
 
@@ -32,16 +34,15 @@ many cases upgrading to version 3.1 (or later) provides an enhanced set of featu
 [[upgrade-types]]
 === Upgrading Within Specific Versions of {nxrm}
 
-Upgrading from {nxrm} 2 to 3 requires version 2.14 (or later) and 3.1 (or later). To upgrade from an
+Upgrading from {nxrm} 2 to 3 requires version 2.14 (or later) and version 3.1 (or later). To upgrade from an
 older version, refer to the specific sections below.
 
 [[upgrade-version-two]]
 ==== Upgrading from 2.x to 2.14 (or later)
 
 If you have a version of 2.x that is not 2.14 (or later), you must upgrade before starting the upgrade to {nxrm}
-3. This requires that you first redirect the contents of the existing instance (2.x) to a newly downloaded
-version of the latest instance (2.14 or later). See this
-link:https://support.sonatype.com/hc/en-us/articles/213464198-How-do-I-upgrade-Nexus-[article] for instructions.
+3. This requires that you first redirect the contents of the existing instance to a newly downloaded version of 
+the latest instance (2.14 or later). See this link:https://support.sonatype.com/hc/en-us/articles/213464198-How-do-I-upgrade-Nexus-[article] for instructions.
 
 [[upgrade-version-three]]
 ==== Upgrading from Milestone 7 release to 3.1 (or later)
@@ -72,9 +73,9 @@ upgrade process to fail.
 [[upgraded]]
 ==== What Is Upgraded
 
-As mentioned, {nxrm} 3 represents a shift in design. This shift has involved a new architecture to support more 
-advanced features that support today's modern development practices. As such, a number of core changes to data 
-stored in version 3.1 (or later) will occur as part of the upgrade process. This includes:
+As mentioned, {nxrm} 3 represents a modern design shift, involving a new architecture that supports advanced 
+features for today's development practices. As such, a number of core changes to data stored in version 3.1 (or 
+later) occur as part of the upgrade process. Including:
 
 * *Component Storage Format (Files to Blobs)* - Components (artifacts) in {nxrm} 2 are stored as individual files
   on disk. Version 3 stores components as <<admin-repository-blobstores,blobs>>. The conversion process requires
@@ -98,8 +99,8 @@ upgraded automatically:
 * operating system `nexus` service scripts
 * operating system optimizations, such as increasing allowable open file handles
 * environment variables affecting values used to control the repository manager
-* third-party or custom-developed plugins develop 
-* Jetty Server XML Configuration Files
+* third-party or custom-developed plugins
+* Jetty Server XML configuration files
 * unimplemented repository formats
 * manual edits to other files under the `nexus` installation directory, such as edits to
   `nexus/WEB-INF/classes/ehcache.xml`
@@ -124,8 +125,7 @@ be included in the upgrade process to version 3.1 (or later).
 [[upgrade-prep]]
 === Designing Your Upgrade Plan
 
-If you decide to upgrade, the following represent the most critical decisions to be made when creating your
-upgrade plan:
+When upgrading, the most critical decisions you need to make about an upgrade plan are:
 
 * Identification of a maintenance window for version 2.14 (or later), allowing the upgrade to proceed without
   interruption
@@ -142,8 +142,7 @@ upgrade plan:
 There are two supported scenarios for upgrading:
 
 * Separate servers for version 2.14 (or later) and 3.1 (or later)
-* Both versions of 2.14 (or later) and 3.1 (or later) running on the same server, but in different service
-  locations
+* Both versions of 2.14 and 3.1 running on the same server, but in different install directories
 
 //// 
 Begs the question if there are unsupported, or something we can add here to preven support questions.
@@ -155,7 +154,7 @@ Begs the question if there are unsupported, or something we can add here to prev
 Upgrade is made possible by specific upgrade capabilities in both version 2.14 (or later) and 3.1 (or later)
 (Upgrade: Agent and Upgrade, respectively), and an upgrade tool provided in version 3.1 (or later). Once the
 'Upgrade: Agent' capability, mentioned in <<upgrade-start>>, is enabled and both repository manager instances are
-communicating, you should consider one of three upgrade methods:
+communicating, you can choose one of three methods to transfer your content:
 
 ////
 Expand on what types of architectures might benefit from the listed options
@@ -163,7 +162,7 @@ Expand on what types of architectures might benefit from the listed options
 
 *HTTP Downloading*
 
-HTTP downloading is an upgrade method in which version 3.1 (or later) will make HTTP requests to version 2.14 (or
+HTTP downloading is an upgrade method in which version 3.1 (or later) makes HTTP requests to version 2.14 (or
 later). This is the slowest option for upgrading.
 
 If version 2.14 (or later) and 3.1 (or later) are on different machines and do not share access to the same file
@@ -171,10 +170,10 @@ system storage, you must use the HTTP download method.
 
 *File System Copying*
 
-In this upgrade method, version 2.14 (or later) will tell version 3.1 (or later) the location of the file and
+In this upgrade method, version 2.14 (or later) tells version 3.1 (or later) the location of the file and
 where to retrieve the content.
 
-This upgrade method will work if versions 2.14 (or later) and 3.1 (or later) are on the same machine, and
+This upgrade method works if versions 2.14 (or later) and 3.1 (or later) are on the same machine, and
 configured in a way that the mounts are accessible by the same path (from one machine to the other), this option
 will work. It is a slightly faster process than the HTTP Download method, and has less impact on the performance
 of version 2.14 (or later).
@@ -201,7 +200,7 @@ have to be told where the file is, and they obtain it from the file system, dire
 
 While discussed in greater detail in <<admin-repository-blobstores,Chapter 4>>, {nxrm} 3 does allow you to
 create new blob stores and determine the amount of space for each, if more than one exists. However, it is
-important to consider how you want to organize this storage mechanism, and the differences in previous versions.
+important to consider how you want to organize and reserve space for this storage mechanism.
 
 When upgrading, make sure you have enough storage capacity in the destination file system(s). For instance, if you
 are using the hard linking <<upgrade-methods,method>>, the bytes themselves are not duplicated (saving space),
@@ -347,11 +346,11 @@ you through upgrading in three phases:
 In version 2.14 (or later), enable the 'Upgrade: Agent' capability to open the connection for the upgrade-agent.
 Follow these steps:
 
-.Click 'Administration' in the left-hand panel
-.Open the 'Capabilities' screen
-.Select 'New' to prompt the 'Create new capability' modal
-.Select 'Upgrade: Agent' as your capability 'Type'
-.Click 'Add' to close the modal
+. Click 'Administration' in the left-hand panel
+. Open the 'Capabilities' screen
+. Select 'New' to prompt the 'Create new capability' modal
+. Select 'Upgrade: Agent' as your capability 'Type'
+. Click 'Add' to close the modal
 
 In the lower section of the 'Capabilities' interface, the repository manager acknowledges the upgrade-agent as
 'Active'.
@@ -362,9 +361,9 @@ In the lower section of the 'Capabilities' interface, the repository manager ack
 In version 3.1 (or later), enable the 'Upgrade' capability to open the connection for the upgrade-agent, and
 access the 'Upgrade' tool. Follow these steps:
 
-.Click 'System', to open the 'Capabilities' screen
-.Click 'Create capability'
-.Select 'Upgrade', then click 'Create capability' to enable the upgrade
+. Click 'System', to open the 'Capabilities' screen
+. Click 'Create capability'
+. .Select 'Upgrade', then click 'Create capability' to enable the upgrade
 
 
 [[upgrade-content]]
@@ -373,8 +372,8 @@ access the 'Upgrade' tool. Follow these steps:
 After you enable upgrade capabilities for versions 2.14 (or later) and 3.1 (or later), access the upgrade tool to
 start your upgrade.
 
-.Go to the 'Administration' menu 
-.Select 'Upgrade' Located under 'System' to open the wizard.
+. Go to the 'Administration' menu 
+. Select 'Upgrade' Located under 'System' to open the wizard.
 
 Overview:: The upgrade tool provides an overview of what is allowed for an upgrade as well as warnings on what 
 cannot be upgraded.
