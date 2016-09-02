@@ -88,10 +88,8 @@ later) occur as part of the upgrade process. Including:
 ==== What Is Not Upgraded
 
 The file structures within your repository manager environment will differ between version 2.14 (or later) and
-3.1 (or later). This means some support tools and configurations are not be included in the upgrade process. 
-Before <<upgrade-prep,preparing>> starting that process, as part of your plan, consider which setting and 
-configuration items will need to be reconfigured. The settings and configuration items list below will not be 
-upgraded automatically:
+3.1 (or later). Before <<upgrade-prep,preparing>> for the upgrade process, review this list of settings and 
+configuration items. The following list of items are not automatically included when you upgrade.
 
 * custom branding
 * virtual repositories
@@ -253,7 +251,7 @@ You can include both your existing {rhc} and its corresponding SSL trust store c
 from version 2.14 (or later) to 3.1 (or later). If you are a {oss} user you only have the ability to upgrade your
 settings from the 'Health Check: Configuration' capability. If you are a {pro} user, you can also upgrade your
 existing 'SSL: Health Check' settings from version 2.14 (or later) to 3.1 (or later). After the upgrade process is
-complete, settings for both 'Health Check: Configuration' and 'SSL: Health Check' capabilities will be enabled in
+complete, settings for both 'Health Check: Configuration' and 'SSL: Health Check' capabilities are enabled in
 version 3.1 (or later), as they were in version 2.14 (or later).
 
 *NuGet API Key*
@@ -294,10 +292,10 @@ upgrade your Target Privileges and vice versa. If you do not upgrade both, you m
 further adjustments to version 3.1 (or later) configuration to have things work as they did in version 2.14 (or
 later).
 
-Repository targets from version 2.14 (or later) will be converted to content selectors in version 3.1 (or later).
+Repository targets from version 2.14 (or later) are converted to content selectors in version 3.1 (or later).
 In contrast to repository targets, which rely on regular expressions for user permissions, content selectors use
-a syntax called JEXL perform similar restrictions. If characters are not translatable the upgrade process will
-replace unsupported characters with underscores (`_`). For example, a repository target in version 2.14 (or
+a syntax called JEXL to perform similar restrictions. If characters are not translatable, the upgrade process
+replaces unsupported characters with underscores (`_`). For example, a repository target in version 2.14 (or
 later) named 'All (Any Repository)' will be converted to a selector permission named 'All_Any_Repository' in
 version 3.1 (or later).
 
@@ -307,52 +305,53 @@ version 3.1 (or later).
 When considering upgrade time and speed, take into account all enabled scheduled tasks and additional settings on
 your version 2.14 (or later) instance that you may not need. Depending on your configuration of version 2.14 (or
 later) you could optimize the performance of you upgrade by either turning off or deleting obsolete content and
-tasks. As discussed in the link:
-https://support.sonatype.com/hc/en-us/articles/213465138-How-can-I-configure-Nexus-to-reduce-disk-space-[article about performance and tuning for {nxrm} 2], identify then reduce your list of tasks in version 2.14 (or later) to
-improve the speed of your repository manager. See some highlights, below:
+tasks. As discussed in this 
+link:https://support.sonatype.com/hc/en-us/articles/213465138-How-can-I-configure-Nexus-to-reduce-disk-space-[arti
+cle about performance and tuning for {nxrm} 2], identify then reduce your list of tasks in version 2.14 (or 
+later) to improve the speed of your repository manager. See some highlights, below:
 
 * *System feeds* - If your organization does not rely on system feeds, often used for team communication, 
 learn how to 
-https://support.sonatype.com/hc/en-us/articles/213464998-How-to-disable-the-System-Feeds-nexus-timeline-plugin-feature-to-improve-Nexus-performance[disable] them within your timeline plugin file
+https://support.sonatype.com/hc/en-us/articles/213464998-How-to-disable-the-System-Feeds-nexus-timeline-plugin-feature-to-improve-Nexus-performance[disable] them within your timeline plugin file.
 * *Repair index tasks* - These task support search in the repository manager user interface. Since these tasks do
-  not need to be rebuilt that often, consider disabling them across all repositories
+  not need to be rebuilt that often, consider disabling them across all repositories.
 * *Snapshot removal tasks* - Enable both 'Remove Snapshots from Repository' and 'Remove Unused Snapshots From
   Repository', which deletes old component states no longer needed. * *Repositories no longer supported by the
   {nxrm}* - Remove any deprecated repositories, or other content. For example, if your repository manager
-  contains any Maven 2 proxy repository with the domain name 'codehaus.org' should be deleted. See https://support.sonatype.com/hc/en-us/articles/217611787-codehaus-org-Repositories-Should-Be-Removed-From-Your-Nexus-Instance[Codehaus repositories], for more information
+  contains any Maven 2 proxy repository with the domain name 'codehaus.org' should be deleted. See https://support.sonatype.com/hc/en-us/articles/217611787-codehaus-org-Repositories-Should-Be-Removed-From-Your-Nexus-Instance[Codehaus repositories], for more information.
 * *'Rebuild Maven Metadata Files'* - This scheduled task should only be run if you need to repair a corrupted
   Maven repository storage on disk. If run infrequently, you can disable it completely to reserve more space
-  needed for your upgrade
+  needed for your upgrade.
 * *Staging rules* - If you are a {pro} user that use the application for staging releases, redefine or reduce the
   number of configured rules to free up space.
 * *Scheduled task for releases* - If you find empty 'Use Index' checkboxes under 'Task Settings', use the
-  opportunity to disable or remove those specific tasks for releases
+  opportunity to disable or remove those specific tasks for releases.
 * *Smart Proxy Preemptive Fetch* - The most notable performance benefit is that hidden caches are utilized more
-  efficiently
+  efficiently.
 
 ////
 * Reviewing the Custom Metadata capability (when enabled)
 ////
 
-To help you make deeper decisions around reducing scheduled tasks to improve the performance of your upgrade, see 
+To help you decide how to reduce scheduled tasks, improving the performance of your upgrade, see 
 the knowledge base article https://support.sonatype.com/hc/en-us/articles/213465208-What-do-the-scheduled-tasks-in-Nexus-do-and-how-often-should-I-run-them-['What do the scheduled tasks in Nexus do, and how often should I run them?'].
 
 [[upgrade-start]]
 === Starting the Upgrade
 
-After you've designed your upgrade plan and made considerations around system performance and storage are taken
-into account, there are a few basic steps t o start the upgrade:
+After you've designed your upgrade plan, considered system performance, and assessed storage needs, there are a 
+few basic steps to start the upgrade:
 
-* Upgrade the your existing version 2.x to 2.14 (or later) (see <<upgrade-version-two>>).
-* Enable the upgrade capabilities in both version 2.14 (or later) and 3.1 (or later) that allow you to
+. Upgrade the your existing version 2.x to 2.14 (or later) (see <<upgrade-version-two>>).
+. Enable the upgrade capabilities in both version 2.14 (or later) and 3.1 (or later) that allow you to
   synchronize that instance between versions.
 
 With the above complete, you can now use the provide upgrade tool in version 3.1 (or later), which will instruct
 you through upgrading in three phases:
 
- * 'Preparing', the phase that prepares the transfer and creation of all components.
- * 'Synchronizing', the phase that counts and processes all components set to upgrade.
- * 'Finishing', the phase that performs final clean up, then closes the process.
+ . 'Preparing', the phase that prepares the transfer and creation of all components.
+ . 'Synchronizing', the phase that counts and processes all components set to upgrade.
+ . 'Finishing', the phase that performs final clean up, then closes the process.
 
 [[upgrade-configuration]]
 ==== Enabling the Upgrade Capability in Version 2.14 (or later)
