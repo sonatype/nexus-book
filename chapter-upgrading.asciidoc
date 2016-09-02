@@ -34,11 +34,12 @@ practices and automation. However, it is a good idea to review Sonatype's suppor
 link:https://support.sonatype.com/hc/en-us/articles/226495428-Nexus-Repository-Manager-Format-Language-Support[for
 mat support], 
 link:https://support.sonatype.com/hc/en-us/articles/226489388-Nexus-Repository-Manager-2-x-to-3-x-Feature-Equivale
-ncy[feature equivalency], and link:https://support.sonatype.com/hc/en-us/articles/226495428[compatibility across 
-versions].
+ncy[feature equivalency], and 
+link:https://support.sonatype.com/hc/en-us/articles/222426568-Nexus-Repository-Manager-Feature-Compatibility-Matri
+x[compatibility across versions].
 
 [[upgrade-types]]
-=== Upgrading Within Specific Versions of {nxrm}
+=== Upgrading Specific Versions of {nxrm} to Version 3.1 (or later)
 
 Upgrading from {nxrm} 2 to 3 requires version 2.14 (or later) and version 3.1 (or later). To upgrade from an
 older version, refer to the specific sections below.
@@ -81,7 +82,7 @@ upgrade process to fail.
 
 As mentioned, {nxrm} 3 represents a modern design shift, involving a new architecture that supports advanced 
 features for today's development practices. As such, a number of core changes to data stored in version 3.1 (or 
-later) occur as part of the upgrade process. Including:
+later) occur as part of the upgrade process. This including:
 
 * *Component Storage Format (Files to Blobs)* - Components (artifacts) in {nxrm} 2 are stored as individual files
   on disk. Version 3 stores components as <<admin-repository-blobstores,blobs>>. The conversion process requires
@@ -115,7 +116,8 @@ configuration items. The following list of items are not automatically included 
 
 {nxrm} 3 provides a greatly expanded set of format support. For a complete list of formats supported across
 versions, please see the
-link:https://support.sonatype.com/hc/en-us/articles/226495428-Nexus-Repository-Manager-Format-Language-Supportassociated[KB article]. However, the list below represents repository formats as of version 2.14 (or later) that will
+link:https://support.sonatype.com/hc/en-us/articles/226495428-Nexus-Repository-Manager-Format-Language-Supportasso
+ciated[KB article]. However, the list below represents repository formats as of version 2.14 (or later) that will
 be included in the upgrade process to version 3.1 (or later).
 
 * npm
@@ -141,7 +143,7 @@ transferred to
 components
 * Review of <<upgrade-security,security settings>>, and associated differences between version 2.14 (or later) 
 and 3.1 (or later)
-* <<upgrade-performance,Optimization, Performance, and Tuning>>
+* Considerations for <<upgrade-performance,Optimization, Performance, and Tuning>>
 
 [[upgrade-architecture]]
 ==== Supported Installation Scenarios for Upgrading
@@ -228,12 +230,12 @@ configuration details to prevent any failures.
 
 Though a rare case, note that your repositories IDs version of 2.14 (or earlier) that defer by case will not be 
 accepted during an upgrade to 3.1 (example version 2 IDs: `myrepoid` vs `Myrepoid`). To resolve the ID conflict 
-review and change any IDs in 2.14 to distinguishable names. Contact link:https://support.sonatype.com/hc/en-us[Sonatype support] to learn on how to do this safely.
-//
+review and change any IDs in 2.14 to distinguishable names. Contact 
+link:https://support.sonatype.com/hc/en-us[Sonatype support] to learn on how to do this safely.
 
 *Repository Groups*
 
-Review the contents of your repository groups 2.14 to ensure its contents are a selected for upgrade. A single 
+Review the contents of your 2.14 repository groups to ensure its contents are a selected for upgrade. A single 
 component within the group, not selected, may prevent the entire group from being upgraded to 3.1. 
 
 ////
@@ -318,25 +320,29 @@ https://support.sonatype.com/hc/en-us/articles/213464998-How-to-disable-the-Syst
 be rebuilt that often, consider disabling them across all repositories.
 * *Snapshot removal tasks* - Enable both 'Remove Snapshots from Repository' and 'Remove Unused Snapshots From
   Repository', which deletes old component states no longer needed. 
- * *Repositories no longer supported by the {nxrm}* - Remove any deprecated repositories. For 
-   example, if your repository manager contains any Maven 2 proxy repositories with the domain name 
-   'codehaus.org' should be deleted. See https://support.sonatype.com/hc/en-us/articles/217611787-codehaus-org-Repositories-Should-Be-Removed-From-Your-Nexus-Instance[Codehaus repositories], for more information.
-* *'Rebuild Maven Metadata Files'* - This scheduled task should only be run if you need to repair a corrupted
-  Maven repository storage on disk. If run infrequently, you can disable it completely to reserve more space
-  needed for your upgrade.
-* *Staging rules* - If you are a {pro} user that use the application for staging releases, redefine or reduce the
-  number of configured rules to free up space.
-* *Scheduled task for releases* - If you find empty 'Use Index' checkboxes under 'Task Settings', use the
-  opportunity to disable or remove those specific tasks for releases.
-* *Smart Proxy Preemptive Fetch* - The most notable performance benefit is that hidden caches are utilized more
-  efficiently.
+* *Repositories no longer supported by the {nxrm}* - Remove any deprecated repositories. For example, if your 
+repository manager contains any Maven 2 proxy repositories with the domain name 'codehaus.org' should be deleted. 
+See 
+https://support.sonatype.com/hc/en-us/articles/217611787-codehaus-org-Repositories-Should-Be-Removed-From-Your-Nex
+us-Instance[Codehaus repositories], for more information.
+* *'Rebuild Maven Metadata Files'* - This scheduled task should only be run if you need to repair a corrupted 
+Maven repository storage on disk. If run infrequently, you can disable it completely to reserve more space needed 
+for your upgrade.
+* *Staging rules* - If you are a {pro} user that use the application for staging releases, redefine or reduce the 
+number of configured rules to free up space.
+* *Scheduled task for releases* - If you find empty 'Use Index' checkboxes under 'Task Settings', use the 
+opportunity to disable or remove those specific tasks for releases.
+* *Smart Proxy Preemptive Fetch* - The most notable performance benefit is that hidden caches are utilized more 
+efficiently.
 
 ////
 * Reviewing the Custom Metadata capability (when enabled)
 ////
 
 To help you decide how to reduce scheduled tasks, improving the performance of your upgrade, see 
-the knowledge base article https://support.sonatype.com/hc/en-us/articles/213465208-What-do-the-scheduled-tasks-in-Nexus-do-and-how-often-should-I-run-them-['What do the scheduled tasks in Nexus do, and how often should I run them?'].
+the knowledge base article 
+https://support.sonatype.com/hc/en-us/articles/213465208-What-do-the-scheduled-tasks-in-Nexus-do-and-how-often-sho
+uld-I-run-them-['What do the scheduled tasks in Nexus do, and how often should I run them?'].
 
 [[upgrade-start]]
 === Starting the Upgrade
@@ -403,11 +409,10 @@ Content:: This screen displays checkboxes for compatible component formats ('Rep
 and configurations ('Security'), and server configuration ('System'). For 'Repositories' you can select 
 'User-Managed Repositories', 'Repository Targets', and 'Health Check'. For 'Security' you can choose from
 'Anonymous', 'LDAP Configuration', 'NuGet API-Key', 'Realms', 'Roles', 'SSL Certificates', 'Target Privileges', 
-'Users', 'Crowd', and 'User Tokens'. For 'System' you can select 'Email', 'HTTP Configuration', and 'IQ Server' 
-configurations.
+and 'Users'. For 'System' you can select 'Email' and 'HTTP Configuration'.
 
 ////
-Might be worth making this a list.
+Might be worth making this a list. Also moving 'Crowd', 'User Tokens' 'IQ Server', as they are pro options
 ////
 
 NOTE: Repository targets, which use regular expressions to match and filter specific content will upgrade to JEXL 
