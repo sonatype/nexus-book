@@ -13,8 +13,7 @@ In this chapter, we've isolated the most common path for the upgrade process fro
 to 3.1 (or later) only. To help facilitate this process, capabilities have been added in both version 2.14 (or 
 later) and 3.1 (or later). Where appropriate we have also highlighted other upgrade paths for previous versions 
 as well. However, it's important to keep in mind that there may be specific items unique to your installation and 
-upgrade needs. For specific help outside this more standard path consult Sonatype's link:https://support.sonatype.com/hc/en-us/sections/204911768-Installation-Upgrade-and-Compatibility[Support 
-Knowledge Base articles], or contact support directly (available for {pro} customers).
+upgrade needs. For specific help outside this more standard path, please consult Sonatype's link:https://support.sonatype.com/hc/en-us/sections/204911768-Installation-Upgrade-and-Compatibility[Support  Knowledge Base (KB) articles], or contact support directly (available for {pro} customers).
 
 [[why-upgrade]]
 === Why Upgrade?
@@ -32,7 +31,7 @@ Of course, the choice to upgrade ultimately depends on the features your team is
 many cases upgrading to version 3.1 (or later) provides an enhanced set of features to support modern development practices and automation. However, it is a good idea to review Sonatype's support site to compare link:https://support.sonatype.com/hc/en-us/articles/226495428-Nexus-Repository-Manager-Format-Language-Support[format support], link:https://support.sonatype.com/hc/en-us/articles/226489388-Nexus-Repository-Manager-2-x-to-3-x-Feature-Equivalency[feature equivalency], and link:[compatibility across versions].
 
 [[upgrade-types]]
-=== Upgrading Within Specific Versions of {nxrm}
+=== Upgrading Specific Versions of {nxrm} to Version 3.1 (or later)
 
 Upgrading from {nxrm} 2 to 3 requires version 2.14 (or later) and version 3.1 (or later). To upgrade from an
 older version, refer to the specific sections below.
@@ -75,7 +74,7 @@ upgrade process to fail.
 
 As mentioned, {nxrm} 3 represents a modern design shift, involving a new architecture that supports advanced 
 features for today's development practices. As such, a number of core changes to data stored in version 3.1 (or 
-later) occur as part of the upgrade process. Including:
+later) occur as part of the upgrade process. This includes:
 
 * *Component Storage Format (Files to Blobs)* - Components (artifacts) in {nxrm} 2 are stored as individual files
   on disk. Version 3 stores components as <<admin-repository-blobstores,blobs>>. The conversion process requires
@@ -99,7 +98,7 @@ configuration items. The following list of items are not automatically included 
 * environment variables affecting values used to control the repository manager
 * third-party or custom-developed plugins
 * Jetty Server XML configuration files
-* unimplemented repository formats
+* link:https://support.sonatype.com/hc/en-us/articles/226495428-Nexus-Repository-Manager-Format-Language-Support[unimplemented repository formats]
 * manual edits to other files under the `nexus` installation directory, such as edits to
   `nexus/WEB-INF/classes/ehcache.xml`
 * custom log levels or edits to `logback.xml` configuration files (e.g. custom log file rotation, file naming, log patterns)
@@ -107,10 +106,9 @@ configuration items. The following list of items are not automatically included 
 [[upgrade-repo-support]]
 ==== Repository Format Support
 
-{nxrm} 3 provides a greatly expanded set of format support. For a complete list of formats supported across
-versions, please see the
-link:https://support.sonatype.com/hc/en-us/articles/226495428-Nexus-Repository-Manager-Format-Language-Supportassociated[KB article]. However, the list below represents repository formats as of version 2.14 (or later) that will
-be included in the upgrade process to version 3.1 (or later).
+{nxrm} 3 supports an expanded number of repository formats. For a complete list of supported formats in version 2
+and version 3, see the knowledge base article, “Nexus Repository Manager Format / Language Support.” During the
+upgrade process from version 2.14 (or later) to 3.1 (or later), the following repository formats are included:
 
 * npm
 * NuGet
@@ -135,7 +133,7 @@ transferred to
 components
 * Review of <<upgrade-security,security settings>>, and associated differences between version 2.14 (or later) 
 and 3.1 (or later)
-* <<upgrade-performance,Optimization, Performance, and Tuning>>
+* Consider ways to improve <<upgrade-performance,Optimization, Performance, and Tuning>>
 
 [[upgrade-architecture]]
 ==== Supported Installation Scenarios for Upgrading
@@ -152,10 +150,13 @@ Begs the question if there are unsupported, or something we can add here to prev
 [[upgrade-methods]]
 ==== Upgrade Methods
 
-Upgrade is made possible by specific upgrade capabilities in both version 2.14 (or later) and 3.1 (or later)
-(Upgrade: Agent and Upgrade, respectively), and an upgrade tool provided in version 3.1 (or later). Once the
-'Upgrade: Agent' capability, mentioned in <<upgrade-start>>, is enabled and both repository manager instances are
-communicating, you can choose one of three methods to transfer your content:
+An upgrade method specifies the way in which data from version 2.14 (or later) is sent to, and upgraded by,
+version 3.1 (or later). Access to available upgrade functionality, including the upgrade method options, is made
+possible by specific upgrade capabilities ('Upgrade: Agent' and 'Upgrade', respecitvely) in both version 2.14 (or
+later) and 3.1 (or later). In addition, an upgrade tool is provided in version 3.1 (or later) to assist in
+isolating what will be upgraded. Once the upgrade capabilities are enabled, and both repository manager instances
+are communicating, you can use the upgrade tool to choose one of three methods to transfer your content:
+
 
 ////
 Expand on what types of architectures might benefit from the listed options
@@ -167,17 +168,16 @@ HTTP downloading is an upgrade method in which version 3.1 (or later) makes HTTP
 later). This is the slowest option for upgrading.
 
 If version 2.14 (or later) and 3.1 (or later) are on different machines and do not share access to the same file
-system storage, you must use the HTTP download method.
+system storage, you must use the HTTP downloading method.
 
 *File System Copying*
 
 In this upgrade method, version 2.14 (or later) tells version 3.1 (or later) the location of the file and
 where to retrieve the content.
 
-This upgrade method works if versions 2.14 (or later) and 3.1 (or later) are on the same machine, and
-configured in a way that the mounts are accessible by the same path (from one machine to the other), this option
-will work. It is a slightly faster process than the HTTP Download method, and has less impact on the performance
-of version 2.14 (or later).
+This upgrade method works if versions 2.14 (or later) and 3.1 (or later) are on the same machine, and configured
+in a way that the mounts are accessible by the same path (from one machine to the other). It is a slightly faster
+process than the HTTP Download method, and has less impact on the performance of version 2.14 (or later).
 
 *Hard Linking*
 
@@ -194,16 +194,16 @@ convert from 2.14 (or later) file system to the 3.1 (or later) blob store.
 Hard linking is simply a different name for the same inode (files are internally referenced by inodes).
 ////
 
-NOTE: The HTTP download method puts more load on your version 2.14 (or later) instance than other methods,
+NOTE: The HTTP downloading method puts more load on your version 2.14 (or later) instance than other methods,
 because this method requires version 2.14 (or later) to serve all of the content. Copying and hard linking only
 have to be told where the file is, and they obtain it from the file system, directly.
 
 [[upgrade-file-systems]]
 ==== File System Considerations
 
-While discussed in greater detail in <<admin-repository-blobstores,Chapter 4>>, version 3 allows you to
-create and name multiple blob stores to store your content from upgraded from version 2. Before you start 
-the process it is important to consider how you want to identify space within the storage mechanism.
+While discussed in greater detail in <<admin-repository-blobstores,Chapter 4>>, {nxrm} 3 allows you to create and
+name multiple blob stores to store your content. Before you start the upgrade process it is important to consider
+how you want to identify space within the storage mechanism.
 
 When upgrading, make sure you have enough storage capacity in the destination file system(s). For instance, if you
 are using the hard linking <<upgrade-methods,method>>, the bytes themselves are not duplicated (saving space),
@@ -231,8 +231,9 @@ Contact link:https://support.sonatype.com/hc/en-us[Sonatype support] to learn on
 
 *Repository Groups*
 
-Review the contents of your repository groups 2.14 to ensure its contents are a selected for upgrade. A single 
-component within the group, not selected, may prevent the entire group from being upgraded to 3.1. 
+Review the contents of your repository groups in version 2.14 (or later) to ensure its contents are selected for
+upgrade. A single component within the group, not selected, may prevent the entire group from being upgraded to
+3.1 (or later).
 
 ////
 WIP
@@ -302,13 +303,11 @@ version 3.1 (or later).
 [[upgrade-performance]]
 ==== Optimization, Performance, and Tuning
 
-When considering upgrade time and speed, take into account all enabled scheduled tasks and additional settings on
-your version 2.14 (or later) instance that you may not need. Depending on your configuration of version 2.14 (or
-later) you could optimize the performance of your upgrade by either turning off tasks not used or deleting 
-obsolete content. As discussed in this 
-link:https://support.sonatype.com/hc/en-us/articles/213465138-How-can-I-configure-Nexus-to-reduce-disk-space-[arti
-cle about performance and tuning for {nxrm} 2], identify then reduce your list of tasks in version 2.14 (or 
-later) to improve the speed of your repository manager. See some highlights, below:
+When considering upgrade time and speed, take into account all enabled scheduled tasks and additional settings
+that you may not need on your version 2.14 (or later) instance. Depending on your configuration of version 2.14
+(or later) instance, you could optimize the performance of your upgrade by either turning off tasks not used or
+deleting obsolete content. As discussed in this link:https://support.sonatype.com/hc/en-us/articles/213465138-How-can-I-configure-Nexus-to-reduce-disk-space-[article about performance and tuning for {nxrm} 2], identify then reduce your list of tasks in version 2.14 (or 
+later) to improve the speed of your repository manager. Some highlights from the article are provided below:
 
 * *System feeds* - If your organization does not rely on system feeds, often used for team communication, 
 learn how to 
@@ -349,9 +348,9 @@ few basic steps to start the upgrade:
 With the above complete, you can now use the provide upgrade tool in version 3.1 (or later), which will instruct
 you through upgrading in three phases:
 
- . 'Preparing', the phase that prepares the transfer and creation of all components.
- . 'Synchronizing', the phase that counts and processes all components set to upgrade.
- . 'Finishing', the phase that performs final clean up, then closes the process.
+. 'Preparing', the phase that prepares the transfer and creation of all components.
+. 'Synchronizing', the phase that counts and processes all components set to upgrade.
+. 'Finishing', the phase that performs final clean up, then closes the process.
 
 [[upgrade-configuration]]
 ==== Enabling the Upgrade Capability in Version 2.14 (or later)
