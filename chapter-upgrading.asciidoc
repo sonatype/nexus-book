@@ -129,12 +129,15 @@ When upgrading, the most critical decisions you need to make about an upgrade pl
 
 * Identification of a maintenance window for version 2.14 (or later), allowing the upgrade to proceed without
   interruption
-* Selection of an installation scenario that best supports your upgrade plan
-* Selection of an upgrade method
-* Procurement of required system storage, as well as location for content to be transferred to
-* Identification of configurations that may result in failure, and prevent upgrade of certain components
-* Review of security settings, and associated differences between version 2.14 (or later) and 3.1 (or later)
-* Optimization, Performance, and Tuning
+* Selection of an <<upgrade-architecture,installation scenario>> that best supports your upgrade plan
+* Selection of an <<upgrade-methods,upgrade method>>
+* Procurement of required <<upgrade-file-systems,system storage>>, as well as location for content to be 
+transferred to
+* Identification of <<upgrade-support,configurations>> that may result in failure, and prevent upgrade of certain 
+components
+* Review of <<upgrade-security,security settings>>, and associated differences between version 2.14 (or later) 
+and 3.1 (or later)
+* <<upgrade-performance,Optimization, Performance, and Tuning>>
 
 [[upgrade-architecture]]
 ==== Supported Installation Scenarios for Upgrading
@@ -189,6 +192,8 @@ This is the fastest option because you will not have to move the bytes around.
 ////
 We should say what this method is, similar to the others. It lacks some detail, especially about how one would
 convert from 2.14 (or later) file system to the 3.1 (or later) blob store.
+
+Hard linking is simply a different name for the same inode (files are internally referenced by inodes).
 ////
 
 NOTE: The HTTP download method puts more load on your version 2.14 (or later) instance than other methods,
@@ -219,13 +224,22 @@ configuration details to prevent any failures.
 
 Before upgrading repositories to version 3.1 (or later), find the repository IDs in version 2.14 (or later) and
 plan how you will rename any conflicting repositories in version 3.1 (or later). Your repository IDs in version
-2.14 (or later) may differ by letter case. This means you may have to manually edit the IDs in before the upgrade 
-process. Contact our link:https://support.sonatype.com/hc/en-us[support team] to learn on how to do this safely.
+2.14 (or later) may differ by letter case. This means you may have to edit the IDs, manually, before the upgrade 
+process. 
+
+////
+Contact link:https://support.sonatype.com/hc/en-us[Sonatype support] to learn on how to do this safely.
+////
 
 *Repository Groups*
 
-Review the contents of your repository groups. If empty, the upgrade plan will not permit transfer, as validation 
-will fail.
+Review the contents of your repository groups 2.14 to ensure its contents are a selected for upgrade. A single 
+component within the group, not selected, may prevent the entire group from being upgraded to 3.1. 
+
+////
+WIP
+https://issues.sonatype.org/browse/NEXUS-10601
+////
 
 *User Tokens*
 
