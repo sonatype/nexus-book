@@ -1,0 +1,314 @@
+[[upgrading]]
+==  Upgrading {nxrm}
+{inall}
+
+[[upgrade-introduction]]
+=== Introduction
+
+The upgrade feature provides a built-in supported method for replicating components and configurations from 
+{nxrm} versions 2.14 to 3.1. Future iterations of this feature will be available for versions beyond both 2.14 
+and 3.1, alike.
+
+This tool helps you build an upgrade plan which allows version 3 to talk to version 2 by way of a 
+capability that communicates with the upgrade tool. The plan you create with version 3 will provide a 
+wizard that guides you through an upgrade from the latest version of 2.x or higher to {nxrm} 3.1 or higher.
+
+During the majority of the upgrade process, version 2 should remain functioning at high capacity. You or your 
+organization should put strong emphasis on performance and stability when designing the upgrade plan.
+
+NOTE: This chapter will cover a special feature used to upgrade from {nxrm} 2 to 3. However, the repository 
+manager provides alternative methods to upgrade if you are currently running older versions of 3, all the way 
+back to milestone 7. See our support knowledge base to walk you through the steps to upgrade from 
+https://support.sonatype.com/hc/en-us/articles/222159808[milestone 7 of version 3 to 3.0.0 final] or 
+https://support.sonatype.com/hc/en-us/articles/217967608[version 3.0.0 to a later version].
+
+////
+Expand this intro to give readers a 10-foot view of the upgrade tool
+////
+
+[[upgrade-architecture]]
+=== Supported Architecture for Upgrading
+
+There are two architectures that can be used for upgrading. You can have separate version 2 and version 3 
+servers, or you can have both versions of 2 and 3 running on the same server in different service locations.
+ 
+[[upgrade-prep]]
+=== Preparing for an Upgrade
+
+If you decide to update versions 2 and 3 to the latest instances that allow you to upgrade, the most critical 
+decisions you or your organization make around the upgrade plan should include: 
+
+* where they want your components to be transferred to when the upgrade is complete
+* which of the two architectures is best for your upgrade plan
+* designating a maintenance window for version 2 so you can take it down for a period, and the upgrade can 
+proceed with interruption
+* how your system storage is structured and what ingestion methods are available to you
+
+The upgrade tool only allows one transfer at a time. After it starts you must wait for the upgrade 
+to complete if you decide to transfer more content. If you press 'Abort' during the 'Preparing' or 
+'Synchronizing' phases the contents will not be transferred.
+
+[[upgrade-performance]]
+==== Performance and Tuning for Upgrading
+
+There are several ways to tune {nxrm} 2.14, or later, for a quicker upgrade. Review the current configuration in 
+your compatible version of 2 to clean up content that may hinder performance.
+
+When considering upgrade time and speed, take into account all enabled scheduled tasks on your version 2 
+instance that you may not need. Depending on your configuration of version 2 you could optimize the 
+performance of the application by:
+
+* disabling system feeds
+* disabling repair tasks
+* reviewing the enabled Custom Metadata capability
+* removing unused snapshots
+* removing old scheduled tasks not in use
+* removing repositories no longer supported by the repository manager (e.g. 
+https://support.sonatype.com/hc/en-us/articles/217611787-codehaus-org-Repositories-Should-Be-Removed-From-Your-Nexus-Instance[Codehaus repositories])
+* disabling 'Rebuild Maven Metadata Files' scheduled tasks
+* increasing your file size limit
+
+////
+This section can be expanded; each bullet point can attributed to real-life scenarios
+////
+
+Another factor, the quality of your network, will arbitrarily impact the speed of ingestion methods 
+(e.g HTTP download).
+
+[[upgrade-file-systems]]
+==== File System Considerations
+
+As mentioned in <<admin-repository-blobstores,Chapter 4>> you can create new blob stores and determine the 
+amount of space for each, if more than one exists. In version 3, consider how you want to organize this storage 
+mechanism. Components in {nxrm} 2.x are stored as individual files on disk. {nxrm} version 3 stores components as 
+blobs. The conversion process requires the repository manager to iterate every component in your storage. This 
+process will take the bulk of the time required for upgrading.
+
+When upgrading, make sure you have enough storage capacity in the destined file system(s). If you are using 
+the hard linking ingestion method, the bytes themselves are not duplicated (saving space), but you must ensure 
+there are enough free inodes for the content you want to transfer during upgrade.
+
+In the instance you have configured your repository manager HTTP context and path as a reverse proxy server
+the traffic coming from version 2 could be busy, as you start the upgrade steps. Version 3 starts pulling 
+over the content with the upgrade tool as content is added to version 2.
+
+NOTE: HTTP download ingestion puts more load on your version 2 instance than other ingestion methods, because 
+this method requires version 2 to serve all of the content. Copying and hard linking only have to be told where 
+the file is, and they obtain it from the file system, directly.
+
+[[upgrade-content-prep]]
+=== Preparing Content for Upgrade
+
+*IQ Server*
+
+{inrmonly}
+
+If upgrading {iq} settings and configuration, ensure that your licenses include the integration for both versions 
+2 and 3. Your configuration for 'IQ Server URL', 'Username', 'Password', and 'Request Timeout' will be included 
+in the upgrade. Additional configuration, such as analysis properties, trust store usage, and the enabled {iq} 
+connection itself will be replicated from versions 2 to 3.
+
+*NuGet API Key*
+
+The upgrade tool will add all keys to {nxrm} 3 that are present in {nxrm} 2.14 when asked, even if the version 2 
+NuGet API Key Realm is not active. This is because there is no explicit on or off setting for NuGet keys.
+
+*Repository IDs*
+
+Before upgrading repositories to version 3, find the repository IDs in version 2 and plan how you will 
+rename any conflicting repositories in version 3. Contact our https://support.sonatype.com/hc/en-us[support
+team] to learn on how to do this safely.
+
+*Repository Groups*
+
+Review the contents of your repository groups. If empty, the upgrade plan will not permit transfer, as validation 
+will fail.
+
+*User Tokens*
+
+The upgrade tool can only replicate pre-existing user tokens from version 2 to 3 if the 'Enabled' box in version 
+2 is checked. In version 2, click the 'User Token' tab, in the 'Administration' menu, and enable the setting. 
+
+////
+link to user token chapter
+////
+
+
+*Repository Health Check and SSL Health Check*
+
+You can include both your existing {rhc} and its corresponding SSL trust store configuration when you upgrade 
+from version 2 to version 3. If you are a {oss} user you only have the ability to upgrade your settings from the 
+'Health Check: Configuration' capability. If you run {pro}, you can also upgrade your existing 'SSL: Health 
+Check' settings in version 2 to version 3. After the upgrade is complete settings for both 'Health Check: 
+Configuration' and 'SSL: Health Check' capabilities will be enabled in version 3, as they were in version 2.
+
+*Repository Targets and Target Privileges*
+
+If upgrading your Repository Targets from version 2 to version 3, it is recommended you also upgrade your Target 
+Privileges and vice versa.  If you do not upgrade both, you may find that you need to make further adjustments to 
+version 3 configuration to have things work as they did in version 2.
+
+////
+[[upgrade-security]]
+==== Security and Upgrade
+
+TBD
+
+potential new section
+////
+
+[[upgrade-methods]]
+=== Upgrade Methods
+
+In order to start an upgrade, version 2 has to listen for version 3 to initiate communication. This is the core
+property of the 'Upgrade: Agent'. When the upgrade wizard in version 3 helps you build an upgrade plan, it
+talks to your version 2 instance through the upgrade-agent to find out what repositories exist (e.g. to list
+them in the wizard user interface). When you pick them, version 3 tells version 2 to start compiling a full list
+of what it has that needs replicating in each of those repositories. Ultimately, this creates a scheduled task
+that walks through the repository storage folder, lists the files, then synchronizes them, storing the metadata
+in the changelog database.
+
+On the version 3 side, components are stored as blobs. The conversion process requires version 3 to iterate over 
+every component in your storage.
+
+Once the 'Upgrade: Agent' capability, mentioned in <<upgrade-start>>, is enabled and both repository
+manager instances are stood up and communicating, you can consider one of three ingestion methods: HTTP download,
+file system copying, or hard linking. The choice of ingestion method can be made on a repository-by-repository
+basis, but there is an upgrade-wide default.
+
+////
+Expand on what types of architectures might benefit from the listed options
+////
+
+*HTTP Downloading*
+
+HTTP downloading is an ingestion method in which version 3 will make HTTP requests to version 2. This is the 
+slowest option for upgrading.
+
+If {nxrm} 2.x and {nxrm} 3.x are on different machines and do not share access to the same file system storage, 
+you must use the HTTP download method.
+
+*File System Copying*
+
+If versions 2 and 3 are on the same machine (or share access to the same file systems) then version 3 will 
+copy the files from version 2. Version 2 will tell version 3 the location of the file and where to retrieve the 
+content. 
+
+Assuming versions 2 and 3 are on the same machine, configured in a way that the mounts are accessible by the same 
+path (from one machine to the other) this option will work. It is a slightly faster process than the download 
+method and has less impact on the performance of version 2.
+
+*Hard Linking*
+
+This method only works on the same file system. If you want to hard link, configure your instance of version 3 in 
+such a way that you have a blob store defined in an appropriate location where hard linking is possible.
+
+This is the fastest option because you will not have to move the bytes around.
+
+[[upgrade-process-expectations]]
+=== Upgrade Process and Expectations
+
+While version 2 is active repository content will be added, updated, and deleted as the upgrade continues 
+within version 3. Version 3 will pick up these changes. However, configuration changes such as new 
+repositories, realm settings, permissions, roles and role assignments, HTTP configuration, and SSL certificates 
+should not be changed. After the upgrade starts such changes will not be picked up by version 3 and may result 
+in failure.
+
+[[upgrade-repo-support]]
+=== Repository Format Support
+
+Below is a list of repositories available in version 2 and 3 and which are supported by upgrading. For each of 
+these formats you can upgrade server-wide settings, security realm settings, and repository content.
+
+* npm
+* NuGet
+* Site/Raw
+* Maven2
+
+[[upgrade-start]]
+=== Starting the Upgrade
+
+After considerations around system performance and storage are taken into account, there are a few basic steps 
+to start the upgrade:
+
+* Upgrade the repository manager to the latest version of 2.x and configure the upgrade capability that allows 
+you to synchronize that instance with {nxrm} 3.1 or later.
+* Run 2.14 or later on one server, and version 3.1 or later on another non-conflicting server.
+* Configure the upgrade-agent in version 2 and start the upgrade wizard in version 3.
+
+{nxrm} 3.1 provides a wizard to instruct you through upgrading in three phases:
+
+ * 'Preparing', the phase that prepares the transfer and creation of all components.
+ * 'Synchronizing', the phase that counts and processes all components set to upgrade.
+ * 'Finishing', the phase that performs final clean up, then closes the process.
+
+To execute the upgrade plan you must open the connection between version 2 and 3. The connection finds what 
+repositories exist and lists them in the upgrade wizard. It enables the port you configured to run version 2 
+remotely in order to communicate with version 3. The upgrade plan, as a whole, is a two-part process where 
+version 2 must be set up to listen for a version 3 instance in order for the former to talk to the latter.
+
+[[upgrade-configuration]]
+==== Enabling Upgrade in Version 2
+
+In version 2, activate the 'Upgrade: Agent' capability to open the connection for the upgrade-agent. Follow
+these steps:
+
+* Click 'Administration' in the left-hand panel
+* Open the 'Capabilities' screen
+* Select 'New' to prompt the 'Create new capability' modal
+* Select 'Upgrade: Agent' as your capability 'Type'
+* Click 'Add' to close the modal
+
+In the lower section of the 'Capabilities' interface, the repository manager acknowledges the upgrade-agent as
+'Active'.
+
+[[upgrade-plan]]
+==== Enabling Upgrade in Version 3
+
+Next, sign in to your version 3 instance. You will create a 'Upgrade' capability to enable the feature. When
+enabled, the 'Upgrade' item appears in the 'Administration' menu, under 'System'. Follow these steps to
+activate the capability:
+
+* Click 'System', to open the 'Capabilities' screen
+* Click 'Create capability'
+* Select 'Upgrade', then click 'Create capability' to enable the upgrade
+
+[[upgrade-content]]
+==== Upgrading Content
+
+After you establish upgrade capabilities for versions 2 and 3, you will activate the wizard to start your
+upgrade. In version 3 go to the 'Administration' menu and select 'Upgrade', located under 'System', to
+open the wizard.
+
+Overview:: The wizard will provide an overview of what is allowed for an upgrade as well as warnings on what 
+cannot be upgraded.
+
+Agent Connection:: This screen presents two fields, 'URL' and 'Access Token'. The 'URL' field should contain the
+base URL (including context path) of your version 2 server (e.g. +http://localhost:8081/nexus/+). The 'Access
+Token' field should contain the security key from your version 2 'Upgrade: Agent' capability details.
+
+Content:: This screen displays checkboxes for compatible component formats ('Repositories'), security features 
+('Security'), and server configuration ('System'). For 'Repositories' you can select 'User-Managed Repositories', 
+'Repository Targets', and 'Health Check'. For 'Security' you can choose from 'Anonymous', 'LDAP Configuration', 
+'NuGet API-Key', 'Realms', 'Roles', 'SSL Certificates', 'Target Privileges', 'Users', 'Crowd', and 'User Tokens'. 
+For 'System' you can select 'Email', 'HTTP Configuration', and 'IQ Server' configurations.
+
+NOTE: Repository targets, which use regular expressions to match and filter specific content will upgrade to JEXL 
+syntax, used for <<content-selectors,content selectors>>.
+
+Repository Defaults:: If 'User-Managed Repositories' is one of your selections from the 'Content' screen, the 
+'Repository Defaults' screen allows you to select directory destination and upgrade method. The first dropdown 
+menu, 'Destination' gives your option to pick a blob store name different than the default. The second dropdown
+menu, 'Method', allows you to choose among hard linking, copying local files or downloading. This section allows 
+you to click and change each repository's individual method and destination (i.e. blob store).
+
+Repositories:: If 'User-Managed Repositories' is one of your selections from the 'Content' screen, the 
+'Repositories' screen allows you to select which repositories you want to upgrade. You can either select all 
+repositories with one click, at the top of the table. Alternatively, you can click each individual repository. In 
+addition to 'Repository', the table displays information around the status of the repository.
+
+Preview:: This table displays a preview of the content set for upgrade, selected in the previous screens. 
+Click 'Begin', then confirm from the modal, that you want to start the upgrade. After the preview 'Preparing', 
+'Synchronizing', and 'Finishing' will follow.
+
+When the final content upgrade ends, go to your version 3 instance to see all your content replicated there.
