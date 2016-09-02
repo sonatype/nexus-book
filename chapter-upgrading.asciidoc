@@ -201,9 +201,9 @@ have to be told where the file is, and they obtain it from the file system, dire
 [[upgrade-file-systems]]
 ==== File System Considerations
 
-While discussed in greater detail in <<admin-repository-blobstores,Chapter 4>>, {nxrm} 3 does allow you to
-create new blob stores and determine the amount of space for each, if more than one exists. However, it is
-important to consider how you want to organize and reserve space for this storage mechanism.
+While discussed in greater detail in <<admin-repository-blobstores,Chapter 4>>, version 3 allows you to
+create and name multiple blob stores to store your content from upgraded from version 2. Before you start 
+the process it is important to consider how you want to identify space within the storage mechanism.
 
 When upgrading, make sure you have enough storage capacity in the destination file system(s). For instance, if you
 are using the hard linking <<upgrade-methods,method>>, the bytes themselves are not duplicated (saving space),
@@ -304,8 +304,8 @@ version 3.1 (or later).
 
 When considering upgrade time and speed, take into account all enabled scheduled tasks and additional settings on
 your version 2.14 (or later) instance that you may not need. Depending on your configuration of version 2.14 (or
-later) you could optimize the performance of you upgrade by either turning off or deleting obsolete content and
-tasks. As discussed in this 
+later) you could optimize the performance of your upgrade by either turning off tasks not used or deleting 
+obsolete content. As discussed in this 
 link:https://support.sonatype.com/hc/en-us/articles/213465138-How-can-I-configure-Nexus-to-reduce-disk-space-[arti
 cle about performance and tuning for {nxrm} 2], identify then reduce your list of tasks in version 2.14 (or 
 later) to improve the speed of your repository manager. See some highlights, below:
@@ -363,6 +363,7 @@ Follow these steps:
 . Open the 'Capabilities' screen
 . Select 'New' to prompt the 'Create new capability' modal
 . Select 'Upgrade: Agent' as your capability 'Type'
+. Copy and save the 'Access Token' (you'll need it for the 'Upgrade' tool in 3.1)
 . Click 'Add' to close the modal
 
 In the lower section of the 'Capabilities' interface, the repository manager acknowledges the upgrade-agent as
@@ -376,7 +377,7 @@ access the 'Upgrade' tool. Follow these steps:
 
 . Click 'System', to open the 'Capabilities' screen
 . Click 'Create capability'
-. .Select 'Upgrade', then click 'Create capability' to enable the upgrade
+. Select 'Upgrade', then click 'Create capability' to enable the upgrade
 
 
 [[upgrade-content]]
@@ -391,16 +392,19 @@ start your upgrade.
 Overview:: The upgrade tool provides an overview of what is allowed for an upgrade as well as warnings on what 
 cannot be upgraded.
 
-Agent Connection:: This screen presents two fields, 'URL' and 'Access Token'. The 'URL' field should contain the
-base URL (including context path) of your version 2.14 (or later) server (e.g. +http://localhost:8081/nexus/+).
-The 'Access Token' field should contain the security key from your version 2.14 (or later) 'Upgrade: Agent'
-capability details.
+Agent Connection:: This screen presents two fields, 'URL' and 'Access Token'. Follow these steps: 
+
+. In the 'URL' field, enter the base URL (including context path) of your version 2.14 (or later) server (e.g. 
++http://localhost:8081/nexus/+).
+. In the 'Access Token' field, enter the security key, copied from your version 2.14 (or later) 'Upgrade: Agent'
+capability 'Settings'.
 
 Content:: This screen displays checkboxes for compatible component formats ('Repositories'), security features 
-('Security'), and server configuration ('System'). For 'Repositories' you can select 'User-Managed Repositories', 
-'Repository Targets', and 'Health Check'. For 'Security' you can choose from 'Anonymous', 'LDAP Configuration', 
-'NuGet API-Key', 'Realms', 'Roles', 'SSL Certificates', 'Target Privileges', 'Users', 'Crowd', and 'User Tokens'. 
-For 'System' you can select 'Email', 'HTTP Configuration', and 'IQ Server' configurations.
+and configurations ('Security'), and server configuration ('System'). For 'Repositories' you can select 
+'User-Managed Repositories', 'Repository Targets', and 'Health Check'. For 'Security' you can choose from
+'Anonymous', 'LDAP Configuration', 'NuGet API-Key', 'Realms', 'Roles', 'SSL Certificates', 'Target Privileges', 
+'Users', 'Crowd', and 'User Tokens'. For 'System' you can select 'Email', 'HTTP Configuration', and 'IQ Server' 
+configurations.
 
 ////
 Might be worth making this a list.
@@ -424,4 +428,6 @@ Preview:: This table displays a preview of the content set for the upgrade, sele
 Click 'Begin', then confirm from the modal, that you want to start the upgrade process. After the preview 
 'Preparing', 'Synchronizing', and 'Finishing' will follow.
 
-When the final content upgrade ends, go to your version 3 instance to see all your content replicated there.
+When the upgrade process completes, your content is replicated for you to view. Click the Browse button
+image:figs/web/ui-browse-button-icon.png[scale=50] in the main toolbar to access all content upgraded from 
+version 2.14 (or later) to 3.1 (or later).
