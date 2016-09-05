@@ -107,14 +107,12 @@ filtering works for all columns in a list and can be used in most list displays 
 example you can use it to filter the users list to find disabled users, filter the routing list, the roles list
 and many more.
 
-
 [[fig-ui-list-filtering]]
 .Filtering the Repository List to Display Only Hosted Repositories
 image::figs/web/ui-list-filtering.png[scale=50]
 
 The column headers in most lists can be clicked to invoke a sorting of the list by the respective column as well as
 activate and deactivate specific columns.
-
 
 [[search-components]]
 === Searching for Components
@@ -130,13 +128,13 @@ one of the nested options like 'Custom', 'Maven' and others. The common feature 
 selector for the search without results is displayed in <<fig-search>>.
 
 [[fig-search]]
-.Keyword Search with 'Format' and 'More criteria' Input
-image::figs/web/search.png[scale=40]
+.Keyword Search with 'More criteria' Input
+image::figs/web/search.png[scale=75]
 
 Beneath the search title is the search criteria input area that displays the current criteria input e.g.,
 'Keyword'. Beside the current criteria is a 'More Criteria' button that allows you to add further criteria to your
 search. Each criteria can be removed by clicking on the minus/dash icon within the criteria input box. The cross/x in
-the input box resets the value.  In <<fig-search>> you can see the 'Format' criteria added to the search.
+the input box resets the value.
 
 Each criteria can be used with a search term and supports the * character (star, asterisk) for pattern matching. E.g.,
 you could search with the 'Group' search criteria and search for +org.sonatype.nexus.*+. This would return components
@@ -150,8 +148,7 @@ repositories:
 Keyword:: A keyword is a string used for a search, where matches in 'Format', 'Group', 'Name', 'Version' and all
 other component metadata values are returned.
 
-Format:: The format of the repository in which to look for a component. E.g. {OSS} supports `maven2`, `docker`,
-`nuget` and `raw`.
+Format:: The format of the repository in which to look for a component.
 
 Group:: An identifier that groups components in some way, such as by organization. It can also be used to simply to
 create a specific namespace for a project. Not all repository formats use the notion of a group. Some tools simply
@@ -173,6 +170,17 @@ SHA-256 or SHA-512 algorithm.
 In addition there are criteria that can be used to search for components in repositories with specific formats
 only:
 
+Docker Repositories::
+
+Image Name;; The name for the Docker image. It is equivalent to the 'Name' of the component in the repository
+manager that represents the Docker image.
+
+Image Tag;; The tag for the Docker image. It is equivalent to the 'Version' of the component in the repository
+manager that represents the Docker image.
+
+Layer Id;; The unique identifier for a Docker image layer. It is equivalent to the 'layerId' attribute of the
+component in the repository manager that represents the Docker image.
+
 Maven Repositories::
 
 Group Id;; The Maven +groupId+ for a component. Other build systems supporting the Maven repository format call
@@ -193,17 +201,6 @@ release components. `SNAPSHOT` development components use a time-stamped version
 
 Extension;; The extension used for a specific asset of a component.
 
-npm Repositories::
-
-Additional criteria for component searches in 'npm Repositories' are:
-
-Group;; The npm 'Group' is equivalent to the component group, also sometimes referred to as scope by npm users.
-
-Name;; The npm 'Name' is equivalent to the component version.
-
-Version;; The npm 'Version' is equivalent to the component version.
-
-
 NuGet Repositories::
 
 ID;; The NuGet component identifier is known as `Package ID` to NuGet users.
@@ -211,22 +208,16 @@ ID;; The NuGet component identifier is known as `Package ID` to NuGet users.
 Tags;; Additional information about a component formatted as space-delimited keywords, chosen by the package
 author.
 
-Docker Repositories::
+PyPI Repositories::
 
-Image Name;; The name for the Docker image. It is equivalent to the 'Name' of the component in the repository
-manager that represents the Docker image.
+Classifiers;; Denote the maturity, intended audience, license and supported versions the creator wished 
+associated with their component.
 
-Image Tag;; The tag for the Docker image. It is equivalent to the 'Version' of the component in the repository
-manager that represents the Docker image.
+Description;; Creator provided long description of the component.
 
-Layer Id;; The unique identifier for a Docker image layer. It is equivalent to the 'layerId' attribute of the
-component in the repository manager that represents the Docker image.
+PyPI Keywords;; Associated component keywords.  Generally used as identifiers to search.
 
-Raw Repositories:: 
-
-Searches in 'Raw Repositories' can be narrowed down with the 'Path' criteria. It allows you to specify a file path
-to the components in the raw repository. The search can return all components or files with the respective path
-pattern.
+Summary;; Creator provided description of the component.
 
 ==== Search Results
 
@@ -235,13 +226,16 @@ in the 'Search' feature view, the first 1000 results become visible in the compo
 displayed  in <<fig-search-results>>. If more than 1000 results exist, notation will appear under the filters 
 relaying how many items were found in total.
 
-The components are listed with their 'Name', 'Group', 'Version', 'Format', 'Repository', 'Age' and 'Popularity' 
-information and are sorted alphabetically by 'Name'.  Columns and sort order can be adjusted like in all other 
-lists.
+The components are listed with their 'Name', 'Group', 'Version', 'Format' and 'Repository' information and are 
+sorted alphabetically by 'Name'.  Columns and sort order can be adjusted like in all other lists.
 
 [[fig-search-results]]
-.Results of a Component Search for +junit+
-image::figs/web/search-results.png[scale=35]
+.Results of a Component Search for +format maven2+
+image::figs/web/search-results.png[scale=75]
+
+////
+--Hiding this until is https://issues.sonatype.org/browse/NEXUS-10770 resolved and this is restored.
+--Should also readd the columns to the list preceeding the figure
 
 The 'Age' column displays the age of the component.  The age of a component is typically calculated from the
 initial release to a repository -- typically a public repository such as the Central Repository. Since most Java
@@ -254,6 +248,7 @@ a good idea on the adoption rate of a new release. For example if a newer versio
 popularity compared to an older version, you might want to check the upstream project and see if there is any
 issues stopping other users from upgrading that might affect you as well. Another reason could be that the new
 version does not provide significant improvements to warrant an upgrade for most users.
+////
 
 Selecting a component in the list changes to a display of the component information documented in
 <<component-information>>.
@@ -310,12 +305,19 @@ configured to 'nuget'.
 npm Search::
 
 The 'npm' search is a predefined search available via the 'npm' menu item in the 'Search' section of the 'Browse'
-main menu. It defaults to inputs for 'Scope', 'Name' and 'Version' and supports adding further criteria.
+main menu. It defaults to inputs for 'Scope', 'Name' and 'Version' and supports adding further criteria. The 
+format is configured to 'npm'.
+
+PyPI Search::
+
+The 'PyPI' search is a predefined search available via the 'PyPI' menu item in the 'Search' section of the 
+'Browse' main menu. It defaults to inputs for 'Classifiers', 'Description', 'PyPI Keywords' and 'Summary' and 
+supports adding further criteria. The format is configured to 'pypi'.
 
 Raw Search::
 
 The 'Raw' search is a predefined search available via the 'Raw' menu item in the 'Search' section of the 'Browse'
-main menu. It defaults to an input for 'Path' and supports adding further criteria. The format is configured to
+main menu. It defaults to an input for 'Name' and supports adding further criteria. The format is configured to
 'raw'.
 
 ==== Example Use Case - SHA-1 Search
@@ -336,7 +338,6 @@ them in a dependency declaration.
 TIP: A SHA-1 or similar checksum search can be a huge timesaver when migrating from a legacy build system, where
 the used libraries are checked into the version control system as binary components with no version information
 available.
-
 
 [[browse-browse]]
 === Browsing Repositories and Repository Groups
@@ -414,7 +415,7 @@ manager storage
 
 [[fig-asset-info]]
 .Asset Info Example
-image::figs/web/asset-info.png[scale=35]
+image::figs/web/asset-info.png[scale=75]
 
 The 'Attributes' section contains further metadata about the asset related to 'Cache', 'Checksum' and
 'Content_attributes'.  An example is displayed in <<fig-asset-attributes>>.
@@ -425,11 +426,10 @@ repository has a 'Maven2' section with attributes for 'extension', 'baseVersion'
 
 [[fig-asset-attributes]]
 .Asset Attributes Example
-image::figs/web/asset-attributes.png[scale=35]
+image::figs/web/asset-attributes.png[scale=70]
 
 ////
-this was for version 3 pre CMA refactor .. so might be fine as is once
-adapted .. 
+this was for version 3 pre CMA refactor .. so might be fine as is once adapted .. 
 
 [[using-sect-uploading]]
 === Uploading Maven Artifacts 
