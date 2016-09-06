@@ -26,20 +26,22 @@ Inbound client communication includes
 
 {inrmonly}
 
-When the SSL certificate of a remote proxy repository is not trusted, the repository may be automatically blocked or
-outbound requests fail with a message similar to 'PKIX path building failed'.
+When the SSL certificate of a remote proxy repository is not trusted, the repository may be automatically blocked 
+or outbound requests fail with a message similar to 'PKIX path building failed'.
 
 {pro} includes a specific 'SSL' configuration tab for each repository in the repository configuration documented
 in <<confignx-sect-manage-repo>> to solve this problem. It is displayed when the remote URL of a proxy repository
 resolves to an `https://` location.
 
-The 'SSL' tab shows the details of the remote certificate, as in the example <<fig-ssl-secure-central>>. Use the 'SSL'
-tab when the remote certificate is not issued by a well-known public certificate authority included in the default Java
-trust store. This specifically also included usage of self-signed certificates used in your organization.
+The 'SSL' tab shows the details of the remote certificate, as in the example <<fig-ssl-secure-central>>. Use the 
+'SSL'tab when the remote certificate is not issued by a well-known public certificate authority included in the 
+default Java trust store. This specifically also included usage of self-signed certificates used in your 
+organization.
 
-To confirm trust of the remote certificate, click the 'Add to trust store' button on the top-right of the 'SSL' tab.
-This feature is analogous to going to the <<fig-ssl-certificates-list>> user interface and using the 'Add' button found
-there. If the certificate is already added, the button can undo this operation and will read 'Remove from trust store'.
+To confirm trust of the remote certificate, click the 'Add to trust store' button on the top-right of the 'SSL' 
+tab. This feature is analogous to going to the <<fig-ssl-certificates-list>> user interface and using the 'Add' 
+button found there. If the certificate is already added, the button can undo this operation and will read 'Remove 
+from trust store'.
 
 The checkbox labelled 'Use Nexus SSL trust store' is used to confirm that the repository manager should consult
 the private, internal truststore when confirming trust of the remote repository certificate. Without adding the
@@ -62,18 +64,19 @@ may become untrusted.
 
 {inrmonly}
 
-{pro} allows you to manage trust of all remote SSL certificates in a centralized user interface. Use this interface when
-you wish to examine all the currently trusted certificates for remote repositories, or manage certificates from secure
-remotes that are not repositories.
+{pro} allows you to manage trust of all remote SSL certificates in a centralized user interface. Use this 
+interface when you wish to examine all the currently trusted certificates for remote repositories, or manage 
+certificates from secure remotes that are not repositories.
 
-Access <<fig-ssl-certificates-list>> by selecting 'SSL Certificates' in the left-hand 'Administration' menu. The list
-shows any certificates that are already trusted.
+Access <<fig-ssl-certificates-list>> by selecting 'SSL Certificates' in the left-hand 'Administration' menu. The 
+list shows any certificates that are already trusted.
 
 [[fig-ssl-certificates-list]]
 .SSL Certificates Administration
 image::figs/web/ssl-certificates-list.png[scale=50]
 
-Buttons are provided to 'Refresh' the list from the server, 'Add' a new certificate or 'Delete' the selected certificate.
+Buttons are provided to 'Refresh' the list from the server, 'Add' a new certificate or 'Delete' the selected 
+certificate.
 
 The 'Add' button presents two options - 'Paste PEM' and 'Load from server'.
 
@@ -199,24 +202,24 @@ We will elaborate here on the second approach, which is to use the Eclipse Jetty
 TIP: Keep in mind that you will have to redo some of these configurations each time you upgrade the repository
 manager, since they are modifications to the embedded Jetty instance located in '$NEXUS_HOME'.
 
-To configure the Eclipse Jetty instance to accept HTTPS connections, first enable the file +jetty-https.xml+ to the
-Jetty startup configuration in +wrapper.conf+ as detailed in <<nexus-home-conf>>.
+To configure the Eclipse Jetty instance to accept HTTPS connections, first enable the file +jetty-https.xml+ to 
+the Jetty startup configuration in +wrapper.conf+ as detailed in <<nexus-home-conf>>.
 
-Next, the HTTP port you want to use for the HTTPS connection has to be defined by setting the +application-port-ssl+
-property in +nexus.properties+.
+Next, the HTTP port you want to use for the HTTPS connection has to be defined by setting the +application-port-ssl+ property in +nexus.properties+.
 
 ----
 application-port-ssl=8443
 ----
 
-Create a keystore file containing a single certificate that Jetty will use for the HTTPS connections. Instructions are
-available on the http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html[Eclipse Jetty documentation
-site]. You may find the common keytool commands in our SSL Certiicate Guide a useful reference.
+Create a keystore file containing a single certificate that Jetty will use for the HTTPS connections. 
+Instructions are available on the http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html[Eclipse Jetty documentation site]. You may find the common keytool commands in 
+https://support.sonatype.com/hc/en-us/articles/213465768[SSL Certificate Guide] a useful reference.
 
-Adjust the values in the +jetty-https.xml+ file in +NEXUS_HOME/conf+ to reflect your keystore settings. The default
-configuration in that file suggests to create a subdirectory +NEXUS_HOME/conf/ssl+ and copy the +keystore+ file in there
-and rename it to +keystore.jks+. You can either do that or choose a different location or filename for your keystore
-file and update the paths for the +keystore+ and +truststore+ in the +jetty-https.xml+ file.
+Adjust the values in the +jetty-https.xml+ file in +NEXUS_HOME/conf+ to reflect your keystore settings. The 
+default configuration in that file suggests to create a subdirectory +NEXUS_HOME/conf/ssl+ and copy the 
++keystore+ file in there and rename it to +keystore.jks+. You can either do that or choose a different location 
+or filename for your keystore file and update the paths for the +keystore+ and +truststore+ in the 
++jetty-https.xml+ file.
 
 Once this is all in place you can start up the repository manager and access the user interface at e.g.,
 +https://localhost:8443/nexus+.  If you have just created a self-signed certificate, modern web browsers will warn
