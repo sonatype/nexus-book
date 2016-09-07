@@ -14,10 +14,10 @@ manager running successfully in production deployments.
 [[install-sect-downloading]]
 === Downloading
 
-{nxrm} can be downloaded from https://support.sonatype.com/forums/23079216[Sonatype]. Distributions are available for the
-64-bit versions for Apple OSX, Microsoft Windows and Unix/Linux. They contain all necessary resources to install and run
-the repository manager. You can download a plain archive file or an installer for your operating system of a specific release
-version.
+{nxrm} can be downloaded from http://www.sonatype.com/nexus-repository-oss[Sonatype]. Distributions are available 
+for the 64-bit versions for Apple OSX, Microsoft Windows and Unix/Linux. They contain all necessary resources to 
+install and run the repository manager. You can download a plain archive file or an installer for your operating 
+system of a specific release version.
 
 The plain archive files are Gzip TAR (TGZ) or ZIP files and are suitable for installation without a graphical user
 interface purely using command line-based interaction. The file names include operating system qualifiers and are
@@ -315,7 +315,7 @@ In the second line you will run a default priority to add the +nexus+ service be
 *systemd.*
 
 This example is a script that uses +systemd+ to run the repository manager service. Create a file called 
-+nexus.service+. Add the following contents, then save the file in the +/usr/local/bin+ directory.
++nexus.service+. Add the following contents, then save the file in the +/etc/systemd/system/+ directory.
 
 ----
 [Unit]
@@ -326,6 +326,9 @@ After=network.target
 Type=forking
 ExecStart=/opt/nexus/bin/nexus start
 ExecStop=/opt/nexus/bin/nexus stop
+=======
+ExecStart=/etc/systemd/system/nexus start
+ExecStop=/etc/systemd/system/nexus stop
 User=nexus
 Restart=on-abort
 
