@@ -80,7 +80,7 @@ To set the path for a specific Java location open the +bin/nexus+ script and loc
 INSTALL4J_JAVA_HOME_OVERRIDE=/usr/lib/jvm/java-8-oracle
 ---- 
 
-The startup script verifies the runtime environment by checking for the existance of the nested `bin/java` command
+The startup script verifies the runtime environment by checking for the existence of the nested `bin/java` command
 as well as major and minor version of the runtime to be the required `1.8`. If the configured runtime is not
 suitable, it will proceed with a best effort to locate a suitable runtime configured on the path or via the
 `JAVA_HOME` environment variable. If successful, it will start up the repository manager with this JVM.
@@ -835,6 +835,32 @@ to use the absolute path `/opt/repository/storage/`, you have to change to:
 -Djava.io.tmpdir=/opt/repository/storage/tmp
 ----
 
+[[config-legacy-url]]
+==== Configuring Legacy URL Paths
+
+{nxrm} 3 uses specific URL patterns to expose repositories, repository groups as well as the content via
+HTTP/HTTPS as used by many client side tools.
+
+For example, a repository with the name `example` is exposed via the path `repository/example` appended to the
+server URL. For the default installation on a local server with the default port 8081 and the default root
+context path, this results in a full URL for the repository of `http://localhost:8081/repository/example`.
+
+{nxrm} 2 uses different paths such as `content/repositories/example`. In addition, it uses the default context
+path `nexus` resulting in an equivalent URL of `http://localhost:8081/nexus/content/repositories/example`.
+
+{nxrm} 3 can be configured to use identical path generation of version 2 by enabling legacy mode in
+`$install-dir/etc/org.sonatype.nexus.cfg` with
+
+----
+org.sonatype.nexus.repository.httpbridge.internal.HttpBridgeModule.legacy=true
+----
+
+Together with the appropriate <<config-http-port,HTTP port>> and <<config-context-path, context path>>
+configuration, legacy mode usage can result in identical client tool facing URLs from {nxrm} version 3 and
+version 2. This is specifically useful after upgrades from version 2 to version 3 or when both versions are used.
+
+NOTE: Find out more about upgrading {nxrm} in the dedicated <<upgrading>>.
+
 [[uninstall]]
 === Uninstalling
 
@@ -851,8 +877,3 @@ Click 'Next', then 'Finish' to complete the uninstall process.
 To uninstall the repository manager from an archive installation, remove the service configuration and 
 delete the entire directory.
 
-////
-/* Local Variables: */
-/* ispell-personal-dictionary: "ispell.dict" */
-/* End:             */
-////
