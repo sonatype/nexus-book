@@ -13,7 +13,7 @@ echo "Building documentation index page"
 asciidoc -o target/nexus-documentation.html nexus-documentation.asciidoc
 
 echo "Building pdf version of book"
-a2x -k -fpdf -dbook --xsl-file=docbook-xsl/fo.xsl --dblatex-opts="-P toc.section.depth=2 -P latex.output.revhistory=0 -P doc.publisher.show=0 -s ./latex/custom-docbook.sty" -D target book-nexus.asciidoc
+a2x -v -k -fpdf -dbook --xsl-file=docbook-xsl/fo.xsl --dblatex-opts="-P toc.section.depth=2 -P latex.output.revhistory=0 -P doc.publisher.show=0 -s ./latex/custom-docbook.sty" -D target book-nexus.asciidoc
 
 #gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=target/tmp.pdf pdf/nexus-book-cover.pdf pdf/title-page.pdf pdf/blank-page.pdf target/book-nexus.pdf
 #gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=target/tmp.pdf target/book-nexus.pdf
