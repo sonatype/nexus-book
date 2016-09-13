@@ -117,10 +117,10 @@ addition.
 .Certificate Details Displayed after Successful Retrieval
 image::figs/web/ssl-add-server.png[scale=50]
 
-In some organizations, all of the remote sites are accessed through a globally configured proxy server which rewrites
-every SSL certificate. This single proxy server is acting as a private certificate authority. In this case, you can
-https://support.sonatype.com/entries/83303437[follow special instructions for trusting the proxy server root
-certificate], which can greatly simplify your certificate management duties.
+In some organizations, all of the remote sites are accessed through a globally configured proxy server which 
+rewrites every SSL certificate. This single proxy server is acting as a private certificate authority. In this 
+case, you can follow https://support.sonatype.com/entries/83303437[special instructions for trusting the proxy 
+server root certificate], which can greatly simplify your certificate management duties.
 
 ==== Trusting SSL Certificates Using Keytool
 
@@ -140,16 +140,16 @@ Before you begin the process of trusting a certificate from the command line you
 * network access to the remote SSL server you want to trust from the host running the repository manager. This
   must include any HTTP proxy server connection details
 
-If you are connecting to servers which have certificates that are not signed by a public CA, you will need to complete
-these steps:
+If you are connecting to servers which have certificates that are not signed by a public CA, you will need to 
+complete these steps:
 
 . Copy the default JVM truststore file (`$JAVA_HOME/jre/lib/security/cacerts`) to a repository manager specific
 location for editing.
 
 . Import additional trusted certificates into the copied truststore file.
 
-. Configure JSSE system properties for the {nxrm} process so that the custom truststore is consulted instead of the
-  default file.
+. Configure JSSE system properties for the {nxrm} process so that the custom truststore is consulted instead of 
+the default file.
 
 Some common commands to manually trust remote certificates can be found in our
 https://sonatype.zendesk.com/entries/95353268-SSL-Certificate-Guide#common-keytool-commands[SSL Certificate Guide].
@@ -157,8 +157,9 @@ https://sonatype.zendesk.com/entries/95353268-SSL-Certificate-Guide#common-keyto
 ===== Configuring {nxrm} With a Custom Truststore
 
 Once you have imported your trusted certificates into a truststore file, you can modify
-'$NEXUS_HOME/bin/jsw/conf/wrapper.conf' to set the system properties necessary to load this file. Make sure to adapt the
-property numbers (10, 11) to start at the last unused value, which depends on the rest of your configuration.
+'$NEXUS_HOME/bin/jsw/conf/wrapper.conf' to set the system properties necessary to load this file. Make sure to 
+adapt the property numbers (10, 11) to start at the last unused value, which depends on the rest of your
+configuration.
 
 ----
 wrapper.java.additional.10=-Djavax.net.ssl.trustStore=<truststore>
@@ -205,17 +206,18 @@ manager, since they are modifications to the embedded Jetty instance located in 
 To configure the Eclipse Jetty instance to accept HTTPS connections, first enable the file +jetty-https.xml+ to 
 the Jetty startup configuration in +wrapper.conf+ as detailed in <<nexus-home-conf>>.
 
-Next, the HTTP port you want to use for the HTTPS connection has to be defined by setting the +application-port-ssl+ property in +nexus.properties+.
+Next, the HTTP port you want to use for the HTTPS connection has to be defined by setting the 
++application-port-ssl+ property in +nexus.properties+.
 
 ----
 application-port-ssl=8443
 ----
 
 Create a keystore file containing a single certificate that Jetty will use for the HTTPS connections. 
-Instructions are available on the http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html[Eclipse Jetty documentation site]. You may find the common keytool commands in 
+Instructions are available on the http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html[Eclipse Jetty documentation site]. You may find the common keytool commands in the
 https://support.sonatype.com/hc/en-us/articles/213465768[SSL Certificate Guide] a useful reference.
 
-Adjust the values in the +jetty-https.xml+ file in +NEXUS_HOME/conf+ to reflect your keystore settings. The 
+Adjust the values in the +jetty-https.xml+ file in +$NEXUS_HOME/conf+ to reflect your keystore settings. The 
 default configuration in that file suggests to create a subdirectory +NEXUS_HOME/conf/ssl+ and copy the 
 +keystore+ file in there and rename it to +keystore.jks+. You can either do that or choose a different location 
 or filename for your keystore file and update the paths for the +keystore+ and +truststore+ in the 
