@@ -17,7 +17,7 @@ and license analysis for open source components.
 With high availability brought to light, Component Fabric sets the standard for a continuously operational 
 application to reduce points of failure among content within your repository manager. Ultimately, this particular 
 feature acts as a private binary cloud storage and backend for the entire suite of repository manager features 
-and components utilized by globally distributed teams.
+and components utilized by globally distributed teams. 
 
 [[why-fabric]]
 === Why Enable Component Fabric?
@@ -26,6 +26,9 @@ Component Fabric is, essentially, a storage backend for multiple {nxrm} instance
 use one version of {nxrm} with the assurance that if one of the nodes goes down a duplicated node can be used. 
 The intention of component fabric is that it can be used in one data center.
 
+Component Fabric uses Hazelcast to enable active-active high availability across your network of nodes. Hazelcast
+provides a convenient and familiar interface for developers to work with distributed data structures and other 
+aspects of in-memory computing.
 ////
 Compare and contrast traditional topology vs component fabric.
 expand later.
@@ -66,8 +69,8 @@ Expand upon use cases such as: High Availability a) Active/Active Load Balancing
 Disaster Recover - Node Failover, Disaster Recovery, Backup, Scaling Out
 //// 
 
-[[ha-node-performance]]
-=== Node Performance Considerations
+[[fabric-node-performance]]
+=== Node Optimization, Performance, and Tuning
 
 The individual nodes are aware of their setup conditions such as:
 
@@ -91,8 +94,8 @@ pre-fetching of components from the fabric even before a client tool requests it
 move the section above to the intro
 ////
 
-[[fabric-configuration]]
-=== Configuring Component Fabric
+[[fabric-configuration-options]]
+=== Component Fabric Installation Options
 
 {nxrm} installation consists of very few simple steps:
 
@@ -103,21 +106,55 @@ move the section above to the intro
 Any further work is done automatically by the interactions of the new repository manager with the data and 
 configuration in the component fabric.
 
-[[fabric-start]]
-=== Starting Component Fabric
+////
+The section above implies once Hazelcast is enabled
+////
 
-To start your configuration, download a binary as explained in <<install-sect-downloading>>. Create two distinct 
-folders to store duplicate instances of the repository manager. For example, you can create two directories 
-`nexus` and `nexus2`. However, you have not yet installed {pro}, review the installation steps from the 
-beginning, as explained in <<install-introduction>>.
+Before starting Component Fabric determine which options is best for installation. There are three supported 
+methods you can consider installation:
 
-In each distinct folders, unpackage the `tar.gz`.In the `nexus` folder, edit the 
+* on two separate physical servers
+* on two virtual machines
+* on two Docker instances
+
+[[fabric-separate-servers]]
+==== Installing on Separate Physical Servers
+
+Section TBD
+
+[[fabric-virtual-machines]]
+==== Installing on Separate Virtual Machines
+
+Section TBD
+
+[[fabric-docker]]
+==== Installing on Docker
+
+Section TBD
+
+////
+Refer to https://docs.sonatype.com/display/~bradbeck/Demoing+HA+with+Docker as reference
+////
+
+[[fabric-configuration]]
+=== Configuring Component Fabric
+
+////
+Review Brad's demo before completing this section, make sure 
+////
+
+Before starting your configuration, download second of binary {pro} as explained in <<install-sect-downloading>>. 
+Create two distinct folders to store duplicate instances of the repository manager. For example, you can create 
+two directories `nexus` and `nexus2`. However, you have not yet installed {pro}, review the installation steps 
+from the beginning, as explained in <<install-introduction>>.
+
+Extract the `tar.gz` from your newly downloaded version of {nxrm}. In the `nexus` folder, edit the 
 `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file. Change the `application-port={port-number}` in your first instance 
 of {nxrm}. Then remove the `#` before `nexus.clustered = true`, enabling Hazelcast usage on start. Go to you the 
 second `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file and repeat the same steps.
 
-TIP:: Log in to your accouunt and go to the 'Administration' menu. Click 'Nodes' under the 'System' category.  
-You should see two nodes. Each machine should have a different node enabled as "true".
+[[fabric-start]]
+=== Starting Component Fabric
 
 On startup in review your log. You should see connection messages via Hazelcast similar to this, below:
 
@@ -133,8 +170,11 @@ Members [2] {
 [[after-fabric-startup]]
 === After Starting Up Component Fabric
 
-Section TBD
+TIP:: Log in to your account and go to the 'Administration' menu. Click 'Nodes' under the 'System' category.  
+You should see two nodes. Each machine should have a different node enabled as "true".
 
 ////
-Using visibility of Node section to monitor, manage nodes enabled by component fabric
+Assuming you have an already existing NXRM running with "nexus.clustered = true" enabled
+After I download my second NXRM, the enable "nexus.clustered = true" on that instance, the synchronized node will 
+appear on both instances in System > Nodes screen
 ////
