@@ -2,25 +2,22 @@
 ==  High Availability for {nxrm}
 {inrmonly}
 
-////
-Update chapter name, sections to component fabric after sorting out sections
-////
-
-[[fabric-introduction]]
+[[high-availability-introduction]]
 === Introduction
 
-Component Fabric is an integral part of {pro} that reduces the complexity of deployment and infrastructure, while 
-simultaneously improving scalability, user experience, and performance. Component fabric allows you to create a 
-performant backend with built-in support for active-active high availability configurations, enhanced security, 
+Using {pro}'s high availability feature is an integral part of the repository manager as it reduces the 
+complexity of deployment and infrastructure, while simultaneously improving scalability, user experience, and 
+performance. Active-active high availability allows you to create a performant backend with built-in support for active-active 
+high availability configurations, enhanced security, 
 and license analysis for open source components.
 
-With high availability brought to light, Component Fabric sets the standard for a continuously operational 
-application to reduce points of failure among content within your repository manager. Ultimately, this particular 
-feature acts as a private binary cloud storage and backend for the entire suite of repository manager features 
-and components utilized by globally distributed teams. 
+With high availability brought to light this feature sets the standard for a continuously operational application 
+to reduce points of failure among content within your repository manager. Ultimately, this particular feature 
+acts as a private binary cloud storage and backend for the entire suite of repository manager features and 
+components utilized by globally distributed teams. 
 
-[[why-fabric]]
-=== Why Enable Component Fabric?
+[[why-high-availability]]
+=== Why Enable High Availability?
 
 Component Fabric is, essentially, a storage backend for multiple {nxrm} instances. When it's enables users can 
 use one version of {nxrm} with the assurance that if one of the nodes goes down a duplicated node can be used. 
@@ -51,58 +48,16 @@ Expand upon use cases such as: High Availability a) Active/Active Load Balancing
 Disaster Recover - Node Failover, Disaster Recovery, Backup, Scaling Out
 ////
 
-[[fabric-configuration-options]]
-=== Component Fabric Installation Options
+[[high-availability-configuration]]
+=== Configuring High Availability
 
-{nxrm} installation consists of very few simple steps:
-
-* Install binary on server
-* Register and authenticate with the component fabric feature
-* Declare minimal local node configuration such as storage and node performance (e.g. prefetch rules)
-
-Any further work is done automatically by the interactions of the new repository manager with the data and 
-configuration in the component fabric.
-
-////
-The section above implies once Hazelcast is enabled
-////
-
-Before starting Component Fabric determine which options is best for installation. There are three supported 
-methods you can consider installation:
-
-* on two separate physical servers
-* on two virtual machines
-* on two Docker instances
-
-[[fabric-separate-servers]]
-==== Installing on Separate Physical Servers
-
-Section TBD
-
-[[fabric-virtual-machines]]
-==== Installing on Separate Virtual Machines
-
-Section TBD
-
-[[fabric-docker]]
-==== Installing on Docker
-
-Section TBD
-
-////
-Refer to https://docs.sonatype.com/display/~bradbeck/Demoing+HA+with+Docker as reference
-////
-
-[[fabric-configuration]]
-=== Configuring Component Fabric
-
-Component Fabric automatically synchronizes component metadata between two (or more) nodes. This means you have 
-to run at least two instances of {nxrm}. So, before you start configuring the feature consider these key 
+Enabling high availability automatically synchronizes component metadata between two nodes. This means 
+you have to run at least two instances of {nxrm}. So, before you start configuring the feature consider these key 
 expectation for managing your nodes in your repository manager instances:
 
-* There are two (or more) nodes that need synchronization
-* The two (or more) nodes are located the same data center
-* Have an optimized network connection among your nodes
+* There are two nodes that need synchronization
+* The two nodes are located the same data center
+* Have an optimized network connection among the nodes
 (Enabling Component Fabric assumes you aren't using a low-latency network)
 * File system for the blob storage among all nodes is the same:: the file system storage must be on the same 
 machines
@@ -112,21 +67,7 @@ machines
 geographic diverse data centers. 
 ////
 
-////
-Review Brad's demo before completing this section, make sure 
-////
-
-Before starting your configuration, download second of binary {pro} as explained in <<install-sect-downloading>>. 
-Create two distinct folders to store duplicate instances of the repository manager. For example, you can create 
-two directories `nexus` and `nexus2`. However, you have not yet installed {pro}, review the installation steps 
-from the beginning, as explained in <<install-introduction>>.
-
-Extract the `tar.gz` from your newly downloaded version of {nxrm}. In the `nexus` folder, edit the 
-`$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file. Change the `application-port={port-number}` in your first instance 
-of {nxrm}. Then remove the `#` before `nexus.clustered = true`, enabling Hazelcast usage on start. Go to you the 
-second `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file and repeat the same steps.
-
-[[fabric-node-performance]]
+[[high-availability-performance]]
 ==== Node Optimization, Performance, and Tuning
 
 The individual nodes are aware of their setup conditions such as:
@@ -151,7 +92,64 @@ pre-fetching of components from the fabric even before a client tool requests it
 move the section above to the intro
 ////
 
-[[fabric-start]]
+[[high-availability-install]]
+=== High Availability Installation Options
+
+{nxrm} installation consists of very few simple steps:
+
+* Install binary on server
+* Register and authenticate with the component fabric feature
+* Declare minimal local node configuration such as storage and node performance (e.g. prefetch rules)
+
+Any further work is done automatically by the interactions of the new repository manager with the data and 
+configuration in the component fabric.
+
+////
+The section above implies once Hazelcast is enabled
+////
+
+Before starting Component Fabric determine which options is best for installation. There are three supported 
+methods you can consider installation:
+
+* on two separate physical servers
+* on two virtual machines
+* on two Docker instances
+
+Assuming you have an existing repository manager in place and before starting your configuration, download a 
+second binary of {pro} as explained in <<install-sect-downloading>>. Create another folder to prepare for a new 
+binary that you will use for synchronization of component metadata from your existing repository manager.For 
+example, you can create a directory called `nexus2`. However, you have not yet installed {pro}, review the 
+installation steps from the beginning, as explained in <<install-introduction>>.
+
+Extract the `tar.gz` from your newly downloaded version of {nxrm}, the follow these steps:
+
+. In the source 
+. In second folder (e.g. `nexus2`) go to the `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file. 
+. Change the `application-port={port-number}` in your first instance 
+of {nxrm}. Then remove the `#` before `nexus.clustered = true`, enabling Hazelcast usage on start. Go to you the 
+second `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file and repeat the same steps.
+
+[[fabric-separate-servers]]
+==== Installing on Separate Physical Servers
+
+Section TBD
+
+[[fabric-virtual-machines]]
+==== Installing on Separate Virtual Machines
+
+Section TBD
+
+[[fabric-docker]]
+==== Installing on Docker
+
+Section TBD
+
+////
+Refer to https://docs.sonatype.com/display/~bradbeck/Demoing+HA+with+Docker as reference
+////
+
+
+[[high-availability-start]]
 === Starting Component Fabric
 
 On startup in review your log. You should see connection messages via Hazelcast similar to this, below:
@@ -165,7 +163,7 @@ Members [2] {
 }
 ----
 
-[[after-fabric-startup]]
+[[after-high-availability-startup]]
 === After Starting Up Component Fabric
 
 TIP:: Log in to your account and go to the 'Administration' menu. Click 'Nodes' under the 'System' category.  
