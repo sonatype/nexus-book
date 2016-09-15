@@ -41,57 +41,14 @@ manager installations Component Fabric allows for a distributed and replicated s
 complexity and offers a simple and cost effective way to provision, configure, manage, and maintain multiple 
 repositories.
 
-[[fabric-processes-expectations]]
-=== Component Fabric Processes and Expectations
-
-Component Fabric automatically synchronizes component metadata between two (or more) nodes. This means you have 
-to run at least two instances of {nxrm}. So, before you start configuring the feature consider these key 
-expectation for managing your nodes in your repository manager instances:
-
-* There are two (or more) nodes that need synchronization
-* The two (or more) nodes are located the same data center
-* Have an optimized network connection among your nodes
-(Enabling Component Fabric assumes you aren't using a low-latency network)
-* File system for the blob storage among all nodes is the same
 ////
-(Before you configure Component Fabric, make sure the shared file system - how)
-*Which is different from what you might encounter in a normal component fabric scenario, where you might have 
-geographic diverse data centers. 
-////
-
-
 [[characteristics-component-fabric]]
 === Characteristics of Component Fabric
 
 Section TBD
-////
+
 Expand upon use cases such as: High Availability a) Active/Active Load Balancing b) Managing Increased Load;
 Disaster Recover - Node Failover, Disaster Recovery, Backup, Scaling Out
-//// 
-
-[[fabric-node-performance]]
-=== Node Optimization, Performance, and Tuning
-
-The individual nodes are aware of their setup conditions such as:
-
-* Memory availability and processor performance
-* Network connectivity performance
-* Characteristics of local storage in terms of size and performance
-
-Nodes are connected to the component fabric and as such are aware of other nodes and can be configured to fulfill 
-a specific purpose such as:
-
-* High performance node in CI cluster 
-* Slow backup node for potential disaster recovery
-* Failover-node sitting in active standby mode
-* Load-balanced node
-
-The knowledge of the component fabric about deployment topology and performance allows nodes to choose the 
-fastest route to fetch the component data from the fabric. The specified purpose of a node can configure 
-pre-fetching of components from the fabric even before a client tool requests it as a performance enhancement.
-
-////
-move the section above to the intro
 ////
 
 [[fabric-configuration-options]]
@@ -139,6 +96,22 @@ Refer to https://docs.sonatype.com/display/~bradbeck/Demoing+HA+with+Docker as r
 [[fabric-configuration]]
 === Configuring Component Fabric
 
+Component Fabric automatically synchronizes component metadata between two (or more) nodes. This means you have 
+to run at least two instances of {nxrm}. So, before you start configuring the feature consider these key 
+expectation for managing your nodes in your repository manager instances:
+
+* There are two (or more) nodes that need synchronization
+* The two (or more) nodes are located the same data center
+* Have an optimized network connection among your nodes
+(Enabling Component Fabric assumes you aren't using a low-latency network)
+* File system for the blob storage among all nodes is the same:: the file system storage must be on the same 
+machines
+////
+(Before you configure Component Fabric, make sure the shared file system - how)
+*Which is different from what you might encounter in a normal component fabric scenario, where you might have 
+geographic diverse data centers. 
+////
+
 ////
 Review Brad's demo before completing this section, make sure 
 ////
@@ -152,6 +125,31 @@ Extract the `tar.gz` from your newly downloaded version of {nxrm}. In the `nexus
 `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file. Change the `application-port={port-number}` in your first instance 
 of {nxrm}. Then remove the `#` before `nexus.clustered = true`, enabling Hazelcast usage on start. Go to you the 
 second `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file and repeat the same steps.
+
+[[fabric-node-performance]]
+==== Node Optimization, Performance, and Tuning
+
+The individual nodes are aware of their setup conditions such as:
+
+* Memory availability and processor performance
+* Network connectivity performance
+* Characteristics of local storage in terms of size and performance
+
+Nodes are connected to the component fabric and as such are aware of other nodes and can be configured to fulfill 
+a specific purpose such as:
+
+* High performance node in CI cluster 
+* Slow backup node for potential disaster recovery
+* Failover-node sitting in active standby mode
+* Load-balanced node
+
+The knowledge of the component fabric about deployment topology and performance allows nodes to choose the 
+fastest route to fetch the component data from the fabric. The specified purpose of a node can configure 
+pre-fetching of components from the fabric even before a client tool requests it as a performance enhancement.
+
+////
+move the section above to the intro
+////
 
 [[fabric-start]]
 === Starting Component Fabric
