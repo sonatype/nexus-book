@@ -11,10 +11,10 @@ performance. Active-active high availability allows you to create a performant b
 active-active high availability configurations, enhanced security, and license analysis for open source 
 components.
 
-With high availability brought to light, this feature sets the standard for a continuously operational 
-application to reduce points of failure among content within your repository manager. Ultimately, this particular 
-feature acts as a private binary cloud storage and backend for the entire suite of repository manager features 
-and components utilized by globally distributed teams.
+Introducing high availability to your system sets the standard for a continuously operational application to 
+reduce points of failure among content within your repository manager. Ultimately, this particular feature acts 
+as a private binary cloud storage and backend for the entire suite of repository manager features and components 
+utilized by globally distributed teams.
 
 [[why-high-availability]]
 === Why Enable High Availability?
@@ -23,9 +23,8 @@ Component Fabric is, essentially, a storage backend for multiple {nxrm} instance
 use one version of {nxrm} with the assurance that if one of the nodes goes down a duplicated node can be used. 
 The intention of component fabric is that it can be used in one data center.
 
-Component Fabric uses Hazelcast to enable active-active high availability across your network of nodes. Hazelcast
-provides a convenient and familiar interface for developers to work with distributed data structures and other 
-aspects of in-memory computing.
+Active/active high availability is enabled across your nodes via Hazelcast. Hazelcast provides a convenient and 
+familiar interface for you to work with distributed data structures and other aspects of in-memory computing.
 ////
 Compare and contrast traditional topology vs component fabric.
 expand later.
@@ -51,29 +50,40 @@ Disaster Recover - Node Failover, Disaster Recovery, Backup, Scaling Out
 [[high-availability-expectations]]
 === Planning High Availability for {nxrm}
 
-Enabling high availability automatically synchronizes component metadata between two nodes. This means 
-you have to run at least two instances of {nxrm}. First and foremost you must ensure two nodes share
-file system storage and network before configuring the feature. Consider these key goals for enabling high 
-availability:
+Enabling high availability automatically synchronizes component metadata between two nodes, co-located in the 
+same data center. This means the nodes can run independently as two separate instances, providing extra uptime 
+within a data center. If one of the nodes goes down, you can use the other.
 
-* Ensure you have an optimized network connection to achieve active/active high availability.
-* Create a plan to manage your nodes for synchronization.
-* Install a <<high-availability-install,secondary version>> of {pro}.
-* The two nodes are located the same data center
-(Enabling Component Fabric assumes you aren't using a low-latency network)
-* File system for the blob storage among all nodes is the same:: the file system storage must be on the same 
-machines
-////
-(Before you configure Component Fabric, make sure the shared file system - how)
-*Which is different from what you might encounter in a normal component fabric scenario, where you might have 
-geographic diverse data centers. 
-////
+{pro} is flexible, and can lend itself to a variety of different system architectures. So, before enabling this 
+specific feature, determine which option is best for your existing architecture and system configuration before 
+installing. There are three supported infrastructures you can consider to facilitate high availability between 
+your repository managers. You can install them:
 
+- on two separate physical servers
+- on two virtual machines
+- on two Docker instances
 
+Ultimately, the rule of thumb is you ensure the two nodes utilized share a file system for blob storage and exist 
+on the same network. Subsequently, the key goals for enabling high availability are as follows:
 
-////
-move the section above to the intro
-////
+- Create a plan to <<high-availability-nodes,manage your nodes>> for synchronization.
+- Install a <<high-availability-install,secondary version>> of {pro}.
+- <<high-availability-configuration,Configure the second binary>> as its own independent server
+- Activate Hazelcast from the main configuration file
+
+[[high-availability-nodes]]
+=== Managing Nodes
+
+Ultimately, each repository manager acts as an individual node, fully-aware of their setup parameters such as:
+
+Memory availability and processor performance
+Network connectivity performance
+Characteristics of local storage in terms of size and performance
+
+This awareness also translates to increased efficiency, scalability, and control, allowing nodes to automatically 
+choose the fastest route to fetch component data from the fabric. With additional customization, the specified 
+purpose of a node can configure prefetching of components from the fabric even before a client tool requests it, 
+leading to an even higher level of enhanced performance.
 
 [[high-availability-install]]
 ==== Installing a New Binary
@@ -97,12 +107,6 @@ configuration in the component fabric.
 The section above implies once Hazelcast is enabled
 ////
 
-Before starting Component Fabric determine which options is best for installation. There are three supported 
-methods you can consider installation:
-
-* on two separate physical servers
-* on two virtual machines
-* on two Docker instances
 
  and before starting your configuration, download a 
 second binary of {pro} as explained in <<install-sect-downloading>>. Create another folder to prepare for a new 
