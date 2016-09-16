@@ -5,10 +5,11 @@
 [[high-availability-introduction]]
 === Introduction
 
-Using {pro}'s high availability feature is an integral part of the repository manager as it reduces the 
-complexity of deployment and infrastructure, while simultaneously improving scalability, user experience, and 
-performance. Active-active high availability provides performant backend with built-in support for enhanced 
-security and license analysis for open source components.
+{pro}'s high availability feature is an integral part of the repository manager ability to scale. It reduces the 
+complexity of deployment and infrastructure, while simultaneously improving user experience and performance. 
+
+More specifically, this feature employs active/active high availability, which a provides performant backend with 
+built-in support for enhanced security and license analysis for open source components.
 
 Introducing high availability to your system sets the standard for a continuously operational application to 
 reduce points of failure among content within your repository manager. Ultimately, this particular feature acts 
@@ -18,36 +19,32 @@ utilized by globally distributed teams.
 [[why-high-availability]]
 === Why Enable High Availability?
 
-Component Fabric is, essentially, a storage backend for multiple {nxrm} instances. When it's enables users can 
-use one version of {nxrm} with the assurance that if one of the nodes goes down a duplicated node can be used. 
-The intention of component fabric is that it can be used in one data center.
+The high availability feature provides a storage backend for two {nxrm} instances co-located in the same data 
+center. When it's enables users can use one version of {nxrm} with the assurance that if one of the nodes goes 
+down a duplicated node can be used.
 
-Active/active high availability is enabled across your nodes via Hazelcast. Hazelcast provides a convenient and 
-familiar interface for you to work with distributed data structures and other aspects of in-memory computing.
+Instead of manually managing your infrastructure, processes, and tools associated with numerous repository 
+manager installations, {pro} high availability feature provides a replicated storage system that eliminates 
+complexity and offers a simple and cost effective way to provision, configure, manage, and maintain multiple 
+repositories.
 
-Ultimately, when enabling high availability in your two repository manager instances, they act as individual 
-nodes, fully-aware of their setup parameters such as:
+Active/active high availability is enabled across your nodes via Hazelcast. Hazelcast provides an interface to 
+work with distributed data structures and other aspects of in-memory computing.
+
+When enabling active/active high availability in your two repository manager instances, they act as 
+individual nodes, fully-aware of their setup parameters such as:
 
 - Memory availability and processor performance
 - Network connectivity performance
 - Characteristics of local storage in terms of size and performance
 
 This awareness also translates to increased efficiency, scalability, and control, allowing nodes to automatically 
-choose the fastest route to fetch component data from the fabric. With additional customization, the specified 
-purpose of a node can configure prefetching of components from the fabric even before a client tool requests it, 
-leading to an even higher level of enhanced performance.
-
-Instead of manually managing your infrastructure, processes, and tools associated with numerous repository 
-manager installations Component Fabric allows for a distributed and replicated storage system that eliminates 
-complexity and offers a simple and cost effective way to provision, configure, manage, and maintain multiple 
-repositories.
+choose the fastest route to fetch component data between the two nodes. With additional customization, these 
+purpose-driven nodes can configure prefetching of components even before a client tool requests it, leading to an 
+even higher level of enhanced performance.
 
 [[high-availability-expectations]]
 === Planning High Availability for {nxrm}
-
-Enabling high availability automatically synchronizes component metadata between two nodes, co-located in the 
-same data center. This means the nodes can run independently as two separate instances, providing extra uptime 
-within a data center. If one of the nodes goes down, you can use the other.
 
 {pro} is flexible, and can lend itself to a variety of different system architectures. So, before enabling this 
 specific feature, determine which option is best for your existing architecture and system configuration before 
@@ -82,9 +79,7 @@ manager.
 In order for the two nodes to communicate, you must distinguish the `application-port` of your existing 
 repository manager from the new instance you download. Go to <<config-http-port>> to identify the new repository 
 manager port.
- 
-Declare minimal local node configuration such as storage and node performance
- synchronization of component metadata from your existing repository manager.
+
 
 [[high-availability-enable]]
 ==== Enabling the High Availability Service
@@ -92,20 +87,20 @@ When you enable `nexus.clustered` in the configuration file,
 
 After you extract your newly downloaded `tar.gz` of {pro}, the follow these steps:
 
-. In your source repository manager go to the `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file
-. In second folder (e.g. `nexus2`) go to the `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file. 
-of {nxrm}. Then remove the `#` before `nexus.clustered = true`, enabling Hazelcast usage on start. Go to you the 
-second `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file and repeat the same steps.
+. In your existing repository manager, open the `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file.
+. Remove the `#` before `nexus.clustered = true` to enabl=le Hazelcast usage on start. 
+. Go to the new repository manager and repeat steps 1 and 2, to enable the new instance.
 
 Any further work is done automatically by the interactions of the new repository manager with the data and 
-configuration in the component fabric.
+configuration synchronized with the high availability feature.
 
 [[high-availability-startup]]
 ==== Starting the High Availability Service
 
-Start both instances of your repository managers. At this point, you have already configured a new, distinct 
-repository manager to run as a backup for the original instance. On startup you can review the log, in the 
-command line. You should see connection messages via Hazelcast similar to this, below:
+At this point, you have already configured a new, distinct repository manager to run as a backup for the original 
+instance. So, start both repository managers, by entering and executing `./bin/nexus run` in the command line. On 
+startup you can review the log, in the command line. You should see connection messages via Hazelcast similar 
+to this, below:
 
 ----
 2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
@@ -119,16 +114,29 @@ Members [2] {
 [[high-availability-running]]
 ==== Running High Availability
 
-The . From the first enabled node cdefault blob store directory is created after 
+As the console runs From the first enabled node default blob store directory is created after 
 starting up the new repository manager
 
-For example, if the first node is called "node-a" The node from your existing repository manager exposes the default blob store, when enabled in "node-a" is created
+For example, if the first n is called "node-a" The node from your existing repository manager exposes the default 
+blob store, when enabled in "node-a" is created...
+
+[[high-availability-storage]]
+==== Managing Nodes and Storage
+
+Anytime you create a new blob store, make sure it's created from a location that is shared between two nodes. For 
+example, if you are working with a NFS directory called...
+
+You can use the <<admin-repository-blobstores,blob store>> screen to add the location of the shared blob store 
+path. 
 
 TIP:: Log in to your account and go to the 'Administration' menu. Click 'Nodes' under the 'System' category.  
 You should see two nodes. Each machine should have a different node enabled as "true".
-
 ////
 Assuming you have an already existing NXRM running with "nexus.clustered = true" enabled
 After I download my second NXRM, the enable "nexus.clustered = true" on that instance, the synchronized node will 
 appear on both instances in System > Nodes screen
 ////
+
+
+
+IMPORTANT:: Configure your nodes to only share the blob store directory. Don't share the entire data directory. Each node should have its own independent 
