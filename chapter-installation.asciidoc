@@ -16,8 +16,7 @@ manager running successfully in production deployments.
 
 {nxrm} can be downloaded from http://www.sonatype.com/nexus-repository-oss[Sonatype]. Distributions are available 
 for the 64-bit versions for Apple OSX, Microsoft Windows and Unix/Linux. They contain all necessary resources to 
-install and run the repository manager. You can download a plain archive file or an installer for your operating 
-system of a specific release version.
+install and run the repository manager. You can download the plain archive file for your operating system of a specific release version.
 
 The plain archive files are Gzip TAR (TGZ) or ZIP files and are suitable for installation without a graphical user
 interface purely using command line-based interaction. The file names include operating system qualifiers and are
@@ -30,17 +29,8 @@ nexus-{version-exact}-unix.tar.gz
 nexus-{version-exact}-win64.zip
 ----
 
-The operating system-specific installers can be used for installation in a graphical user interface.  The file
-naming includes operating system qualifiers and uses the native extensions for applications:
-
-[subs="attributes"]
-----
-nexus-{version-exact}-mac.dmg
-nexus-{version-exact}-unix.sh
-nexus-{version-exact}-win64.exe
-----
-
-Next steps, after a successful download, depend on the distribution you downloaded and the operating system and are documented in <<installation-archive>> and <<installation-installer>>.
+Next steps, after a successful download, depend on the operating system you are using and are documented in
+<<installation-archive>>.
 
 [[installation-java]]
 === Java Runtime Environment
@@ -155,66 +145,6 @@ similar commands with a prefix of `/` e.g., `/run`.
 
 Once the repository manager is started you can access the user interface as details in <<access>>.
 
-[[installation-installer]]
-===  Installing and Running with the Installer
-
-The installers can be used as an alternative to the distribution archive installation process documented in
-<<installation-archive>>.
-
-You can start the installer following these operating system-specific steps:
-
-Windows::  Start the `.exe` by double-clicking on it.
-
-OSX:: Extract the `.dmg` file by double-clicking on the file icon and then start the installer by double-clicking
-on the `.app`.
-
-Unix:: Run the `.sh` file in a command line window or double-clicking on it. This starts the installer user
-interface. Passing the `-c` option allows you to run the installer purely in the command line window.
-
-TIP: Ensure to run the installer as the user that should be used to run the application as a service. We recommend
-usage of a dedicated user account with limited access rights to the host operating system - do not use 'root' or
-'administrator'-type users.
-
-The installer guides you through multiple steps to get the repository manager installed:
-
-Welcome:: Press 'Next' after reading the instructions to proceed.
-
-Installation Type:: Select the edition you want to install.
-
-Destination Directory:: Configure the directory into which the application will be installed. The user running the
-installer and the user that will run the application have to have full access to the specified directory. Further
-details about this 'installation directory' can be found in <<directories>>.
-
-Data Directory:: Configure the directory for all the data stored by the repository manager including
-configuration, repository and component data. Further details about this 'data directory' can be found in
-<<directories>>.
-
-Options:: Configure 'HTTP', 'JVM' and 'Service'-related aspects. The 'HTTP' configuration allows you to configure
-the 'HTTP Port', the 'HTTP Host' and the 'Context Path'. 
-+
-The port defaults to 8081 and can be set to any available port in your organization. The host defaults to 0.0.0.0,
-which means that the repository manager will be available via any IP number assigned to the server. The context
-path defaults to the root context, but can be configured to other paths such as `/nexus`.
-+
-The 'JVM'  configuration includes 'Initial Heap' and 'Maximum Heap' parameters. The 'Select JVM' checkbox allows
-you to activate an additional setup step, that will allow you to use a specific JVM installation instead of the
-bundled JVM.
-+ 
-The 'Service' configuration allows you to start the repository manager as part of the installation process. The
-installer automatically performs the necessary configuration to run the repository manager as a service on the
-target operating system. 
-
-License Agreement::  Read and accept the license agreement with the checkbox and press 'Install' to proceed.
-
-After the extraction of all required assets into the configured directories a last step allows you to create a
-desktop icon and open the application. Press 'Finish' to complete the installation.
-
-The two directories created and populated are referred to as the 'installation directory' and the 'data
-directory'. More details can be found in <<directories>>.
-
-If you selected to start the application, the repository manager is started to run as a service and your
-web-browser is started and the user interface detailed in <<access>> is accessible.
-
 [[installation-docker]]
 === Installing with Docker
 
@@ -230,8 +160,7 @@ https://hub.docker.com/r/sonatype/nexus3/[Docker Hub].
 === Upgrading
 
 Since the repository manager separates its configuration and data storage from the application, it is easy to 
-upgrade an existing installation. There are two ways to upgrade: with the installer application or the 
-distribution file. 
+upgrade an existing installation.
 
 To keep the upgrade simple schedule downtime to preserve important directories during the process. Follow the 
 steps in the support https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base article].
@@ -248,9 +177,6 @@ properly upgrade the application.
 When installing {nxrm} for production usage it has to be configured it to run as a service, so it restarts
 after the server reboots. It is good practice to run that service or daemon as a specific user that has only the
 required access rights.
-
-The <<installation-installer,installer>> automatically configures the service and no further configuration is
-necessary.
 
 Installation from the <<installation-archive,distribution archive>> does not include the configuration of a
 service. The following sections provide instructions for configuring the service manually. Independent of the
@@ -379,9 +305,6 @@ nexus.exe /install
 The created service is available named 'nexus' in common console application to manage services such as Windows
 Services. You can start, stop and restart the service there as well as configure it to start as part of a
 operating system startup.
-
-TIP: If you installed the repository manager using the installer, your service is automatically created and the 
-above create command should not be necessary to run.
 
 [[service-osx]]
 ====  Running as a Service on Mac OS X
@@ -698,8 +621,7 @@ code segments.
 
 Data Directory:: This directory contains all the repositories, components and other data that is being stored and
 managed by the repository manager. It is located within the installation directory by default for archive-based
-installs and called `data`. The installer allows you to configure the location of this directory. In
-this documentation it is referred to as `$data-dir` in any code segments.
+installs and called `data`. In this documentation it is referred to as `$data-dir` in any code segments.
 
 [[installation-directory]]
 ==== Installation Directory
@@ -836,9 +758,9 @@ Therefore, if the port is set to `9081`, the exposed URL will be `http://localho
 ==== Configuring the Data Directory Location
 
 <<installation-archive,Distribution archive installation>> of the repository manager configures the location of
-the <<data-directory, data directory>> to be nested inside the application directory. The
-<<installation-installer,installer>> allows the user to configure the location of this directory to be any
-path. The configuration of this folder is located in `$install-dir/bin/nexus.vmoptions`. For example, if you want
+the <<data-directory, data directory>> to be nested inside the application directory. 
+
+The configuration of this folder is located in `$install-dir/bin/nexus.vmoptions`. For example, if you want
 to use the absolute path `/opt/repository/storage/`, you have to change to:
 
 ----
@@ -849,21 +771,6 @@ to use the absolute path `/opt/repository/storage/`, you have to change to:
 [[uninstall]]
 === Uninstalling
 
-To uninstall the repository manager from your system locate the +uninstall+ file in the installation directory. 
-
-Open +uninstall+ to prompt the uninstaller. The interface will ask you if you want to completely remove the 
-repository manager and its components. If yes, click 'Next'.
-
-The next step displays the directory of the repository manager. All configurations, components, assets, and 
-{oss}-related data will be removed from the directory if you check 'Yes, remove Nexus application data'.
-
-Click 'Next', then 'Finish' to complete the uninstall process.
-
 To uninstall the repository manager from an archive installation, remove the service configuration and 
 delete the entire directory.
 
-////
-/* Local Variables: */
-/* ispell-personal-dictionary: "ispell.dict" */
-/* End:             */
-////
