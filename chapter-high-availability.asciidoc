@@ -17,72 +17,64 @@ creating a binary storage for the entire suite of features and components availa
 === Why Cluster?
 
 The biggest draw to a high performing, well-synchronized backend is a self-maintaining system with improved 
-disaster recovery features. Downtime can be costly to organizations that hosts a multitude of applications.
-Therefore, an automated backup plan with distributed clusters is preventative of any worse case scenarios around 
-data loss. 
+disaster recovery features. Downtime can be costly to organizations that host a multitude of applications.
+Therefore, an automated backup plan with distributed clusters decrease the chances of data loss. 
 
-With backup support, you can apply high availability methodologies that solve load balancing issues and implement
+With backup support, you can use high availability methodologies to resolve load balancing issues and implement
 failover initiatives for physical and virtual servers, alike. Currently, you can only synchronize two nodes. But 
-down the line, you can expand the amount of clustered servers you like to introduce to your overall system backup 
-plan.
+down the line, you can expand the amount of clustered servers along your overall system backup plan.
 
-////
-... or some better way to hint at component fabric
-////
+[[how-high-availability]]
+=== How is High Availability Implemented?
 
-[[high-availability-purpose]]
-=== What is the Purpose of High Availability?
-
-The high availability feature provides a storage backend for two {nxrm} instances co-located in the same data 
+The high availability feature provides a storage backend for two {nxrm} instances colocated in the same data 
 center.
 
-High availability implementations are made of servers, joined together but a common directory. The second cluster 
-is implemented to achieve synchronization between both enabled clusters. The clusters (or servers, or nodes) 
-communicate with each other to provide uptime and the assurance that if one goes down a duplicated node can be 
-used.
+High availability implementations are made among two nodes, joined together by a common blob store directory. The 
+second node that you initiate is synchronized with the first. When configured, the nodes communicate with each 
+other to provide uptime and the assurance that if one goes down a duplicated node can be used.
 
-Instead of manually managing your infrastructure, processes, and tools associated with numerous repository 
-manager installations, the repository manager's high availability feature provides a replicated storage system 
-that eliminates complexity and offers a simple and cost effective way to provision, configure, manage, and 
-maintain multiple repositories.
+Instead of manual adjustments to your infrastructure, processes, and tools associated with your repository 
+manager installations, the high availability feature provides a replicated storage system. This eliminates 
+complexity and offers a simpler way to provision, configure, manage, and maintain multiple repositories.
 
-This feature is enabled across your nodes via Hazelcast. Hazelcast provides an active/active approach, with an 
-interface for distributed data structures and other aspects of in-memory computing.
+This feature is enabled across your nodes via link:https://hazelcast.com/[Hazelcast]. Hazelcast provides an 
+active/active approach to server clustering. It comes equipped with an interface for distributed data structures 
+and other aspects of in-memory computing.
 
-When enabling active/active high availability in your two repository manager instances, they act as 
-individual nodes, fully-aware of their setup parameters such as:
+When enabling active/active high availability in your two repository manager instances, they act as individual 
+nodes, fully-aware of their setup parameters such as:
 
 - Memory availability and processor performance
 - Network connectivity performance
 - Characteristics of local storage in terms of size and performance
 
-This awareness also translates to increased efficiency, scalability, and control, allowing nodes to automatically 
-choose the fastest route to intercept component data between the two nodes. With additional customization, these 
-purpose-driven nodes can configure prefetching of components even before a client tool requests it, leading to 
-greater level of performance.
+This node-driven awareness within your clustered repository manager translates to increased efficiency, 
+scalability, and control, allowing the nodes to automatically choose the fastest route to intercept component 
+data between the two nodes. With additional customization, these purpose-driven nodes can configure prefetching 
+of components even before a client tool requests it, leading to greater level of performance.
 
 [[high-availability-expectations]]
 === Requirements for Clustering in {pro}
 
-{pro} is flexible, and can lend itself to a variety of different system architectures. So, before enabling this 
+{pro} is flexible and can lend itself to a variety of different system architectures. So, before enabling this 
 specific feature, determine which option is best for your existing architecture and system configuration before 
 installing. There are three supported infrastructures you can consider to facilitate high availability between 
-your repository managers. You can install them on two:
+your repository managers. You can install them across a mix of two:
 
-- separate physical servers
+- physical servers
 - virtual machines
 - Docker instances
 
-Your should recognize any challenges you may encounter when planning high availability implementation. You also 
-need to be mindful of cluster performance, so your repository manager can remain at its most optimal speed.
+You should to be mindful of server performance, so your repository manager nodes can remain at its most optimal 
+speed. Ultimately, the rule of thumb is you ensure the two nodes utilized share a file system for blob storage 
+and that they exist on the same network. Subsequently, to enable your nodes for high availability follow these 
+steps:
 
-Ultimately, the rule of thumb is you ensure the two nodes utilized share a file system for blob storage and that 
-they exist on the same network. Subsequently, the key goals for enabling high availability are as follows:
-
-- <<high-availability-install,Installing a secondary version>> of {pro}.
-- <<high-availability-configuration,Configuring the second binary>> as its own independent server.
-- <<high-availability-enable,Activating the clusters>> from the file `org.sonatype.nexus.cfg`.
-- <<high-availability-startup,Starting>> and running the service upon activation.
+- <<high-availability-install,Install a second instance>> of {pro}.
+- <<high-availability-configuration,Configure the second binary>> as its own independent server.
+- <<high-availability-enable,Activate the clusters>> from the file `org.sonatype.nexus.cfg`.
+- <<high-availability-startup,Start>> and run the service after configuration.
 
 [[high-availability-install]]
 ==== Installing a New Binary
@@ -110,7 +102,7 @@ nodes. To do this, you must distinguish the `application-port` of your existing 
 repository manager port.
 
 [[high-availability-enable]]
-==== Enabling the Clusters
+==== Enabling the Nodes
 
 Follow these steps to enable the high availability feature:
 
@@ -138,9 +130,17 @@ Members [2] {
 }
 ----
 
-[[high-availability-storage]]
-==== Managing Nodes and Storage
+[[high-availability-verify]]
+=== Verifying Synchronization
 
-With your two instances running, you can refer to the repository manager's user interface to view the nodes 
-activated by the high availability feature. Go to the 'Nodes' screen under 'System' located in the 
-'Administration' menu. Each machine should have a different node enabled as "true".
+At runtime, when you're log in as an administrator on one node, the other node automatically pairs the 
+administrator to the second node. The {nxrm} interface allows you to see the nodes paired.
+
+To verify this connection, go to the 'Nodes' screen, under 'System' located in the 'Administration' menu. This 
+screen provides details of the node, detected as the backup server. 
+
+For example, when you look at the row representing "node-a", you can see its 'UUID' (a unique identifier) 
+as well as the label 'true'. The 'true' statement, in the 'Local' column, indicates the "node-b" is synchronized 
+for backup. So, the moment you create and save a new repository called 'npm-internal' in "node-a", 'npm-internal' 
+will appears in "node-b".
+
