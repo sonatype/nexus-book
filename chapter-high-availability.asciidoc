@@ -20,9 +20,9 @@ The biggest draw to a high performing, well-synchronized backend is a self-maint
 disaster recovery features. Downtime can be costly to organizations that host a multitude of applications.
 Therefore, an automated backup plan with distributed clusters decrease the chances of data loss. 
 
-With backup support, you can use high availability methodologies to resolve load balancing issues and implement
-failover initiatives for physical and virtual servers alike. Currently, you can only synchronize two nodes. But 
-down the line, you can expand the amount of clustered servers along your overall system backup plan.
+With backup support, you can use high availability methodologies to adopt load balancing and implement failover 
+initiatives for physical and virtual servers alike. Currently, you can only synchronize two nodes. But down the 
+line, you can expand the amount of clustered servers along your overall system backup plan.
 
 [[how-high-availability]]
 === How is High Availability Implemented?
@@ -30,17 +30,15 @@ down the line, you can expand the amount of clustered servers along your overall
 The high availability feature provides a storage backend for two {nxrm} instances colocated in the same data 
 center.
 
-High availability implementations are made among two nodes, joined together by a common blob store directory. The 
-second node that you initiate is synchronized with the first. When configured, the nodes communicate with each 
-other to provide uptime and the assurance that if one goes down a duplicated node can be used.
+High availability implementations are established between two nodes, joined together by a common blob store 
+directory. The second node that you initiate is synchronized with the first. When configured, the nodes 
+communicate with each other to create continuous uptime and the assurance that if one goes down, the second node 
+can be used.
 
-Instead of manual adjustments to your infrastructure, processes, and tools associated with your repository 
-manager installations, the high availability feature provides a replicated storage system. This eliminates 
-complexity and offers a simpler way to provision, configure, manage, and maintain multiple repositories.
-
-This feature is enabled across your nodes via link:https://hazelcast.com/[Hazelcast]. Hazelcast provides an 
-active/active approach to server clustering. It comes equipped with an interface for distributed data structures 
-and other aspects of in-memory computing.
+This feature is enabled across your nodes via link:https://hazelcast.com/[Hazelcast], which provides in-memory 
+computing for active data and active backup. So, instead of making manual adjustments to your servers' 
+infrastructure, processes, and tools, high availability via Hazelcast simplifies the configuration needed to 
+maintain multiple repositories.
 
 When enabling active/active high availability in your two repository manager instances, they act as individual 
 nodes, fully-aware of their setup parameters such as:
@@ -107,7 +105,7 @@ repository manager port.
 Follow these steps to enable the high availability feature:
 
 . In your existing repository manager, open the `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file.
-. Remove the `#` before `nexus.clustered = true` to enable Hazelcast usage on start. 
+. Remove the `#` before +nexus.clustered=true+ to enable Hazelcast usage on start. 
 . Go to the new repository manager and repeat steps 1 and 2, to enable the new instance.
 
 Any further work is done automatically by the interactions of the new repository manager with the data and 
