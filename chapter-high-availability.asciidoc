@@ -5,20 +5,16 @@
 [[high-availability-introduction]]
 === Introduction
 
-{nxrm}'s high availability feature provides clustering for two separate instances of the repository manager. This 
-is used to create shared storage for a more fail-safe backend in your repository manager, minimizing downtime and 
+{nxrm}'s high availability feature provides a more fail-safe repository manager, minimizing downtime, and 
 reducing points of system failure.
 
-This chapter covers the benefits and steps needed to implement high availability. Usage of clusters set the 
+This chapter covers the benefits and steps needed to implement high availability. Usage of clusters sets the 
 standard for automating the process of continuous uptime, relieving teams of manual recovery techniques, and 
 creating a binary storage for the entire suite of features and components available in your repository managers.
 
-[[why-high-availability]]
-=== Why Cluster?
-
 The biggest draw to a high performing, well-synchronized backend is a self-maintaining system with improved 
 disaster recovery features. Downtime can be costly to organizations that host a multitude of applications.
-Therefore, an automated backup plan with distributed clusters decrease the chances of data loss. 
+Therefore, an automated backup plan with distributed nodes decreases the chances of data loss. 
 
 With backup support, you can use high availability methodologies to adopt load balancing and implement failover 
 initiatives for physical and virtual servers alike. Currently, you can only synchronize two nodes. But down the 
@@ -37,17 +33,15 @@ computing for active data and active backup. So, instead of making manual adjust
 infrastructure, processes, and tools, high availability via Hazelcast simplifies the configuration needed to 
 maintain multiple repositories.
 
-When enabling active/active high availability in your two repository manager instances, they act as individual 
-nodes, fully-aware of their setup parameters such as:
+With active/active high availability in your two repository manager instances, you enable two interchangeable
+nodes that act transparently as one instance. This makes them fully-aware of their setup parameters such as:
 
 - Memory availability and processor performance
 - Network connectivity performance
 - Characteristics of local storage in terms of size and performance
 
-This node-driven awareness within your clustered repository manager translates to increased efficiency, 
-scalability, and control, allowing the nodes to automatically choose the fastest route to intercept component 
-data between the two nodes. With additional customization, these purpose-driven nodes can configure prefetching 
-of components even before a client tool requests it, leading to greater level of performance.
+This node-driven awareness makes your clustered repository manager more scalable, allowing the nodes to 
+automatically intercept component data between the two nodes.
 
 [[high-availability-expectations]]
 === Requirements for Clustering in {pro}
@@ -87,8 +81,8 @@ same shared storage. You need to share the nodes the directory location of your
 <<admin-repository-blobstores,blob store>>. You shouldn't configure your nodes to share an entire data directory. 
 Each node should have its own independent non-conflicting OrientDB database.
 
-For example, if you have two nodes -- a default called "node-a" and a new node called "node-b" -- and "node-a's"  
-blob store directory located at `/foo/bar/blobs/foobar`. "Node-b" should be mounted to the same file system 
+For example, if you have two nodes -- a default called "node-a" and a new node called "node-b" -- and blob store 
+directory for "node-a" is located at `/foo/bar/blobs/foobar`. "Node-b" should be mounted to the same blob store
 location.
 
 [[high-availability-configuration]]
@@ -102,22 +96,22 @@ repository manager port.
 [[high-availability-enable]]
 ==== Enabling the Nodes
 
-Follow these steps to enable the high availability feature:
+Follow these steps to enable high availability:
 
 . In your existing repository manager, open the `$NEXUS_HOME/etc/org.sonatype.nexus.cfg` file.
-. Remove the `#` before +nexus.clustered=true+ to enable Hazelcast usage on start. 
+. Remove the `#` before +nexus.clustered=true+ to enable high availability in the new instance. 
 . Go to the new repository manager and repeat steps 1 and 2, to enable the new instance.
 
 Any further work is done automatically by the interactions of the new repository manager with the data and 
-configuration synchronized with the high availability feature.
+configuration synchronized with the high availability.
 
 [[high-availability-startup]]
 ==== Starting the High Availability Service
 
 At this point, you have already configured a new, distinct repository manager to run as a backup for the original 
-instance. So, start both repository managers, by entering and executing `./bin/nexus run` in the command line. On 
-startup you can review the log, in the command line. You should see connection messages via Hazelcast similar 
-to this, below:
+instance. To start, bring the nodes to full service by starting the repository managers in the command line. On 
+startup you can review the log, in the command line. You should see connection messages via Hazelcast similar to 
+this, below:
 
 ----
 2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
