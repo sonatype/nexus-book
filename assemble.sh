@@ -63,11 +63,11 @@ cp -v site/global/index.html target/site/$version/
 
 if [ $publish_master == "true" ]; then
 echo "Invoking templating process for master"
-$templateScript ../nexus-book/target/site/reference $docProperties "block" "../../" "book"
+$templateScript $dir/target/site/reference $docProperties "block" "../../" "book"
 fi
 
 echo "Invoking templating process for $version "
-$templateScript ../nexus-book/target/site/$version/reference $docProperties "block" "../../../" "book"
+$templateScript $dir/target/site/$version/reference $docProperties "block" "../../../" "book"
 
 if [ $publish_index == "true" ]; then
   echo "Preparing Nexus Repository and Nexus Documentation index for deployment"
@@ -77,13 +77,13 @@ if [ $publish_index == "true" ]; then
   echo "  Copying content and resources"
   cp target/index.html target/site
   echo "Invoking templating for index page"
-  $templateScript ../nexus-book/target/site/ $docProperties "none" "../" "article"
+  $templateScript $dir/target/site/ $docProperties "none" "../" "article"
   cp -rv site/global/sitemap*.xml target/site
   echo "... done"
 
   echo "Preparing Nexus Documentation index for deployment"
   cp target/nexus-documentation.html target/site/nexus-documentation/index.html
   echo "Invoking templating for index page"
-  $templateScript ../nexus-book/target/site/nexus-documentation/ "nexus-documentation.properties" "none" "" "article"
+  $templateScript $dir/target/site/nexus-documentation/ "nexus-documentation.properties" "none" "" "article"
   echo "... done"
 fi
