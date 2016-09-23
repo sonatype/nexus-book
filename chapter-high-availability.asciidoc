@@ -27,8 +27,11 @@ In {pro}, there are two ways you can implement high availability. In both scenar
 two distributed nodes. You can implement this by the following methods:
 
 . Start with a fresh installation of {pro} that includes the high availability feature.
+. Enable high availability in version of {pro} 3 to synchronize content from a 2.x to 3.y upgrade.
+////
 . Add a second server with the high availability feature in place, then configure it in your existing instance of 
 {pro}
+////
 
 High availability implementations are established between two nodes, joined together by a common blob store 
 directory. The second node that you initiate is synchronized with the first. When configured, the nodes 
@@ -53,22 +56,22 @@ automatically intercept component data between the two nodes.
 [[high-availability-expectations]]
 === Requirements for Clustering in {pro}
 
-For both scenarios the minimum release to work with is 3.1. Depending on your current file system configuration, 
-you may need to re-organize in preparation for high availability.
+Depending on your current file system configuration, you may need to re-organize in preparation for high 
+availability.
 
 ////
 How would we tell them to re-organize their file system config for HA, if at all?
 ////
 
 The repository manager must have the same network configuration as the second repository manager that you'll need 
-to install, so the nodes can communicate. Enabling the second repository manager is the minimum requirement to 
-allow redundancy between the nodes.
+to install, so the nodes can communicate. Enabling the second repository manager with high availability is the 
+minimum requirement to allow redundancy between the nodes.
 
 [[high-availability-servers]]
 === Supported Servers for High Availability
 
-There are three supported infrastructures you can consider to facilitate high availability between 
-your repository managers. You can install them across a mix of two:
+There are three supported infrastructures you can consider to facilitate high availability between your 
+repository managers. You can install them across a mix of two:
 
 - physical servers
 - virtual machines
@@ -81,47 +84,51 @@ Begs the question what you need to do to enhance HA performance.
 [[high-availability-prepare]]
 === Preparing a Cluster for High Availability
 
-When you have a workable file system set for high availability, which shares the blob store path and network 
-configuration, follow the steps below to get started:
+When you have a workable file structure, where your two blob store file paths are the same, follow the steps 
+below to get started:
 
 - <<high-availability-install,Install>> a fresh instance of {pro} that includes high availability, then 
-duplicate the file. Alternatively you can add a second version of 3.1 with high availability to connect to
-your existing version of 3.1.
+duplicate the file.
 - <<high-availability-configure,Configure and activate>> the cluster.
 - <<high-availability-startup,Start>> the service.
 
 [[high-availability-install]]
 === Installing {pro} for High Availability
 
-To enable clustering for either a fresh installation, or existing repository manager with high availability, 
-choose between the methods below.
+To enable clustering from a fresh installation of {pro}, follow the steps below.
 
 ==== Using a Fresh Installation of {pro}
 
-To enable clustering for a fresh install of the repository manager, all you need to do is:
+To prepare a fresh installation for {pro} for high availability
 
-- Download {pro}.
-- Duplicate the file.
+- Download {pro} and .
+- Duplicate the {pro} file, creating a second folder.
 - Set the location for the second repository manager so the nodes share same the 
-<<admin-repository-blobstores,blob store>>.
-
-==== Adding a New Version of {pro} with High Availability
-
-If you have an existing repository manager you can start high availability in a new instance to expose 
-clustering, and connect the nodes for redundancy. So, this method assumes already use an existing version of 3.1. 
-Follow these steps:
-
-- Download a second version of {pro}.
-- Set the location for the second repository manager in your file system so the nodes share same the blob store.
-
-Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory. For 
-your repository manager to operate properly each node should have its own independent, non-conflicting OrientDB 
-database. Instead, you only need to join the <<admin-repository-blobstores,blob store>> file locations together, 
-where the nodes share access to components.
+<<admin-repository-blobstores,blob store>> path.
 
 For example, let's say you create two nodes, a default called "node-a" and a new node called "node-b". Then you 
 designate the blob store directory for "node-a" at `sonatype-work/nexus3/data/blobs`. You must mount "node-b" to 
 the same location.
+
+////
+==== Adding a New Version of {pro} with High Availability
+
+If you have an existing repository manager you can start high availability in a new instance to expose 
+clustering, and connect the nodes for redundancy. So, this method assumes you already use an existing version of 
+{pro} with high availability. Follow these steps:
+
+- Download a second version of {pro}.
+- Set the location for the second repository manager in your file system so the nodes share same the blob store.
+
+From Benjamin: Somewhere we should also mention that in case of an existing NX instance, that instance needs to 
+be rebooted first. The first node to join/form the cluster defines the current NX config, any other node joining 
+afterwards will copy that config. I.e. if one was to start the second NX instance first, all config 
+from the existing instance gets lost when that would join the cluster later.
+////
+Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory. For 
+your repository manager to operate properly each node should have its own independent, non-conflicting OrientDB 
+database. Instead, you only need to join the <<admin-repository-blobstores,blob store>> file locations together, 
+where the nodes share access to components.
 
 ////
 TIP:: If you run repository manager instances on different hosts, to get the most out of high availability for 
