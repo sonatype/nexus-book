@@ -110,8 +110,8 @@ $ tar xvzf nexus-{version-exact}-unix.tar.gz
 You install the repository manager in a directory other than your users home directory. On a Unix machine common 
 practice is to use `/opt`.
 
-The extraction process creates two sibling directories: an 'application directory' and a Sonatype work directory.
-The latter contains the 'data directory'. Further details about these folders and their contents can be found in
+The extraction process creates two sibling directories: an application directory and a Sonatype work directory.
+The latter contains the data directory. Further details about these folders and their contents can be found in
 <<directories>>.
 
 The `bin` folder contains the generic startup scripts for Unix-like platforms called `nexus`. The Windows platform
@@ -288,11 +288,13 @@ sudo systemctl start nexus.service
 After starting the service for any Linux-based operating systems, verify that the service started successfully.
 
 ----
-tail -f /opt/nexus/data/log/nexus.log
+tail -f /opt/nexus/../sonatype-work/nexus3/data/log/nexus.log
 ----
 
 The tail command verifies that the service has been started successfully. If successful, you should see a message 
 notifying you that it is listening for HTTP.
+
+IMPORTANT:: Be sure to assign the appropriate permissions to the user running the `nexus` service.
 
 [[service-windows]]
 ==== Running as a Service on Windows
@@ -759,11 +761,12 @@ You can use `$install-dir/bin/nexus.vmoptions` to define a new location for data
 configuration file, change the values of `Dkaraf.data` and `Djava.io.tmpdir` to designate an absolute path you
 prefer to use.
 
-For example, to use the absolute path `/opt/repository/storage` change the values as follows:
+The `nexus` service will look to add the data directory to the absolute path that you configure. For example,
+to use the absolute path `/opt/nexus/..sonatype-work/nexus3/data` change the values as follows:
 
 ----
--Dkaraf.data=/opt/repository/storage
--Djava.io.tmpdir=/opt/repository/storage/tmp
+-Dkaraf.data=/opt/nexus/..sonatype-work/nexus3/data
+-Djava.io.tmpdir=/opt/nexus/..sonatype-work/nexus3/data/tmp
 ----
 
 [[config-legacy-url]]
