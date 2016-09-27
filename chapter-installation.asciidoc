@@ -623,8 +623,8 @@ additional components such as Java libraries and configuration files. The name o
 `nexus-` and is appended with the version name. In this documentation it is referred to as `$install-dir` in any
 code segments.
 
-Data Directory:: This directory contains all the repositories, components and other data that is being stored and
-managed by the repository manager. This is sibling to the installation directory by default for archive-based installs.It is located at `sonatype-work/nexus3/data`. In this documentation it is referred to as `$data-dir` in any code segments.
+Data Directory:: This directory contains all the repositories, components and other data that are stored and
+managed by the repository manager. This is a sibling to the installation directory and contains archive-based installs. The default location of the data directory is `sonatype-work/nexus3/data`. In this documentation it is referred to as `$data-dir` in any code segments.
 
 [[installation-directory]]
 ==== Installation Directory
@@ -661,6 +661,10 @@ TBD... should this be documented or is it needed or should it be removed from th
 
 `system`:: contains all components and plugins that constitute the application.
 
+[[data-directory]]
+==== Data Directory
+
+The data directory contains subdirectories such as `blobs`, `db`, `elasticsearch`, and others. These contain all the components, repository, configuration, and other data presented by the repository manager. Follow the instructions in <<config-data-directory>> to customize the location.
 
 [[configure-runtime]]
 === Configuring the Runtime Environment
@@ -745,6 +749,18 @@ nexus-context-path=/components/
 ----
 
 Therefore, if the port is set to `9081`, the exposed URL will be `http://localhost:9081/components/`.
+
+[[config-data-directory]]
+==== Configuring the Data Directory
+
+You can use `$install-dir/bin/nexus.vmoptions` to define a new location for data you want to preserve. In the configuration file, change the values of `Dkaraf.data` and `Djava.io.tmpdir` to designate an absolute path you prefer to use.
+
+For example, to use the absolute path `/opt/repository/storage` change the values as follows:
+
+----
+-Dkaraf.data=/opt/repository/storage
+-Djava.io.tmpdir/opt/repository/storage/tmp
+----
 
 [[config-legacy-url]]
 ==== Configuring Legacy URL Paths
