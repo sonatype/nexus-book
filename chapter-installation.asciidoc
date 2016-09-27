@@ -288,7 +288,7 @@ sudo systemctl start nexus.service
 After starting the service for any Linux-based operating systems, verify that the service started successfully.
 
 ----
-tail -f /opt/nexus/../sonatype-work/nexus3/data/log/nexus.log
+tail -f /opt/sonatype-work/nexus3/data/log/nexus.log
 ----
 
 The tail command verifies that the service has been started successfully. If successful, you should see a message 
@@ -618,7 +618,7 @@ More information about security related topics can be found in <<security>>.
 [[directories]]
 === Directories
 
-There are two main directories created and used by the repository manager.
+After you extract the repository manager archive, two directories will appear:
 
 Installation directory:: This directory is contains the Nexus Repository Manager application and all the required
 additional components such as Java libraries and configuration files. The name of the directory by default uses
@@ -626,9 +626,8 @@ additional components such as Java libraries and configuration files. The name o
 code segments.
 
 Data directory:: This directory contains all the repositories, components and other data that are stored and managed
-by the repository manager. This is a sibling to the installation directory and contains your own configurations
-and data. The default location of the data directory is nested inside `sonatype-work`. In this documentation it is
-referred to as `$data-dir` in any code segments.
+by the repository manager. The default location of the data directory is nested inside `sonatype-work`. In this
+documentation it is referred to as `$data-dir` in any code segments.
 
 [[installation-directory]]
 ==== Installation Directory
@@ -758,15 +757,15 @@ Therefore, if the port is set to `9081`, the exposed URL will be `http://localho
 ==== Configuring the Data Directory
 
 You can use `$install-dir/bin/nexus.vmoptions` to define a new location for data you want to preserve. In the
-configuration file, change the values of `Dkaraf.data` and `Djava.io.tmpdir` to designate an absolute path you
+configuration file, change the values of `-Dkaraf.data` and `-Djava.io.tmpdir` to designate an absolute path you
 prefer to use.
 
 The `nexus` service will look to add the data directory to the absolute path that you configure. For example,
-to use the absolute path `/opt/nexus/..sonatype-work/nexus3/data` change the values as follows:
+to use the absolute path `/opt/sonatype-work/nexus3/data` change the values as follows:
 
 ----
--Dkaraf.data=/opt/nexus/..sonatype-work/nexus3/data
--Djava.io.tmpdir=/opt/nexus/..sonatype-work/nexus3/data/tmp
+-Dkaraf.data=/opt/sonatype-work/nexus3/data
+-Djava.io.tmpdir=/opt/sonatype-work/nexus3/data/tmp
 ----
 
 [[config-legacy-url]]
