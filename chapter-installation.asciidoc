@@ -110,8 +110,9 @@ $ tar xvzf nexus-{version-exact}-unix.tar.gz
 You install the repository manager in a directory other than your users home directory. On a Unix machine common 
 practice is to use `/opt`.
 
-The extraction process creates two sibling directories, the 'installation directory' and the 'data directory'.
-Further details about these folders can be found in <<directories>>.
+The extraction process creates two sibling directories: an 'application directory' and a Sonatype work directory.
+The latter contains the 'data directory'. Further details about these folders and their contents can be found in
+<<directories>>.
 
 The `bin` folder contains the generic startup scripts for Unix-like platforms called `nexus`. The Windows platform
 equivalent is called `nexus.exe`. To start the repository manager from the `bin` folder on a Unix-like platform
@@ -622,9 +623,9 @@ additional components such as Java libraries and configuration files. The name o
 `nexus-` and is appended with the version name. In this documentation it is referred to as `$install-dir` in any
 code segments.
 
-Data Directory:: This directory contains all the repositories, components and other data that are stored and
-managed by the repository manager. This is a sibling to the installation directory and contains archive-based
-installs. The default location of the data directory is `sonatype-work/nexus3/data`. In this documentation it is
+Data directory:: This directory contains all the repositories, components and other data that are stored and managed
+by the repository manager. This is a sibling to the installation directory and contains you own configurations
+and data. The default location of the data directory is nested inside `sonatype-work`. In this documentation it is
 referred to as `$data-dir` in any code segments.
 
 [[installation-directory]]
@@ -648,12 +649,10 @@ system
 `LICENSE.txt and NOTICE.txt`:: contain legal details about the license and copyright notices.
 
 `bin`::  contains the `nexus` startup script itself as well as startup-related  configuration files.
-
 //// 
 TBD... should this be documented or is it needed or should it be removed from the product
 `deploy`:: is empty. 
 ////
-
 `etc` :: contains configuration files.
 
 `lib` :: contains binary libraries related to Apache Karaf.
@@ -665,9 +664,9 @@ TBD... should this be documented or is it needed or should it be removed from th
 [[data-directory]]
 ==== Data Directory
 
-The data directory contains subdirectories such as `blobs`, `db`, `elasticsearch`, and others. These
-contain all the components, repository, configuration, and other data presented by the repository manager.
-Follow the instructions in <<config-data-directory>> to customize the location.
+The data directory, found at `sonatype-work/nexus3/data`, contains subdirectories such as `blobs`, `db`,
+`elasticsearch`, and others. These contain all the components, repository, configuration, and other data presented
+by the repository manager. Follow the instructions in <<config-data-directory>> to customize the location.
 
 [[configure-runtime]]
 === Configuring the Runtime Environment
@@ -764,7 +763,7 @@ For example, to use the absolute path `/opt/repository/storage` change the value
 
 ----
 -Dkaraf.data=/opt/repository/storage
--Djava.io.tmpdir/opt/repository/storage/tmp
+-Djava.io.tmpdir=/opt/repository/storage/tmp
 ----
 
 [[config-legacy-url]]
