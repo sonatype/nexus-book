@@ -6,7 +6,7 @@ set -e
 set -u
 
 # load properties to be able to use them in here
-source nexus-book.properties
+source book.properties
 
 echo "version set to $version"
 
