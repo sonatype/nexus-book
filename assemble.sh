@@ -18,7 +18,7 @@ dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 echo "Processing in ${dir}"
 
 templateScript=../nexus-documentation-wrapper/apply-template.sh
-docProperties=$dir/nexus-book.properties
+docProperties=$dir/book.properties
 source $docProperties
 
 echo "Nexus Repository Manager Version $version"
