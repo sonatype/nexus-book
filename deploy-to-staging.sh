@@ -21,9 +21,9 @@ function rsyncToDest {
 }
 
 if [ $publish_master == "true" ]; then
-    rsyncToDest site/reference/ reference --delete
-    rsyncToDest site/pdf/ pdf --delete
-    rsyncToDest site/other/ other --delete
+    rsyncToDest site/reference3/ reference3 --delete
+    rsyncToDest site/pdf3/ pdf3 --delete
+    rsyncToDest site/other3/ other3 --delete
 fi
 
 rsyncToDest site/$version/ $version --delete
