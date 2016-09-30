@@ -21,12 +21,13 @@ function rsyncToDest {
     echo "Syncing $1 to $2 "
     mkdir -p $target
     rsync $options -av target/$source $target
+    echo " Completed sync from $1 to $2 "
 }
 
 if [ $publish_master == "true" ]; then
-    rsyncToDest site/reference/ reference --delete
-    rsyncToDest site/pdf/ pdf --delete
-    rsyncToDest site/other/ other --delete
+    rsyncToDest site/reference3/ reference3 --delete
+    rsyncToDest site/pdf3/ pdf3 --delete
+    rsyncToDest site/other3/ other3 --delete
 fi
 
 rsyncToDest site/$version/ $version --delete
