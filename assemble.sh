@@ -25,12 +25,12 @@ echo "Nexus Repository Manager Version $version"
 
 if [ $publish_master == "true" ]; then
     echo "Preparing for master deployment"
-    rm -rf target/site/reference
-    rm -rf target/site/pdf
-    rm -rf target/site/other
-    mkdir -p target/site/reference
-    mkdir -p target/site/pdf
-    mkdir -p target/site/other
+    rm -rf target/site/reference3
+    rm -rf target/site/pdf3
+    rm -rf target/site/other3
+    mkdir -p target/site/reference3
+    mkdir -p target/site/pdf3
+    mkdir -p target/site/other3
 fi
 
 echo "Preparing for version $version deployment"
@@ -43,10 +43,10 @@ mkdir -p target/site/$version/other
 
 if [ $publish_master == "true" ]; then
     echo "Copying for master deployment"
-    cp -r target/book-nexus.chunked/*  target/site/reference
-    cp target/book-nexus.pdf target/site/pdf/nxbook-pdf.pdf
-    cp target/sonatype-nexus-eval-guide.pdf target/site/pdf/sonatype-nexus-eval-guide.pdf
-    cp target/book-nexus.epub target/site/other/nexus-book.epub
+    cp -r target/book-nexus.chunked/*  target/site/reference3
+    cp target/book-nexus.pdf target/site/pdf3/nxbook-pdf.pdf
+    cp target/sonatype-nexus-eval-guide.pdf target/site/pdf3/sonatype-nexus-eval-guide.pdf
+    cp target/book-nexus.epub target/site/other3/nexus-book.epub
 fi
 
 echo "Copying for version $version deployment"
@@ -63,7 +63,7 @@ cp -v site/global/index.html target/site/$version/
 
 if [ $publish_master == "true" ]; then
 echo "Invoking templating process for master"
-$templateScript $dir/target/site/reference $docProperties "block" "../../" "book"
+$templateScript $dir/target/site/reference3 $docProperties "block" "../../" "book"
 fi
 
 echo "Invoking templating process for $version "
