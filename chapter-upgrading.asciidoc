@@ -88,8 +88,8 @@ added, updated, or deleted is picked up by the upgrade and added to the target {
 changes are not.
 
 You should not make changes to items such as realm settings, permissions, roles, role assignments, HTTP
-configuration, SSL certificates, or add new repositories. These types of configuration changes can cause the
-upgrade process to fail.
+configuration, SSL certificates, or add new repositories. These types of configuration changes are not taken into
+account for an ongoing upgrade and can cause the upgrade process to fail.
 
 [[upgraded]]
 ==== What Is Upgraded
@@ -103,7 +103,7 @@ Component storage format from files to blobs:: Components in {nxrm} 2 are stored
   version 3 to iterate over every component stored in version 2. This takes the bulk of the time required for the
   upgrade process.
 Settings and metadata:: Settings and some component metadata in {nxrm} 2 are stored across many files.
-  Conversely, {nxrm} 3 loads equivalent settings into an http://orientdb.com/[OrientDB] database.
+  Conversely, {nxrm} 3 loads equivalent data into an http://orientdb.com/[OrientDB] database.
 
 [[not-upgraded]]
 ==== What Is Not Upgraded
@@ -125,11 +125,11 @@ items. The following list of items are not automatically included when you upgra
   `nexus/WEB-INF/classes/ehcache.xml`
 * custom log levels or edits to `logback.xml` configuration files (e.g. custom log file rotation, file naming, log patterns)
 
-There are equivalent configurations possible for all these values and customizations. The specifics vary widely
-and have to be applied manually after determining the need for such customizations and developing specific plans
-for the modifications. The scope of these varies from zero to large efforts. E.g. some VM start-up parameters might
-not be appropriate any more due to optimized performance of version 3. On the other hand custom plugins might now
-standard supported features.
+There are equivalent configurations possible for all these values and customizations in {nxrm} 3. The specifics
+vary widely and have to be applied manually after determining the need for such customizations and developing
+specific plans for the modifications. The scope of these varies from zero to large efforts. E.g. some VM start-up
+parameters might not be appropriate any more due to optimized performance of version 3. On the other hand custom
+plugin features might now be a standard supported features.
 
 [[upgrade-repo-support]]
 ==== Repository Format Support
@@ -164,14 +164,10 @@ components.
 [[upgrade-architecture]]
 ==== Supported Installation Scenarios
 
-There are two supported scenarios for upgrading:
+There are two scenarios for upgrading:
 
 * Separate servers for version 2 and version 3 
 * Version 2 and version 3 running on the same server
-
-//// 
-Begs the question if there are unsupported, or something we can add here to prevent support questions.
-////
 
 [[upgrade-methods]]
 ==== Upgrade Methods
@@ -181,14 +177,18 @@ Upgrade is made possible by specific <<admin-system-capabilities,capabilities>> 
 capability, mentioned in <<upgrade-start>>, is enabled and both repository manager instances are communicating,
 you can choose one of three methods to transfer your content:
 
+- HTTP Download
+- File System Copying
+- File System Hard Linking 
+
 ////
 Expand on what types of architectures might benefit from the listed options
 ////
 
 *HTTP Downloading*
 
-HTTP downloading is an transfer method in which version 3 makes HTTP requests to version 2 to transfer
-configuration and data. This is the slowest option.
+HTTP download is a transfer method in which version 3 makes HTTP requests to version 2 to transfer
+configuration and data. This is the slowest optio.
 
 If version 2 and version 3 are running on different machines and do not share access to the same file system
 storage, you must use the HTTP download method.
@@ -202,7 +202,7 @@ This upgrade method works if versions 2 and version 3 are configured to access t
 identically named mount points. It is a faster process than the HTTP Download method, and has less impact on the
 performance of version 2.
 
-*Hard Linking*
+*File System Hard Linking*
 
 In this transfer method, version 2 tells version 3 the path of the file content to transfer and a file system hard
 link to the same content is created.
@@ -216,10 +216,10 @@ method.
 
 While discussed in greater detail in <<admin-repository-blobstores,Chapter 4>>, {nxrm} 3 allows you to create and
 name multiple blob stores to store your content. Before you start the upgrade process it is important to consider
-how you want to allocate space within the storage mechanism.
+how you want to allocate space within the storage system.
 
 When upgrading, make sure you have enough storage capacity in the destination file system(s). For instance, if you
-are using the hard linking, the bytes themselves are not duplicated (saving space), but you must ensure there are 
+are using hard linking, the data is not duplicated. This saves storage space, but you must ensure that there are
 enough free inodes for the content you want to transfer during the upgrade process.
 
 [[upgrade-support]]
@@ -241,7 +241,7 @@ upgrade. A single component within the group, not selected, may prevent the enti
 
 *User Tokens*
 
-The upgrade tool only replicates pre-existing user tokens to version 3, if user token support is enabled in
+The upgrade tool only upgrades pre-existing user tokens to version 3, if user token support is enabled in
 version 2. In version 2, click the 'User Token' tab, in the 'Administration' menu, and enable the setting.
 
 *Repository Health Check and SSL Health Check*
@@ -263,7 +263,7 @@ If you're a {pro} user, and you want to upgrade your source {iq} settings and co
 repository manager, ensure that your licenses include the integration for both versions. Your configuration for 
 'IQ Server URL', 'Username', 'Password', and 'Request Timeout' will be included in the upgrade. Additional 
 configuration, such as analysis properties, trust store usage, and the enabled {iq} connection itself will be 
-replicated from versions 2 to 3.
+upgraded from versions 2 to 3.
 
 [[upgrade-security]]
 ==== Security Compatibility
@@ -292,7 +292,7 @@ upgrade process modifies repository target names to ensure compatibility with JE
 ==== Optimization, Performance, and Tuning
 
 When considering upgrade time and speed, take into account all enabled features on your {nxrm} 2 instance that you
-may not need. You can optimize the performance of your upgrade by either disabling specific features. As discussed
+may not need. You can optimize the performance of your upgrade by  disabling specific features. As discussed
 in this https://support.sonatype.com/hc/en-us/articles/213465138[article about performance and tuning], identify
 and then reduce your list of used features to improve the performance of your repository manager. See some
 highlights, below:
@@ -308,7 +308,7 @@ Repositories no longer supported:: Remove any deprecated repositories. For examp
 Rebuild Maven Metadata Files:: This scheduled task should only be run if you need to repair a corrupted Maven
 repository storage on disk.
 Staging rules:: If you are a {pro} user that uses the application for staging releases, redefine or reduce the
-number of configured rules.
+number of configured staging rules and staging profiles..
 Scheduled task for releases:: If you find empty 'Use Index' checkboxes under 'Task Settings', use the opportunity
 to disable or remove those specific tasks for releases.
 
@@ -330,11 +330,11 @@ few basic steps to start the upgrade:
 . Install {nxrm} 3, if upgrading to a new instance 
 . Enable the upgrade capabilities in both version 2 and version 3.
 
-With the above complete, you can use the provided upgrade tool in version 3, which guides you through
+With the above complete, you can use the upgrade tool in version 3, which guides you through
 upgrading in three phases:
 
-. 'Preparing', the phase that prepares the transfer and creation of all components.
-. 'Synchronizing', the phase that counts and processes all components set to upgrade.
+. 'Preparing', the phase that prepares the transfer and creation of all configuration and components.
+. 'Synchronizing', the phase that counts and processes all components set to upgrade and upgrades all other configuration.
 . 'Finishing', the phase that performs final clean up, then closes the process.
 
 [[upgrade-configuration]]
@@ -345,10 +345,11 @@ Follow these steps:
 
 . Click 'Administration' in the left-hand panel.
 . Open the 'Capabilities' screen.
-. Select 'New' to prompt the 'Create new capability' modal.
+. Select 'New' to access the 'Create new capability' modal.
 . Select 'Upgrade: Agent' as your capability 'Type'.
 . Click 'Add' to close the modal.
-. Copy and save the 'Access Token' found on the 'Status' tab for your new capability (you'll need it for the 'Upgrade' tool in version 3).
+. Copy and save the 'Access Token' found on the 'Status' tab for your new capability. You need it to configure the
+'Upgrade' tool in version 3.
 
 In the lower section of the 'Capabilities' interface, the repository manager acknowledges the upgrade-agent as
 'Active'.
@@ -359,7 +360,7 @@ In the lower section of the 'Capabilities' interface, the repository manager ack
 In version 3, enable the 'Upgrade' capability to open the connection for the upgrade-agent, and
 access the 'Upgrade' tool. Follow these steps:
 
-. Click 'System', to open the 'Capabilities' screen.
+. Click 'Capabilities' in the 'System' section of the 'Administration' main menu, to open the 'Capabilities' feature view.
 . Click 'Create capability'.
 . Select 'Upgrade', then click 'Create capability' to enable the upgrade.
 
@@ -369,13 +370,13 @@ access the 'Upgrade' tool. Follow these steps:
 After you enable the upgrade capabilities, access the upgrade tool in {nxrm} 3 to start your upgrade.
 
 . Go to the 'Administration' menu.
-. Select 'Upgrade' located under 'System' to open the wizard.
+. Select 'Upgrade' located in the  'System' section of the 'Administration' main menu to open the wizard.
 
 Overview:: The upgrade tool provides an overview of what is allowed for an upgrade as well as warnings on what 
 cannot be upgraded.
 
-Agent Connection:: This screen presents two fields, 'URL' and 'Access Token'. In the 'URL' field, enter the base
-URL (including context path) of your version 2 server (e.g. +http://localhost:8081/nexus/+). In the 'Access Token'
+Agent Connection:: This screen presents two fields, 'URL' and 'Access Token'. In the 'URL' field, enter the
+URL (including context path) of your version 2 server e.g. +http://localhost:8081/nexus/+). In the 'Access Token'
 field, enter the access token, copied from your version 2 'Upgrade: Agent' capability 'Status' tab.
 
 Content:: This screen allows you to select from compatible component formats ('Repositories'), security features 
@@ -386,7 +387,7 @@ For 'System' you can select 'Email', 'HTTP Configuration', and 'IQ Server' confi
 
 Repository Defaults:: If 'User-Managed Repositories' is one of your selections from the 'Content' screen, the
 'Repository Defaults' screen allows you to select directory destination and transfer method. The first drop-down
-menu, 'Destination' gives your option to pick a blob store name different than the default. The second drop-down
+menu, 'Destination' gives your option to pick a blob store name different from default. The second drop-down
 menu, 'Method', allows you to choose the transfer method. This section allows you to click and change each
 repository's individual method and destination (i.e. blob store).
 
@@ -396,9 +397,9 @@ image::figs/web/upgrade-repositories-partial.png[scale=60]
 
 Repositories:: If 'User-Managed Repositories' is one of your selections from the 'Content' screen, the 
 'Repositories' screen allows you to select which repositories you want to upgrade. As shown in
-<<fig-upgrade-repositories-partial>>, you can either select all repositories with one click, at the top of 
+<<fig-upgrade-repositories-partial>>, you can select all repositories with one click, at the top of 
 the table. Alternatively, you can click each individual repository. In addition to 'Repository', the table 
-displays information around the status of the repository.
+displays information about the status of the repository.
 
 Preview:: This table displays a preview of the content set for the upgrade, selected in the previous screens. 
 Click 'Begin', then confirm from the modal, that you want to start the upgrade process.
@@ -413,7 +414,7 @@ After the upgrade was started in the 'Preview' screen, the repository manager st
 step.  From this point on, no further configuration changes should be performed on version 2. They will not be
 moved to version 3.
 
-However any content changes to the upgraded repositories continue to be upgraded during the following 
+However, any content changes to the upgraded repositories continue to be upgraded during the following 
 'Synchronizing' step. For example, new proxied components or new deployed components in version 2 are transferred
 to version 3.
 
@@ -421,17 +422,17 @@ During the transfer process, your content can already be viewed and accessed in 
 the <<search-components,component search>> or <<browse-browse,browsing>> in repositories or repository groups.
 
 The status in the view shows the number of components transferred and when the last changes where detected in
-version 2. Once all components are migrated and no further changes have been detected for a while you upgrade is
-mostly complete. You can now decide upon waiting for further deployments to version or finalizing the upgrade. To
+version 2. Once all components are migrated and no further changes have been detected for a while the upgrade is
+mostly complete. You can now decide upon waiting for further deployments to version 2 or finalizing the upgrade. To
 finalize, stop the monitoring and proceed through the 'Finishing' screen.
 
-===== Upgrading Scenarios
+===== Upgrade Scenarios
 
 ////
 Consider changing title to Upgrading Piecemeal Content
 ////
 
-You could transfer all components at once, but the time to complete these steps depends on the amount of components
+You can transfer all components at once, but the time to complete these steps depends on the amount of components
 transferred. This can range from minutes to hours and potentially beyond. With that in mind, your upgrade plan allows
 you to transfer repositories and repository configurations, incrementally.
 
@@ -444,8 +445,8 @@ transferred from a previous upgrade, the new upgrade will overwrite the existing
 There are a few supported methods to choose from when running the upgrade. You can:
 
 - transfer non-repository configuration and several repositories, then return to upgrade the rest of the repositories
-- transfer all content, and then upgrade everything a second time (though, previously upgraded repositories are
-unselectable
+- transfer all content, and then upgrade everything a second time (though, previously upgraded repositories can not be 
+selected)
 - transfer non-repository configurations, then return and upgrade all repositories
 - transfer everything, abort at any stage, then re-initiate a second upgrade
 
@@ -455,7 +456,7 @@ The section above should include talking points on single upgrade and multiple u
 
 ==== After the Upgrade
 
-With the upgrade completed and all components transferred you can perform the next steps in your upgrade
+With the upgrade completed and all components are transferred you can perform the next steps in your upgrade
 plan. These can include:
 
 - Stop {nxrm} 2.
