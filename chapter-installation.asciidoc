@@ -682,8 +682,11 @@ within the installation.  The application startup is performed with the JVM conf
 ----
 -Xms1200M
 -Xmx1200M
+-XX:MaxDirectMemorySize=2G
+-XX:+HeapDumpOnOutOfMemoryError
 -XX:+UnlockDiagnosticVMOptions
 -XX:+UnsyncloadClass
+-XX:+LogVMOutput
 -Djava.net.preferIPv4Stack=true
 -Dkaraf.home=.
 -Dkaraf.base=.
@@ -691,6 +694,7 @@ within the installation.  The application startup is performed with the JVM conf
 -Djava.util.logging.config.file=etc/java.util.logging.properties
 -Dkaraf.data=../sonatype-work/nexus3/data
 -Djava.io.tmpdir=../sonatype-work/nexus3/data/tmp
+-XX:LogFile=../sonatype-work/nexus3/data/log/jvm.log
 -Dkaraf.startLocalConsole=false
 ----
 
@@ -757,8 +761,8 @@ Therefore, if the port is set to `9081`, the exposed URL will be `http://localho
 ==== Configuring the Data Directory
 
 You can use `$install-dir/bin/nexus.vmoptions` to define a new location for data you want to preserve. In the
-configuration file, change the values of `-Dkaraf.data` and `-Djava.io.tmpdir` to designate an absolute path you
-prefer to use.
+configuration file change the values of `-Dkaraf.data`, `-Djava.io.tmpdir`, and `-XX:LogFile` to designate an
+absolute path you prefer to use.
 
 The `nexus` service will look to add the data directory to the absolute path that you configure. For example,
 to use the absolute path `/opt/sonatype-work/nexus3/data` change the values as follows:
@@ -766,6 +770,7 @@ to use the absolute path `/opt/sonatype-work/nexus3/data` change the values as f
 ----
 -Dkaraf.data=/opt/sonatype-work/nexus3/data
 -Djava.io.tmpdir=/opt/sonatype-work/nexus3/data/tmp
+-XX:LogFile=/opt/sonatype-work/nexus3/data/log/jvm.log
 ----
 
 [[config-legacy-url]]
