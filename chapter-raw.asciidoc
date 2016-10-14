@@ -25,6 +25,9 @@ For the Maven site example in <<maven-site>>, set the 'Name' to `site` and chang
 After creating the new raw repository, it appears in the list of repositories with the name 'site' provided
 earlier. The 'URL' in the list can be used for deployment and access usage.
 
+TIP: Disable the 'Strict Content Type Validation', if you encounter problems related to the content MIME-type.
+
+
 [[maven-site]]
 === Creating and Deploying a Maven Site
 
@@ -203,8 +206,27 @@ After a completed upload the repository manager provides the file at the URL
 `http://localhost:8081/repository/documentation/test.png`. Using this approach in a script entire static websites
 or any other binary resources can be uploaded.
 
-////
-/* Local Variables: */
-/* ispell-personal-dictionary: "ispell.dict" */
-/* End:             */
-////
+A complete static website consisting of numerous HTML, CSS, JS and image files or some other directory structure
+of multiple files and resources can be uploaded with a script that assembles and issues numerous HTTP PUT
+requests.
+
+The https://github.com/sonatype/nexus-book-examples/tree/nexus-3.0.x/raw[raw folder of the nexus-book-examples
+repository] contains the Groovy script `rawPopulator.groovy` as an example of such a script as well as a
+simplistic website of two HTML pages in the `site` directory. You can upload the directory to a raw repository
+with the name `documentation` to your repository manager at `http://repo.example.com:8081` with
+
+.Example invocation of the rawPopulator script
+----
+$ groovy rawPopulator.groovy -d site -r documentation -u admin -p admin123 -h http://repo.example.com:8081
+
+Staging 2 files for publishing
+pushing site/index.html
+POST response status: HTTP/1.1 201 Created
+pushing site/success.html
+POST response status: HTTP/1.1 201 Created
+----
+
+After the upload, you can access the site at `http://repo.example.com:8081/repository/documentation/` to load
+`index.html` and clicking on the link directs you to the `success.html` page.
+
+
