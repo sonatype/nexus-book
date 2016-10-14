@@ -429,7 +429,7 @@ ProxyPreserveHost On
 <VirtualHost: *:80>
   ServerName www.example.com
   ServerAdmin admin@example.com
-  ProxyPass /nexus http://localhost:8081/
+  ProxyPass / http://localhost:8081/
   ProxyPassReverse / http://localhost:8081/
   ErrorLog logs/www.example.com/nexus/error.log
   CustomLog logs/www.example.com/nexus/access.log common
@@ -456,8 +456,8 @@ http {
     # optimize downloading files larger than 1G
     #proxy_max_temp_file_size 2G
 
-    location /nexus {
-      proxy_pass http://localhost:8081/nexus;
+    location / {
+      proxy_pass http://localhost:8081/;
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -511,7 +511,7 @@ http {
     # optimize downloading files larger than 1G 
     # proxy_max_temp_file_size 2G
 
-    location / {
+    location /nexus {
       proxy_pass http://localhost:8081/nexus;
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
