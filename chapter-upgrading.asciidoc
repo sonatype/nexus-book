@@ -329,11 +329,12 @@ few basic steps to start the upgrade:
 . Install {nxrm} 3, if upgrading to a new instance 
 . Enable the upgrade capabilities in both version 2 and version 3.
 
-With the above complete, you can use the upgrade tool in version 3, which guides you through
-upgrading in three phases:
+With the above complete, you can use the upgrade tool in version 3, which guides you through upgrading in three
+phases:
 
 . 'Preparing', the phase that prepares the transfer and creation of all configuration and components.
-. 'Synchronizing', the phase that counts and processes all components set to upgrade and upgrades all other configuration.
+. 'Synchronizing', the phase that counts and processes all components set to upgrade and upgrades all other
+configuration.
 . 'Finishing', the phase that performs final clean up, then closes the process.
 
 [[upgrade-configuration]]
@@ -375,7 +376,7 @@ Overview:: The upgrade tool provides an overview of what is allowed for an upgra
 cannot be upgraded.
 
 Agent Connection:: This screen presents two fields, 'URL' and 'Access Token'. In the 'URL' field, enter the
-URL (including context path) of your version 2 server e.g. +http://localhost:8081/nexus/+). In the 'Access Token'
+URL of your version 2 server including the context path e.g. +http://localhost:8081/nexus/+. In the 'Access Token'
 field, enter the access token, copied from your version 2 'Upgrade: Agent' capability 'Status' tab.
 
 Content:: This screen allows you to select from compatible component formats ('Repositories'), security features 
@@ -386,9 +387,9 @@ For 'System' you can select 'Email', 'HTTP Configuration', and 'IQ Server' confi
 
 Repository Defaults:: If 'User-Managed Repositories' is one of your selections from the 'Content' screen, the
 'Repository Defaults' screen allows you to select directory destination and transfer method. The first drop-down
-menu, 'Destination' gives your option to pick a blob store name different from default. The second drop-down
+menu, 'Destination' allows you to pick a blob store name different from default. The second drop-down
 menu, 'Method', allows you to choose the transfer method. This section allows you to click and change each
-repository's individual method and destination (i.e. blob store).
+repository's individual trasnfer method and destination (i.e. blob store).
 
 [[fig-upgrade-repositories-partial]]
 .Partial List of Repository Selections for Upgrade
@@ -412,6 +413,9 @@ Might be worth making this a list. Also moving 'Crowd', 'User Tokens' 'IQ Server
 After the upgrade was started in the 'Preview' screen, the repository manager starts with a short 'Preparing'
 step.  From this point on, no further configuration changes should be performed on version 2. They will not be
 moved to version 3.
+
+Any upgrade process invoked destroys any existing configuration in the target {nxrm} 3 server and replaces it with
+the upgraded configuration from version 2.
 
 However, any content changes to the upgraded repositories continue to be upgraded during the following 
 'Synchronizing' step. For example, new proxied components or new deployed components in version 2 are transferred
@@ -441,21 +445,21 @@ from your 'Security' or 'System' options has a different operation. These are no
 transferred from a previous upgrade, the new upgrade will overwrite the existing non-repository configurations in
 {nxrm} 3.
 
-There are a few supported methods to choose from when running the upgrade. You can:
+Typically an upgrade should be treated as a single process that potentially spans multiple steps. These can be
+separate invocations of the upgrade tool with verification on the target {nxrm} 3 in between. Repeated upgrade of
+repositories includes the related configuration such as repository targets/content selectors and related security
+configuration. It is destructive to configuration from a prior upgrade. Keeping this in mind, here are a few
+possible alternative steps you can perform:
 
+- transfer everything, abort at any stage, then re-initiate a second upgrade after modifications on the source {nxrm} 2
 - transfer non-repository configuration and several repositories, then return to upgrade the rest of the repositories
 - transfer all content, and then upgrade everything a second time (though, previously upgraded repositories can not be 
 selected)
-- transfer non-repository configurations, then return and upgrade all repositories
-- transfer everything, abort at any stage, then re-initiate a second upgrade
-
-////
-The section above should include talking points on single upgrade and multiple upgrade efforts. Comments in the PR
-////
+- transfer non-repository configuration, then optionally return and upgrade all repositories
 
 ==== After the Upgrade
 
-With the upgrade completed and all components are transferred you can perform the next steps in your upgrade
+With the upgrade completed and all components transferred, you can perform the next steps in your upgrade
 plan. These can include:
 
 - Stop {nxrm} 2.
