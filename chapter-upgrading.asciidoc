@@ -21,8 +21,8 @@ IMPORTANT: {pro} customers can take advantage of the assistance of the support t
 [[why-upgrade]]
 === Why Upgrade?
 
-As of {nxrm} version 3.1  there is wider feature and functionality equivalency to {nxrm} 2.
-Highlights of new functionality available in version 3 include:
+As of {nxrm} 3.1  there is wider feature and functionality equivalency to {nxrm} 2.
+Highlights of new functionality include:
 ////
 * High availability (Component Fabric)
 ////
@@ -57,15 +57,15 @@ Further instructions are available on the https://support.sonatype.com/hc/en-us/
 
 Upgrades of version 3 are supported for version 3 milestone 7 and later. The upgrade is a similar process to
 version 2 upgrades and is documented in more detail in the
-https://support.sonatype.com/hc/en-us/articles/217967608[support knowledge base article].
+https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base article].
 
 [[upgrade-version-two-three]]
 === Upgrading 2.x to 3.y
 
-Upgrading from {nxrm} 2 to 3 requires the source repository manager to use version 2.14 (or later) and the target
+Upgrading from {nxrm} 2 to 3 requires the source repository manager to use version 2.14.1 (or later) and the target
 repository manager to use version 3.1 (or later). 
 
-If the source repository manager uses a version of 2.x that is not 2.14 (or later), you must upgrade before
+If the source repository manager uses a version of 2.x that is not 2.14.1 (or later), you must upgrade before
 starting the upgrade to {nxrm} 3 as detailed in <<upgrade-version-two>>.
 
 The target repository manager is typically a fresh installation of the latest 3.x release, with a minimum release
@@ -74,14 +74,14 @@ documented in <<upgrade-version-three>>.
 
 WARNING: Using an existing installation of {nxrm} 3 populated with data and configuration as the target repository
 manager incurs restrictions that make the upgrade more complex and potentially requires reconfiguring the version
-2 instance prior to the upgrade.
+2 instance prior to the upgrade as well as reconfiguring {nxrm} 3 after the upgrade.
 
 [[upgrade-process-expectations]]
 ==== Upgrade Process and Expectations
 
-The process of upgrading {nxrm} 2 to 3, is similar to any major enterprise application, and should be managed via
-an upgrade plan. The upgrade plan is really just a specific checklist of all the steps required to perform
-the upgrade.
+The process of upgrading {nxrm} 2 to 3, is similar to any major enterprise application upgrade, and should be
+managed via an upgrade plan. The upgrade plan is really just a specific checklist of all the steps required to
+perform the upgrade.
 
 While the upgrade process is underway, you can continue to use the source {nxrm} 2. Any repository content that’s
 added, updated, or deleted is picked up by the upgrade and added to the target {nxrm} 3 -- however, configuration
@@ -94,9 +94,9 @@ account for an ongoing upgrade and can cause the upgrade process to fail.
 [[upgraded]]
 ==== What Is Upgraded
 
-As mentioned, {nxrm} 3 represents a modern design shift, involving a new architecture that supports advanced
-features for today's development practices. As such, a number of core changes to data stored in version 3 occur as
-part of the upgrade process. This includes:
+As mentioned, {nxrm} 3 represents a application design shift, involving a new architecture that supports advanced
+features for today's development practices. As such, a number of core changes to data stored occur as part of the
+upgrade process. This includes:
 
 Component storage format from files to blobs:: Components in {nxrm} 2 are stored as individual files on
   disk. Version 3 stores components as <<admin-repository-blobstores,blobs>>. The conversion process requires
@@ -108,9 +108,9 @@ Settings and metadata:: Settings and some component metadata in {nxrm} 2 are sto
 [[not-upgraded]]
 ==== What Is Not Upgraded
 
-The file structures within your repository manager environment will differ between version 2 and version 3.
+The file structures within your repository manager environment differs between version 2 and version 3.
 Before <<upgrade-prep,preparing>> for the upgrade process, review this list of settings and configuration
-items. The following list of items are not automatically included when you upgrade.
+items. These items are not automatically included when you upgrade:
 
 * custom branding
 * virtual repositories
@@ -127,9 +127,10 @@ items. The following list of items are not automatically included when you upgra
 
 There are equivalent configurations possible for all these values and customizations in {nxrm} 3. The specifics
 vary widely and have to be applied manually after determining the need for such customizations and developing
-specific plans for the modifications. The scope of these varies from zero to large efforts. E.g. some VM start-up
-parameters might not be appropriate any more due to optimized performance of version 3. On the other hand custom
-plugin features might now be a standard supported features.
+specific plans for the modifications. The scope of these modifications varies from zero to large
+efforts. E.g. some VM start-up parameters might not be appropriate any more due to optimized performance of
+version 3. On the other hand custom plugin features might now be a standard supported features or require a
+completely new development effort.
 
 [[upgrade-repo-support]]
 ==== Repository Format Support
@@ -170,25 +171,23 @@ There are two scenarios for upgrading:
 * Version 2 and version 3 running on the same server
 
 [[upgrade-methods]]
-==== Upgrade Methods
+==== Data Transfer Methods
 
 Upgrade is made possible by specific <<admin-system-capabilities,capabilities>> in version 2 and version 3 called
-'Upgrade: Agent' and 'Upgrade'. In addition, version 3 includes an upgrade tool. Once the 'Upgrade: Agent'
-capability, mentioned in <<upgrade-start>>, is enabled and both repository manager instances are communicating,
-you can choose one of three methods to transfer your content:
+'Upgrade: Agent' and 'Upgrade'. These capabilities manage the communication between the two servers and can
+transfer all configuration via web protocols. The bulk of the data to be transferred consists of all the binary
+components in the repositories that are upgraded. Once the 'Upgrade: Agent' capability, mentioned in
+<<upgrade-start>>, is enabled and both repository manager instances are communicating, you can choose one of three
+methods for this transfer:
 
 - HTTP Download
 - File System Copying
 - File System Hard Linking 
 
-////
-Expand on what types of architectures might benefit from the listed options
-////
-
 *HTTP Downloading*
 
 HTTP download is a transfer method in which version 3 makes HTTP requests to version 2 to transfer
-configuration and data. This is the slowest optio.
+configuration and data. This is the slowest option.
 
 If version 2 and version 3 are running on different machines and do not share access to the same file system
 storage, you must use the HTTP download method.
@@ -220,7 +219,7 @@ how you want to allocate space within the storage system.
 
 When upgrading, make sure you have enough storage capacity in the destination file system(s). For instance, if you
 are using hard linking, the data is not duplicated. This saves storage space, but you must ensure that there are
-enough free inodes for the content you want to transfer during the upgrade process.
+enough file handlers avaialble for the content you want to transfer during the upgrade process.
 
 [[upgrade-support]]
 ==== Configuration Details for Upgrading
@@ -259,7 +258,7 @@ Realm is not active in version 2.
 
 *IQ Server*
 
-If you're a {pro} user, and you want to upgrade your source {iq} settings and configuration to your target 
+If you are a {pro} user, and you want to upgrade your source {iq} settings and configuration to your target 
 repository manager, ensure that your licenses include the integration for both versions. Your configuration for 
 'IQ Server URL', 'Username', 'Password', and 'Request Timeout' will be included in the upgrade. Additional 
 configuration, such as analysis properties, trust store usage, and the enabled {iq} connection itself will be 
@@ -270,7 +269,7 @@ upgraded from versions 2 to 3.
 
 Before you upgrade from version 2 to version 3 review the differences in security settings along the upgrade
 path. Known changes may affect privileges, roles and repository targets. Repository targets no longer exist in
-{nxrm} 3 and are replaced by content selectors.
+{nxrm} 3 and are replaced by content selectors as documented in <<content-selectors>>.
 
 *Version 2 Roles*
 
