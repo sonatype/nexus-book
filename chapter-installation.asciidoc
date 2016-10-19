@@ -633,12 +633,13 @@ After you extract the repository manager archive, two directories will appear:
 
 Installation directory:: This directory is contains the Nexus Repository Manager application and all the required
 additional components such as Java libraries and configuration files. The name of the directory by default uses
-`nexus-` and is appended with the version name. In this documentation it is referred to as `$install-dir` in any
-code segments.
+`nexus-` and is appended with the version name. In this section, and throughout the book, it is referred to as
+`$install-dir` in any code segments.
 
 Data directory:: This directory contains all the repositories, components and other data that are stored and managed
-by the repository manager. The default location of the data directory is `sonatype-work/nexus3`. In this
-documentation it is referred to as `$data-dir` in any code segments.
+by the repository manager. The default location of the data directory is `../sonatype-work/nexus3` relative to the
+nexus installation directory. In this section, and throughout the book, it is referred to as `$data-dir` in any
+code segments.
 
 [[installation-directory]]
 ==== Installation Directory
@@ -701,30 +702,50 @@ within the installation.  The application startup is performed with the JVM conf
 -Djava.net.preferIPv4Stack=true
 -Dkaraf.home=.
 -Dkaraf.base=.
--Dkaraf.etc=etc
--Djava.util.logging.config.file=etc/java.util.logging.properties
+-Dkaraf.etc=etc/karaf
+-Djava.util.logging.config.file=etc/karaf/java.util.logging.properties
 -Dkaraf.data=../sonatype-work/nexus3
 -Djava.io.tmpdir=../sonatype-work/nexus3/tmp
 -XX:LogFile=../sonatype-work/nexus3/log/jvm.log
 -Dkaraf.startLocalConsole=false
 ----
 
-The main location for configuration files is the `etc` directory. The directory includes:
+The main location for configuration files is the `etc` directory. It includes one properties file and
+a number of nested directories:
 
-config.properties:: The main configuration for the Apache Karaf runtime. This file should 'not' be modified.
+[subs="attributes"]
+----
+$ ls -1 nexus-{version-exact}/etc
+nexus-default.properties
+fabric
+karaf
+jetty
+logback
+ssl
+----
 
-custom.properties:: Customizable configuration used by Apache Karaf. This file can be used to pass additional 
-parameters to the Apache Karaf container.
+nexus-default.properties:: Default properties file for the application providing default values such as
+the ports used for HTTP and HTTPS access, as well as the context path and host. You can override these
+defaults in `$data-dir/etc/nexus.properties`
 
-jetty-*.xml:: A number of configuration files for Eclipse Jetty
+fabric:: Configuration files for Ehcache, Elasticsearch, and OrientDB
 
-org.apache.* and org.ops4j.*:: Various Karaf and OSGi related configuration files.
+karaf:: Configuration files for Apache Karaf, including:
 
-org.sonatype.nexus.cfg:: Main configuration file for the application allowing you to configure aspects 
-such as ports used for HTTP and HTTPS access, location of the data and configuration storage as well as the 
-context path and host.
+  config.properties::: The main configuration for the Apache Karaf runtime. This file should 'not' be modified.
 
-system.properties:: Configuration parameters used for the JVM and application start up.
+  custom.properties::: Customizable configuration used by Apache Karaf. This file can be used to pass additional 
+                       parameters to the Apache Karaf container.
+
+  org.apache.* and org.ops4j.*::: Various Karaf and OSGi related configuration files.
+
+  system.properties::: System properties used for the JVM and application start up.
+
+jetty:: Configuration files for Eclipse Jetty
+
+logback:: Configuration files for Logback
+
+ssl:: A directory to put keystores when configuring HTTPS
 
 [[config-jvm]]
 ==== Updating Memory Allocation and other JVM Paramaters
@@ -746,7 +767,7 @@ Other JVM parameters such as GC algorithm can be configured in the same location
 
 The default value for the HTTP port used to access the repository manager user interface and resources is
 `8081`. Therefore the user interface would be available at `http://localhost:8081/`. To change or update the port 
-locate the line `application-port=8081` in `$install-dir/etc/org.sonatype.nexus.cfg`, then edit the number. Here 
+locate the line `application-port=8081` in `$data-dir/etc/nexus.properties`, then edit the number. Here 
 is an example where you would change the port to `9081`:
 
 ----
@@ -759,7 +780,7 @@ Therefore, the exposed URL will be `http://localhost:9081/`.
 ==== Changing the Context Path
 
 To change or update the context path in the instance you want point to a specific webapp or component, locate  
-the `nexus-context-path=/` line in the`$install-dir/etc/org.sonatype.nexus.cfg`. Here is an example where you 
+the `nexus-context-path=/` line in the`$data-dir/etc/nexus.properties`. Here is an example where you 
 expose the user interface to a `components` directory.
 
 ----
@@ -798,7 +819,7 @@ context path, this results in a full URL for the repository of `http://localhost
 path `nexus` resulting in an equivalent URL of `http://localhost:8081/nexus/content/repositories/example`.
 
 {nxrm} 3 can be configured to use identical path generation of version 2 by enabling legacy mode in
-`$install-dir/etc/org.sonatype.nexus.cfg` with
+`$data-dir/etc/nexus.properties` with
 
 ----
 org.sonatype.nexus.repository.httpbridge.internal.HttpBridgeModule.legacy=true
