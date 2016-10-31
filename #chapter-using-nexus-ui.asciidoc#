@@ -1,0 +1,520 @@
+[[using]]
+== Using the User Interface
+
+[[using-introduction]]
+=== Introduction
+
+This chapter covers the basic aspects of the user interface of {pro} and {oss} applicable for read-only access
+including an overview of the user interface features, searching components and browsing repositories and other
+features that are, by default, available to anonymous users and similar read-only roles.
+
+Administrative tasks like configuring repositories, tasks, security and many other aspects are documented in
+<<admin>>.
+
+[[using-sect-intro]]
+=== User Interface Overview
+{inall}
+
+The user interface is used with a web browser and works best with modern browsers. Older versions such as
+Microsoft Internet Explorer 8 or earlier are not supported and actively blocked from using the repository manager
+user interface to avoid an unsatisfactory user experience.
+
+The repository manager provides anonymous access for users who only need to search for components, browse the
+repositories and access components via client tools such as Maven or NuGet. This anonymous access level is a
+configurable, read-only mode that includes the main user interface elements as shown in
+<<fig-ui-overview-anonymous>>.
+
+[[fig-ui-overview-anonymous]]
+.User Interface for Anonymous Users
+image::figs/web/ui-overview-anonymous.png[scale=85]
+
+Once a user is logged in further features become available depending on the user's privileges. An example for the
+'admin' user including the 'Administration' menu icon is visible in <<fig-ui-overview-admin>>.
+
+[[fig-ui-overview-admin]]
+.User Interface for Logged In 'admin' User
+image::figs/web/ui-overview-admin.png[scale=85]
+
+The user interface is separated into a number of different sections.
+
+Main toolbar::
+
+The top of the page contains the header with a number of elements starting on the left with the logo:
+
+Logo and version label;; The logo and the version label differ for {oss} and {pro} and allows you to know what
+version of the repository manager you are accessing at a glance.
+
+Browse button image:figs/web/ui-browse-button-icon.png[scale=50];; The browse button allows you to switch to the
+'Browse' menu items in the main menu section on the left of the user interface. The contents of the menu will
+depend on your assigned user privileges.
+
+Administration button image:figs/web/ui-admin-button-icon.png[scale=50];; The administration button allows to
+ switch to the 'Administration' menu items in the main menu section on the left of the user interface as visible
+ in <<fig-ui-overview-admin>>. The contents of the menu will depend on your assigned user privileges.
+
+Search input box;; The search input box can be used to start a keyword search. The results are displayed in the
+feature view panel.
+
+Refresh button image:figs/web/ui-refresh-button-icon.png[scale=50];; The refresh button is a global refresh button
+that affects all views in the user interface including the feature view panel. E.g., it refreshes the search
+results view, the user list or the staging repository list, if they are currently the active feature view.
+
+Help button image:figs/web/ui-help-button-icon.png[scale=50];; Clicking the help button opens up the help menu.
+ It contains a link to specific help about the currently active feature view. The 'About' item displays a dialog
+ with details about the version as well as license and copyright information. The 'Documentation', 'Knowledge
+ base', 'Community', 'Issue tracker' and 'Support' items link to the respective pages on the Sonatype websites.
+
+Sign In image:figs/web/ui-sign-in-icon.png[scale=50] and user account/Sign Out buttons image:figs/web/ui-user-account-icon.png[scale=50];; The 'Sign In' button allows you to sign in to the user
+interface as a specific user. Doing so gives you access to the privileges assigned to the user, changes the 'Sign
+in' button to a 'Sign out' button and adds a button displaying the user's name.  The user's name button functions
+to access the 'Account' feature view as part of the 'User' menu in the main menu on the left with any other user
+features the account can access.
+
+Main Menu::
+
+The main menu on the left contains either the 'Browse', the 'Administration' or the 'User' menu items. The exact
+list of available menu items depends on the current user's assigned privileges. E.g., the 'Administration' menu as
+visible in <<fig-ui-overview-admin>> includes the 'Security' section, which is not available to anonymous users by
+default.  The panel itself can be horizontally collapsed and expanded with the button in the top right-hand corner
+of the panel. Each submenu can be vertically collapsed and expanded with the button beside the title for each
+submenu. Selecting a menu item triggers the display of the respective feature view in the feature view panel.
+
+Feature View Panel::
+
+The feature view panel in the center of the user interface right of the main menu initially displays the 'Welcome'
+feature view. It changes display based on your selected item in the main menu.
+
+<<fig-user-interface-example>> shows a typical user interface appearance of the repository manager with the 
+'Users' feature view in the feature view panel. It shows a list of users.
+
+[[fig-user-interface-example]]
+.Typical Example Interface with a List
+image::figs/web/user-interface-example.png[scale=85]
+
+Clicking on a row in the list, switches the feature view to a specific display for the item in the row as visible
+in <<fig-ui-example-view>>. The top level navigation allows you get back to the list by clicking on the 'Users'
+label. The form below has a number of sections that can be accessed via buttons as well as specific functionality
+like deletion and their associated buttons.
+
+[[fig-ui-example-view]]
+.Typical Example Interface for Editing and Viewing 
+image::figs/web/ui-example-view.png[scale=60]
+
+The list header features buttons for various operations that differ per list as well as an input box that allows
+you to filter the list by any terms used in any column. <<fig-ui-list-filtering>> shows an example use case where
+a user typed "Hosted" in the filter box and the list of repositories only shows hosted repositories. This
+filtering works for all columns in a list and can be used in most list displays in the repository manager. For
+example you can use it to filter the users list to find disabled users, filter the routing list, the roles list
+and many more.
+
+[[fig-ui-list-filtering]]
+.Filtering the Repository List to Display Only Hosted Repositories
+image::figs/web/ui-list-filtering.png[scale=85]
+
+The column headers in most lists can be clicked to invoke a sorting of the list by the respective column as well as
+activate and deactivate specific columns.
+
+[[search-components]]
+=== Searching for Components
+{inall}
+
+Searching components in the repository manager is an important use case for being able to access information about
+specific components including different versions that are available, security and license data and other
+information as well as for build tool migrations, download of deployment packages and other component related
+development, QA and operations activities.
+
+The different search modes can be accessed with the 'Browse' button in the main toolbar and selecting 'Search' or
+one of the nested options like 'Custom', 'Maven' and others. The common feature view with the criteria drop-down
+selector for the search without results is displayed in <<fig-search>>.
+
+[[fig-search]]
+.Keyword Search with 'More criteria' Input
+image::figs/web/search.png[scale=75]
+
+Beneath the search title is the search criteria input area that displays the current criteria input e.g.,
+'Keyword'. Beside the current criteria is a 'More Criteria' button that allows you to add further criteria to your
+search. Each criteria can be removed by clicking on the minus/dash icon within the criteria input box. The cross/x in
+the input box resets the value.
+
+Each criteria can be used with a search term and supports the * character (star, asterisk) for pattern matching. E.g.,
+you could search with the 'Group' search criteria and search for +org.sonatype.nexus.*+. This would return components
+with the group of +org.sonatype.nexus+, but also +org.sonatype.nexus.plugins+ and many others.
+
+====  Search Criteria and Component Attributes
+
+A number of criteria can be used with any repository format and returns results from all components in all
+repositories:
+ 
+Keyword:: A keyword is a string used for a search, where matches in 'Format', 'Group', 'Name', 'Version' and all
+other component metadata values are returned.
+
+Format:: The format of the repository in which to look for a component.
+
+Group:: An identifier that groups components in some way, such as by organization. It can also be used to simply to
+create a specific namespace for a project. Not all repository formats use the notion of a group. Some tools simply
+use a different name for the concept e.g., +org+ for Apache Ivy or `groupId` for Apache Maven and the 'maven2'
+repository format. In the case of a maven2 repository, group is a required attribute. Other formats, like the
+'nuget' repository format, do not use group at all.
+
+Name:: The name of a component constitutes its main identifier. Different repository formats use a different name
+for the concept such as `artifactId` for Apache Maven and the 'maven2' repository format.
+
+Version:: The version of a component allows you to have different points in time of a component released. Various
+tools such as Maven or NuGet use the term version. Other build systems call this differently e.g. +rev+, short for
+revision, in the case of Apache Ivy. In most repository formats version numbers are not enforced to follow a
+specific standard and are simply a string. This affects the sort order and can produce unexpected results.
+
+Checksum - MD5, SHA-1, SHA-256 or SHA-512:: A checksum value of a component file generated by an MD5, SHA-1,
+SHA-256 or SHA-512 algorithm.
+
+In addition there are criteria that can be used to search for components in repositories with specific formats
+only:
+
+Docker Repositories::
+
+Image Name;; The name for the Docker image. It is equivalent to the 'Name' of the component in the repository
+manager that represents the Docker image.
+
+Image Tag;; The tag for the Docker image. It is equivalent to the 'Version' of the component in the repository
+manager that represents the Docker image.
+
+Layer Id;; The unique identifier for a Docker image layer. It is equivalent to the 'layerId' attribute of the
+component in the repository manager that represents the Docker image.
+
+Maven Repositories::
+
+Group Id;; The Maven +groupId+ for a component. Other build systems supporting the Maven repository format call
+this differently e.g. +org+ for Apache Ivy and +group+ for Gradle and Groovy Grape. 'Group Id' is equivalent to
+'Group'.
+
+Artifact Id;; The Maven +artifactId+ for a component. Other build systems call this differently e.g. +name+ for
+Apache Ivy and Gradle, and +module+ for Groovy Grape.  'Artifact Id' is equivalent to 'Name'.
+
+Classifier;; The Maven 'classifier' for a component. Common values are +javadoc+, +sources+ or +tests+.
+
+Packaging;; The Maven +packaging+ for a component, which is +jar+ by default. Other values as used in Maven and
+other build tools are +ear+, +war+, +maven-plugin+, +pom+, +ejb+, +zip+, +tar.gz+, +aar+ and many others.
+
+Base Version;; The base version of the component/asset. Typically this is the same value as the version for
+release components. `SNAPSHOT` development components use a time-stamped version but the base version uses the
+`SNAPSHOT` version e.g.  version of `1.0.0-20151001.193253-1` and base version of `1.0.0-SNAPSHOT`.
+
+Extension;; The extension used for a specific asset of a component.
+
+NuGet Repositories::
+
+ID;; The NuGet component identifier is known as `Package ID` to NuGet users.
+
+Tags;; Additional information about a component formatted as space-delimited keywords, chosen by the package
+author.
+
+PyPI Repositories::
+
+Classifiers;; Denote the maturity, intended audience, license and supported versions the creator wished 
+associated with their component.
+
+Description;; Creator provided long description of the component.
+
+PyPI Keywords;; Associated component keywords.  Generally used as identifiers to search.
+
+Summary;; Creator provided description of the component.
+
+==== Search Results
+
+Once you have provided your search terms in one or multiple criteria input fields, like the 'Keywords' criteria 
+in the 'Search' feature view, the first 1000 results become visible in the component list, with an example 
+displayed  in <<fig-search-results>>. If more than 1000 results exist, notation will appear under the filters 
+relaying how many items were found in total.
+
+The components are listed with their 'Name', 'Group', 'Version', 'Format' and 'Repository' information and are 
+sorted alphabetically by 'Name'.  Columns and sort order can be adjusted like in all other lists.
+
+[[fig-search-results]]
+.Results of a Component Search for +format maven2+
+image::figs/web/search-results.png[scale=75]
+
+////
+--Hiding this until is https://issues.sonatype.org/browse/NEXUS-10770 resolved and this is restored.
+--Should also readd the columns to the list preceeding the figure
+
+The 'Age' column displays the age of the component.  The age of a component is typically calculated from the
+initial release to a repository -- typically a public repository such as the Central Repository. Since most Java
+components are published to the Central Repository when released, this age gives you a good indication of the
+actual time since the release of the component. For other repository formats and related upstream public
+repositories the availability of data may differ.
+
+The 'Popularity' column shows a relative popularity as compared to the other component versions. This can give you
+a good idea on the adoption rate of a new release. For example if a newer version has a high age value, but a low
+popularity compared to an older version, you might want to check the upstream project and see if there is any
+issues stopping other users from upgrading that might affect you as well. Another reason could be that the new
+version does not provide significant improvements to warrant an upgrade for most users.
+////
+
+Selecting a component in the list changes to a display of the component information documented in
+<<component-information>>.
+
+////
+
+The 'Security Issues' column shows the number of known security issues for the specific component. The 'License
+Threat' column shows a coloured square with blue indicating no license threat and yellow, orange and red
+indicating increased license threats. More information about both indicators can be seen in the 'Component Info'
+panel below the list of components for the specific component.
+
+////
+
+==== Preconfigured Searches
+
+Keyword Search::
+
+The main toolbar includes a 'Search components' text input field.  Type your search term and press 'enter' and the
+repository manager performs a search by 'Keyword'.
++
+The same search can be accessed by selecting the 'Search' item in the 'Browse' main menu. The search term can be
+provided in the 'Keyword' input field in the 'Search' feature view.
+
+Custom Search::
+
+A configurable search using the criteria you select is available via the 'Custom' menu item in the 'Search'
+section of the 'Browse' main menu. Initially it has no criteria and it allows you to create a search with criteria
+you add with the 'More Criteria' button.
+
+Bower Search::
+
+The 'Bower' search is a predefined search available via the 'Bower' menu item in the 'Search' section of the
+'Browse' menu. It defaults to inputs for 'Name' and 'Version' and supports adding further criteria. The format is
+configured to 'bower'.
+
+Docker Search::
+
+The 'Docker' search is a predefined search available via the 'Docker' menu item in the 'Search' section of the
+'Browse' main menu. It defaults to inputs for 'Image Name', 'Image Tag' and 'Layer Id' and supports adding further
+criteria. The format is configured to 'docker'.
+
+Maven Search:: 
+
+The 'Maven' search is a predefined search available via the 'Maven' menu item in the 'Search' section of the
+'Browse' main menu. It defaults to inputs for 'Group Id', 'Artifact Id', 'Version', 'Base Version', 'Classifier'
+and 'Extension' and supports adding further criteria. The format is configured to 'maven2'.
+
+NuGet Search::
+
+The 'NuGet' search is a predefined search available via the 'NuGet' menu item in the 'Search' section of the
+'Browse' main menu. It defaults to inputs for 'ID' and 'Tags' and supports adding further criteria. The format is
+configured to 'nuget'.
+
+npm Search::
+
+The 'npm' search is a predefined search available via the 'npm' menu item in the 'Search' section of the 'Browse'
+main menu. It defaults to inputs for 'Scope', 'Name' and 'Version' and supports adding further criteria. The 
+format is configured to 'npm'.
+
+PyPI Search::
+
+The 'PyPI' search is a predefined search available via the 'PyPI' menu item in the 'Search' section of the 
+'Browse' main menu. It defaults to inputs for 'Classifiers', 'Description', 'PyPI Keywords' and 'Summary' and 
+supports adding further criteria. The format is configured to 'pypi'.
+
+Raw Search::
+
+The 'Raw' search is a predefined search available via the 'Raw' menu item in the 'Search' section of the 'Browse'
+main menu. It defaults to an input for 'Name' and supports adding further criteria. The format is configured to
+'raw'.
+
+==== Example Use Case - SHA-1 Search
+
+Sometimes it is necessary to determine the version of a component, where you only have access to the binary file
+without any detailed component information. When attempting this identification and neither the filename nor the
+contents of the file contain any useful information about the exact version of the component, you can use 'SHA-1'
+search to identify the component.
+
+Create a sha1 checksum, e.g., with the +sha1sum+ command available on Linux or OSX or +fciv+ on Windows, and use
+the created string in a 'Custom' search by adding the 'SHA-1' criteria from the 'Checksum' section of the 'More
+criteria' control.
+
+The search will return a result, which will provide you with the detailed information about the file allowing you
+to replace the file with a dependency declaration. E.g. you can derive the Maven coordinates of a jar file and use
+them in a dependency declaration.
+
+TIP: A SHA-1 or similar checksum search can be a huge timesaver when migrating from a legacy build system, where
+the used libraries are checked into the version control system as binary components with no version information
+available.
+
+[[browse-browse]]
+=== Browsing Repositories and Repository Groups
+{inall}
+
+One of the most straightforward uses of the repository manager is to browse the contents of a repository or a
+repository group. Browsing allows you to inspect the contents of any repository or repository group for all the
+supported repository formats.
+
+Click on the Browse button image:figs/web/ui-browse-button-icon.png[scale=50] in the main toolbar to access the 
+'Browse' menu and the 'Components' and 'Assets' menu items. The 'Component' as well as the 'Assets' feature views 
+allowing you to select a repository or repository group to browse from the list of all repositories as displayed 
+in <<fig-browse-components-repos>>.
+
+[[fig-browse-components-repos]]
+.List of Repositories to Access for Component Browsing
+image::figs/web/browse-components-repos.png[scale=85]
+
+Once you clicked on the row for a specific repository a list of components in the repository is displayed. It 
+uses the same columns as the search results displayed in <<fig-search-results>>. You can filter the list content, 
+change the rows and select ordering.
+
+[[component-information]]
+=== Viewing Component Information
+{inall}
+
+Once you located a component by browsing a repository or via a search and selected it in the list, you see the 
+component information and a list of associated assets. An example is displayed in <<fig-component-details>>.
+
+The information displayed includes the name and format of the repository that contains the component as well as
+the component identifiers 'Group', 'Name' and 'Version'. 'Most popular version' contains the version number of the
+same component that is most popular in its usage within a specific group and name. 'Popularity' shows a relative
+percentage of popularity between the displayed component against all other versions of this component. A value of
+100% signals this version to be the most popular. 50% means that the specific version is half as popular as the
+most popular version. Popularity data is provided by the {ds} based on requests from the Central Repository and
+other data and not available for all components. 'Age' shows the age of the component.
+
+None of the popularity or age data is viewable without {rhc} enabled.  For more details on {rhc} see <<rhc>>.
+
+A list of one or more assets associated with the component is shown below the component information. Click on the 
+row with the 'Name' of the asset you want to inspect to view the asset information documented in 
+<<asset-information>>.
+
+[[fig-component-details]]
+.Example for Component Information and List of Associated Assets
+image::figs/web/component-details.png[scale=35]
+
+To delete a component press the 'Delete component' button as shown in <<fig-component-details>>. A modal will pop
+up to confirm the deletion. You can only delete components from hosted and proxy repositories. A deletion of a
+components triggers the deletion of all its associated assets, in most repository formats.
+
+NOTE: In some repository formats assets are shared across components. They remain after a component deletion. For 
+example, while a Docker image is a component and can be deleted, the layers that make it up remain after its 
+deletion as these assets are potentially shared with other Docker images.
+
+[[fig-analyze-application]]
+.Analyze Application Form
+image::figs/web/analyze-application.png[scale=35]
+
+To analyze an application, press the 'Analyze application' button as shown in <<fig-component-details>>. A form
+will pop up to request further information from you: email address, report password, a list of 
+proprietary packages for the application, and a name for the report. Once you provide this information, 
+press the 'Analyze' button as shown in <<fig-analyze-application>>. Your report link will be emailed to you as 
+soon as it is finished.
+
+[[asset-information]]
+=== Viewing Asset Information
+{inall}
+
+Asset information can be accessed by browsing assets directly or from a component information view. The 
+'Delete' button allows you to remove an asset. The information itself is broken up into two sections, 
+accessable by tabs below the 'Delete'  button.
+
+The 'Info' section contains a number of attributes about the specific asset.  An example is displayed in <<fig-asset-info>>.
+
+Path:: the path to the asset in the repository
+Content type:: the MIME type of the asset
+File size:: the size of the file in KB
+Last updated:: the date and time when the asset was last updated
+Last accessed:: the date and time when the asset was last accessed
+Locally cached:: set to 'true' if the asset can be found in the repository manager storage, 'false' indicates that
+the metadata about the asset is available, while the asset itself has not been downloaded
+Blob reference:: a unique identifier pointing at the the binary blob representing the asset in the repository
+manager storage
+
+[[fig-asset-info]]
+.Asset Info Example
+image::figs/web/asset-info.png[scale=75]
+
+The 'Attributes' section contains further metadata about the asset related to 'Cache', 'Checksum' and
+'Content_attributes'.  An example is displayed in <<fig-asset-attributes>>.
+
+Assets can include format specific attributes displayed in additional sections. For example an asset in a Maven2
+repository has a 'Maven2' section with attributes for 'extension', 'baseVersion', 'groupId', 'artifactId', 
+'version' and 'asset_kind'.
+
+[[fig-asset-attributes]]
+.Asset Attributes Example
+image::figs/web/asset-attributes.png[scale=70]
+
+////
+this was for version 3 pre CMA refactor .. so might be fine as is once adapted .. 
+
+[[using-sect-uploading]]
+=== Uploading Maven Artifacts 
+{inall}
+
+When your build makes use of proprietary or custom dependencies that are not available from public repositories,
+you will often need to find a way to make them available to developers in a custom Maven repository. The
+repository manager ships with a preconfigured third-party repository that was designed to hold third-party
+dependencies that are used in your builds.
+
+If you are signed in as a user with sufficient privileges, the 'Upload' section of the 'Browse' main menu will be
+visible and contain the 'Maven' menu item. Press on this item and the feature view panel will display the 'Maven'
+feature as shown in <<fig-using-artifact-upload>>.
+
+[[fig-using-artifact-upload]]
+.Maven Artifact Upload Feature
+image::figs/web/using_artifact-upload.png[scale=50]
+
+To upload a component, select the target repository from the 'Repository' drop down list and press the 'Add an artifact'
+button and select the component you want to upload from the filesystem in the dialog.
+
+Once you have selected an component, you can modify the 'Classifier' and the 'Extension', if they have not been
+pre-filled automatically.
+
+If the component you want to upload is a POM file, you can press the 'Upload' button to complete the upload.
+
+If you do not have a POM file and are uploading e.g., a JAR file you have to ensure to specify the 'Group', 'Artifact' ,
+'Version' and 'Packaging' values to be able to proceed and then press the 'Upload' button. Packaging values can be
+selected from the drop down list or provided by typing the value into the input box.
+
+In both cases you can upload multiple components for the same coordinates e.g., the POM and the JAR file, with the 'Add
+another artifact' button. This allows you to upload a POM and a JAR file combined with the sources and javadoc JAR files
+in one operation.
+
+[[fig-using-artifact-upload-details]]
+.Maven Artifact Upload Feature
+image::figs/web/using_artifact-upload-details.png[scale=50]
+
+If you added a POM file as an additional component the coordinates from the POM file will be used the and input filed
+will be removed.
+
+TIP: Uploading a POM file allows you to add further details like dependencies to the file, which improves the quality of
+the upload by enabling transitive dependency management.
+////
+
+[[using-sect-user-profile]]
+=== Working with Your User Profile
+{inall}
+
+As a logged-in user, you can click on your user name on the right-hand side of the main toolbar to switch the main menu
+to contain the 'User' menu. Pressing on the 'Account' menu item displays the 'Account' feature in the main feature panel
+as displayed in <<fig-account-feature-panel>>.
+
+[[fig-account-feature-panel]]
+.Editing User Details in the Account Feature Panel 
+image::figs/web/account-feature-panel.png[scale=50]
+
+The 'Account' feature allows you to edit your 'First Name', 'Last Name', and 'Email' directly in the form.
+
+==== Changing Your Password
+
+In addition to changing your name and email, the user profile allows you to change your password by clicking on the
+'Change Password' button. You will be prompted to authenticate with your current password and subsequently supply your
+new password in pop up dialogs.
+
+TIP: The password change feature only works with the built-in security realm. If you are using a different
+security realm like LDAP or Crowd, this option will not be visible.
+
+//// 
+tbd
+==== Additional User Feature Panels
+
+The 'User' menu can be used by other plugins and features to change or access user specific data and functionality. One
+such use case is the User Token access.
+
+.
+tbd link to user token section
+////
