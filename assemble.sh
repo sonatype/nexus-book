@@ -81,9 +81,10 @@ if [ $publish_index == "true" ]; then
   cp -rv site/global/sitemap*.xml target/site
   echo "... done"
 
-  echo "Preparing Nexus Documentation index for deployment"
+  echo "Preparing Nexus Documentation index and error pages for deployment"
   cp target/nexus-documentation.html target/site/nexus-documentation/index.html
-  echo "Invoking templating for index page"
+  cp target/error.html target/site/nexus-documentation/error.html
+  echo "Invoking templating for index and error pages"
   $templateScript $dir/target/site/nexus-documentation/ "nexus-documentation.properties" "none" "" "article"
   echo "... done"
 fi

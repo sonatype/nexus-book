@@ -6,8 +6,9 @@ set -u
 
 ./prepare.sh
 
-echo "Building index page"
+echo "Building index and error pages"
 asciidoc -o target/index.html index.asciidoc 
+asciidoc -o target/error.html error.asciidoc 
 
 echo "Building documentation index page"
 asciidoc -o target/nexus-documentation.html nexus-documentation.asciidoc
