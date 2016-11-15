@@ -180,3 +180,43 @@ other.
 
 To verify this connection, go to the 'Nodes' screen, under 'System' located in the 'Administration' menu. This 
 screen provides details of the nodes in active/active high availability mode, where they are equal.
+
+=== Configuration of {nxrm} within an HA environment
+
+Once you have your high availability environment set up, be aware that almost all configuration done via the UI 
+is shared between all nodes in the cluster. There is no master node you must hit; they are all treated equally. 
+For example, if you create a new repository all nodes in the cluster will be able to see it and utilize it. Or 
+if you want to change your 'Email Server' port you just need to do it once via the UI on any of the servers and 
+the change will share. Because all servers share out the changes, changing on any is acceptable.
+
+NOTE: Same as a single server be aware, if multiple people are configuring something at the same time in your 
+cluster, it may appear the changes are not sharing. If you refresh your screen, you will see the changes when 
+they come across.
+
+There are some things, however, that are not done or shared within the UI and need to be done on each individual 
+server. These are:
+
+- Any CLI configurations you do (such as specifying a port via nexus.properties or setting up SSL)
+- 'Refresh Interval' of the GUI 'Log Viewer' setting
+- Most log messages are not shared across the server (some few are) however logging levels are shared
+- 'Metrics' displayed are for the individual server (and not for the cluster)
+- A 'Support ZIP' is for the individual server. Consult with your support technician which zips they need if 
+troubleshooting.
+- 'Analytics' events are per server
+- 'Audit' events are per server
+////
+last 2 should be changing with NEXUS-10489
+////
+
+TIP: Scheduled tasks will run against one node unless the 'Multi node' configuration option is selected or the 
+task affects something that is in itself shared (like compaction of blob stores).
+
+Regardless, {nxrm} configuration is not done via any load balancers that might be in place. It is done on the 
+individual node level and shared or not.
+
+When adding new nodes to the existing cluster be aware that they will get the shared configuration of the cluster 
+regardless of how they are preconfigured.
+
+CAUTION: In the event you have empty nodes and are adding existing configured nodes to it, the existing 
+unconfigured nodes would erase the existing configuration of the nodes added. When creating a cluster, it is 
+important you start the configured nodes before the empty nodes to avoid unwanted configuration loss.
