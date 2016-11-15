@@ -1,0 +1,343 @@
+[[webhooks]]
+== Webhooks
+{inall}
+
+[[webhooks-introduction]]
+=== Introduction
+
+Webhooks are defined as an HTTP callback. In simple terms, Webhooks allow {nxrm} administrators to configure
+HTTP-based callbacks to notify external services of important events happening within {nxrm}.
+
+Organizations are using Webhooks in many ways to further automate their workflows, and integrate third party
+systems with key services. The {nxrm} provides the ability to use Webhooks for global auditing, repository based
+events, and for events on specific repositories.
+
+=== Using Webhooks
+
+Setting up Webhooks in {nxrm} can be accomplished by any user with sufficient privilege to create Capabilities,
+generally an admin.
+
+For ease of testing Webhooks, you can use a service such as https://requestb.in/[RequestBin] to quickly test out
+your desired Webhook. Alternatively any lightweight server that can allow you to see the contents of an HTTP POST
+will work.
+
+[[webhooks--global-capability]]
+=== Enabling A Global Webhook Capability
+
+[[fig-capability-global-webhook]]
+.Global Webhook: Management Capability Settings
+image::figs/web/capability-global-webhook.png[scale=75]
+
+To enable a Global Webhook, perform the following steps:
+
+* Select 'Capabilities' to open the 'Capabilities' panel, located in the 'Administration' menu
+* Click the 'Create capability' button to get to the 'Select Capability Type' table
+* Select 'Webhook: Global' to open the 'Create Webhook: Global Capability' panel
+* Complete the form by selecting which 'Event Types' you'd like to have events sent, entering the 'URL' you would
+like the events to be sent to
+
+NOTE: A 'Global: Webhook' capability for 'Event Type' audit requires that you also enable the 'Audit' capability,
+in order for events to be fed to the Webhook.
+
+This form also includes an option to use a 'Secret Key' for sending your events with a HMAC payload digest.
+
+NOTE: {nxrm} Webhooks will provide a sha1 hash of the JSON body using a shared secret key. This allows you to
+verify the data integrity as well as its authenticity. The JSON body is hashed without whitespace and this hash
+is provided in the header as X-Nexus-Webhook-Signature.
+
+After you enable the capability, you will now see the 'Webhook: Global' capability in the list of Capabilities.
+
+[[webhooks-repository-capability]]
+=== Enabling A Repository Webhook Capability
+
+[[fig-capability-repository-webhook]]
+.Repository Webhook: Management Capability Settings
+image::figs/web/capability-repository-webhook.png[scale=75]
+
+To enable a Webhook for a specific repository, perform the following steps:
+
+* Select 'Capabilities' to open the 'Capabilities' panel, located in the 'Administration' menu
+* Click the 'Create capability' button to get to the 'Select Capability Type' table
+* Select 'Webhook: Repository' to open the 'Create Webhook: Repository Capability' panel
+* Complete the form by selecting which 'Repository' you'd like to receive events from, select 'Event Types' you'd
+* like to have events sent for, and entering the 'URL' you would like the events to be sent to
+
+This form also includes an option to use a 'Secret Key' for sending your events with a HMAC payload digest.
+
+NOTE: {nxrm} Webhooks will provide a sha1 hash of the JSON body using a shared secret key. This allows you to
+verify the data integrity as well as its authenticity. The JSON body is hashed without whitespace and this hash
+is provided in the header as X-Nexus-Webhook-Signature.
+
+After you enable the capability, you will now see the 'Webhook: Repository' capability in the list of
+Capabilities.
+
+[[webhooks-working-with-hmac]]
+=== Working With HMAC Payloads
+
+If you have enabled a secret key to generate a HMAC digest, a special header will be sent with all of your
+Webhook payloads. This header is 'X-Nexus-Webhook-Signature' and can be used to ensure that the message you
+receive is in fact what was originally generated.
+
+For ease of getting you up and running with Webhooks using HMAC, here is an example express based nodejs script that can be
+used to verify that the payload you receive is what was originally sent.
+
+[source,javascript]
+.app.js
+----
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const settings = require('./settings.json');
+const crypto = require('crypto');
+const secretKey = 'mysecretkey';
+
+app.use(bodyParser.json());
+
+app.post('/', function(req, res) {
+  const body = req.body;
+  const signature = req.headers['x-nexus-webhook-signature'];
+  var hmacDigest = crypto.createHmac("sha1", secretKey).update(JSON.stringify(body)).digest("hex");
+
+  console.log('Webhook received');
+  console.log('Headers: ' + JSON.stringify(req.headers));
+  console.log('Body: ' + JSON.stringify(req.body));
+  console.log('HmacDigest: ' + hmacDigest);
+  console.log('Signature: ' + signature);
+  res.send();
+});
+
+app.listen(3000, function() {
+  console.log('Server running on port 3000.');
+});
+----
+
+This script can also be used for testing as an alternative to https://requestb.in/[RequestBin].
+
+[[webhooks-example-headers-and-payloads]]
+=== Example Headers And Payloads
+
+To work with a Webhook, you need to know a bit about the payload you'll be recieving. Each event you receive a
+payload for will contain special headers that describe what the event is.
+
+.Example Headers
+----
+X-Request-Id: d535c62b-063e-4ace-90ce-f7b579d6c37c
+Content-Type: application/json; charset=UTF-8
+User-Agent: Nexus/3.1.0-SNAPSHOT (PRO; Mac OS X; 10.11.1; x86_64; 1.8.0_60)
+X-Nexus-Webhook-Signature: 687f3719b87232cf1c11b3ef7ea10c49218b6df1
+X-Nexus-Webhook-Id: rm:repository:asset
+X-Nexus-Webhook-Delivery: 7f4a6dde-5c68-4999-bcc0-a62f3fb8ae48
+----
+
+Of special importance are the following three headers, described in detail for you:
+
+.Event Specific Headers
+|===
+|Header | Description
+|X-Webhook-Signature
+|This is the HMAC digest of the body of the payload, if an optional secret key has been configured
+
+|X-Nexus-Webhook-Delivery
+|This is a unique UUID identifying the event
+
+|X-Nexus-Webhook-Id
+|This is the event type e.g. "rm:repository:asset"
+|===
+
+A payload will be returned with each event type, an example of one for a repository asset Webhook is shown below:
+
+.Example Payload
+----
+{
+  "timestamp" : "2016-11-10T23:57:49.664+0000",
+  "nodeId" : "52905B51-085CCABB-CEBBEAAD-16795588-FC927D93",
+  "initiator" : "admin/127.0.0.1",
+  "repositoryName" : "npm-proxy",
+  "action" : "CREATED",
+  "asset" : {
+    "id" : "31c950c8eeeab78336308177ae9c441c",
+    "format" : "npm",
+    "name" : "concrete"
+  }
+}
+----
+
+Events share common fields, described in detail below:
+
+.Common Event Fields
+|===
+|Field |Description
+| nodeId
+| A UUID that identifies which {nxrm} node the event originated from
+
+|timestamp
+| The ISO 8601 representation of the time the event occurred
+
+|initiator
+| The userId or "anonymous" for system events
+|===
+
+Below, you will find examples of many Payloads that are returned, to help you get up and running with Webhooks
+in {nxrm}.
+
+==== Example Audit Payload
+
+This is an example payload returned when a user is created inside of {nxrm}.
+
+.Global Audit Payload
+----
+{
+   "nodeId":"7FFA7361-6ED33978-36997BD4-47095CC4-331356BE",
+   "initiator":"admin/127.0.0.1",
+   "audit":{
+      "domain":"security.user",
+      "type":"created",
+      "context":"testuser",
+      "attributes":{
+         "id":"testuser",
+         "name":"test user",
+         "email":"test@test.com",
+         "source":"default",
+         "status":"active",
+         "roles":"nx-admin, nx-anonymous"
+      }
+   }
+}
+----
+
+.Audit Event Fields
+|===
+|Field |Description
+| audit:domain
+| A string that identifies the domain where the event occurred
+
+| audit:type
+| A string that identifies action type that occurred on the object
+
+| audit:context
+| A string that identifies the object the event refers to
+
+| attributes
+| A list that describes the attributes on the object that the event occurred on
+|===
+
+==== Example Repository Payload
+
+This is an example payload returned when a PyPi proxy repository is created inside of {nxrm}.
+
+.Global Repository Payload
+----
+{
+   "timestamp":"2016-11-14T20:19:34.525+0000",
+   "nodeId":"7FFA7361-6ED33978-36997BD4-47095CC4-331356BE",
+   "initiator":"admin/127.0.0.1",
+   "action":"CREATED",
+   "repository":{
+      "format":"pypi",
+      "name":"pypi-proxy",
+      "type":"proxy"
+   }
+}
+----
+
+.Repository Event Fields
+|===
+|Field |Description
+| action
+| A string that identifies the action performed on the repository
+
+| repository:format
+| A string that identifies the repository format type
+
+| repository:name
+| A string that identifies the repositories name
+
+| repository:type
+| A string that identifies the type of repository
+|===
+
+==== Example Repository Asset Payload
+
+This is an example payload returned when an asset is created inside of {nxrm}.
+
+.Repository Asset Payload
+----
+{
+  "timestamp" : "2016-11-10T23:57:49.664+0000",
+  "nodeId" : "52905B51-085CCABB-CEBBEAAD-16795588-FC927D93",
+  "initiator" : "admin/127.0.0.1",
+  "repositoryName" : "npm-proxy",
+  "action" : "CREATED",
+  "asset" : {
+    "id" : "31c950c8eeeab78336308177ae9c441c",
+    "format" : "npm",
+    "name" : "concrete"
+  }
+}
+----
+
+.Repository Asset Event Fields
+|===
+|Field |Description
+| repositoryName
+| A string that identifies the repository where the event occurred
+
+| action
+| A string that identifies the action performed on the asset
+
+| asset:id
+| A UUID that identifies the assets ID
+
+| asset:format
+| A string that identifies the repository format type
+
+| asset:name
+| A string that identifies the asset name
+|===
+
+==== Example Repository Component Payload
+
+This is an example payload returned when a component is created inside of {nxrm}.
+
+.Repository Component Payload
+----
+{
+   "timestamp":"2016-11-14T19:32:13.515+0000",
+   "nodeId":"7FFA7361-6ED33978-36997BD4-47095CC4-331356BE",
+   "initiator":"anonymous/127.0.0.1",
+   "repositoryName":"npm-proxy",
+   "action":"CREATED",
+   "component":{
+      "id":"08909bf0c86cf6c9600aade89e1c5e25",
+      "format":"npm",
+      "name":"angular2",
+      "group":"types",
+      "version":"0.0.2"
+   }
+}
+----
+
+.Repository Component Event Fields
+|===
+|Field |Description
+| repositoryName
+| A string that identifies the repository where the event occurred
+
+| action
+| A string that identifies the action performed on the component
+
+| component:id
+| A UUID that identifies the assets ID
+
+| component:format
+| A string that identifies the repository format type
+
+| component:name
+| A string that identifies the component name
+
+| component:group
+| A string that identifies the component group
+
+| component:version
+| A string that identifies the component version
+|===
