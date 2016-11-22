@@ -192,18 +192,42 @@ receive a test email message. Successful sending is confirmed in a message.
 [[nodes]]
 ==== Nodes
 
-The 'Nodes' screen provides a summary of active servers, particularly for the use of the high availability
-service. When you start your repository manager, click 'Nodes' in the 'Administration' menu under 'System'.
-You will see a table with attributes of the node you started. When you click a row, you get a detailed summary
-of that node. The summary lists:
+The 'Nodes' screen provides a summary of all active nodes. The screen keeps a record of all running nodes that you
+can manage for single or multiple deployments of nodes, in table form. To view the status of your active node
+click 'Nodes' in the 'Administration' menu under 'System'. When you click a row, you get a detailed summary of the
+chosen node.
+
+The summary lists:
 
 * 'UUID', the server's universally unique identifier
 * 'Local', the current server you're accessing ('true')
 * 'Socket Address', the address corresponding to the server
 * 'node.identity' a unique ID accessible via 'Log Viewer'
 
-If using the high availability service, all synchronized servers are displayed on the 'Nodes' screen. View the table
-to monitor and verify server connections.
+If you run multiple nodes the 'Nodes' screen displays all synchronized nodes in the table. The client you use to
+view your local node (e.g. browser) will be listed as 'true'. View the table to monitor and verify server connections.
+
+Also, from the 'Nodes' screen you can protect your server's database from write access by activating read-only
+mode. This allows you to avoid modifications to your server configuration and blob stores when performing system
+maintenance. The use cases to activate read-only mode may vary. To enable it:
+
+1. Click 'Nodes', under 'System'  in the 'Administration' menu
+2. Click 'Enable read-only mode'
+
+WARNING: Anything that would require a change to a database will fail during read-only mode.
+
+As shown in <<fig-nodes-read-only-mode>>, the button becomes 'Disable read-only mode' when enabled. A banner
+appears above the main toolbar, notifying you that read-only mode is activated.
+
+[[fig-nodes-read-only-mode]]
+.Partial List of Nodes in Read-Only Mode
+image::figs/web/nodes-read-only-mode.png[scale=90]
+
+Disabling read-only mode, by clicking the 'Disable read-only mode' button returns the server to its original,
+writable state.
+
+NOTE: If you enabled high availabilty and run multiple nodes in a cluster, all nodes will be affected by read-only
+mode. To reinstate the nodes for write access, disable read-only mode.
 
 [[admin-base-url]]
 ==== Base URL Creation
