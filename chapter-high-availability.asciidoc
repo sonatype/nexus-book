@@ -40,11 +40,6 @@ directory. The second node that you initiate is synchronized with the first. Whe
 communicate with each other to create continuous uptime and the assurance that if one goes down, the second node 
 can be used.
 
-This feature is enabled across your nodes via link:https://hazelcast.com/[Hazelcast], which provides in-memory 
-computing for active data and active backup. So, instead of making manual adjustments to your servers' 
-infrastructure, processes, and tools, high availability via Hazelcast simplifies the configuration needed to 
-maintain multiple repositories.
-
 With active/active high availability in your two repository manager instances, you enable two interchangeable
 nodes that act transparently as one instance. This makes them fully-aware of their setup parameters such as:
 
@@ -153,9 +148,15 @@ Follow these steps to enable high availability:
 Given that both repository managers are mounted to the same blob store, with the same path, synchronization of 
 data and configuration will occur automatically.
 
+The nodes are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for
+active data and active backup. It uses multicast to discover HA-enabled nodes, and open commmunication among them.
+So, instead of making manual adjustments to your servers' infrastructure, system configurations, and tools, Hazelcast
+simplifies the configuration needed to maintain nodes in an HA cluster.
+
 ////
-Add section, expand on auto detection/multicast feature; see new ticket NEXUS-10918
+now, let's discuss how it work, and what to do when it fails
 ////
+
 
 [[high-availability-startup]]
 ==== Starting the High Availability Service
