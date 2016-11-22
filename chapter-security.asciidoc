@@ -906,3 +906,29 @@ credentials in plain text.
   include `${jetty.etc}/jetty-http.xml`. Save the file.
 
 . Restart Nexus. Verify plain HTTP requests are no longer serviced.
+
+[[auditing]]
+=== Auditing
+
+Auditing of {nxrm} is done by enabling a capability called 'Audit' as described in <<admin-system-capabilities>>. 
+For your convenience, this capability is created by default in {nxrm} installations but is disabled.
+
+Once enabled, a left navigation item 'Audit' will appear under the 'System' submenu of the 'Administration' 
+section. Clicking on this item reveals a table of audit records that have occurred in your {nxrm} instance, like 
+the example shown in <<audit-table-example>>. This table data persists through server restart but can be 
+manually cleared using the 'Clear' button above the table results.
+
+[[audit-table-example]]
+.Example of 'Audit' Table with Expanded Line Item
+image::figs/web/audit-table-example.png[scale=70]
+
+The table contains a record for every configuration change, as well as any asset or component additions and 
+removals. Each row will give you some details about the event, including the type of event, when it happened 
+and which user initiated the action. In addition to what is shown, each line item can be expanded to show more 
+information by clicking the `+` sign at the beginning of the row. The content of the expanded information 
+varies slightly by the 'Domain' viewed. You can collapse the additional information by clicking the `-` sign at 
+the beginning of the row. The table displays about 250 rows and if there are more than that you need to use 
+pagination to see more entries.
+
+If utilizing {pro} High Availability, be aware there is an additional column 'Node ID' that lists which node
+the activity occurred on. This column is disabled and hidden by default.
