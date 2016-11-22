@@ -44,35 +44,31 @@ back your content, i.e. accesslog, components, system configuration, and securit
 {nxrm} allows you to back up your underlying databases for both a single-node deployment or a cluster of
 multiple nodes, when activating <<high-availability>>.
 
-To configure a new task for database backup, review the steps in <<admin-system-tasks>>. You will also be
-required to complete additional fields to configure the backup:
+To configure and run a new task for database backup, review the steps in <<admin-system-tasks>>. You will
+also be required to complete additional fields to configure the backup:
 
 * 'Backup location' (required): choose a directory in your filesystem to store backup data
-* 'Node performing backup' (required): select an active node to store backup data
+* 'Node performing backup' (required): select an active node to store backup data, when high availability
+is enabled
 
 ////
 Consider a screenshot in lieu of written description of table
 ////
 
-After you save the task, you can run the task. Go to the 'Tasks' screen to start the backup:
+////
+expand the statement below, place it in the Preparation section
+////
+When the task runs it exports backup data to the location added to the 'Backup location' field. The directory
+you choose will contain +.bak+ files of the following databases:
 
-1. Click the task
-2. Click 'Run'
-3. Click 'Yes' to confirm running the task from the dialog
+Access log:: login and usage information among repository manager users 
+Analytics:: event data and overall repository manager usage
+Auditing:: system feed features enabled in the repository manager
+Component:: all contents of the component database
+Configuration:: general adminstrative configurations such as scheduled tasks, email server configuration, etc
+Security:: all user and access rights management content
 
-On the 'Tasks' screen the 'Status' column will affirm the status as 'Running'.
-
-Running the task exports backup data to the location designated in the 'Backup location' field. The designated
-location will contain +.bak+ files from the underlying databases, including:
-
-* access log
-* auditing
-* component
-* repository manager configuration
-* security configuration
-
-All backup files are presented in the timestamp format +dbname-YYYY-MM-DD-HH-MM-SS.bak+.
-
+All backup files are presented in the timestamp format based on the time the task was completed.
 
 [[backup-node]]
 === Backing up a Single Node in {nxrm}
