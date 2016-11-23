@@ -163,13 +163,16 @@ Members [2] {
 }
 ----
 
-The 'Members' from the terminal output represent the nodes that get discovered, automatically, at startup. The nodes
-are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for active data and
-active backup.
+The 'Members' from the terminal output represent the nodes that automatically get discovered via multicast at startup.
+The nodes are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for active
+data and active backup.
 
-Hazelcast relies on multicasting to discover HA-enabled nodes, and open communication among them. So, instead of
-making manual adjustments to your servers' infrastructure, system configurations, and tools, Hazelcast simplifies the
-configuration needed to maintain nodes in an HA cluster.
+Hazelcast can rely on multicasting to discover HA-enabled nodes, and open communication among them. So, instead of
+making manual adjustments to your servers' infrastructure, system configurations, and tools, Hazelcast may simplifies
+the configuration needed to maintain nodes in an HA cluster.
+
+NOTE::  Node-listening via Hazelcast may not work with default activation of high availabilty. In some cases advanced
+configuration of the `hazelcast.xml` file may be needed for multicasting to persist.
 
 [[high-availability-verify]]
 === Verifying Synchronization
@@ -222,19 +225,19 @@ important you start the configured nodes before the empty nodes to avoid unwante
 
 === Configuring HA for Cloud Services
 
-{nxrm} can be deployed on cloud-computing services, such as AWS. Depending on your network security, additional
-configuration may be required. For example, if you use a network layer firewall application it may block multicast
-communication. If such a failure occurs you will need to access `hazelcast.xml`. This configuration file can be
-customized to circumvent failures preventing nodes to connect within a cluster. To configure Hazelcast for 
-automatic discovery on secured networks, locate `hazelcast.xml` in `$install-dir/etc/fabric/`. Then:
+By default multicast via Hazelcast opens communication between HA-enabled nodes. {nxrm} can be deployed on cloud-
+computing services, such as AWS, but tepending on your network security, additional configuration may be required.
+For example, if you use a network layer firewall application it may block multicast communication. If such a
+failure occurs you will need to access `hazelcast.xml`. To configure Hazelcast for automatic discovery on secured
+networks, locate `hazelcast.xml` in `$install-dir/etc/fabric/`. Then:
 
 1. Locate the `<join>` tag
 2. Edit the value in `<multicast enabled="true">` to `"false"`
 3. Edit the value in `<aws enabled="false">` to `"true"`
 4. Save the file.
+5. Reboot the repository manager.
 
-The files will look like this:
-
+The `$install-dir/etc/fabric/hazelcast.xml` with the modified properties will look like this:
 ----
 <join>
   <multicast enabled="true">
@@ -258,5 +261,8 @@ The files will look like this:
    </aws>
 </join>
 ----
+
+In this instance, the revised file will establish participation among HA-enable nodes within a cluster. The terminal
+output mentioned in <<high-availability-startup>> validates the connection.
 
 
