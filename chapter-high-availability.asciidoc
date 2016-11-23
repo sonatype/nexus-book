@@ -148,21 +148,11 @@ Follow these steps to enable high availability:
 Given that both repository managers are mounted to the same blob store, with the same path, synchronization of 
 data and configuration will occur automatically.
 
-The nodes are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for
-active data and active backup. It uses multicast to discover HA-enabled nodes, and open commmunication among them.
-So, instead of making manual adjustments to your servers' infrastructure, system configurations, and tools, Hazelcast
-simplifies the configuration needed to maintain nodes in an HA cluster.
-
-////
-now, let's discuss how it work, and what to do when it fails
-////
-
-
 [[high-availability-startup]]
 ==== Starting the High Availability Service
 
 Bring the nodes to full service by starting the repository managers in the command line. As the console 
-starts you can review the log. You should see connection messages via Hazelcast similar to this, below:
+starts you can review the log. You will see connection messages similar to this, below:
 
 ----
 2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
@@ -172,6 +162,14 @@ Members [2] {
     Member [192.168.99.1]:5702 this
 }
 ----
+
+The 'Members' from the terminal output represent the nodes that get discovered, automatically, at startup. The nodes
+are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for active data and
+active backup.
+
+Hazelcast relies on multicasting to discover HA-enabled nodes, and open communication among them. So, instead of
+making manual adjustments to your servers' infrastructure, system configurations, and tools, Hazelcast simplifies the
+configuration needed to maintain nodes in an HA cluster.
 
 [[high-availability-verify]]
 === Verifying Synchronization
@@ -221,3 +219,44 @@ regardless of how they are preconfigured.
 CAUTION: In the event you have empty nodes and are adding existing configured nodes to it, the existing 
 unconfigured nodes would erase the existing configuration of the nodes added. When creating a cluster, it is 
 important you start the configured nodes before the empty nodes to avoid unwanted configuration loss.
+
+=== Configuring HA for Cloud Services
+
+{nxrm} can be deployed on cloud-computing services, such as AWS. Depending on your network security, additional
+configuration may be required. For example, if you use a network layer firewall application it may block multicast
+communication. If such a failure occurs you will need to access `hazelcast.xml`. This configuration file can be
+customized to circumvent failures preventing nodes to connect within a cluster. To configure Hazelcast for 
+automatic discovery on secured networks, locate `hazelcast.xml` in `$install-dir/etc/fabric/`. Then:
+
+1. Locate the `<join>` tag
+2. Edit the value in `<multicast enabled="true">` to `"false"`
+3. Edit the value in `<aws enabled="false">` to `"true"`
+4. Save the file.
+
+The files will look like this:
+
+----
+<join>
+  <multicast enabled="true">
+    <multicast-group>224.2.2.3</multicast-group>
+    <multicast-port>54327</multicast-port>
+  </multicast>
+  <tcp-ip enabled="false">
+   <interface>127.0.0.1</interface>
+  </tcp-ip>
+     <aws enabled="false">
+       <access-key>my-access-key</access-key>
+       <secret-key>my-secret-key</secret-key>
+       <!--optional, default is us-east-1 -->
+       <region>us-west-1</region>
+       <!--optional, default is ec2.amazonaws.com. If set, region shouldn't be set as it will override this property -->
+       <host-header>ec2.amazonaws.com</host-header>
+       <!-- optional, only instances belonging to this group will be discovered, default will try all running instances -->
+       <security-group-name>hazelcast-sg</security-group-name>
+       <tag-key>type</tag-key>
+       <tag-value>hz-nodes</tag-value>
+   </aws>
+</join>
+----
+
+
