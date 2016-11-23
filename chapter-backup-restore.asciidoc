@@ -39,13 +39,38 @@ back your content, i.e. accesslog, components, system configuration, and securit
 ////
 
 [[backup-task]]
-=== Creating a Database Backup Task
+=== Configuring and Running a Database Backup Task
 
-TBD 
+{nxrm} allows you to back up your underlying databases for both a single-node deployment or a cluster of
+multiple nodes, when activating <<high-availability,high availability>>.
+
+To configure and run a new task for database backup, review the steps in the Configuration chapter. The form
+for this task includes an additional field called 'Backup location', which requires you to enter the path to a
+directory where you want to store backup data, shown in <<fig-backup-task>>.
+
 ////
-Setting up the backup task - NEXUS-11631
+Note: removed the anchor/macro referencing tasks due to missing steps addressed in another ticket (bug)  
 ////
 
+[[fig-backup-task]]
+.Manual Database Backup Task with Directory Location 
+image::figs/web/backup-task.png[scale=50]
+
+////
+expand the statement below, place it in the Preparation section
+////
+When the task runs it exports backup data to the directory in the file path added to the 'Backup location'
+field. The directory you choose will contain +.bak+ files of the following databases:
+
+Access log:: login and usage information among repository manager users 
+Analytics:: event data and overall repository manager usage
+Auditing:: a record of repository manager configuration changes as well as asset or component additions and
+removals
+Component:: all related data that make up components within the repository manager 
+Configuration:: general adminstrative configurations such as scheduled tasks, email server configuration, etc.
+Security:: all user and access rights management content
+
+All backup files are presented in the timestamp format based on the time the task was started.
 
 [[backup-node]]
 === Backing up a Single Node in {nxrm}
