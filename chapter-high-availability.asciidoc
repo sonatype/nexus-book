@@ -41,7 +41,7 @@ communicate with each other to create continuous uptime and the assurance that i
 can be used.
 
 With active/active high availability in your two repository manager instances, you enable two interchangeable
-nodes that act transparently as one instance. This makes them fully-aware of their setup parameters such as:
+nodes that act transparently as one instance. This makes them fully aware of their setup parameters such as:
 
 - Memory availability and processor performance
 - Network connectivity performance
@@ -55,10 +55,6 @@ automatically intercept component data between the two nodes.
 
 Depending on your current file system configuration, you may need to re-organize in preparation for high 
 availability.
-
-////
-How would we tell them to re-organize their file system config for HA, if at all?
-////
 
 The repository manager must have the same network configuration as the second repository manager that you'll need 
 to install, so the nodes can communicate. Enabling the second repository manager with high availability is the 
@@ -151,8 +147,8 @@ data and configuration will occur automatically.
 [[high-availability-startup]]
 ==== Starting the High Availability Service
 
-Bring the nodes to full service by starting the repository managers in the command line. As the console 
-starts you can review the log. You will see connection messages similar to this, below:
+Bring the nodes to full service by starting the repository managers. As the console starts you can review the
+log. You will see connection messages similar to this:
 
 ----
 2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
@@ -163,25 +159,13 @@ Members [2] {
 }
 ----
 
-The 'Members' from the log output represent the nodes that automatically get discovered via multicast at startup.
-The nodes are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for active
-data and active backup.
+The nodes are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for
+active data and active backup. Hazelcast can employ multicast to send data across a network, but it supports node
+discovery in other ways.
 
-Hazelcast can rely on multicasting to discover HA-enabled nodes, and open communication among them. So, instead of
-making manual adjustments to your servers' infrastructure, system configurations, and tools, Hazelcast may simplifies
-the configuration needed to maintain nodes in an HA cluster.
-
-NOTE::  Node-listening via Hazelcast may not work with default activation of high availabilty. In some cases advanced
-configuration of the `hazelcast.xml` file may be needed for multicasting to persist.
-
-[[high-availability-verify]]
-=== Verifying Synchronization
-
-At runtime, the repository manager user interface allows you to see the contents of one node synchronized to the 
-other.
-
-To verify this connection, go to the 'Nodes' screen, under 'System' located in the 'Administration' menu. This 
-screen provides details of the nodes in active/active high availability mode, where they are equal.
+By default, multicast is used to discover cluster members. If the default configuration isn't suitable for your
+network infrastructure, you will need to customize `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>>
+for a concrete example.
 
 === Configuration of {nxrm} within an HA environment
 
@@ -223,46 +207,51 @@ CAUTION: In the event you have empty nodes and are adding existing configured no
 unconfigured nodes would erase the existing configuration of the nodes added. When creating a cluster, it is 
 important you start the configured nodes before the empty nodes to avoid unwanted configuration loss.
 
-=== Configuring HA for Cloud Services
+[[high-availability-aws]]
+=== Configuring HA for Amazon Web Services
 
-By default multicast via Hazelcast opens communication between HA-enabled nodes. {nxrm} can be deployed on cloud-
-computing services, such as AWS, but depending on your network security, additional configuration may be required.
-For example, if you use a network layer firewall application it may block multicast communication. If such a
-failure occurs you will need to modify `hazelcast.xml`. To configure Hazelcast for automatic discovery on secured
-networks, locate `hazelcast.xml` in `$install-dir/etc/fabric/`. Then:
+{nxrm} can be deployed on cloud-computing services, such as AWS. Depending on your network security, additional
+configuration may be required. For example, if you use a network layer firewall application it may block multicast
+communication. If such a failure occurs you will need to modify the Hazelcast declaration file.
 
-1. Locate the `<join>` tag
-2. Edit the value in `<multicast enabled="true">` to `"false"`
-3. Edit the value in `<aws enabled="false">` to `"true"`
-4. Save the file.
-5. Reboot the repository manager.
+To configure Hazelcast for automatic node discovery find the `<join>` tag in `$install-dir/etc/fabric/hazelcast.xml`.
+Then, edit the file for each node:
 
-The `$install-dir/etc/fabric/hazelcast.xml` with the modified properties will look like this:
+1. Change the value in `<multicast enabled="true">` to `"false"`.
+2. Change the value in `<aws enabled="false">` to `"true"`.
+3. Save the file.
+4. Reboot each node in the cluster.
+
+The `$install-dir/etc/fabric/hazelcast.xml` file with the modified properties will look similar to this:
 ----
 <join>
-  <multicast enabled="true">
-    <multicast-group>224.2.2.3</multicast-group>
-    <multicast-port>54327</multicast-port>
-  </multicast>
-  <tcp-ip enabled="false">
-   <interface>127.0.0.1</interface>
-  </tcp-ip>
-     <aws enabled="false">
-       <access-key>my-access-key</access-key>
-       <secret-key>my-secret-key</secret-key>
-       <!--optional, default is us-east-1 -->
-       <region>us-west-1</region>
-       <!--optional, default is ec2.amazonaws.com. If set, region shouldn't be set as it will override this property -->
-       <host-header>ec2.amazonaws.com</host-header>
-       <!-- optional, only instances belonging to this group will be discovered, default will try all running instances -->
-       <security-group-name>hazelcast-sg</security-group-name>
-       <tag-key>type</tag-key>
-       <tag-value>hz-nodes</tag-value>
-   </aws>
+    <multicast enabled="false">
+       <multicast-group>224.2.2.3</multicast-group>
+       <multicast-port>54327</multicast-port>
+    </multicast>
+    <tcp-ip enabled="false">
+        <interface>127.0.0.1</interface>
+    </tcp-ip>
+    <aws enabled="true">
+        <access-key>my-access-key</access-key>
+        <secret-key>my-secret-key</secret-key>
+        <!--optional, default is us-east-1 -->
+        <region>us-west-1</region>
+        <!--optional, default is ec2.amazonaws.com. If set, region shouldn't be set as it will override this property -->
+        <host-header>ec2.amazonaws.com</host-header>
+        <!-- optional, only instances belonging to this group will be discovered, default will try all running instances -->
+        <security-group-name>security-group-name</security-group-name>
+        <tag-key>type</tag-key>
+        <tag-value>nexus-nodes</tag-value>
+    </aws>
 </join>
 ----
 
-In this instance, the revised file will establish a connection among HA-enabled nodes. The log output mentioned in
-<<high-availability-startup>> validates the connection.
+[[high-availability-verify]]
+=== Verifying Synchronization
 
+At runtime, the repository manager user interface allows you to see the contents of one node synchronized to the 
+other.
 
+To verify this connection, go to the 'Nodes' screen, under 'System' located in the 'Administration' menu. This 
+screen provides details of the nodes in active/active high availability mode, where they are equal.
