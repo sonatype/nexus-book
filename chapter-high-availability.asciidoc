@@ -40,13 +40,8 @@ directory. The second node that you initiate is synchronized with the first. Whe
 communicate with each other to create continuous uptime and the assurance that if one goes down, the second node 
 can be used.
 
-This feature is enabled across your nodes via link:https://hazelcast.com/[Hazelcast], which provides in-memory 
-computing for active data and active backup. So, instead of making manual adjustments to your servers' 
-infrastructure, processes, and tools, high availability via Hazelcast simplifies the configuration needed to 
-maintain multiple repositories.
-
 With active/active high availability in your two repository manager instances, you enable two interchangeable
-nodes that act transparently as one instance. This makes them fully-aware of their setup parameters such as:
+nodes that act transparently as one instance. This makes them fully aware of their setup parameters such as:
 
 - Memory availability and processor performance
 - Network connectivity performance
@@ -60,10 +55,6 @@ automatically intercept component data between the two nodes.
 
 Depending on your current file system configuration, you may need to re-organize in preparation for high 
 availability.
-
-////
-How would we tell them to re-organize their file system config for HA, if at all?
-////
 
 The repository manager must have the same network configuration as the second repository manager that you'll need 
 to install, so the nodes can communicate. Enabling the second repository manager with high availability is the 
@@ -153,15 +144,11 @@ Follow these steps to enable high availability:
 Given that both repository managers are mounted to the same blob store, with the same path, synchronization of 
 data and configuration will occur automatically.
 
-////
-Add section, expand on auto detection/multicast feature; see new ticket NEXUS-10918
-////
-
 [[high-availability-startup]]
 ==== Starting the High Availability Service
 
-Bring the nodes to full service by starting the repository managers in the command line. As the console 
-starts you can review the log. You should see connection messages via Hazelcast similar to this, below:
+Bring the nodes to full service by starting the repository managers. You will see connection messages similar to
+this:
 
 ----
 2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
@@ -172,16 +159,13 @@ Members [2] {
 }
 ----
 
-[[high-availability-verify]]
-=== Verifying Synchronization
+The nodes are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for
+active data and active backup. Hazelcast can employ multicast to discover cluster members, but it supports node
+discovery in other ways. If the default configuration isn't suitable for your network infrastructure, you will
+need to customize `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>> for a concrete example.
 
-At runtime, the repository manager user interface allows you to see the contents of one node synchronized to the 
-other.
-
-To verify this connection, go to the 'Nodes' screen, under 'System' located in the 'Administration' menu. This 
-screen provides details of the nodes in active/active high availability mode, where they are equal.
-
-=== Configuration of {nxrm} within an HA environment
+[[high-availability-environment]]
+=== Configuring {pro} Environment for High Availability
 
 Once you have your high availability environment set up, be aware that almost all configuration done via the UI 
 is shared between all nodes in the cluster. There is no master node you must hit; they are all treated equally. 
@@ -220,3 +204,50 @@ regardless of how they are preconfigured.
 CAUTION: In the event you have empty nodes and are adding existing configured nodes to it, the existing 
 unconfigured nodes would erase the existing configuration of the nodes added. When creating a cluster, it is 
 important you start the configured nodes before the empty nodes to avoid unwanted configuration loss.
+
+[[high-availability-aws]]
+=== Configuring High Availability for Amazon Web Services
+
+{nxrm} can be deployed on cloud-computing services, such as Amazon Web Services (AWS). Depending on your network
+security, additional configuration may be required. For example, if you use a network layer firewall application
+it may block multicast communication. If such a failure occurs you will need to modify the Hazelcast configuration
+file.
+
+To configure Hazelcast for automatic node discovery find the `<join>` tag in `$install-dir/etc/fabric/hazelcast.xml`.
+Then, edit the file for each node:
+
+1. Change the value in `<multicast enabled="true">` to `"false"`.
+2. Change the value in `<aws enabled="false">` to `"true"`.
+3. Save the file.
+4. Reboot each node in the cluster.
+
+The `$install-dir/etc/fabric/hazelcast.xml` file with the modified properties will look similar to this:
+----
+<join>
+    <multicast enabled="false">
+       <multicast-group>224.2.2.3</multicast-group>
+       <multicast-port>54327</multicast-port>
+    </multicast>
+    <tcp-ip enabled="false">
+        <interface>127.0.0.1</interface>
+    </tcp-ip>
+    <aws enabled="true">
+        <access-key>my-access-key</access-key>
+        <secret-key>my-secret-key</secret-key>
+        <!--optional, default is us-east-1 -->
+        <region>us-west-1</region>
+        <!--optional, default is ec2.amazonaws.com. If set, region shouldn't be set as it will override this property -->
+        <host-header>ec2.amazonaws.com</host-header>
+        <!-- optional, only instances belonging to this group will be discovered, default will try all running instances -->
+        <security-group-name>security-group-name</security-group-name>
+        <tag-key>type</tag-key>
+        <tag-value>nexus-nodes</tag-value>
+    </aws>
+</join>
+----
+
+[[high-availability-verify]]
+=== Verifying Synchronization
+
+At runtime, the repository manager user interface allows you to see the contents of one node synchronized to the 
+other. See <<nodes>> for details on viewing active nodes in cluster.
