@@ -147,8 +147,8 @@ data and configuration will occur automatically.
 [[high-availability-startup]]
 ==== Starting the High Availability Service
 
-Bring the nodes to full service by starting the repository managers. As the console starts you can review the
-log. You will see connection messages similar to this:
+Bring the nodes to full service by starting the repository managers. You will see connection messages similar to
+this:
 
 ----
 2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
@@ -160,14 +160,12 @@ Members [2] {
 ----
 
 The nodes are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for
-active data and active backup. Hazelcast can employ multicast to send data across a network, but it supports node
-discovery in other ways.
+active data and active backup. Hazelcast can employ multicast to discover cluster members, but it supports node
+discovery in other ways. If the default configuration isn't suitable for your network infrastructure, you will
+need to customize `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>> for a concrete example.
 
-By default, multicast is used to discover cluster members. If the default configuration isn't suitable for your
-network infrastructure, you will need to customize `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>>
-for a concrete example.
-
-=== Configuration of {nxrm} within an HA environment
+[[high-availability-environment]]
+=== Configuring {pro} Environment for High Availability
 
 Once you have your high availability environment set up, be aware that almost all configuration done via the UI 
 is shared between all nodes in the cluster. There is no master node you must hit; they are all treated equally. 
@@ -208,11 +206,12 @@ unconfigured nodes would erase the existing configuration of the nodes added. Wh
 important you start the configured nodes before the empty nodes to avoid unwanted configuration loss.
 
 [[high-availability-aws]]
-=== Configuring HA for Amazon Web Services
+=== Configuring High Availability for Amazon Web Services
 
-{nxrm} can be deployed on cloud-computing services, such as AWS. Depending on your network security, additional
-configuration may be required. For example, if you use a network layer firewall application it may block multicast
-communication. If such a failure occurs you will need to modify the Hazelcast declaration file.
+{nxrm} can be deployed on cloud-computing services, such as Amazon Web Services (AWS). Depending on your network
+security, additional configuration may be required. For example, if you use a network layer firewall application
+it may block multicast communication. If such a failure occurs you will need to modify the Hazelcast configuration
+file.
 
 To configure Hazelcast for automatic node discovery find the `<join>` tag in `$install-dir/etc/fabric/hazelcast.xml`.
 Then, edit the file for each node:
@@ -251,7 +250,4 @@ The `$install-dir/etc/fabric/hazelcast.xml` file with the modified properties wi
 === Verifying Synchronization
 
 At runtime, the repository manager user interface allows you to see the contents of one node synchronized to the 
-other.
-
-To verify this connection, go to the 'Nodes' screen, under 'System' located in the 'Administration' menu. This 
-screen provides details of the nodes in active/active high availability mode, where they are equal.
+other. See <<nodes>> for details on viewing active nodes in cluster.
