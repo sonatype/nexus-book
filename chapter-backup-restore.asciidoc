@@ -40,8 +40,10 @@ back your content, i.e. accesslog, components, system configuration, and securit
 multiple nodes, when activating <<high-availability,high availability>>.
 
 To configure and run a new task for database backup, review the steps in the Configuration chapter. The form
-for this task includes an additional field called 'Backup location', which requires you to enter the path to a
-directory where you want to store backup data, shown in <<fig-backup-task>>.
+for this task includes an additional field called 'Backup location', which requires you to enter a file
+where you want to store backup data, shown in <<fig-backup-task>>. In this field you add an absolute or
+relative path to store your databases. To configure the task to export backup data to a relative location
+store it in your data directory, e.g. `$data-dir/nexus3`.
 
 ////
 Note: removed the anchor/macro referencing tasks due to missing steps addressed in another ticket (bug)  
@@ -51,11 +53,8 @@ Note: removed the anchor/macro referencing tasks due to missing steps addressed 
 .Manual Database Backup Task with Directory Location 
 image::figs/web/backup-task.png[scale=50]
 
-////
-expand the statement below, place it in the Preparation section
-////
-When the task runs it exports backup data to the directory in the file path added to the 'Backup location'
-field. The directory you choose will contain +.bak+ files of the following databases:
+When the task runs it exports backup data to the relative path specified in the 'Backup location' field. The
+directory you added will contain +.bak+ files of the following databases:
 
 Access log:: login and usage information among repository manager users 
 Analytics:: event data and overall repository manager usage
@@ -84,25 +83,24 @@ TBD
 [[backup-retrieve]]
 === Restoring a Database Backup
 
-To restore the databases from backups, follow the following steps.
+IMPORTANT:: The restoration process should be executed on a single node.  All nodes in an high availability cluster
+should be stopped prior to restoration.
 
-1. If nexus won't start, install a fresh copy of nexus using the same version that backups were created
-from.
-2. Ensure nexus is stopped.
-3. Create a folder under sonatype-work/nexus3 called backup.
-4. Copy the .bak files to be restored into this folder.
-5. Remove the existing database files from sonatype-work/nexus3/db if they exist.  The database restorer
- won't overwrite any existing data.
-6. Restart nexus
+You can restore the exported database files to their full state after the task is complete. You will need to access
+the backup folder, nested in `$data-dir/nexus3` relative path file you created. For example, if configured the task
+to store your `.bak` files in a relative location called 'backup' in your data directory follow these steps:
 
-To confirm the restore was triggered, check the logs for a message like "database config restored", which
-will be logged at the INFO level.
+1. If {nxrm} won't start, install a fresh copy of the repository manager; it must be the same version where the
+`.bak` files were created.
+2. Stop the repository manager.
+3. Copy the relative path file ('backup') to `$data-dir/nexus3`
+4. Remove the existing database folder (`db`) from `$data-dir/nexus3/db` if they exist. The restoration won't
+overwrite any existing data.
+5. Restart {nxrm}.
 
-If the component database is restored, the corresponding blobstores that hold the components must also be
+To confirm the restore was triggered, check the logs for a message that says "database config restored", which is
+logged at the `INFO` level.
+
+NOTE:: If the `Component` database is restored, the corresponding blobstores containing components must also be
 restored.
-
-Notes for HA:
-
-The restoration process should be run on a single node.  All nodes in an HA cluster should be stopped prior to
-restoration.
 
