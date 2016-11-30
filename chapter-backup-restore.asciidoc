@@ -9,14 +9,6 @@ TBD
 
 TBD
 
-[[backup-configuration]]
-=== Backup Plan
-
-TBD
-////
-Checklist, self-repair tasks - TBD
-////
-
 
 [[backup-requirements]]
 === Requirements for Backing Up {nxrm}
@@ -27,26 +19,24 @@ TBD
 [[backup-preparation]]
 === Preparing a Backup for {nxrm}
 
-In preparation for a back up, {nxrm} provides a feature that allows you to export settings and metadata from
-OrientDB to a relative location, before backing up the entire repository manager.
+In preparation for a back up, {nxrm} provides a scheduled task that allows you to export databases to a relative
+location. When you run the export of these settings and metadata, which come from the database, they will be  placed
+together in a relative path you choose. This is the only action you can perform with the task. If your plan is to back
+up your entire repository manager consider options to backup the application to a secondary location, so you can preserve
+any configurations.
 
-The common scenario is as follows:
+The databases that you export have pointers to blob stores, which contain components and asset potentially across multiple
+repositories. If not backed up together the component metadata can point to non-existent blob stores, or the blob store
+metadata may be non-descript when attempting to restore the exported data. So, It's recommended that you back up both you
+database and blob stores in order to keep the data intact.
 
-* Configure the export backup task for OrientDB configurations
-* Run the scheduled task to export OrientDB
-* Store the configuration files to a relative location
-* Back up the entire repository manager
+Here's a common scenario to backup all parts of your repository manager:
+
+* configure the export backup task for a database export
+* run the scheduled task to export the databases to a relative location
+* Back up the entire repository manager, e.g. application directory 
 * Restore the backed-up, exported files
 ////
-Considerations:
-You must back up your Nexus instance, and you should periodically test your backup.
-All of Nexus except for the Orient databases can be backed up using a file system backup.
-The Orient databases may have unflushed state, so it’s best to do export the .bak files  and back up
-the exported files instead.
-The databases have pointers to the blobs, so if you back up and restore either, you should do both.
-(Otherwise you’ll have metadata that points to nonexistent blobs, or blobs that are unreachable because no
-metadata describes them.)
-
 Formalize: Before you execute a backup of your OrientDB, select a backup tool of your preference to
 back your content, i.e. accesslog, components, system configuration, and security
 ////
