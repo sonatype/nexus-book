@@ -27,14 +27,25 @@ TBD
 [[backup-preparation]]
 === Preparing a Backup for {nxrm}
 
-Preparing for back up and restoration of {nxrm} is critical to your organization.
+In preparation for a back up, {nxrm} provides a feature that allows you to export settings and metadata from
+OrientDB to a relative location, before backing up the entire repository manager.
+
+The common scenario is as follows:
+
+* Configure the export backup task for OrientDB configurations
+* Run the scheduled task to export OrientDB
+* Store the configuration files to a relative location
+* Back up the entire repository manager
+* Restore the backed-up, exported files
 ////
-Users must 1) export Orient databases then 2) back up the entire NXRM (app dir, data dir, blobs, et al)
-All of NXRM except for the Orient databases can be backed up using a file system backup.
-Test periodicallyThe Orient databases may have an unflushed state, so it’s best to do a database export
-(wrong term) and back up the exported files instead.
-Create & schedule task, run task, task exports bak files, back up the backed up application/data directories
-to a safe location (some of this may recur in the configuration section of the chapter
+Considerations:
+You must back up your Nexus instance, and you should periodically test your backup.
+All of Nexus except for the Orient databases can be backed up using a file system backup.
+The Orient databases may have unflushed state, so it’s best to do export the .bak files  and back up
+the exported files instead.
+The databases have pointers to the blobs, so if you back up and restore either, you should do both.
+(Otherwise you’ll have metadata that points to nonexistent blobs, or blobs that are unreachable because no
+metadata describes them.)
 
 Formalize: Before you execute a backup of your OrientDB, select a backup tool of your preference to
 back your content, i.e. accesslog, components, system configuration, and security
@@ -42,9 +53,6 @@ back your content, i.e. accesslog, components, system configuration, and securit
 
 [[backup-task]]
 === Configuring and Running a Database Backup Task
-
-{nxrm} allows you to back up your underlying databases for both a single-node deployment or a cluster of
-multiple nodes, when activating <<high-availability,high availability>>.
 
 To configure and run a new task for database backup, review the steps in the Configuration chapter. The form
 for this task includes an additional field called 'Backup location', which requires you to enter the path to a
