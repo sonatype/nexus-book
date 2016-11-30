@@ -19,27 +19,32 @@ TBD
 [[backup-preparation]]
 === Preparing a Backup for {nxrm}
 
-In preparation for a back up, {nxrm} provides a scheduled task that allows you to export databases to a relative
-location. When you run the export of these settings and metadata, which come from the database, they will be  placed
-together in a relative path you choose. This is the only action you can perform with the task. If your plan is to back
-up your entire repository manager consider options to backup the application to a secondary location, so you can preserve
-any configurations.
+In preparation for a back up, {nxrm} provides a scheduled task that allows you to export databases to a
+relative location. The task only exports databases, therefore you need develop a strategy to backup these
+exported files. When you run an export of these settings and metadata, which come from the database,
+they will be input into the relative path you configure. If your plan is to back up your entire repository
+manager back up the application to a secondary location as part of your strategy, so you can preserve any
+configurations for restoration.
 
-The databases that you export have pointers to blob stores, which contain components and asset potentially across multiple
-repositories. If not backed up together the component metadata can point to non-existent blob stores, or the blob store
-metadata may be non-descript when attempting to restore the exported data. So, It's recommended that you back up both you
-database and blob stores in order to keep the data intact.
+When an export task is run, no write access is available for the databases.
 
-Here's a common scenario to backup all parts of your repository manager:
+The databases that you export have pointers to blob stores, which contain components and assets potentially
+across multiple repositories. If not backed up together the component metadata can point to non-existent
+blob stores, or the blob store metadata may be non-descript when attempting to restore the exported data.
+So, it's recommended that you back up both your database and blob stores in order to keep the data intact.
+
+Here's a common scenario to back up references and explicit parts of your repository manager in a piecemeal
+fashion:
 
 * configure the export backup task for a database export
-* run the scheduled task to export the databases to a relative location
-* Back up the entire repository manager, e.g. application directory 
-* Restore the backed-up, exported files
-////
-Formalize: Before you execute a backup of your OrientDB, select a backup tool of your preference to
-back your content, i.e. accesslog, components, system configuration, and security
-////
+* run the scheduled task to export the databases to a relative path
+* back up the databases in the relative path
+* back up the contents of the installation directory, application directory, data directory, server components,
+libraries, and control scripts
+* back up the blob store
+* copy all backed-up directories, configurations, and exported databases to a safe location
+* restore the backed-up directories, configurations, and exported databases to operation
+* test backups and exports from the restore procedure routinely
 
 [[backup-task]]
 === Configuring and Running a Database Backup Task
