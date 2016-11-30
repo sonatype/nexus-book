@@ -53,8 +53,8 @@ Note: removed the anchor/macro referencing tasks due to missing steps addressed 
 .Manual Database Backup Task with Directory Location 
 image::figs/web/backup-task.png[scale=50]
 
-When the task runs it exports backup data to the relative path specified in the 'Backup location' field. The
-directory you added will contain +.bak+ files of the following databases:
+When the task runs it exports backup data to the path specified in the 'Backup location' field. The directory
+you input will contain +.bak+ files of the following databases:
 
 Access log:: login and usage information among repository manager users 
 Analytics:: event data and overall repository manager usage
@@ -88,14 +88,14 @@ IMPORTANT:: The restoration process should be executed on a single node.  All no
 should be stopped prior to restoration.
 ////
 
-You can restore the exported database files to their full state after the task is complete. You will need to access
-the relative location you created in `$data-dir/nexus3`. For example, if configured the task to store your `.bak`
+You can restore the exported database files to their full state after the backup is complete. You will need to access
+the relative location you created in `$data-dir/nexus3`. For example, if configuring the task to store your `.bak`
 files in a relative location called `backup`, follow these steps:
 
 1. If {nxrm} won't start, install a fresh copy of the repository manager; it must be the same version where the
 `.bak` files were created.
 2. Stop the repository manager.
-3. Copy the relative path file ('backup') to `$data-dir/nexus3`
+3. Copy the relative path file to `$data-dir/nexus3`
 4. Remove the existing database folder (`db`) from `$data-dir/nexus3/db` if they exist. The restoration won't
 overwrite any existing data.
 5. Restart {nxrm}.
@@ -105,4 +105,3 @@ To verify the restoration, check the logs for a message that says "database conf
 
 NOTE:: If the `Component` database is restored, the corresponding blobstores containing components must also be
 restored.
-
