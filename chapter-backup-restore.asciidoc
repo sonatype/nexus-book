@@ -18,17 +18,13 @@ TBD
 [[backup-preparation]]
 === Preparing a Backup for {nxrm}
 
-In preparation for a backup, {nxrm} provides a scheduled task that allows you to export databases. The task
-only exports databases, therefore you need to develop a backup strategy to store the exported files with
-anything else you wish to backup.
+In preparation for a backup, {nxrm} provides a scheduled task that allows you to export settings and
+metadata from your repository manager's underlying databases. The task only exports the content, therefore
+you need to develop a backup strategy to store the exported files with anything else you wish to backup.
 
-When you run an export of the database settings and metadata, they will be input into the new location you
-determine when configuring the task. If your plan is to back up your entire repository manager back up the
-application to a secondary location as part of your strategy, so you can preserve any configurations for
-restoration.
-
-NOTE: Write access to databases is temporarily suspended until a backup is complete. It's advised to
-schedule backup tasks during off-hours.
+When you run an export of these settings, they will be stored at the new location you determine when
+configuring the task. If part of your strategy is to back up your entire repository manager to a secondary
+location, you can also preserve any custom configurations to be restored later.
 
 The databases that you export have pointers to blob stores, which reside in the data directory and contain
 components and assets potentially across multiple repositories. If not backed up together the component
@@ -40,16 +36,17 @@ Here's a common scenario to back up references and explicit parts of your reposi
 fashion:
 
 1. Configure the 'Database backup' task to export databases.
-2. Run the scheduled task to export the databases to new folder.
-3. Back up the contents of the installation directory, other contents of the data directory, server components,
-libraries, and control scripts.
+2. Run the scheduled task to export the databases to a new folder.
+3. Back up the installation and data directories.
 4. Back up blob stores.
-5. Copy all backed-up directories, configurations, and exported databases to a safe location.
 
 It is important to use the 'Database backup' task because it generates a snapshot of the databases preserved
-for backup instead copying the entire data directory, where they reside. Exporting the data directory without
+for backup instead of copying the entire data directory, where they reside. Exporting the data directory without
 configuring the task and copying the output to another location may reflect a state of the directory that's
 inconsistent with the output you can automatically schedule with 'Database backup'.
+
+NOTE: Write access to databases is temporarily suspended until a backup is complete. It's advised to
+schedule backup tasks during off-hours.
 
 After you complete the database export and store its dependencies to a secure location, you can <<backup-retrieve
 ,restore>> the exported files.
