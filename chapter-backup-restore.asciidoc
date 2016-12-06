@@ -39,9 +39,11 @@ back your content, i.e. accesslog, components, system configuration, and securit
 {nxrm} allows you to back up your underlying databases for both a single-node deployment or a cluster of
 multiple nodes, when activating <<high-availability,high availability>>.
 
-To configure and run a new task for database backup, review the steps in the Configuration chapter. The form
-for this task includes an additional field called 'Backup location', which requires you to enter the path to a
-directory where you want to store backup data, shown in <<fig-backup-task>>.
+To configure and run a new task for database backup, review the steps in the Configuration chapter. The
+form for this task includes an additional field called 'Backup location', which requires you to enter a
+file where you want to store backup data, shown in <<fig-backup-task>>. In this field you add an absolute
+or relative path to store your databases. The relative location's chosen path starts in the data directory,
+e.g. `$data-dir/nexus3`.
 
 ////
 Note: removed the anchor/macro referencing tasks due to missing steps addressed in another ticket (bug)  
@@ -51,11 +53,8 @@ Note: removed the anchor/macro referencing tasks due to missing steps addressed 
 .Manual Database Backup Task with Directory Location 
 image::figs/web/backup-task.png[scale=50]
 
-////
-expand the statement below, place it in the Preparation section
-////
-When the task runs it exports backup data to the directory in the file path added to the 'Backup location'
-field. The directory you choose will contain +.bak+ files of the following databases:
+When the task runs it exports backup data to the path specified in the 'Backup location' field. The directory
+you input will contain +.bak+ files of the following databases:
 
 Access log:: login and usage information among repository manager users 
 Analytics:: event data and overall repository manager usage
@@ -84,7 +83,26 @@ TBD
 [[backup-retrieve]]
 === Restoring a Database Backup
 
-TBD
 ////
-potentially, subtask for NEXUS-11203
+IMPORTANT:: The restoration process should be executed on a single node.  All nodes in an high availability cluster
+should be stopped prior to restoration.
 ////
+
+You can restore the exported database files to their full state after the backup is complete. You will need access to
+the location specified by your backup task. In preparation for the restore you should only remove the `db` folders you
+want to retrieve. For example, if configuring the task to store your `.bak` files from `db` to a relative location
+called `backup`, follow these steps:
+
+1. If {nxrm} won't start, install a fresh copy of the repository manager; it must be the same version where the
+`.bak` files were created.
+2. Stop the repository manager.
+3. Create the `backup` folder.
+3. Copy the `.bak` files you wish to restore to the `backup` folder, in `$data-dir/nexus3`.
+4. Remove the existing database folder (`db`) from `$data-dir/nexus3/db` if they exist. The restoration won't
+overwrite any existing data.
+NOTE:: If the `Component` database is restored, the corresponding blob stores containing components must also be
+restored.
+5. Restart {nxrm}.
+
+To verify the restoration, check the logs for a message that says "database config restored", which is logged at the
+`INFO` level.
