@@ -9,15 +9,6 @@ TBD
 
 TBD
 
-[[backup-configuration]]
-=== Backup Plan
-
-TBD
-////
-Checklist, self-repair tasks - TBD
-////
-
-
 [[backup-requirements]]
 === Requirements for Backing Up {nxrm}
 
@@ -27,23 +18,47 @@ TBD
 [[backup-preparation]]
 === Preparing a Backup for {nxrm}
 
-TBD
+In preparation for a backup, {nxrm} provides a scheduled task that allows you to export settings and
+metadata from your repository manager's underlying databases. The task only exports the content, therefore
+you need to develop a backup strategy to store the exported files with anything else you wish to backup.
+
+When you run an export of these settings, they will be stored at the new location you determine when
+configuring the task. If part of your strategy is to back up your entire repository manager to a secondary
+location, you can also preserve any custom configurations to be restored later.
+
+The databases that you export have pointers to blob stores, which reside in the data directory and contain
+components and assets potentially across multiple repositories. If not backed up together the component
+metadata can point to non-existent blob stores, or the blob store metadata may be non-descript when attempting
+to restore the exported data. So when you plan to back up the exported data, it's recommended that you copy
+both database and blob stores together to a new location, in order to keep the data intact.
+
+Here's a common scenario to back up references and explicit parts of your repository manager in a piecemeal
+fashion:
+
+1. Configure the 'Database backup' task to export databases.
+2. Run the scheduled task to export the databases to a new folder.
+3. Back up the installation and data directories.
+4. Back up blob stores.
+
+It is important to use the 'Database backup' task because it generates a snapshot of the databases preserved
+for backup instead of copying the entire data directory, where they reside. Exporting the data directory without
+configuring the task and copying the output to another location may reflect a state of the directory that's
+inconsistent with the output you can automatically schedule with 'Database backup'.
+
+NOTE: Write access to databases is temporarily suspended until a backup is complete. It's advised to
+schedule backup tasks during off-hours.
+
 ////
-Formalize: Before you execute a backup of your OrientDB, select a backup tool of your preference to
-back your content, i.e. accesslog, components, system configuration, and security
+After you complete the database export and store its dependencies to a secure location, you can <<backup-retrieve
+,restore>> the exported files.
 ////
 
 [[backup-task]]
 === Configuring and Running a Database Backup Task
 
-{nxrm} allows you to back up your underlying databases for both a single-node deployment or a cluster of
-multiple nodes, when activating <<high-availability,high availability>>.
-
-To configure and run a new task for database backup, review the steps in the Configuration chapter. The
-form for this task includes an additional field called 'Backup location', which requires you to enter a
-file where you want to store backup data, shown in <<fig-backup-task>>. In this field you add an absolute
-or relative path to store your databases. The relative location's chosen path starts in the data directory,
-e.g. `$data-dir/nexus3`.
+To configure and run a new task for database backup, review the steps in the Configuration chapter. The form
+for this task includes an additional field called 'Backup location', which requires you to enter the path to a
+directory where you want to store backup data, shown in <<fig-backup-task>>.
 
 ////
 Note: removed the anchor/macro referencing tasks due to missing steps addressed in another ticket (bug)  
