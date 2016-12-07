@@ -2,18 +2,16 @@
 ==  Backing Up and Restoring {nxrm}
 {inall}
 
-TBD
-
 [[backup-introduction]]
 === Introduction
 
-TBD
+{nxrm} provides a means for you to configure exports of your repository manager's underlying databases
+and automate the process. As the repository manager acts as an instrumental tool for your software supply
+chain and life cycle, the export feature initiates the steps for backing up the repository manager, its
+databases, and contents stored within them.
 
-[[backup-requirements]]
-=== Requirements for Backing Up {nxrm}
-
-TBD
-
+This chapter covers the methods necessary to prepare for a backup, configure and execute the export task,
+and fully recover the exported content ahead of backing up {nxrm}.  
 
 [[backup-preparation]]
 === Preparing a Backup for {nxrm}
@@ -29,8 +27,8 @@ location, you can also preserve any custom configurations to be restored later.
 The databases that you export have pointers to blob stores, which reside in the data directory and contain
 components and assets potentially across multiple repositories. If not backed up together the component
 metadata can point to non-existent blob stores, or the blob store metadata may be non-descript when attempting
-to restore the exported data. So when you plan to back up the exported data, it's recommended that you copy
-both database and blob stores together to a new location, in order to keep the data intact.
+to restore the exported data. So when you plan a new backup, it's recommended that you copy both database
+and blob stores together to a new location, in order to keep the data intact.
 
 Here's a common scenario to back up references and explicit parts of your repository manager in a piecemeal
 fashion:
@@ -47,11 +45,6 @@ inconsistent with the output you can automatically schedule with 'Database backu
 
 NOTE: Write access to databases is temporarily suspended until a backup is complete. It's advised to
 schedule backup tasks during off-hours.
-
-////
-After you complete the database export and store its dependencies to a secure location, you can <<backup-retrieve
-,restore>> the exported files.
-////
 
 [[backup-task]]
 === Configuring and Running a Database Backup Task
@@ -81,19 +74,8 @@ Security:: all user and access rights management content
 
 All backup files are presented in the timestamp format based on the time the task was started.
 
-[[backup-node]]
-=== Backing up a Single Node in {nxrm}
-
-TBD
-////
-Distinguish single node backup from an backup for HA
-////
-
-
-[[backup-ha]]
-=== Backing up {nxrm} in an HA Environment
-
-TBD
+After you complete the database export and store the files to a secure location, you can <<backup-retrieve
+,restore>> the exported files.
 
 [[backup-retrieve]]
 === Restoring a Database Backup
