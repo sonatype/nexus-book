@@ -412,8 +412,8 @@ ProxyPreserveHost On
 <VirtualHost: *:80>
   ServerName www.example.com
   ServerAdmin admin@example.com
-  ProxyPass / http://localhost:8081/
-  ProxyPassReverse / http://localhost:8081/
+  ProxyPass /nexus http://localhost:8081/
+  ProxyPassReverse /nexus http://localhost:8081/
   ErrorLog logs/www.example.com/nexus/error.log
   CustomLog logs/www.example.com/nexus/access.log common
 </VirtualHost>
@@ -434,10 +434,10 @@ http {
     server_name  www.example.com;
 
     # allow large uploads of files
-    client_max_body_size 1G
+    client_max_body_size 1G;
 
     # optimize downloading files larger than 1G
-    #proxy_max_temp_file_size 2G
+    #proxy_max_temp_file_size 2G;
 
     location / {
       proxy_pass http://localhost:8081/;
@@ -489,10 +489,10 @@ http {
     server_name  repo.example.com;
 
     # allow large uploads of files
-    client_max_body_size 1G
+    client_max_body_size 1G;
 
     # optimize downloading files larger than 1G 
-    # proxy_max_temp_file_size 2G
+    # proxy_max_temp_file_size 2G;
 
     location /nexus {
       proxy_pass http://localhost:8081/nexus;
@@ -557,12 +557,12 @@ http {
     server_name  repo.example.com;
 
     # allow large uploads of files
-    client_max_body_size 1G
+    client_max_body_size 1G;
 
     # optimize downloading files larger than 1G
-    #proxy_max_temp_file_size 2G
+    #proxy_max_temp_file_size 2G;
 
-    ssl on
+    ssl on;
     ssl_certificate      example.pem;
     ssl_certificate_key  example.key;
 
