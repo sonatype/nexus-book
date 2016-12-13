@@ -200,6 +200,12 @@ configuration and data. This is the slowest option.
 If version 2 and version 3 are running on different machines and do not share access to the same file system
 storage, you must use the HTTP download method.
 
+NOTE: The HTTP requests from version 3 to version 2 contain encoded slashes in the URL to denote the pathname of
+a downloaded component. These encoded slashes can cause issues when version 2 runs behind a reverse proxy. E.g.
+when using Apache HTTP Server be sure to employ the directive `AllowEncodedSlashes NoDecode`. A misconfigured
+reverse proxy will prevent this transfer method from succeeding, typically by causing HTTP 404 ("Not Found")
+errors in version 3.
+
 *File System Copying*
 
 In this transfer method, version 2 tells version 3 the path of the file content to transfer and a simple file
