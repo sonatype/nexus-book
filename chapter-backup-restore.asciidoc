@@ -7,11 +7,11 @@
 
 {nxrm} provides a means for you to configure exports of your repository manager's underlying databases
 and automate the process. As the repository manager acts as an instrumental tool for your software supply
-chain and life cycle, the export feature initiates the steps for backing up the repository manager, its
-databases, and contents stored within them.
+chain and life cycle, the export feature lets you persist with the steps for backing up these databases.
 
-This chapter covers the methods necessary to prepare for a backup, configure and execute the export task,
-and fully recover the exported content of {nxrm}.  
+This chapter covers the methods necessary to configure and execute the export task, then fully recover the
+exported databases of {nxrm}. In the future, {nxrm} will allow you to back up the databases to a third-party
+location.
 
 [[backup-preparation]]
 === Preparing a Backup for {nxrm}
@@ -38,17 +38,17 @@ fashion:
 3. Back up the installation and data directories.
 4. Back up blob stores.
 
-It is important to use the 'Export configuration & metadata for backup' task because it generates a snapshot 
-of the databases preserved for backup instead of copying the entire data directory, where they reside. 
-Exporting the data directory without configuring the task and copying the output to another location may reflect 
-a state of the directory that's inconsistent with the output you can automatically schedule with 
-'Export configuration & metadata for backup'.
+When you run the 'Export configuration & metadata for backup' task it generates a snapshot of the databases
+preserved for a backup instead of copying the entire data directory, where they reside. Exporting the data
+directory without configuring the task and copying the output to another location may reflect a state of the
+directory that's inconsistent with the output you can automatically schedule with 'Export configuration
+& metadata for backup'.
 
 NOTE: Write access to databases is temporarily suspended until a backup is complete. It's advised to
 schedule backup tasks during off-hours.
 
 [[backup-task]]
-=== Configuring and Running an Export configuration & metadata for backup Task
+=== Configuring and Running an 'Export configuration & metadata for backup' Task
 
 To configure and run a new task for database backup, review the steps in the Configuration chapter. The form
 for this task includes an additional field called 'Backup location', which requires you to enter the path to a
@@ -79,7 +79,7 @@ After you complete the database export and store the files to a secure location,
 ,restore>> the exported files.
 
 [[backup-retrieve]]
-=== Restoring a Database Backup
+=== Restoring Exported Database Configurations and Metadata
 
 ////
 IMPORTANT:: The restoration process should be executed on a single node.  All nodes in an high availability cluster
@@ -88,7 +88,7 @@ should be stopped prior to restoration.
 
 You can restore the exported database files to their full state after the backup is complete. You will need access to
 the location specified by your backup task. In preparation for the restore you should only remove the `db` folders you
-want to retrieve. For example, if configuring the task to store your `.bak` files from `db` to a relative location
+want to restore. For example, if configuring the task to store your `.bak` files from `db` to a relative location
 called `backup`, follow these steps:
 
 1. If {nxrm} won't start, install a fresh copy of the repository manager; it must be the same version where the
