@@ -64,7 +64,7 @@ managers. You can install them across a mix of two:
 [[high-availability-prepare]]
 === Preparing a Cluster for High Availability
 
-When you have a workable file structure, where your two blob store file paths are the same, follow the steps 
+When you have a workable file structure, where all three blob store file paths are the same, follow the steps 
 below to get started:
 
 - <<high-availability-install,Install>> a fresh instance of {pro} that includes high availability, then 
@@ -82,13 +82,13 @@ To enable clustering from a fresh installation of {pro}, follow the steps below.
 To prepare a fresh installation for {pro} for high availability
 
 - Download {pro}
-- Duplicate the {pro} file, creating a second folder
+- Duplicate the {pro} file, twice, creating a second and third instance of your repository manager
 - Set the location for the second repository manager so the nodes share same the 
 <<admin-repository-blobstores,blob store>> path
 
-For example, let's say you create two nodes, a default called "node-a" and a new node called "node-b". Then you 
-designate the blob store directory for "node-a" at `sonatype-work/nexus3/blobs`. You must mount "node-b" to 
-the same location.
+For example, let's say you create two nodes, a default called "node-a" and two new nodes called "node-b" and
+"node-c", respectively. Then you designate the blob store directory for "node-a" at `sonatype-work/nexus3/blobs`.
+You must mount "node-b" and "node-c" to the same location.
 
 ////
 ==== Adding a New Version of {pro} with High Availability
@@ -102,7 +102,7 @@ clustering, and connect the nodes for redundancy. So, this method assumes you al
 
 From Benjamin: Somewhere we should also mention that in case of an existing NX instance, that instance needs to 
 be rebooted first. The first node to join/form the cluster defines the current NX config, any other node joining 
-afterwards will copy that config. I.e. if one was to start the second NX instance first, all config 
+afterwards will copy that config. I.e. if one was to start the second/third NX instances first, all config 
 from the existing instance gets lost when that would join the cluster later.
 ////
 Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory. For 
@@ -126,10 +126,14 @@ Follow these steps to enable high availability:
 
 . In the first repository manager, open the `$data-dir/etc/nexus.properties` file.
 . Remove the `#` before +nexus.clustered = true+ to enable the node at start-up. 
-. Go to the second repository manager and repeat steps 1 and 2, to enable it to use high availability, too.
+. Go to the second and third repository managers, and repeat steps 1 and 2, to enable them to use high availability, too.
 
-Given that both repository managers are mounted to the same blob store, with the same path, synchronization of 
-data and configuration will occur automatically.
+Given that all nodes are mounted to the same blob store, with the same path, synchronization of data and configuration
+will occur automatically.
+
+////
+the phrasing in bullet 2 above will likely be different, hence this note to myself
+////
 
 [[high-availability-startup]]
 ==== Starting the High Availability Service
@@ -140,9 +144,10 @@ this:
 ----
 2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
  
-Members [2] {
+Members [3] {
     Member [192.168.99.1]:5701
-    Member [192.168.99.1]:5702 this
+    Member [192.168.99.1]:5702
+    Member [192.168.99.1]:5703 this
 }
 ----
 
@@ -236,5 +241,5 @@ The `$install-dir/etc/fabric/hazelcast.xml` file with the modified properties wi
 [[high-availability-verify]]
 === Verifying Synchronization
 
-At runtime, the repository manager user interface allows you to see the contents of one node synchronized to the 
-other. See <<nodes>> for details on viewing active nodes in cluster.
+At runtime, the repository manager user interface allows you to see the contents of one node synchronized with the others.
+See <<nodes>> for details on viewing active nodes in cluster.
