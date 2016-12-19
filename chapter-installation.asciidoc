@@ -54,10 +54,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
 ----
 
 When multiple JDK or JRE versions are installed, you need to ensure the correct version is configured by running
-the above command as the operating system user that is used to run the repository manager. This allows you to
-have a dedicated runtime environment for the repository manager installed that is not on the path and not used by
-other installed applications. It allows you to separate upgrades of the Java runtime used by the repository
-manager from upgrades of the runtime used by other applications.
+the above command as the operating system user that is used to run the repository manager.
 
 TIP: OpenJDK or other Java distributions or older Java versions are not supported.
 
@@ -74,6 +71,10 @@ The startup script verifies the runtime environment by checking for the existenc
 as well as major and minor version of the runtime to be the required `1.8`. If the configured runtime is not
 suitable, it will proceed with a best effort to locate a suitable runtime configured on the path or via the
 `JAVA_HOME` environment variable. If successful, it will start up the repository manager with this JVM.
+
+This allows you to have a dedicated runtime environment for the repository manager installed that is not on the 
+path and not used by other installed applications. Further, you can separate upgrades of the Java runtime used by 
+the repository manager from upgrades of the runtime used by other applications.
 
 [[installation-archive]]
 ===  Installing and Running with the Distribution Archive
@@ -113,9 +114,9 @@ The extraction process creates two sibling directories: an application directory
 The latter contains the data directory. Further details about these folders and their contents can be found in
 <<directories>>.
 
-The `bin` folder contains the generic startup scripts for Unix-like platforms called `nexus`. The Windows platform
-equivalent is called `nexus.exe`. To start the repository manager from the `bin` folder on a Unix-like platform
-like Linux use
+The `bin` folder contains the generic startup scripts for Unix-like platforms called `nexus`. The Windows 
+platform equivalent is called `nexus.exe`. To start the repository manager from application directory in the 
+`bin` folder on a Unix-like platform like Linux use
 
 ----
 ./nexus run
@@ -141,7 +142,7 @@ In order to shut down the repository manager running via the `run` command, you 
 
 The `nexus` script can be used to manage the repository manager as a background application on OSX and Unix with
 the `start`, `stop`, `restart`, `force-reload` and `status` commands. The Windows `nexus.exe` command supports
-similar commands with a prefix of `/` e.g., `/run`.
+similar commands with a prefix of `/` e.g., `/start`.
 
 Once the repository manager is started you can access the user interface as details in <<access>>.
 
@@ -154,7 +155,7 @@ Docker automates the deployment of applications inside virtualized Linux contain
 that supports the installation of {pro} and {oss}.
 
 To install the repository manager with a Docker image, follow the steps at 
-https://hub.docker.com/r/sonatype/nexus3/[Docker Hub].
+https://hub.docker.com/r/sonatype/nexus3/[the Sonatype nexus3 Docker Hub image].
 
 [[configure-service]]
 === Configuring as a Service
@@ -394,7 +395,7 @@ http://nginx.org/en/docs/http/configuring_https_servers.html#compatibility[ssl c
 *Scenario*: You need to expose the repository manager on restricted port 80. The repository manager should not be 
 run with the root user. Instead run your reverse proxy on the restricted port 80 and the repository manager on 
 the default port +8081+. End users will access the repository manager using the virtual host URL 
-http://www.example.com/nexus instead of http://localhost:8081/nexus.
+http://www.example.com/ instead of http://localhost:8081/.
 
 Ensure your external hostname (+www.example.com+) routes to your reverse proxy server. This example uses the 
 default content path (+/+).
@@ -407,10 +408,10 @@ ProxyPreserveHost On
 <VirtualHost: *:80>
   ServerName www.example.com
   ServerAdmin admin@example.com
-  ProxyPass /nexus http://localhost:8081/
-  ProxyPassReverse /nexus http://localhost:8081/
-  ErrorLog logs/www.example.com/nexus/error.log
-  CustomLog logs/www.example.com/nexus/access.log common
+  ProxyPass / http://localhost:8081/
+  ProxyPassReverse / http://localhost:8081/
+  ErrorLog logs/www.example.com/error.log
+  CustomLog logs/www.example.com/access.log common
 </VirtualHost>
 ----
 
@@ -652,9 +653,10 @@ TBD... should this be documented or is it needed or should it be removed from th
 [[data-directory]]
 ==== Data Directory
 
-The data directory, found at `sonatype-work/nexus3`, contains subdirectories such as `blobs`, `db`,
-`elasticsearch`, and others. These contain all the components, repository, configuration, and other data presented
-by the repository manager. Follow the instructions in <<config-data-directory>> to customize the location.
+The data directory, found by default at `../sonatype-work/nexus3`, contains subdirectories such as `blobs`, `db`,
+`elasticsearch`, and others. These contain all the components, repository, configuration, and other data 
+presented by the repository manager. Follow the instructions in <<config-data-directory>> to customize the 
+location.
 
 [[configure-runtime]]
 === Configuring the Runtime Environment
@@ -670,10 +672,10 @@ within the installation.  The application startup is performed with the JVM conf
 -Xms1200M
 -Xmx1200M
 -XX:MaxDirectMemorySize=2G
--XX:+HeapDumpOnOutOfMemoryError
 -XX:+UnlockDiagnosticVMOptions
 -XX:+UnsyncloadClass
 -XX:+LogVMOutput
+-XX:LogFile=../sonatype-work/nexus3/log/jvm.log
 -Djava.net.preferIPv4Stack=true
 -Dkaraf.home=.
 -Dkaraf.base=.
@@ -681,7 +683,6 @@ within the installation.  The application startup is performed with the JVM conf
 -Djava.util.logging.config.file=etc/karaf/java.util.logging.properties
 -Dkaraf.data=../sonatype-work/nexus3
 -Djava.io.tmpdir=../sonatype-work/nexus3/tmp
--XX:LogFile=../sonatype-work/nexus3/log/jvm.log
 -Dkaraf.startLocalConsole=false
 ----
 
@@ -717,8 +718,8 @@ jetty:: Configuration files for Eclipse Jetty
 logback:: Configuration files for Logback
 
 nexus-default.properties:: Default properties file for the application providing default values such as
-the ports used for HTTP and HTTPS access, as well as the context path and host. You can override these
-defaults in `$data-dir/etc/nexus.properties`.
+the ports used for HTTP and HTTPS access, as well as the context path and host. Override these
+defaults in `$data-dir/etc/nexus.properties`. This file should 'not' be modified.
 
 ssl:: A directory to put keystores when configuring HTTPS
 
