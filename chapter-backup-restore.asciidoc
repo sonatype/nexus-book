@@ -5,20 +5,20 @@
 [[backup-introduction]]
 === Introduction
 
-{nxrm} provides a means for you to configure exports of your repository manager's underlying databases
+{nxrm} provides a means for you to configure exports of your repository manager's Orient databases
 and automate the process. As the repository manager acts as an instrumental tool for your software supply
-chain and life cycle, the export feature lets you persist with the steps for backing up these databases.
+chain and lifecycle, the export feature will initialize the steps for backing up your {nxrm}.
 
-This chapter covers the methods necessary to configure and execute the export task, then fully recover the
-exported databases of {nxrm}. In the future, {nxrm} will allow you to back up the databases to a third-party
-location.
+This chapter covers the methods necessary to configure and execute the export task as well as to and
+fully recover the exported databases of {nxrm}. 
 
 [[backup-preparation]]
 === Preparing a Backup for {nxrm}
 
-In preparation for a backup, {nxrm} provides a scheduled task that allows you to export settings and
-metadata from your repository manager's underlying databases. The task only exports the content, therefore
-you need to develop a backup strategy to store the exported files with anything else you wish to backup.
+In preparation for a backup, {nxrm} provides a scheduled task that allows you to export settings and metadata
+from your repository manager's Orient databases. The task only exports the databases, therefore it is
+recommended you back up your entire repository manager and develop a backup strategy to store the exported
+files with anything else you wish to backup.
 
 When you run an export of these settings, they will be stored at the new location you determine when
 configuring the task. If part of your strategy is to back up your entire repository manager to a secondary
@@ -33,12 +33,10 @@ and blob stores together to a new location, in order to keep the data intact.
 Here's a common scenario to back up custom configurations in tandem with the database export task:
 
 1. Configure the 'Export configuration & metadata for backup' task to export databases.
-2. Run the scheduled task to export the databases to a new folder.
-3. Back up custom configurations in your installation directory.
-4. Back up custom configurations in your data directory, e.g. the `nexus.properties` if used to override
-`nexus-default.properties`.
-5. Copy and back up blob stores and the databases to which they point, as close in time to the start of the
+2. Run the scheduled task to export the databases to the configured folder.
+3. Back up custom configurations in your installation and data directories around the same time you run the
 export task.
+4. Back up all blob stores.
 
 When you run the 'Export configuration & metadata for backup' task it generates a snapshot of the databases
 preserved for a backup instead of copying the entire data directory, where they reside. Exporting the data
@@ -79,6 +77,7 @@ All backup files are presented in the timestamp format based on the time the tas
 
 After you complete the database export and store the files to a secure location, you can <<backup-retrieve
 ,restore>> the exported files.
+
 
 [[backup-retrieve]]
 === Restoring Exported Databases
