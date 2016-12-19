@@ -30,13 +30,19 @@ metadata can point to non-existent blob stores, or the blob store metadata may b
 to restore the exported data. So when you plan a new backup, it's recommended that you copy both database
 and blob stores together to a new location, in order to keep the data intact.
 
-Here's a common scenario to back up references and explicit parts of your repository manager in a piecemeal
-fashion:
+////
+Insert image here, i.e. https://docs.google.com/drawings/d/1-3jYw0MDTBGOBhQyrdH0Yb_0meP4euzeOKBnOocibYY/edit
+////
+
+Here's a common scenario to back up custom configurations in tandem with the database export task:
 
 1. Configure the 'Export configuration & metadata for backup' task to export databases.
 2. Run the scheduled task to export the databases to a new folder.
-3. Back up the installation and data directories.
-4. Back up blob stores.
+3. Back up custom configurations in your installation directory.
+4. Back up custom configurations in your data directory, e.g. the `nexus.properties` if used to override
+`nexus-default.properties`.
+5. Copy and back up blob stores and the databases to which they point, as close in time to the start of the
+export task.
 
 When you run the 'Export configuration & metadata for backup' task it generates a snapshot of the databases
 preserved for a backup instead of copying the entire data directory, where they reside. Exporting the data
