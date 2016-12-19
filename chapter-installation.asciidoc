@@ -781,39 +781,6 @@ to use the absolute path `/opt/sonatype-work/nexus3` change the values as follow
 -XX:LogFile=/opt/sonatype-work/nexus3/log/jvm.log
 ----
 
-[[config-legacy-url]]
-==== Configuring Legacy URL Paths
-
-{nxrm} 3 uses specific URL patterns to expose repositories, repository groups as well as the content via
-HTTP/HTTPS as used by many client side tools.
-
-For example, a repository with the name `example` is exposed via the path `repository/example` appended to the
-server URL. For the default installation on a local server with the default port 8081 and the default root
-context path, this results in a full URL for the repository of `http://localhost:8081/repository/example`.
-
-{nxrm} 2 uses different paths such as `content/repositories/example`. In addition, it uses the default context
-path `nexus` resulting in an equivalent URL of `http://localhost:8081/nexus/content/repositories/example`.
-
-{nxrm} 3 can be configured to use identical path generation of version 2 by enabling legacy mode in
-`$data-dir/etc/nexus.properties` with
-
-----
-org.sonatype.nexus.repository.httpbridge.internal.HttpBridgeModule.legacy=true
-----
-
-Together with the appropriate <<config-http-port,HTTP port>> and <<config-context-path, context path>>
-configuration, legacy mode usage can result in identical client tool facing URLs from {nxrm} version 3 and
-version 2. This is specifically useful after upgrades from version 2 to version 3 or when both versions are used.
-
-The Legacy URL Paths have the exact same behaviour for client tools as {nxrm} 2, allowing you to download as well
-as deploy components with the same API/HTTP calls. However, accessing the legacy URLs in the browser as a user
-does not support the directory browsing mode for inspecting the content of a repository as supported in
-{nxrm} 2. The browsing user interface for components and assets as documented in <<browse-browse>> can be
-used intead.
-
-NOTE: Find out more about upgrading {nxrm} in the dedicated <<upgrading>>.
-
-
 [[uninstall]]
 === Uninstalling
 

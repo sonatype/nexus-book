@@ -502,3 +502,26 @@ plan. These can include:
   <<config-legacy-url,repository paths of version 2>>, if desired.
 - Alternatively update all tool configurations pointing to the repository manager, such as Maven settings files
   and POM files.
+
+===== Configuring Legacy URL Paths
+
+By default, {nxrm} 2 uses a different URL pattern to expose repositories and repository groups than {nxrm} 3. 
+While automated tools and CI can be reconfigured to utilize the new patterns, it is possible to change a 
+configuration on the {nxrm} end to allow your Upgrade to use the old pattern as well.
+
+This can be done in `$data-dir/nexus3/etc/nexus.properties` by adding
+
+----
+org.sonatype.nexus.repository.httpbridge.internal.HttpBridgeModule.legacy=true
+----
+
+As with any {nxrm} <<configure-runtime,configuration>> change, the server must be restarted for this to start 
+working.  Once done, this will allow the example of `http://localhost:8081/nexus/repository/sample` to also be 
+accessed using `http://localhost:8081/nexus/content/repositories/sample`.
+
+This example (above) assumes your hostname (localhost), port (8081) and context path (nexus) match between your 
+{nxrm} 2 and {nxrm} 3 installations.  If not, you must utilize the ones from version 3 or reconfigure as stated 
+above.
+
+NOTE: Any automated tooling that uses direct repository browsing will not function in {nxrm} 3 as that is not 
+currently supported.
