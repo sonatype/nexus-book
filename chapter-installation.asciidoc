@@ -44,8 +44,7 @@ If you prefer to use an external runtime or use a Unix operating system, it is r
 version of Java 8 available from the http://www.oracle.com/technetwork/java/javase/downloads/index.html[Oracle 
 website]. You can choose to install the full JDK or the JRE only.
 
-
-You can confirm the installed Java version with the `java` command:
+You can confirm the installed Java version with the `java -version` command:
 
 ----
 $  java -version
@@ -55,7 +54,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
 ----
 
 When multiple JDK or JRE versions are installed, you need to ensure the correct version is configured by running
-the above command as the operating system user, that is used to run the repository manager. This allows you to
+the above command as the operating system user that is used to run the repository manager. This allows you to
 have a dedicated runtime environment for the repository manager installed that is not on the path and not used by
 other installed applications. It allows you to separate upgrades of the Java runtime used by the repository
 manager from upgrades of the runtime used by other applications.
@@ -336,21 +335,19 @@ manager installed in +/opt+ is shown <<ex-nexus-plist>>.
 </plist>
 ----
 
-After saving the file as +com.sonatype.nexus.plist+ in
-+/Library/LaunchDaemons/+ you have to change the ownership and access
-rights.
+After saving the file as +com.sonatype.nexus.plist+ in +/Library/LaunchDaemons/+ you have to change the ownership 
+and access rights.
 
 ----
 sudo chown root:wheel /Library/LaunchDaemons/com.sonatype.nexus.plist
 sudo chmod 644 /Library/LaunchDaemons/com.sonatype.nexus.plist
 ----
 
+TIP: Consider setting up a different user to run the repository manager and adapt permissions and the RUN_AS_USER 
+setting in the +nexus+ startup script.
 
-TIP: Consider setting up a different user to run the repository manager and adapt
-permissions and the RUN_AS_USER setting in the +nexus+ startup script.
- 
-With this setup the repository managers, starts as a service at boot time. To
-manually start it after the configuration you can use
+With this setup the repository manager starts as a service at boot time. To manually start it after the 
+configuration you can use
 
 ----
 sudo launchctl load /Library/LaunchDaemons/com.sonatype.nexus.plist
@@ -392,7 +389,6 @@ http://httpd.apache.org/docs/current/mod/mod_ssl.html[mod_ssl]), http://nginx.or
 (http://nginx.org/en/docs/http/ngx_http_proxy_module.html[ngx_http_proxy_module], 
 http://nginx.org/en/docs/http/configuring_https_servers.html#compatibility[ssl compatibility])
 
-
 ==== Example: Reverse Proxy on Restricted Ports
 
 *Scenario*: You need to expose the repository manager on restricted port 80. The repository manager should not be 
@@ -400,9 +396,8 @@ run with the root user. Instead run your reverse proxy on the restricted port 80
 the default port +8081+. End users will access the repository manager using the virtual host URL 
 http://www.example.com/nexus instead of http://localhost:8081/nexus.
 
-Ensure your external hostname (+www.example.com+) routes to your reverse proxy server. In this example use the 
-default content path (+/+)
-
+Ensure your external hostname (+www.example.com+) routes to your reverse proxy server. This example uses the 
+default content path (+/+).
 
 .Apache httpd
 ----
@@ -457,7 +452,6 @@ port at a base path of +/nexus+.
 Ensure your external hostname (+repo.example.com+) routes to your reverse proxy server and edit the webapp path 
 a slash at end (+/+).
 
-
 .Apache httpd
 ----
 ProxyRequests Off
@@ -472,7 +466,6 @@ ProxyPreserveHost On
   CustomLog logs/repo.example.com/nexus/access.log common
 </VirtualHost>
 ----
-
 
 .nginx
 ----
@@ -516,7 +509,6 @@ to be slash (+/+).
 To test your configuration, review the steps to
 https://support.sonatype.com/hc/en-us/articles/213465768-SSL-Certificate-Guide[generate a self-signed SSL 
 certificate] for reverse proxy servers.
-
 
 .Apache httpd - ensure Apache httpd is loading +mod_ssl+ and +mod_headers+.
 ----
@@ -619,10 +611,10 @@ additional components such as Java libraries and configuration files. The name o
 `nexus-` and is appended with the version name. In this section, and throughout the book, it is referred to as
 `$install-dir` in any code segments.
 
-Data directory:: This directory contains all the repositories, components and other data that are stored and managed
-by the repository manager. The default location of the data directory is `../sonatype-work/nexus3` relative to the
-nexus installation directory. In this section, and throughout the book, it is referred to as `$data-dir` in any
-code segments.
+Data directory:: This directory contains all the repositories, components and other data that are stored and 
+managed by the repository manager. The default location of the data directory is `../sonatype-work/nexus3` 
+relative to the installation directory. In this section, and throughout the book, it is referred to as 
+`$data-dir` in any code segments.
 
 [[installation-directory]]
 ==== Installation Directory
@@ -705,7 +697,6 @@ karaf
 logback
 nexus-default.properties
 ssl
-
 ----
 
 fabric:: Configuration files for Ehcache, Elasticsearch, and OrientDB
@@ -727,7 +718,7 @@ logback:: Configuration files for Logback
 
 nexus-default.properties:: Default properties file for the application providing default values such as
 the ports used for HTTP and HTTPS access, as well as the context path and host. You can override these
-defaults in `$data-dir/etc/nexus.properties`
+defaults in `$data-dir/etc/nexus.properties`.
 
 ssl:: A directory to put keystores when configuring HTTPS
 
@@ -737,7 +728,7 @@ ssl:: A directory to put keystores when configuring HTTPS
 The default and maximum heap sizes for the repository manager are a value of `1200M`, suitable for most usage
 patterns. As a Java application running on the JVM the repository manager is using JVM configuration parameters
 for numerous settings as part of the startup parameters for the JVM. These values are defined in the configuration
-file `$install-dir/bin/nexus.vmoptions`. Increased memory configuration can be set with e.g. :
+file `$install-dir/bin/nexus.vmoptions`. Increased memory configuration can be set with e.g.:
 
 ----
 -Xms1500M
@@ -827,4 +818,3 @@ NOTE: Find out more about upgrading {nxrm} in the dedicated <<upgrading>>.
 
 To uninstall the repository manager from an archive installation, remove the service configuration and 
 delete the entire directory.
-
