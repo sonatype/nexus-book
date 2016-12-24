@@ -18,10 +18,9 @@ creating a binary storage for the entire suite of features and components availa
 In {pro}, there are two ways you can implement high availability. In both scenarios, you create a cluster with 
 three distributed nodes. You can implement this by the following methods:
 
-. Start with a fresh installation of {pro} that includes the high availability feature.
-. Enable high availability in version {pro} 3 to synchronize content from a 2.x to 3.y upgrade. 
+* Start with a fresh installation of {pro} that includes the high availability feature.
+* Enable high availability in {pro} to synchronize content from a 2.x to 3.y upgrade.
 
-IMPORTANT:: To upgrade from 2.x to 3.y, review <<upgrade-version-two-three>> before configuring high availability.
 ////
 . Add a second server with the high availability feature in place, then configure it in your existing instance of 
 {pro}
@@ -47,15 +46,19 @@ intercept component data.
 
 Depending on your current file system configuration, you may need to re-organize in preparation for clustering.
 
-Each repository manager acts as a node and all nodes must share the same network configuration as the second
+Each repository manager acts as a node and all nodes must share the same network configuration as the first
 repository, so the nodes can communicate. Enabling three repository manager instances with high availability is the
 minimum requirement to allow redundancy between the nodes.
+
+////
+Re-write intro and add requirements as bullets.
+////
 
 [[high-availability-servers]]
 === Supported Servers for High Availability
 
 There are three supported infrastructures you can consider to facilitate high availability among your repository
-managers. You can install them across a mix of two:
+managers. You can install them across a mix of the following environments:
 
 - physical servers
 - virtual machines
@@ -64,11 +67,9 @@ managers. You can install them across a mix of two:
 [[high-availability-prepare]]
 === Preparing a Cluster for High Availability
 
-When you have a workable file structure, where all three blob store file paths are the same, follow the steps 
-below to get started:
+When you configure all blob store file paths to be the same, follow the steps below to get started:
 
-- <<high-availability-install,Install>> a fresh instance of {pro} that includes high availability, then 
-duplicate the file.
+- <<high-availability-install,Install>> a fresh instance of {pro}.
 - <<high-availability-configure,Configure and activate>> the cluster.
 - <<high-availability-startup,Start>> the service.
 
@@ -81,14 +82,14 @@ To enable clustering from a fresh installation of {pro}, follow the steps below.
 
 To prepare a fresh installation for {pro} for high availability
 
-- Download {pro}
-- Duplicate the {pro} file, twice, creating a second and third instance of your repository manager
-- Set the location for the second repository manager so the nodes share same the 
-<<admin-repository-blobstores,blob store>> path
+1. Download {pro}, version 3.3.
+2. Copy a minimum of two additional {pro} to establish three nodes, in different locations.
+3. Configure a location for all three nodes to share the same <<admin-repository-blobstores,blob store>> path.
 
-For example, let's say you create two nodes, a default called "node-a" and two new nodes called "node-b" and
-"node-c", respectively. Then you designate the blob store directory for "node-a" at `sonatype-work/nexus3/blobs`.
-You must mount "node-b" and "node-c" to the same location.
+For example, let's say you create three nodes, a default called `/foo/data/node-a` and two new nodes called
+`/foo/data/node-b` and `/foo/data/node-c`, respectively. Then you designate the blob store directory for
+`foo/data/node-a` at `sonatype-work/nexus3/blobs`. You must mount `/foo/data/node-b` and `/foo/data/node-c` to
+the same location.
 
 ////
 ==== Adding a New Version of {pro} with High Availability
@@ -124,9 +125,9 @@ hosts performs better. So comment instead of suggestion.
 
 Follow these steps to enable high availability:
 
-. In the first repository manager, open the `$data-dir/etc/nexus.properties` file.
-. Remove the `#` before +nexus.clustered = true+ to enable the node at start-up. 
-. Go to the second and third repository managers, and repeat steps 1 and 2, to enable them to use high availability, too.
+1. In the first repository manager, open the `$data-dir/etc/nexus.properties` file.
+2. Remove the `#` before +nexus.clustered = true+ to enable the node at start-up. 
+3. Go to the second and third repository managers and repeat steps 1 and 2, to enable them for high availability.
 
 Given that all nodes are mounted to the same blob store, with the same path, synchronization of data and configuration
 will occur automatically.
