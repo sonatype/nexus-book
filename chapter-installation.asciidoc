@@ -657,10 +657,7 @@ The data directory, found by default at `../sonatype-work/nexus3`, includes subd
 components, repository, configuration, and other data presented by the repository manager. The subdirectories
 are listed as:
 
-`backup/` :: If you have configured a scheduled task to export Orient databases, this directory will contain a
-number of +.bak+ files that contain snapshots of the Orient databases.
-
-`elasticsearch/` :: TBD
+`elasticsearch/` :: This contains all the currently configured state of Elasticsearch.
 
 `health-check/` :: This file contains cached reports from the {rhc} feature.
 
@@ -673,21 +670,32 @@ store directory is included with the repository manager. Each time you create a 
 menu, in 'Administration', the new directory appears as a sibling to +default+. The blob store files contain
 repository components and their assets.
 
+`etc/` :: This directory contains the main runtime configuration and customization of the repository manager. The files
+are explained further in <<configure-runtime>>.
+
+`instances` :: This file contains information on all running instances of {nxrm}.
+
+`cache` :: This file contains information on currently cached Karaf bundles.
+
+`keystores` :: This contains the automatically generated key used to identify your repository manager.
+
+`db` :: This file contains the Orient databases that store the repository manager's underlying component and metadata.
+
+`tmp` :: This file is used for temporary storage.
+
 ////
-`etc/logback/` :: 
-`instances` :: TBD
-`orient` :: TBD
-`cache` :: TBD
-`folder` :: TBD
-`keystores` :: TBD
+`backup` :: TBD
 `port` :: TBD
-`db` :: TBD
-`generated-bundles` :: TBD
+`generated-bundles` :: This folder is empty.
 `lock` :: TBD
-`tmp` :: TBD
+`orient` :: 
 ////
 
-Follow the instructions in <<config-data-directory>> to customize the location.
+NOTE: Unless you specify a relative path, running 'Export configuration & metadata for backup task' creates a folder 
+with snapshot of the databases, in the data directory. See <<backup-preparation>> to learn how to configure this task.
+
+If you want to re-define the location of your repository manager's data configuration, follow the instructions
+in <<config-data-directory>> to customize the location.
 
 [[configure-runtime]]
 === Configuring the Runtime Environment
