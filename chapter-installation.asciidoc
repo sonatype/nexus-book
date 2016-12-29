@@ -653,10 +653,47 @@ TBD... should this be documented or is it needed or should it be removed from th
 [[data-directory]]
 ==== Data Directory
 
-The data directory, found by default at `../sonatype-work/nexus3`, contains subdirectories such as `blobs`, `db`,
-`elasticsearch`, and others. These contain all the components, repository, configuration, and other data 
-presented by the repository manager. Follow the instructions in <<config-data-directory>> to customize the 
-location.
+The data directory, found by default at `../sonatype-work/nexus3`, includes subdirectories that contain all the
+components, repositories, configurations, and other data presented by the repository manager. The subdirectories
+are listed as:
+
+`blobs/` ::  This is the default location of the blob store. If you provided a fully qualified path when creating
+a new blob store, it may not end up in this directory.
+
+`cache/` :: This directory contains information on currently cached Karaf bundles.
+
+`db/` :: This directory contains the OrientDB databases which are the primary storage for your repository manager's
+metadata.
+
+`elasticsearch/` :: This directory contains the currently configured state of Elasticsearch.
+
+`etc/` :: This directory contains the main runtime configuration and customization of the repository manager. The
+files are explained further in <<configure-runtime>>.
+
+`health-check/` :: This directory contains cached reports from the {rhc} feature.
+
+`keystores/` :: This contains the automatically generated key used to identify your repository manager.
+
+`log/` :: The +nexus.log+ file that contains information about a running instance of the repository manager. This
+directory also contains archived copies of log files. Log files are rotated every day. To reclaim disk space, you
+can delete old log files from the logs directory.
+
+`tmp/` :: This directory is used for temporary storage.
+
+////
+`backup` :: TBD
+`port` :: TBD
+`generated-bundles` :: This folder is empty.
+`instances/` :: This directory contains information on all running instances of {nxrm}. Karaf-related.
+`lock` :: TBD
+`orient` :: 
+////
+
+NOTE: Unless you specify a relative path, running 'Export configuration & metadata for backup task' creates a folder 
+with a snapshot of the databases, in the data directory. See <<backup-preparation>> to learn how to configure this task.
+
+If you want to re-define the location of your repository manager's data configuration, follow the instructions
+in <<config-data-directory>> to customize the location.
 
 [[configure-runtime]]
 === Configuring the Runtime Environment
