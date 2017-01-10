@@ -19,7 +19,6 @@ In {pro}, there are two ways you can implement high availability. In the scenari
 with three distributed nodes. You can implement this by the following methods:
 
 * Start with a fresh installation of {pro} that includes high availability.
-* Enable high availability in {pro} to synchronize content from a 2.x to 3.y upgrade.
 * Convert an older version of {pro} 3 into a high availability cluster.
 
 ////
@@ -93,21 +92,21 @@ For example, let's say you create three nodes, a default called `/foo/data/node-
 `foo/data/node-a` at `sonatype-work/nexus3/blobs`. You must mount `/foo/data/node-b` and `/foo/data/node-c` to
 the same location.
 
+==== Converting an Existing Instance of {pro} into a Cluster
+
+If you have an earlier version of {pro} 3 with metadata and custom configurations that doesn't contain high
+availability, you can convert it into a cluster. Follow these steps:
+
+1. Upgrade your existing repository manager to version 3.3.
+2. Set the location for the second repository manager in your file system so the nodes share same the blob store.
+
 ////
-==== Adding a New Version of {pro} with High Availability
-
-If you have an existing repository manager you can start high availability in a new instance to expose 
-clustering, and connect the nodes for redundancy. So, this method assumes you already use an existing version of 
-{pro} with high availability. Follow these steps:
-
-- Download a second version of {pro}.
-- Set the location for the second repository manager in your file system so the nodes share same the blob store.
-
 From Benjamin: Somewhere we should also mention that in case of an existing NX instance, that instance needs to 
 be rebooted first. The first node to join/form the cluster defines the current NX config, any other node joining 
 afterwards will copy that config. I.e. if one was to start the second/third NX instances first, all config 
 from the existing instance gets lost when that would join the cluster later.
 ////
+
 Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory. For 
 your repository manager to operate properly each node should have its own independent, non-conflicting OrientDB 
 database. Instead, you only need to join the <<admin-repository-blobstores,blob store>> file locations together, 
