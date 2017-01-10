@@ -19,7 +19,7 @@ In {pro}, there are two ways you can implement high availability. In the scenari
 with three distributed nodes. You can implement this by the following methods:
 
 * Start with a fresh installation of {pro} that includes high availability.
-* Convert an older version of {pro} 3 into a high availability cluster.
+* Upgrade an older version of {pro} 3 to 3.3 that includes high availability.
 
 ////
 . Add a second server with the high availability feature in place, then configure it in your existing instance of 
@@ -97,29 +97,22 @@ the same location.
 If you have an earlier version of {pro} 3 with metadata and custom configurations that doesn't contain high
 availability, you can convert it into a cluster. Follow these steps:
 
-1. Upgrade your existing repository manager to version 3.3.
-2. Set the location for the second repository manager in your file system so the nodes share same the blob store.
+1. Stop running the existing repository manager.
+2. Follow the steps in the support article to upgrade the repository manager to version 3.3.
+3. Reboot the repository manager in the newly upgraded version of the repository manager.
+4. Enable high availability.
+5. Download a second, then copy third instance to separate folders.
+6. Start the second and third repository managers to form the cluster.
+6. Set the location for the second and third repository managers in your file system so the nodes share same
+the blob store.
 
-////
-From Benjamin: Somewhere we should also mention that in case of an existing NX instance, that instance needs to 
-be rebooted first. The first node to join/form the cluster defines the current NX config, any other node joining 
-afterwards will copy that config. I.e. if one was to start the second/third NX instances first, all config 
-from the existing instance gets lost when that would join the cluster later.
-////
+Choose the node that want to be the parent, so that all configurations from the newly upgraded instance won't
+get lost when you join the the second and third nodes needed to form the cluster.
 
 Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory. For 
 your repository manager to operate properly each node should have its own independent, non-conflicting OrientDB 
 database. Instead, you only need to join the <<admin-repository-blobstores,blob store>> file locations together, 
 where the nodes share access to components.
-
-////
-TIP:: If you run repository manager instances on different hosts, to get the most out of high availability for 
-uptime, you can use the same port.
-
-From Joe: It is unclear to me if getting the most of HA involves running on different hosts or using the same 
-port when running on different hosts. I was going to suggest striking "want to" then I realized maybe different 
-hosts performs better. So comment instead of suggestion.
-////
 
 [[high-availability-configure]]
 ==== Enabling the Nodes
