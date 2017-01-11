@@ -95,24 +95,31 @@ the same location.
 
 ==== Converting an Existing Instance of {pro} into a Cluster
 
-If you have an earlier version of {pro} 3 with metadata and custom configurations that doesn't contain high
-availability, you can convert it into a cluster. If you want to configure your non-HA-supported version so it's
-synchronized with the second and third node, follow these steps:
+If you have an earlier version of {pro} 3, you can convert it into a cluster. Follow the steps below to
+configure this non-HA-supported version so it's synchronized with the second and third nodes.
 
 1. Stop running the existing repository manager.
-2. Follow the steps in the support article to upgrade the repository manager to a version that supports high
-availability. Store the repository manager in its own directory.
-3. Copy a second instance of the repository manager, and store it in its own separate directory.
+2. Follow the steps in the support article to upgrade the repository manager to a version that supports
+high availability. Store the repository manager in its own directory.
+3. Download and unpackage a second repository manager, and store it in its own separate directory.
 4. Create a third instance by copying the second repository manager to its own separate directory.
 5. <<high-availability-configure,Enable>> the first, newly upgraded node for high availability.
 6. Enable high availability for the second and third nodes.
-6. Configure a location for all three nodes to share the same the blob store.
-7. Start all three nodes to form the cluster.
+7. Configure a location for all three nodes to share the same the blob store.
+8. Start all three nodes to form the cluster.
+////
+RE: step 2 -Currently, there no KB article for this but there is some documentation in Joe's HA testing
+overview. I'll contact the team in the follow-up ticket to get their thoughts on whether I write KB or
+add the steps to this chapter
+////
 
 Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory. For 
 your repository manager to operate properly each node should have its own independent, non-conflicting OrientDB 
 database. Instead, you only need to join the <<admin-repository-blobstores,blob store>> file locations together, 
 where the nodes share access to components.
+////
+The paragraph beginning "Regardless" will be repurposed in NEXUS-12038
+////
 
 [[high-availability-configure]]
 === Enabling the Nodes
