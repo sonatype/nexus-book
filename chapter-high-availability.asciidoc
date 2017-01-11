@@ -19,7 +19,7 @@ In {pro}, there are two ways you can implement high availability. In the scenari
 with three distributed nodes. You can implement this by the following methods:
 
 * Start with a fresh installation of {pro} that includes high availability.
-* Upgrade an older version of {pro} 3 to 3.3 that includes high availability.
+* Upgrade an older version of {pro} 3 to a version that supports high availability.
 
 ////
 . Add a second server with the high availability feature in place, then configure it in your existing instance of 
@@ -83,8 +83,9 @@ To enable clustering from a fresh installation of {pro}, follow the steps below.
 
 To prepare a fresh installation for {pro} for high availability
 
-1. Download {pro}, version 3.3.
-2. Copy a minimum of two additional {pro} to establish three nodes, in different locations.
+1. Download a {pro} version of the repository manager supported with high availability.
+2. Copy a minimum of two additional {pro} to establish three nodes, in different locations (e.g. three separate
+directories).
 3. Configure a location for all three nodes to share the same <<admin-repository-blobstores,blob store>> path.
 
 For example, let's say you create three nodes, a default called `/foo/data/node-a` and two new nodes called
@@ -95,19 +96,18 @@ the same location.
 ==== Converting an Existing Instance of {pro} into a Cluster
 
 If you have an earlier version of {pro} 3 with metadata and custom configurations that doesn't contain high
-availability, you can convert it into a cluster. Follow these steps:
+availability, you can convert it into a cluster. If you want to configure your non-HA-supported version so it's
+synchronized with the second and third node, follow these steps:
 
 1. Stop running the existing repository manager.
-2. Follow the steps in the support article to upgrade the repository manager to version 3.3.
-3. Reboot the repository manager in the newly upgraded version of the repository manager.
-4. Enable high availability.
-5. Download a second, then copy third instance to separate folders.
-6. Start the second and third repository managers to form the cluster.
-6. Set the location for the second and third repository managers in your file system so the nodes share same
-the blob store.
-
-Choose the node that want to be the parent, so that all configurations from the newly upgraded instance won't
-get lost when you join the the second and third nodes needed to form the cluster.
+2. Follow the steps in the support article to upgrade the repository manager to a version that supports high
+availability. Store the repository manager in its own directory.
+3. Copy a second instance of the repository manager, and store it in its own separate directory.
+4. Create a third instance by copying the second repository manager to its own separate directory.
+5. <<high-availability-configure,Enable>> the first, newly upgraded node for high availability.
+6. Enable high availability for the second and third nodes.
+6. Configure a location for all three nodes to share the same the blob store.
+7. Start all three nodes to form the cluster.
 
 Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory. For 
 your repository manager to operate properly each node should have its own independent, non-conflicting OrientDB 
@@ -115,7 +115,7 @@ database. Instead, you only need to join the <<admin-repository-blobstores,blob 
 where the nodes share access to components.
 
 [[high-availability-configure]]
-==== Enabling the Nodes
+=== Enabling the Nodes
 
 Follow these steps to enable high availability:
 
