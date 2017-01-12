@@ -77,21 +77,21 @@ When you configure all blob store file paths to be the same, follow the steps be
 [[high-availability-install]]
 === Installing {pro} for High Availability
 
-To enable clustering from a fresh installation of {pro}, follow the steps below.
+Whether you use a fresh installation or upgrade a non-HA-supported version of {pro} to form a cluster, you
+need to run the additional nodes on different hosts. Follow the appropriate scenario in this section. 
 
 ==== Using a Fresh Installation of {pro}
 
-To prepare a fresh installation for {pro} for high availability
+To prepare a fresh installation of {pro} for high availability
 
-1. Download a {pro} version of the repository manager supported with high availability.
-2. Copy a minimum of two additional {pro} to establish three nodes, in different locations (e.g. three separate
-directories).
-3. Configure a location for all three nodes to share the same <<admin-repository-blobstores,blob store>> path.
+1. Download {pro}, supported with high availability.
+2. Install two additional {pro} instances on different hosts to establish three nodes.
+3. Configure all three nodes to use the same <<admin-repository-blobstores,blob store>> path.
 
 For example, let's say you create three nodes, a default called `/foo/data/node-a` and two new nodes called
 `/foo/data/node-b` and `/foo/data/node-c`, respectively. Then you designate the blob store directory for
-`foo/data/node-a` at `sonatype-work/nexus3/blobs`. You must mount `/foo/data/node-b` and `/foo/data/node-c` to
-the same location.
+`foo/data/node-a` at `sonatype-work/nexus3/blobs`. You must mount `/foo/data/node-b` and `/foo/data/node-c`
+to the same location.
 
 ==== Converting an Existing Instance of {pro} into a Cluster
 
@@ -100,18 +100,21 @@ configure this non-HA-supported version so it's synchronized with the second and
 
 1. Stop running the existing repository manager.
 2. Follow the steps in the support article to upgrade the repository manager to a version that supports
-high availability. Store the repository manager in its own directory.
-3. Download and unpackage a second repository manager, and store it in its own separate directory.
-4. Create a third instance by copying the second repository manager to its own separate directory.
-5. <<high-availability-configure,Enable>> the first, newly upgraded node for high availability.
-6. Enable high availability for the second and third nodes.
-7. Configure a location for all three nodes to share the same the blob store.
-8. Start all three nodes to form the cluster.
+high availability.
+3. Download and unpackage a second repository manager to establish a second node.
+4. Create a third instance by copying the second repository manager to establish a third node.
+5. <<high-availability-configure,Enable>> the first, newly upgraded node for high availability. Then enable
+high availability for the second and third nodes.
+6. Configure a location for all three nodes to share the same the blob store.
+7. Start the first node, then start the second and third nodes to form the cluster.
 ////
 RE: step 2 -Currently, there no KB article for this but there is some documentation in Joe's HA testing
 overview. I'll contact the team in the follow-up ticket to get their thoughts on whether I write KB or
 add the steps to this chapter
 ////
+
+In both scenarios the data from the first node is synchronized with the second and third nodes, so that if
+one node fails the other nodes in the clusters will maintain that data.
 
 Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory. For 
 your repository manager to operate properly each node should have its own independent, non-conflicting OrientDB 
