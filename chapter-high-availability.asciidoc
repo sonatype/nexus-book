@@ -26,9 +26,9 @@ with three distributed nodes. You can implement this by the following methods:
 {pro}
 ////
 
-High availability clustering is established between three nodes, joined together by a common blob store path. The
-second and third nodes that you initiate are synchronized with the first. When configured, the nodes communicate
-with each other to create continuous uptime and the assurance that if one goes down, the other nodes can be used.
+High availability clustering is established between three nodes, joined together by a common blob store path.
+The second and third nodes that you initiate are synchronized with the first. When configured, the nodes communicate
+with each other to create continuous uptime and the assurance that if one fails, the other nodes can be used.
 
 When you enable high availability among the nodes it creates a cluster of three interchangeable nodes that act
 transparently as one instance. This makes them fully aware of their setup parameters such as:
@@ -46,8 +46,8 @@ intercept component data.
 Depending on your current file system configuration, you may need to re-organize in preparation for clustering.
 
 Each repository manager acts as a node and all nodes must share the same network configuration as the first
-repository, so the nodes can communicate. Enabling three repository manager instances with high availability is the
-minimum requirement to allow redundancy between the nodes.
+repository, so the nodes can communicate. Enabling three repository manager instances with high availability is
+the minimum requirement to allow redundancy between the nodes.
 
 ////
 Re-write intro and add requirements as bullets. Add a blob store config example, then merge this section into How to
@@ -87,11 +87,6 @@ To prepare a fresh installation of {pro} for high availability
 2. Install two additional {pro} instances on different hosts to establish three nodes.
 3. Configure all three nodes to use the same <<admin-repository-blobstores,blob store>> path.
 
-For example, let's say you create three nodes, a default called `/foo/data/node-a` and two new nodes called
-`/foo/data/node-b` and `/foo/data/node-c`, respectively. Then you designate the blob store directory for
-`foo/data/node-a` at `sonatype-work/nexus3/blobs`. You must mount `/foo/data/node-b` and `/foo/data/node-c`
-to the same location.
-
 ==== Converting an Existing Instance of {pro} into a Cluster
 
 If you have an earlier version of {pro} 3, you can convert it into a cluster. Follow the steps below to
@@ -107,22 +102,22 @@ high availability for the second and third nodes.
 6. Configure a location for all three nodes to share the same the blob store.
 7. Start the first node and wait for its start-up sequence to complete, then start the second and third
 nodes to form the cluster.
-////
-RE: step 2 -Currently, there no KB article for this but there is some documentation in Joe's HA testing
-overview. I'll contact the team in the follow-up ticket to get their thoughts on whether I write KB or
-add the steps to this chapter
-////
 
 In both scenarios the data from the first node is synchronized with the second and third nodes, so that if
 one node fails the other nodes in the cluster will maintain that data.
 
-Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory. For 
-your repository manager to operate properly each node should have its own independent, non-conflicting OrientDB 
-database. Instead, you only need to join the <<admin-repository-blobstores,blob store>> file locations together, 
-where the nodes share access to components.
-////
-The paragraph beginning "Regardless" will be repurposed in NEXUS-12038
-////
+[[high-availability-blob-store]]
+=== Configuring Nodes to Share the Same Blob Store
+
+Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory.
+For your repository manager to operate properly each node should have its own independent, non-conflicting
+OrientDB database. Instead, you only need to join the <<admin-repository-blobstores,blob store>> file locations
+together, where the nodes share access to components.
+
+For example, let's say you create three nodes, a default called `/foo/data/node-a` and two new nodes called
+`/foo/data/node-b` and `/foo/data/node-c`, respectively. Then you designate the blob store directory for
+`foo/data/node-a` at `sonatype-work/nexus3/blobs`. You must mount `/foo/data/node-b` and `/foo/data/node-c`
+to the same location.
 
 [[high-availability-configure]]
 === Enabling the Nodes
