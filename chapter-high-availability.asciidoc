@@ -5,7 +5,7 @@
 [[high-availability-introduction]]
 === Introduction
 
-{nxrm}'s high availability feature provides a more fail-safe repository manager, minimizing downtime, and 
+{nxrm}'s high availability (HA) feature provides a more fail-safe repository manager, minimizing downtime, and 
 reducing points of system failure.
 
 This chapter covers the benefits and steps needed to implement high availability clusters. Clustering sets the 
@@ -15,44 +15,26 @@ creating a binary storage for the entire suite of features and components availa
 [[how-high-availability]]
 === How is High Availability Implemented?
 
-In {pro}, there are two ways you can implement high availability. In the scenarios below you create a cluster
-with three distributed nodes. You can implement this by the following methods:
+In {pro}, there are two ways you can implement high availability. In the scenarios below you will configure your
+environment for redundancy. The cluster, which contains three redundant nodes, acts as one transparent instance.
+
+Clustering requires you to:
+
+* Configure three servers to establish the connection between the nodes by enabling the service in each repository
+manager.
+* Join the nodes together by a common blob store path to maintain a shared storage for repository manager data.
+
+You can implement this by the following methods:
 
 * Start with a fresh installation of {pro} that includes high availability.
 * Upgrade an older version of {pro} 3 to a version that supports high availability.
 
-////
-. Add a second server with the high availability feature in place, then configure it in your existing instance of 
-{pro}
-////
-
-High availability clustering is established between three nodes, joined together by a common blob store path.
-The second and third nodes that you initiate are synchronized with the first. When configured, the nodes communicate
+When the cluster is established the second and third nodes are synchronized with the first. The nodes communicate
 with each other to create continuous uptime and the assurance that if one fails, the other nodes can be used.
-
-When you enable high availability among the nodes it creates a cluster of three interchangeable nodes that act
-transparently as one instance. This makes them fully aware of their setup parameters such as:
-
-- Memory availability and processor performance
-- Network connectivity performance
-- Characteristics of local storage in terms of size and performance
-
-This node-driven awareness makes your clustered repository manager more scalable, allowing the nodes to automatically
-intercept component data.
-
-[[high-availability-expectations]]
-=== Requirements for Clustering in {pro}
-
-Depending on your current file system configuration, you may need to re-organize in preparation for clustering.
 
 Each repository manager acts as a node and all nodes must share the same network configuration as the first
 repository, so the nodes can communicate. Enabling three repository manager instances with high availability is
 the minimum requirement to allow redundancy between the nodes.
-
-////
-Re-write intro and add requirements as bullets. Add a blob store config example, then merge this section into How to
-Implement HA, above
-////
 
 [[high-availability-servers]]
 === Supported Servers for High Availability
@@ -63,15 +45,6 @@ managers. You can install them across a mix of the following environments:
 - physical servers
 - virtual machines
 - Docker instances
-
-[[high-availability-prepare]]
-=== Preparing a Cluster for High Availability
-
-When you configure all blob store file paths to be the same, follow the steps below to get started:
-
-- <<high-availability-install,Install>> a fresh instance of {pro}.
-- <<high-availability-configure,Configure and activate>> the cluster.
-- <<high-availability-startup,Start>> the service.
 
 [[high-availability-install]]
 === Installing {pro} for High Availability
@@ -106,6 +79,27 @@ nodes to form the cluster.
 In both scenarios the data from the first node is synchronized with the second and third nodes, so that if
 one node fails the other nodes in the cluster will maintain that data.
 
+[[high-availability-prepare]]
+=== Preparing a Cluster for High Availability
+
+When you configure all blob store file paths to be the same, follow the steps below to get started:
+
+- <<high-availability-install,Install>> a fresh instance of {pro}.
+- <<high-availability-configure,Configure and activate>> the cluster.
+- <<high-availability-startup,Start>> the service.
+
+[[high-availability-configure]]
+=== Enabling the Nodes
+
+Follow these steps to enable high availability:
+
+1. In the first repository manager, open the `$data-dir/etc/nexus.properties` file.
+2. Remove the `#` before +nexus.clustered = true+ to enable the node at start-up. 
+3. Go to the second and third repository managers and repeat steps 1 and 2, to enable them for high availability.
+
+Given that all nodes are mounted to the same blob store, with the same path, synchronization of data and configuration
+will occur automatically.
+
 [[high-availability-blob-store]]
 === Configuring Nodes to Share the Same Blob Store
 
@@ -119,18 +113,6 @@ For example, let's say you create three nodes, a default called `/foo/data/node-
 `/foo/data/node-b` and `/foo/data/node-c`, respectively. Then you designate the blob store directory for
 `foo/data/node-a` at `sonatype-work/nexus3/blobs`. You must mount `/foo/data/node-b` and `/foo/data/node-c`
 to the same location.
-
-[[high-availability-configure]]
-=== Enabling the Nodes
-
-Follow these steps to enable high availability:
-
-1. In the first repository manager, open the `$data-dir/etc/nexus.properties` file.
-2. Remove the `#` before +nexus.clustered = true+ to enable the node at start-up. 
-3. Go to the second and third repository managers and repeat steps 1 and 2, to enable them for high availability.
-
-Given that all nodes are mounted to the same blob store, with the same path, synchronization of data and configuration
-will occur automatically.
 
 ////
 the phrasing in bullet 2 above will likely be different, hence this note to myself
