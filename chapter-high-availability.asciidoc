@@ -12,17 +12,20 @@ This chapter covers the benefits and steps needed to implement high availability
 standard for automating the process of continuous uptime, relieving teams of manual recovery techniques, and 
 creating a binary storage for the entire suite of features and components available in your repository managers.
 
-[[how-high-availability]]
-=== How is High Availability Implemented?
+[[high-availability-prepare]]
+=== Preparing a Cluster for High Availability
 
 In {pro}, there are two ways you can implement high availability. In the scenarios below you will configure your
 environment for redundancy. The cluster, which contains three redundant nodes, acts as one transparent instance.
 
 Clustering requires you to:
 
-* Configure three servers to establish the connection between the nodes by enabling the service in each repository
+1. Configure three servers to establish the connection between the nodes by enabling the service in each repository
 manager.
-* Join the nodes together by a common blob store path to maintain a shared storage for repository manager data.
+2. Enable the high availability service.
+3. Join the nodes together by a common blob store path to maintain a shared storage for repository manager data.
+4. Start the first node, then start the second and third nodes to form the cluster.
+5. Verify node synchronization from the administration menu.
 
 You can implement this by the following methods:
 
@@ -70,7 +73,7 @@ configure this non-HA-supported version so it's synchronized with the second and
 upgrade the repository manager to a version that supports high availability.
 3. Download and unpack a new repository manager to establish a second node.
 4. Create a third instance by copying the second repository manager to establish a third node.
-5. <<high-availability-configure,Enable>> the first, newly upgraded node for high availability. Then enable
+5. <<high-availability-nodes,Enable>> the first, newly upgraded node for high availability. Then enable
 high availability for the second and third nodes.
 6. Configure a location for all three nodes to share the same the blob store.
 7. Start the first node and wait for its start-up sequence to complete, then start the second and third
@@ -79,16 +82,7 @@ nodes to form the cluster.
 In both scenarios the data from the first node is synchronized with the second and third nodes, so that if
 one node fails the other nodes in the cluster will maintain that data.
 
-[[high-availability-prepare]]
-=== Preparing a Cluster for High Availability
-
-When you configure all blob store file paths to be the same, follow the steps below to get started:
-
-- <<high-availability-install,Install>> a fresh instance of {pro}.
-- <<high-availability-configure,Configure and activate>> the cluster.
-- <<high-availability-startup,Start>> the service.
-
-[[high-availability-configure]]
+[[high-availability-nodes]]
 === Enabling the Nodes
 
 Follow these steps to enable high availability:
@@ -99,24 +93,6 @@ Follow these steps to enable high availability:
 
 Given that all nodes are mounted to the same blob store, with the same path, synchronization of data and configuration
 will occur automatically.
-
-[[high-availability-blob-store]]
-=== Configuring Nodes to Share the Same Blob Store
-
-In order to synchronize data each node should have its own independent, non-conflicting OrientDB database.
-Instead, you only need to join the <<admin-repository-blobstores,blob store>> file locations together, where
-the nodes share access to components.
-
-Regardless of method, be mindful that you shouldn't configure your nodes to share an entire data directory.
-
-For example, let's say you create three nodes, a default called `/foo/data/node-a` and two new nodes called
-`/foo/data/node-b` and `/foo/data/node-c`, respectively. Then you designate the blob store directory for
-`foo/data/node-a` at `sonatype-work/nexus3/blobs`. You must mount `/foo/data/node-b` and `/foo/data/node-c`
-to the same location.
-
-////
-the phrasing in bullet 2 above will likely be different, hence this note to myself
-////
 
 [[high-availability-startup]]
 ==== Starting the High Availability Service
@@ -138,6 +114,27 @@ The nodes are synchronized via link:https://hazelcast.com/[Hazelcast], which pro
 active data and active backup. Hazelcast can employ multicast to discover cluster members, but it supports node
 discovery in other ways. If the default configuration isn't suitable for your network infrastructure, you will
 need to customize `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>> for a concrete example.
+
+[[high-availability-blob-store]]
+=== Configuring Nodes to Share the Same Blob Store
+
+In order to synchronize data each node should have its own independent, non-conflicting OrientDB database.
+Instead, you only need to join the <<admin-repository-blobstores,blob store>> file locations together, where
+the nodes share access to components.
+
+Regardless of the method you choose to enable HA, be  mindful that you shouldn't configure your nodes to share
+an entire data directory.
+
+In a practical example let's say you create three nodes, a default called `/foo/data/node-a` and two new nodes
+called `/foo/data/node-b` and `/foo/data/node-c`, respectively. Then you designate the blob store directory for
+`foo/data/node-a` at `sonatype-work/nexus3/blobs`. You must mount `/foo/data/node-b` and `/foo/data/node-c`
+to the same location.
+
+[[high-availability-verify]]
+=== Verifying Synchronization
+
+At runtime, the repository manager user interface allows you to see the contents of one node synchronized with
+the others. See <<nodes>> for details on viewing active nodes in cluster.
 
 [[high-availability-environment]]
 === Configuring {pro} Environment for High Availability
@@ -220,9 +217,3 @@ The `$install-dir/etc/fabric/hazelcast.xml` file with the modified properties wi
     </aws>
 </join>
 ----
-
-[[high-availability-verify]]
-=== Verifying Synchronization
-
-At runtime, the repository manager user interface allows you to see the contents of one node synchronized with the others.
-See <<nodes>> for details on viewing active nodes in cluster.
