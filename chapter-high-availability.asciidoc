@@ -34,8 +34,8 @@ You can implement this by the following methods:
 * Start with a fresh installation of {pro} that includes high availability.
 * Upgrade an older version of {pro} 3 to a version that supports high availability.
 
-When the cluster is established, the second and third nodes are synchronized with the first. The nodes communicate
-with each other to create continuous uptime and the assurance that if one fails, the other nodes can be used.
+When the cluster is established the nodes communicate with each other to create continuous uptime and the assurance
+that if one fails, the other nodes can be used.
 
 [[high-availability-servers]]
 === Supported Servers for High Availability
@@ -71,14 +71,29 @@ configure this non-HA-supported version so it's synchronized with the second and
 upgrade the repository manager to a version that supports high availability.
 3. Download and unpack a new repository manager to establish a second node.
 4. Create a third instance by copying the second repository manager to establish a third node.
-5. <<high-availability-nodes,Enable>> the first, newly upgraded node for high availability. Then enable
+5. Configure a location for all three nodes to share the same the blob store.
+6. <<high-availability-nodes,Enable>> the first, newly upgraded node for high availability. Then enable
 high availability for the second and third nodes.
-6. Configure a location for all three nodes to share the same the blob store.
 7. Start the first node and wait for its start-up sequence to complete, then start the second and third
 nodes to form the cluster.
 
 In both scenarios the data from the first node is synchronized with the second and third nodes, so that if
 one node fails the other nodes in the cluster will maintain that data.
+
+[[high-availability-blob-store]]
+=== Configuring Nodes to Share the Same Blob Store
+
+Regardless of the method you choose to enable high availability, be mindful that configuring your nodes to
+share an entire data directory will undermine HA configuration, and cause it not to function. All elements
+of the system except the blob store should be distinct and not shared.
+
+Instead, you only need to join the <<admin-repository-blobstores,blob stores>> together, where the nodes share
+access to components.
+
+In a practical example let's say you create three nodes, a default called `/foo/data/node-a` and two new nodes
+called `/foo/data/node-b` and `/foo/data/node-c`, respectively. Then you designate the blob store directory for
+`foo/data/node-a` at `sonatype-work/nexus3/blobs`. Both `/foo/data/node-b` and `/foo/data/node-c` must be
+configured to share the blob store with `foo/data/node-a` .
 
 [[high-availability-nodes]]
 === Enabling the Nodes
@@ -113,26 +128,13 @@ active data and active backup. Hazelcast can employ multicast to discover cluste
 discovery in other ways. If the default configuration isn't suitable for your network infrastructure, you will
 need to customize `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>> for a concrete example.
 
-[[high-availability-blob-store]]
-=== Configuring Nodes to Share the Same Blob Store
-
-In order to synchronize data each node should have its own independent, non-conflicting OrientDB database.
-Instead, you only need to join the <<admin-repository-blobstores,blob store>> file locations together, where
-the nodes share access to components.
-
-Regardless of the method you choose to enable HA, be  mindful that you shouldn't configure your nodes to share
-an entire data directory.
-
-In a practical example let's say you create three nodes, a default called `/foo/data/node-a` and two new nodes
-called `/foo/data/node-b` and `/foo/data/node-c`, respectively. Then you designate the blob store directory for
-`foo/data/node-a` at `sonatype-work/nexus3/blobs`. You must mount `/foo/data/node-b` and `/foo/data/node-c`
-to the same location.
-
 [[high-availability-verify]]
 === Verifying Synchronization
 
-At runtime, the repository manager user interface allows you to see the contents of one node synchronized with
-the others. See <<nodes>> for details on viewing active nodes in cluster.
+At runtime, the repository manager user interface allows you to view that status of the nodes, regardless of
+which you connect to, as they are synchronized.
+
+See <<nodes>> for details on viewing active nodes in cluster.
 
 [[high-availability-environment]]
 === Configuring {pro} Environment for High Availability
