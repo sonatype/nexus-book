@@ -15,19 +15,18 @@ creating a binary storage for the entire suite of features and components availa
 [[high-availability-prepare]]
 === Preparing a Cluster for High Availability
 
-In {pro}, there are two ways you can implement high availability. In the scenarios below you join three nodes to
-meet the minimum requirement for redundancy. A cluster, which contains three redundant nodes, acts as one transparent
-instance.
+In {pro}, there are two ways you can implement HA. In the scenarios below you join three nodes to meet the minimum
+requirement for redundancy. A cluster, which contains three redundant nodes, acts as one transparent instance.
 
 Clustering requires you to:
 
-1. Configure three servers to establish the connection between the nodes by enabling the service in each repository
-manager.
-2. Enable the high availability service.
-3. Join the nodes together by a common blob store path to maintain a shared storage for repository manager data.
-4. Start the first node, then start the second and third nodes to form the cluster.
+1. Configure three servers to establish the connection between the nodes by enabling HA in each repository manager.
+2. Join the nodes together by a common blob store path to maintain a shared storage for blobs, components and assets.
+3. Allow the first enabled node to complete the start-up sequence, then start the second and third nodes to form the
+cluster.
 
-At start-up, you can verify node synchronization from the administration menu.
+When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from the administration
+menu.
 
 You can implement this by the following methods:
 
@@ -40,8 +39,8 @@ that if one fails, the other nodes can be used.
 [[high-availability-servers]]
 === Supported Servers for High Availability
 
-There are three supported infrastructures you can consider to facilitate high availability among your repository
-managers. You can install them across a mix of the following environments:
+There are three supported infrastructures you can consider for managing an HA cluster. You can install them across
+a mix of the following environments:
 
 - physical servers
 - virtual machines
@@ -71,9 +70,8 @@ configure this non-HA-supported version so it's synchronized with the second and
 upgrade the repository manager to a version that supports high availability.
 3. Download and unpack a new repository manager to establish a second node.
 4. Create a third instance by copying the second repository manager to establish a third node.
-5. Configure a location for all three nodes to share the same the blob store.
-6. <<high-availability-nodes,Enable>> the first, newly upgraded node for high availability. Then enable
-high availability for the second and third nodes.
+5. Configure all three nodes to share the same the blob stores.
+6. <<high-availability-nodes,Enable>> high availability on the third nodes.
 7. Start the first node and wait for its start-up sequence to complete, then start the second and third
 nodes to form the cluster.
 
@@ -81,19 +79,19 @@ In both scenarios the data from the first node is synchronized with the second a
 one node fails the other nodes in the cluster will maintain that data.
 
 [[high-availability-blob-store]]
-=== Configuring Nodes to Share the Same Blob Store
+=== Configuring Nodes to Share the Same Blob Stores
 
 Regardless of the method you choose to enable high availability, be mindful that configuring your nodes to
 share an entire data directory will undermine HA configuration, and cause it not to function. All elements
-of the system except the blob store should be distinct and not shared.
+of the system except the blob stores should be distinct and not shared.
 
-Instead, you only need to join the <<admin-repository-blobstores,blob stores>> together, where the nodes share
-access to components.
+Instead, you only need to join the <<admin-repository-blobstores,blob stores>> together, where the nodes
+share access to components.
 
-In a practical example let's say you create three nodes, a default called `/foo/data/node-a` and two new nodes
-called `/foo/data/node-b` and `/foo/data/node-c`, respectively. Then you designate the blob store directory for
-`foo/data/node-a` at `sonatype-work/nexus3/blobs`. Both `/foo/data/node-b` and `/foo/data/node-c` must be
-configured to share the blob store with `foo/data/node-a` .
+As an example let's say you create three nodes, `node-a` for the initial server and two new nodes called
+`node-b` and `node-c`, to represent the second and third servers. Then you designate `node-a` as the base
+directory for blob stores inside `sonatype-work/nexus3/blobs`. Both `node-b` and `node-c` must be configured
+to share the blob store with `node-a`.
 
 [[high-availability-nodes]]
 === Enabling the Nodes
@@ -131,7 +129,7 @@ need to customize `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availabili
 [[high-availability-verify]]
 === Verifying Synchronization
 
-At runtime, the repository manager user interface allows you to view that status of the nodes, regardless of
+At runtime, the repository manager user interface allows you to view the status of the nodes, regardless of
 which you connect to, as they are synchronized.
 
 See <<nodes>> for details on viewing active nodes in cluster.
