@@ -842,14 +842,18 @@ type'. Subsequently you can provide the required 'Username' and 'Password' for p
 HTTP request settings:: In the 'HTTP request settings' you can change the properties of the HTTP requests to the
 remote repository. The values you can apply to this form are:
 
-'User-agent customization';; Complete this field by appending a string to the user-agent HTTP header, e.g. adding
-parameters to the requests in the URL parameters.
+'User-agent customization';; Complete this field by appending a string to the user-agent HTTP header.
 'Connection retries';; Configure the total number or connection attempts after an initial timeout.
 'Connection timeout';; Set the timeout interval for requests, in seconds.
-'Enable circular redirects';; Check the box to allow proxy repositories to continuously resubmit HTTP requests to
-a remote server. For instance, proxying Oracle Maven requires circular redirects to prevent errors. Completing the
-'Username' drop-down option in 'Authentication type' is required. See the https://support.sonatype.com/hc/en-us/articles/213465728-How-to-configure-a-proxy-repository-to-maven-oracle-com[support article] for further configuration instructions.
-'Enable cookies';; Check the box to store HTTP requests from the remote server.
+'Enable circular redirects';; Check the box to allow proxy repositories to follow redirects indicated by the remote
+server even if they point to an already processed URL. Completing the 'Username' drop-down option in 'Authentication
+type' is required. See the https://support.sonatype.com/hc/en-us/articles/213465728[support article] for further
+configuration instructions.
+'Enable cookies';; Check the box to authorize HTTP cookies sent by the remote server, for future requests.
+
+TIP: Though not strictly required, 'Enable cookies' improves request performance by avoiding repeated login/redirects.
+There are exceptions, like in the case for proxying the Oracle Maven Repository, where HTTP cookies must be enabled for
+circular redirects to prevent errors.
 
 The settings in this form are applied to all HTTP requests made from the repository manager to the remote repository
 being proxied.
