@@ -829,22 +829,35 @@ default.
 ===== HTTP 
 
 The 'HTTP' configuration section allows you to configure the necessary details to access the remote repository,
-even if you have to provide authentication details in order to acces it successfully or if you have to connect to
+even if you have to provide authentication details in order to access it successfully or if you have to connect to
 it via a proxy server.
 
 NOTE: This configuration is only necessary, if it is specific to this repository. Global HTTP proxy and
 authentication is documented in <<admin-system-http>>.
 
-Authentication:: This section allows you to select 'Username' or 'Windows NTLM' as 'authentication
+Authentication:: This section allows you to select 'Username' or 'Windows NTLM' as 'Authentication
 type'. Subsequently you can provide the required 'Username' and 'Password' for plain authentication or 'Username',
 'Password', 'Windows NTLM hostname' and 'Windows NTLM domain' for 'Windows NTLM'-based authentication.
 
-HTTP request settings:: In the 'HTTP Request Settings' you can change the properties of the HTTP requests to the
-remote repository. You can append a string to the user-agent HTTP header in the 'User-agent customization' of the
-request and add parameters to the requests in 'URL parameters'. Additionally you can set the timeout value for
-requests in seconds in 'Connection timeout' and configure a number of 'Connection retries'. The HTTP requests
-configured are applied to all requests made from the repository manager to the remote repository being proxied.
+HTTP request settings:: In the 'HTTP request settings' you can change properties of the HTTP requests to the
+remote repository. The values you can apply to this section are:
 
+'User-agent customization';; Enter the string to be appended to user-agent HTTP headers.
+'Connection retries';; Enter the total number of connection attempts after an initial timeout.
+'Connection timeout';; Set the timeout interval for requests, in seconds.
+'Enable circular redirects';; Allow proxy repositories to follow redirects indicated by the remote server even
+if they point to an already processed URL.
+'Enable cookies';; Authorize HTTP cookies sent by the remote server, for future requests.
+
+TIP: `https://maven.oracle.com` is a server that requires 'Enable circular redirects'. When requesting data,
+you are redirected to a queue of different URLs, most of which are involved with authentication. You can limit
+the number of redirects, and increase performance, by checking the 'Enable cookies' box. This allows the repository
+manager to maintain the authentication state in a cookie that would be sent with each request, eliminating the
+need for the authentication-related redirects.
+
+Changes made to 'HTTP request settings' are applied to all HTTP requests made from the repository manager to
+the remote repository being proxied. Enabling these settings will override any general settings defined in
+<<admin-system-http>>.
 
 ////
 
