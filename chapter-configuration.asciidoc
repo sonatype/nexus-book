@@ -350,7 +350,6 @@ a CRON expression)'. Apart from 'Manual', all choices trigger display of a custo
 the specific recurrence. Weekly scheduling requires at least one day of the week to be selected. The advanced
 setting allows you to provide a CRON expression to configure more complex schedules. 
 
-
 The syntax used for 'Advanced (provide a CRON expression)' follows the UNIX-style CRON syntax. CRON expressions
 are comprised of 6 required fields and one optional field separated by white space as described in
 <<tbl-tasks-cron>> and the following paragraphs. A simple expression example is `0 0 9 * * ?`. This configuration
@@ -370,7 +369,6 @@ triggers a task execution every day at 9:00 in the morning. Further examples are
 | Day-of-Week  | 1-7 or SUN-SAT	 | 	`, - * ? / L #`
 | Year (Optional) | empty, 1970-2099 |	`, - * /`
 |=========
-
 
 The `*` character is used to specify any value. For example, `*` in the minute field means every minute.
 
@@ -439,7 +437,6 @@ The legal characters and the names of months and days of the week are not case s
 | `0 15 10 ? * 6L 2002-2005` |    	Fire at 10:15am on every last Friday of every month during the years 2002, 2003, 2004 and 2005
 | `0 15 10 ? * 6#3` |	Fire at 10:15am on the third Friday of every month
 |=======
-
 
 The 'Start date' and 'Start time' allow you to configure a specific date and time from when the schedule should be
 activated. The 'Time to run this task' settings is used to configure the actual time of the task execution.
@@ -569,7 +566,8 @@ The 'Blob stores' feature view available via the 'Blob stores' item in the 'Repo
 blob store:
 
 Name:: the name of the blob store as displayed in the repository administration
-Type:: the type of the blob store backend, currently only 'File' is available representing a file system-based storage
+Type:: the type of the blob store backend, currently only 'File' is available representing a file system-based 
+ storage
 Blob count:: the number of blobs currently stored
 Total size:: the size of the blob store
 Available space:: the overall space available for the blob store
@@ -780,13 +778,13 @@ component in subsequent deployments.
 
 The configuration for proxy repositories in the 'Proxy' section also contains the following parameters:
 
-Remote Storage:: A proxy repository on the other hand requires the configuration of the 'Remote Storage'. It needs
-to be configured with the URL of the remote repository, that should to be proxied. When selecting the URL to proxy
-it is beneficial to avoid proxying remote repository groups. Proxying repository groups prevents some performance
-optimization in terms of accessing and retrieving the content of the remote repository. If you require components
-from the group that are found in different hosted repositories on the remote repository server it is better to
-create multiple proxy repositories that proxy the different hosted repositories from the remote server on your
-repository manager instead of simply proxying the group.
+Remote Storage:: A proxy repository on the other hand requires the configuration of the 'Remote Storage'. It 
+needs to be configured with the URL of the remote repository, that should to be proxied. When selecting the URL 
+to proxy it is beneficial to avoid proxying remote repository groups. Proxying repository groups prevents some 
+performance optimization in terms of accessing and retrieving the content of the remote repository. If you 
+require components from the group that are found in different hosted repositories on the remote repository server 
+it is better to create multiple proxy repositories that proxy the different hosted repositories from the remote 
+server on your repository manager instead of simply proxying the group.
 
 Use the Nexus truststore:: This checkbox allows you to elect for the repository manager to manage the SSL
 certificate of the remote repository. It is only displayed - if the remote storage uses a HTTPS URL. The 'View
@@ -822,24 +820,25 @@ metadata, it uses the longer of this value and 'Maximum component age' before re
 
 ===== Negative Cache
 
-Not found cache enabled/Not found cache TTL:: If the repository manager fails to locate a component, it will cache
-this result for a given number of minutes. In other words, if the repository manager can't find a component in a
-remote repository, it will not perform repeated attempts to resolve this component until the 'Not found cache TTL'
-time has been exceeded. The default for this setting is 1440 minutes (or 24 hours) and this cache is enabled by
-default.
+Not found cache enabled/Not found cache TTL:: If the repository manager fails to locate a component, it will 
+cache this result for a given number of minutes. In other words, if the repository manager can't find a component 
+in a remote repository, it will not perform repeated attempts to resolve this component until the 'Not found cache 
+TTL' time has been exceeded. The default for this setting is 1440 minutes (or 24 hours) and this cache is enabled 
+by default.
 
 ===== HTTP 
 
 The 'HTTP' configuration section allows you to configure the necessary details to access the remote repository,
-even if you have to provide authentication details in order to access it successfully or if you have to connect to
-it via a proxy server.
+even if you have to provide authentication details in order to access it successfully or if you have to connect 
+to it via a proxy server.
 
 NOTE: This configuration is only necessary, if it is specific to this repository. Global HTTP proxy and
 authentication is documented in <<admin-system-http>>.
 
 Authentication:: This section allows you to select 'Username' or 'Windows NTLM' as 'Authentication
-type'. Subsequently you can provide the required 'Username' and 'Password' for plain authentication or 'Username',
-'Password', 'Windows NTLM hostname' and 'Windows NTLM domain' for 'Windows NTLM'-based authentication.
+type'. Subsequently you can provide the required 'Username' and 'Password' for plain authentication or 
+'Username', 'Password', 'Windows NTLM hostname' and 'Windows NTLM domain' for 'Windows NTLM'-based 
+authentication.
 
 HTTP request settings:: In the 'HTTP request settings' you can change properties of the HTTP requests to the
 remote repository. The values you can apply to this section are:
@@ -848,7 +847,7 @@ remote repository. The values you can apply to this section are:
 'Connection retries';; Enter the total number of connection attempts after an initial timeout.
 'Connection timeout';; Set the timeout interval for requests, in seconds.
 'Enable circular redirects';; Allow proxy repositories to follow redirects indicated by the remote server even
-if they point to an already processed URL.
+ if they point to an already processed URL.
 'Enable cookies';; Authorize HTTP cookies sent by the remote server, for future requests.
 
 TIP: `https://maven.oracle.com` is a server that requires 'Enable circular redirects'. When requesting data,
@@ -862,7 +861,6 @@ the remote repository being proxied. Enabling these settings will override any g
 <<admin-system-http>>.
 
 ////
-
 File Content Validation;; If set to true, the repository manager performs a lightweight check on the content of
 downloaded files. This will prevent invalid content to be stored and proxied by the repository manager that
 otherwise can happen in cases where the remote repository (or some proxy between the repository manager and the
@@ -880,15 +878,14 @@ the repository. Only perform this check if the checksum file is present.
 * 'Strict' - Refuse to cache an component if the calculated checksum is inconsistent or if there is no checksum
 for an component.
 
-
 Allow file browsing;; When set to true, users can browse the contents of the repository with a web browser.
 
 Include in Search;; When set to true, this repository is included when you perform a search in the repository
 manager. If this setting is false, the contents of the repository are excluded from a search.
 
-Publish URL;; If this property is set to false, the repository will not be published on a URL, and you will not be able
-to access this repository remotely. You would set this configuration property to false if you want to prevent clients
-for connecting to this repository directly.
+Publish URL;; If this property is set to false, the repository will not be published on a URL, and you will not 
+be able to access this repository remotely. You would set this configuration property to false if you want to 
+prevent clients for connecting to this repository directly.
 
 Expiration Settings:: The repository manager maintains a local cache of components and metadata, you can configure
 expiration parameters for a proxy repository. The expiration settings are:
@@ -902,9 +899,9 @@ Some repository formats include configuration options, such as these formats:
 
 * 'Repository Connectors', 'Docker Registry API Support' and (for proxies) 'Docker Index' for Docker repositories 
   - <<docker-ssl-connector>>, <<docker-registry-api>> and <<docker-proxy>>
-* 'Maven 2' for Maven repositories - <<maven-repository-format>> 
-* 'NuGet' for NuGet proxy repositories - <<nuget-repository-format>>
-* 'Bower' for Bower proxy repositories - <<bower-proxy>>
+* 'Maven 2' for Maven repositories: <<maven-repository-format>> 
+* 'NuGet' for NuGet proxy repositories: <<nuget-repository-format>>
+* 'Bower' for Bower proxy repositories: <<bower-proxy>>
 
 ===== Repository Groups
 
