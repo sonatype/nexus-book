@@ -585,6 +585,54 @@ repository group can not be deleted.
 Blobs deleted in a repository are only marked for deletion. The 'Compact blob store' <<admin-system-tasks,task>>
 can be used to permanently delete these 'soft-deleted' blobs and therefore free up the used storage space.
 
+[[admin-respository-blobstores-choosing]]
+===== Choosing the Number of Blobstores
+
+You will need to choose how many blob stores to create, and how you allocate repositories to these blob stores.
+This decision should be based on:
+
+* the size of your repositories
+* the rate at which you expect them to grow over time
+* the storage space available to {nxrm}
+* the options you have available for adding storage space
+
+For the time being, once a repository is allocated to a blob store, it is there permanently. Blob stores can be
+manually moved from one storage device to another (e.g. to a larger storage device) using a manual process, but
+blob stores cannot be split, nor can repositories span multiple blob stores. For these reasons, your approach to
+using blob stores should be made carefully.
+
+The simplest approach is to create a single blob store per storage device, and allocate all repositories to it.
+This is suitable if:
+
+* Your repositories are growing slowly enough that you won’t exceed your available storage within a year, or
+* If you exceed available storage, you will be able to move the blob store to a larger storage device.
+
+You should separate repositories into two or more blob stores per storage device if:
+
+* You expect to exceed your currently available storage within a year, and
+* You cannot move blob stores to larger storage devices, so you must add capacity to NXRM by adding additional
+storage devices.
+
+This will allow you to move individual blob stores to 
+
+The most flexible approach is to create a blob store for each individual repository, although this is not
+recommended except in extreme cases of unpredictable capacity.
+
+The current repository-to-blob store limitations will be removed in an upcoming release of {nxrm}, which will make
+it possible to revise your repository/blob store configuration.
+
+[[admin-repository-blobstores-size]]
+===== Estimating Blob Store Size
+
+Blob stores contain two files for each binary artifact stored in {nxrm}:
+
+* The binary artifact, stored as a .bytes file (whose size is the same as the artifact)
+* A properties file that stores a small amount of metadata for disaster recovery purposes (<1k)
+
+The total storage size of a blob store is therefore approximately the total size of all of your artifacts, plus an
+allowance for the properties files and the block size of your storage device. (On average, this will be
+1.5 * # of artifacts * block size.)
+
 [[proxy-repository]]
 ==== Proxy Repository
 
