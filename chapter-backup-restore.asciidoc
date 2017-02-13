@@ -71,11 +71,11 @@ Security:: all user and access rights management content
 
 All backup files are presented in the timestamp format based on the time the task was started. 
 
-After you complete the database export and store the files to a secure location, you can <<backup-retrieve
-,restore>> the exported files.
+After you complete the database export and store the files in a secure location, you can restore the exported
+files.
 
 
-[[backup-retrieve]]
+[[backup-restore]]
 === Restoring Exported Databases
 
 ////
@@ -83,22 +83,24 @@ IMPORTANT:: The restoration process should be executed on a single node.  All no
 should be stopped prior to restoration.
 ////
 
-You can restore the exported database files to the state when you ran the scheduled task. You will need access to
-the location specified by the task. In preparation for the file restore, you should only remove the `db` folders you
-want to restore. For example, if configuring the task to store your `.bak` files from `db` to a relative location
-called `backup`, follow these steps:
+You can restore the exported database files to the state when you ran the scheduled task. This requires you to:
 
-1. If {nxrm} won't start, install a fresh copy of the repository manager; it must be the same version where the
-`.bak` files were created.
-2. Stop the repository manager.
-3. Create the `backup` folder.
-3. Copy the `.bak` files you wish to restore.
-4. Remove any existing subfolders from `$data-dir/nexus3/db` if they exist. The restoration won't overwrite any
-existing data.
+* access the location specified in the 'Backup location' field from the 'Export configuration & metadata for backup'
+task where the databases were exported.
+* remove the database directories you want to restore, but only the ones you want restored to the previous state.
+
+The restoration will not overwrite the existing data of databases left in place.
+
+Start the database restoration with these steps:
+
+1. Stop {nxrm}.
+2. Remove the directories you want to restore from `$data-dir/nexus3/db`.
+3. Go to the location where you stored the exported databases.
+4. Copy the .bak files you wish to restore to `$data-dir/nexus3/backup`.
 5. Restart {nxrm}.
 
 NOTE: If the `Component` database is restored, the corresponding blob stores containing components must also be
 restored.
 
-To verify the restoration, check the logs for a message that says "database config restored", which is logged at the
-`INFO` level.
+You can verify the restoration is complete by viewing the fully-restored databases previously removed from
+`$data-dir/nexus3/db`.
