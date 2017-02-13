@@ -71,8 +71,8 @@ Security:: all user and access rights management content
 
 All backup files are presented in the timestamp format based on the time the task was started. 
 
-After you complete the database export and store the files to a secure location, you can <<backup-restore
-,restore>> the exported files.
+After you complete the database export and store the files in a secure location, you can restore the exported
+files.
 
 
 [[backup-restore]]
@@ -83,11 +83,13 @@ IMPORTANT:: The restoration process should be executed on a single node.  All no
 should be stopped prior to restoration.
 ////
 
-You can restore the exported database files to the state when you ran the scheduled task. You will need access to
-the location you specified in the `Backup location` field.
+You can restore the exported database files to the state when you ran the scheduled task. This requires you to:
 
-In preparation for the file restore, you should only remove the database directories you want to restore (i.e. from
-`$data-dir/nexus3/db`). The restoration will not overwrite the existing data of database left in place.
+* access the location specified in the `Backup location` field from the 'Export configuration & metadata for
+backup' task where the database were exported.
+* remove the database directories you want to restore, but only the ones you want restored to a new state.
+
+The restoration will not overwrite the existing data of database left in place.
 
 Start the database restoration with these steps:
 
@@ -95,7 +97,8 @@ Start the database restoration with these steps:
 2. Go to the location where you stored the exported databases.
 3. Copy the `.bak` files you wish to restore to `$data-dir/nexus3/backup`.
 4. Restart {nxrm}.
-5. View the console logs for `database config restored`, which is logged at the `INFO` level.
+
+View the console logs for `database config restored`, which is logged at the `INFO` level.
 
 NOTE: If the `Component` database is restored, the corresponding blob stores containing components must also be
 restored.
