@@ -85,20 +85,22 @@ should be stopped prior to restoration.
 
 You can restore the exported database files to the state when you ran the scheduled task. This requires you to:
 
-* access the location specified in the `Backup location` field from the 'Export configuration & metadata for
-backup' task where the database were exported.
-* remove the database directories you want to restore, but only the ones you want restored to a new state.
+* access the location specified in the `Backup location` field from the `Export configuration & metadata for backup`
+task where the databases were exported.
+* remove the database directories you want to restore, but only the ones you want restored to the previous state.
 
-The restoration will not overwrite the existing data of database left in place.
+The restoration will not overwrite the existing data of databases left in place.
 
 Start the database restoration with these steps:
 
-1. Stop {nxrm}
-2. Go to the location where you stored the exported databases.
-3. Copy the `.bak` files you wish to restore to `$data-dir/nexus3/backup`.
-4. Restart {nxrm}.
+1. Stop {nxrm}.
+2. Remove the directories you want to restore inside `$data-dir/nexus3/db`.
+3. Go to the location where you stored the exported databases.
+4. Copy the `.bak` files you wish to restore to `$data-dir/nexus3/backup`.
+5. Restart {nxrm}.
 
-View the console logs for `database config restored`, which is logged at the `INFO` level.
+You can verify the restoration is complete by viewing the fully-restored databases previously removed from
+`$data-dir/nexus3/db`.
 
 NOTE: If the `Component` database is restored, the corresponding blob stores containing components must also be
 restored.
