@@ -83,6 +83,24 @@ policy to 'Mixed'.
 Usage of the repository with build tools such as sbt, potentially requires the layout policy to be set to
 'Permissive'.
 
+==== Proxying The Oracle Maven Repository
+
+Proxying the Oracle Maven Repository (`https://maven.oracle.com`) requires special HTTP options in a 'maven2
+(proxy)'. Additionally, you must register for an account to access the external repository. Configure the
+proxy repository to access `https://maven.oracle.com`, with these steps:
+
+1. Check 'Authentication'.
+2. Select 'Username' as the 'Authentication type'.
+3. Enter the 'Username' and 'Password' of the Oracle Maven Repository.
+4. Check 'HTTP request settings'.
+5. Check 'Enable circular redirects' 
+6. Check 'Enable cookies'
+
+After applying these settings to your 'maven2 (proxy)' repository, data requests will be redirected to a queue
+of different URLs, most of which are involved with authentication. By enabling these options, you allow the
+repository manager to maintain the authentication state in a cookie that would be sent with each request,
+eliminating the need for the authentication-related redirects and avoiding timeouts. 
+
 === Hosting Maven Repositories
 
 A hosted Maven repository can be used to deploy your own as well as third-party components. A default installation
