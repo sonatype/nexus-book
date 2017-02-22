@@ -13,10 +13,25 @@ standard for automating system failover and implementing continuous uptime. This
 manual recovery techniques and creates a binary storage for the entire suite of features and components available
 in your repository managers.
 
+[[high-availability-clustering]]
+=== Clustering {pro}
+
+When the cluster is established the nodes communicate with each other to create continuous uptime and the assurance
+that if one fails, the other nodes can be used.
+
+In the scenarios below joining three nodes is the minimum requirement for node redundancy. When you form a cluster,
+the three nodes act as one transparent instance.
+
+Consider the two methods to form a cluster, which start high availability:
+
+* If you're setting up a new cluster, skip to <<high-availability-new,Using a Fresh Installation of {pro}>>.
+* If you're converting an existing server into a cluster, skip to <<high-availability-existing,Converting an
+Existing Instance of {pro} into a Cluster>>.
+
 [[high-availability-prepare]]
 === Preparing a Cluster for High Availability
 
-Clustering requires you to:
+Preparing a high availability cluster requires you to:
 
 * Configure three servers to establish the connection between the nodes by enabling HA in each repository manager.
 * Join the nodes together by a common blob store path to maintain a shared storage for blobs, components and assets.
@@ -25,21 +40,6 @@ cluster.
 
 When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from the 'Administration'
 menu.
-
-[[high-availability-clustering]]
-=== Clustering {pro}
-
-In the scenarios below joining three nodes is the minimum requirement for node redundancy. When you form a cluster,
-the three nodes act as one transparent instance.
-
-Consider the two methods to form a cluster, which starts high availability:
-
-* If you're setting up a new cluster, skip to <<high-availability-new,Using a Fresh Installation of {pro}>>
-* If you're converting an existing server into a cluster, skip to <<high-availability-existing,Converting an
-Existing Instance of {pro} into a Cluster>>
-
-When the cluster is established the nodes communicate with each other to create continuous uptime and the assurance
-that if one fails, the other nodes can be used.
 
 [[high-availability-install]]
 === Installing {pro} for High Availability
@@ -79,8 +79,8 @@ one node fails the other nodes in the cluster will maintain that data.
 === Configuring Nodes to Share the Same Blob Stores
 
 Regardless of the method you choose to enable high availability, be mindful that configuring your nodes to
-share an entire data directory will undermine HA configuration, and cause it not to function. All elements
-of the system except the blob stores should be distinct and not shared.
+share an entire `sonatype-work` directory will undermine HA configuration, and cause it not to function. All
+elements of the system except the blob stores should be distinct and not shared.
 
 Instead, you only need to join the <<admin-repository-blobstores,blob stores>> together, where the nodes
 share access to components.
@@ -92,11 +92,17 @@ i.e. `$data-dir/blobs`, on all three of these nodes must be mounted to the same 
 [[high-availability-nodes]]
 === Enabling High Availability
 
+When you enable high availability, the nodes discover on another via link:https://hazelcast.com/[Hazelcast].
+Hazelcast can employ multicast to discover cluster members, but it supports node discovery in other ways. If
+the default configuration isn't suitable for your network infrastructure, you will need to customize
+`$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>> for a concrete example.
+
 Follow these steps to enable high availability:
 
 1. In the first repository manager, open the `$data-dir/etc/nexus.properties` file.
 2. Remove the `#` before +nexus.clustered = true+ to enable the node at start-up. 
-3. Go to the second and third repository managers and repeat steps 1 and 2, to enable them for high availability.
+3. 
+4. Go to the second and third repository managers and repeat steps 1 and 2, to enable them for high availability.
 
 Given that all nodes are mounted to the same blob store, with the same path, synchronization of data and configuration
 will occur automatically.
@@ -117,11 +123,6 @@ Members [3] {
 }
 ----
 
-The nodes are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for
-active data and active backup. Hazelcast can employ multicast to discover cluster members, but it supports node
-discovery in other ways. If the default configuration isn't suitable for your network infrastructure, you will
-need to customize `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>> for a concrete example.
-
 [[high-availability-verify]]
 === Verifying Synchronization
 
@@ -131,7 +132,7 @@ which you connect to, as they are synchronized.
 See <<nodes>> for details on viewing active nodes in a cluster.
 
 [[high-availability-environment]]
-=== Configuring {pro} Environment for High Availability
+=== Configuring an Existing Cluster after Setup
 
 Once you have your high availability environment set up, be aware that almost all configuration done via the UI 
 is shared between all nodes in the cluster. There is no master node you must hit; they are all treated equally. 
