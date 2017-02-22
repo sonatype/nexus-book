@@ -22,7 +22,7 @@ that if one fails, the other nodes can be used.
 In the scenarios below joining three nodes is the minimum requirement for node redundancy. When you form a cluster,
 the three nodes act as one transparent instance.
 
-Consider the two methods to form a cluster, which start high availability:
+Consider the two methods to form a cluster:
 
 * If you're setting up a new cluster, skip to <<high-availability-new,Using a Fresh Installation of {pro}>>.
 * If you're converting an existing server into a cluster, skip to <<high-availability-existing,Converting an
@@ -92,26 +92,26 @@ i.e. `$data-dir/blobs`, on all three of these nodes must be mounted to the same 
 [[high-availability-nodes]]
 === Enabling High Availability
 
+CAUTION: In the event you have empty nodes and are adding existing configured nodes to it, the existing 
+unconfigured nodes would erase the existing configuration of the nodes added. When creating a cluster, it is 
+important you start the configured nodes before the empty nodes to avoid unwanted configuration loss.
+
 When you enable high availability, the nodes discover on another via link:https://hazelcast.com/[Hazelcast].
-Hazelcast can employ multicast to discover cluster members, but it supports node discovery in other ways. If
-the default configuration isn't suitable for your network infrastructure, you will need to customize
+Hazelcast, by default, employs multicast to discover cluster members, but it supports node discovery in other
+ways. If the default configuration isn't suitable for your network infrastructure, you will need to customize
 `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>> for a concrete example.
 
 Follow these steps to enable high availability:
 
 1. In the first repository manager, open the `$data-dir/etc/nexus.properties` file.
 2. Remove the `#` before +nexus.clustered = true+ to enable the node at start-up. 
-3. 
-4. Go to the second and third repository managers and repeat steps 1 and 2, to enable them for high availability.
-
-Given that all nodes are mounted to the same blob store, with the same path, synchronization of data and configuration
-will occur automatically.
+3. Go to the second and third repository managers and repeat steps 1 and 2, to enable them for high availability.
+4. Start all three repository managers.
 
 [[high-availability-startup]]
-==== Starting the High Availability Service
+==== Confirming Node Connectivity
 
-Bring the nodes to full service by starting the repository managers. You will see connection messages similar to
-this:
+When you start the nodes, you will see a message that confirms the connection of the cluster members:
 
 ----
 2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
@@ -134,11 +134,12 @@ See <<nodes>> for details on viewing active nodes in a cluster.
 [[high-availability-environment]]
 === Configuring an Existing Cluster after Setup
 
-Once you have your high availability environment set up, be aware that almost all configuration done via the UI 
-is shared between all nodes in the cluster. There is no master node you must hit; they are all treated equally. 
-For example, if you create a new repository all nodes in the cluster will be able to see it and utilize it. Or 
-if you want to change your 'Email Server' port you just need to do it once via the UI on any of the servers and 
-the change will share. Because all servers share out the changes, changing on any is acceptable.
+Once you have your high availability environment set up, be aware that almost all configuration done via the 
+user interface is shared between all nodes in the cluster. There is no master node you must hit; they are all
+treated equally. For example, if you create a new repository all nodes in the cluster will be able to see it
+and utilize it. Or if you want to change your 'Email Server' port you just need to do it once via the user
+interface on any of the servers and the change will share. Because all servers share out the changes,
+changing on any is acceptable.
 
 NOTE: Same as a single server be aware, if multiple people are configuring something at the same time in your 
 cluster, it may appear the changes are not sharing. If you refresh your screen, you will see the changes when 
@@ -151,8 +152,8 @@ server. These are:
 - 'Refresh Interval' of the GUI 'Log Viewer' setting
 - Most log messages are not shared across the server (some few are) however logging levels are shared
 - 'Metrics' displayed are for the individual server (and not for the cluster)
-- A 'Support ZIP' is for the individual server. Consult with your support technician which zips they need if 
-troubleshooting.
+- A 'Support ZIP' is for the individual server. If you have issues forming a cluster, consult your support
+technician and provide support zips for all nodes.
 - 'Analytics' events are per server
 - 'Audit' events are per server
 ////
@@ -162,15 +163,11 @@ last 2 should be changing with NEXUS-10489
 TIP: Scheduled tasks will run against one node unless the 'Multi node' configuration option is selected or the 
 task affects something that is in itself shared (like compaction of blob stores).
 
-Regardless, {nxrm} configuration is not done via any load balancers that might be in place. It is done on the 
-individual node level and shared or not.
+Regardless, {nxrm} configuration should not be done through the cluster's load balancer. Configuration should
+occur on the individual node level.
 
 When adding new nodes to the existing cluster be aware that they will get the shared configuration of the cluster 
 regardless of how they are preconfigured.
-
-CAUTION: In the event you have empty nodes and are adding existing configured nodes to it, the existing 
-unconfigured nodes would erase the existing configuration of the nodes added. When creating a cluster, it is 
-important you start the configured nodes before the empty nodes to avoid unwanted configuration loss.
 
 [[high-availability-aws]]
 === Configuring High Availability for Amazon Web Services
