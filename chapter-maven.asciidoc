@@ -579,10 +579,10 @@ Use the following instructions to configure Jenkins to connect to {nxrm}:
 . Select 'Manage Jenkins' from the Dashboard's left-navigation menu.
 . Select 'Configure System' from the list of configuration options.
 . In the 'Sonatype Nexus' section, click the 'Add {nxrm} Server' dropdown menu and then select '{nxrm} 2.x Server'. Enter the following:
-.. *Display Name*: Name of the server you want shown when selecting {nxrm} instances for build jobs.
-.. *Server ID*: A unique ID used to reference {nxrm} in Build Pipeline scripts. It should be alphanumeric without spaces.
-.. *Server URL*: Location of your {nxrm} server.
-.. *Credentials*: Select the 'Add' button to enter your {nxrm} username and password using the 'Jenkins Provider Credentials: Jenkins' modal window. Once added, select your {nxrm} username and password from the 'Credentials' dropdown list.
+* *Display Name*: Name of the server you want shown when selecting {nxrm} instances for build jobs.
+* *Server ID*: A unique ID used to reference {nxrm} in Build Pipeline scripts. It should be alphanumeric without spaces.
+* *Server URL*: Location of your {nxrm} server.
+* *Credentials*: Select the 'Add' button to enter your {nxrm} username and password using the 'Jenkins Provider Credentials: Jenkins' modal window. Once added, select your {nxrm} username and password from the 'Credentials' dropdown list.
 . Click the 'Test Connection' button.
 +
 [[fig-nexus-jenkins-global-config]]
@@ -618,11 +618,10 @@ After a completed installation and global configuration of Jenkins, you are read
 The freestyle build job is a flexible and configurable option, and can be used for any type of project.
 
 . To start, create a Freestyle Project by clicking the 'New Item' link on the Dashboard. Give the project a name and click 'OK' to continue with the configuration.
-. Setup the Freestyle project as desired.
 . In the 'Build' section of the freestyle project configuration screen, click the 'Add Build Step' dropdown button and then select '{nxrm} Publisher'. Enter the following parameters:
-.. *Nexus Instance*: Select the display name set in global configuration.
-.. *Nexus Repository*: List of all repositories your authenticated user has access to. Select a repository that has Release Repository Policy and allows for Artifact Uploads.
-.. *Packages*: (optional) Select Packages to publish to {nxrm} during your Freestyle build. For this example, use the 'Add Package' dropdown to select a Maven Package. 
+* *Nexus Instance*: Select the display name set in global configuration.
+* *Nexus Repository*: List of all repositories your authenticated user has access to. Select a repository that has release repository policy and allows for artifact uploads.
+* *Packages*: (optional) Select packages to publish to {nxrm} during your freestyle build. For this example, use the 'Add Package' dropdown to select a 'Maven' Package. 
 +
 [[fig-nexus-jenkins-freestyle-config]]
 .Nexus Jenkins Plugin Freestyle Build Configuration
@@ -630,16 +629,16 @@ image::figs/web/jenkins-freestyle-build-step.png[scale=45]
 +
 [start=4]
 . Complete your freestyle build as desired and click 'Save'.
-. Launch a build for your project. When the build is finished you are presented with output similar to the example below:
+. Launch a build for your project. When the build completes. you will see output similar to the example below:
 +
 [[fig-nexus-jenkins-freestyle-output]]
 .Nexus Jenkins Plugin Freestyle Build Output
 image::figs/web/jenkins-freestyle-build-output.png[scale=45]
 +
-Returning to your {nxrm} instance, you will see the Jenkins war is now available in the Releases repository:
+Returning to {nxrm}, the Jenkins war is now available in the 'Releases' repository:
 +
 [[fig-nexus-jenkins-freestyle-repo]]
-.Nexus Jenkins War in Release Repo
+.Jenkins War in Release Repo
 image::figs/web/jenkins-freestyle-release-repo.png[scale=45]
 
 ===== Pipeline Build Step Configuration
@@ -647,32 +646,55 @@ image::figs/web/jenkins-freestyle-release-repo.png[scale=45]
 Jenkins Pipeline builds allow for precise control and configuration over your build process. 
 
 . To start, create a Pipeline project by clicking the 'New Item' link on the Dashboard. Give the project a name and click 'OK' to continue with the configuration.
-. Setup the General, Build Triggers, and Advanced Project Options sections as desired.
 +
-NOTE: Pipeline jobs allow you to configure the job via a Groovy script. The script is editable in the Pipeline section. In this example we are using the sample 'Github + Maven' script.
+NOTE: Pipeline jobs allow you to configure the job via a Groovy script. The script is editable in the 'Pipeline' section. In this example we will use the sample 'Github + Maven' script.
 
 [start=3]
 . In the 'Pipeline' section, click the 'try sample Pipeline' dropdown, and then select 'Github + Maven'.
++
+[[fig-nexus-jenkins-sample-script]]
+.Sample Pipeline
+image::figs/web/jenkins-pipeline-sample-script.png[scale=45]
++
 . Below the Results stage, add a new {nxrm} Publish stage to the build pipeline script.
++
+----
+
+stage('Publish') {
+
+}
+
+----
 + 
-TIP: The {nxrm} Publisher build step should occur after the build so that the binaries are available for upload. For best reporting during the build process, the publish step should exist in its own stage below the Results stage.
+TIP: The {nxrm} Publisher build step should occur after the build so the binaries are available for upload. For best reporting during the build process, the publish step should exist in its own stage below the Results stage.
 
 [start=5]
 . Click the 'Pipeline Syntax' link located below the Script textbox.
 . In the 'Steps' section of the 'Snippet Generator' window, select the following:
-.. *Sample Step*: Select 'NexusPublisher: {nxrm} Publisher'.
-.. *Nexus Instance*: Select the display name set in global configuration.
-.. *Nexus Repository*: List of all repositories your authenticated user has access to. Select a repository that has Release Repository Policy and allows for Artifact Uploads.
-.. *Packages*: Select Packages to publish to {nxrm} during your Freestyle build.
+* *Sample Step*: Select 'NexusPublisher: {nxrm} Publisher'.
+* *Nexus Instance*: Select the display name set in global configuration.
+* *Nexus Repository*: List of all repositories your authenticated user has access to. Select a repository that has Release Repository Policy and allows for Artifact Uploads.
+* *Packages*: (optional) Select packages to publish to {nxrm} during your pipeline build. For this example, use the 'Add Package' dropdown to select a 'Maven' Package. 
++
+[[fig-nexus-jenkins-pipeline-steps]]
+.Pipeline Sample Script
+image::figs/web/jenkins-pipeline-steps.png[scale=45]
++
 . Click the 'Generate Pipeline Script' button.
 An example pipeline script is shown below:
 +
 ----
-nexusPolicyEvaluation failBuildOnNetworkError: false, iqApplication: 'SampApp', iqStage: 'build', jobCredentialsId: ''
+
+nexusPublisher nexusInstanceId: 'localNexus', nexusRepositoryId: 'releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'war/target/jenkins.war']], mavenCoordinate: [artifactId: 'jenkins-war', groupId: 'org.jenkins-ci.main', packaging: 'war', version: '2.23']]]
+
 ----
 +
-. Copy the generated script and paste it into the previously added Publish stage of your pipeline script.
+. Copy the generated script and paste it into the previously added publish stage of your pipeline script.
 . Complete your pipeline build as desired and click 'Save'.
-. Run the build. Once completed, you are presented with a successful build similar to what's shown below.
+. Run the build. When completed, you should see a successful build.
 
-Returning to your {nxrm} instance, you will see the Jenkins war is now available in the Releases repository.
+Returning to {nxrm}, the Jenkins war is now available in the 'Releases' repository:
++
+[[fig-nexus-jenkins-pipeline-repo]]
+.Jenkins War in Release Repo
+image::figs/web/jenkins-pipeline-release-repo.png[scale=45]
