@@ -16,7 +16,11 @@ in your repository managers.
 [[high-availability-clustering]]
 === Clustering {pro}
 
-When the cluster is established the nodes communicate with each other to create continuous uptime and the assurance
+The minimum supported configuration for a high availability cluster is three nodes. One node represents an
+individual server (the repository manager), where at least two additional servers must be modified along with
+the primary server to form the cluster.
+
+When the cluster is established, nodes communicate with each other to create continuous uptime and the assurance
 that if one fails, the other nodes can be used.
 
 In the scenarios below joining three nodes is the minimum requirement for node redundancy. When you form a cluster,
@@ -33,13 +37,14 @@ Existing Instance of {pro} into a Cluster>>.
 
 Preparing a high availability cluster requires you to:
 
-* Configure three servers to establish the connection between the nodes by enabling HA in each repository manager.
+* Configure three servers to establish the connection between the nodes by enabling high availability in each
+repository manager.
 * Join the nodes together by a common blob store path to maintain a shared storage for blobs, components and assets.
 * Allow the first enabled node to complete the start-up sequence, then start the second and third nodes to form the
 cluster.
 
-When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from the 'Administration'
-menu.
+When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from 'Nodes' screen
+located in 'System' from the 'Administration' menu.
 
 [[high-availability-install]]
 === Installing {pro} for High Availability
@@ -106,12 +111,15 @@ Follow these steps to enable high availability:
 1. In the first repository manager, open the `$data-dir/etc/nexus.properties` file.
 2. Remove the `#` before +nexus.clustered = true+ to enable the node at start-up. 
 3. Go to the second and third repository managers and repeat steps 1 and 2, to enable them for high availability.
-4. Start all three repository managers.
 
 [[high-availability-startup]]
-==== Confirming Node Connectivity
+==== Startup and Confirming Node Connectivity
 
-When you start the nodes, you will see a message that confirms the connection of the cluster members:
+After enabling high availability for all three repository managers, check the console to confirm that multicast
+discovers all three corresponding nodes.
+
+When you start the nodes, you will see a message in the `nexus.log` confirming the connection of the cluster
+members, like the one below:
 
 ----
 2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
@@ -135,8 +143,8 @@ See <<nodes>> for details on viewing active nodes in a cluster.
 === Configuring an Existing Cluster after Setup
 
 Once you have your high availability environment set up, be aware that almost all configuration done via the 
-user interface is shared between all nodes in the cluster. There is no master node you must hit; they are all
-treated equally. For example, if you create a new repository all nodes in the cluster will be able to see it
+user interface is shared between all nodes in the cluster. There is no master node; they are all treated
+equally. For example, if you create a new repository all nodes in the cluster will be able to see it
 and utilize it. Or if you want to change your 'Email Server' port you just need to do it once via the user
 interface on any of the servers and the change will share. Because all servers share out the changes,
 changing on any is acceptable.
@@ -148,7 +156,7 @@ they come across.
 There are some things, however, that are not done or shared within the UI and need to be done on each individual 
 server. These are:
 
-- Any configuration files you do (such as specifying a port via `nexus.properties` or setting up SSL)
+- Any configuration files you modify (such as specifying a port via `nexus.properties` or setting up SSL)
 - 'Refresh Interval' of the GUI 'Log Viewer' setting
 - Most log messages are not shared across the server (some few are) however logging levels are shared
 - 'Metrics' displayed are for the individual server (and not for the cluster)
