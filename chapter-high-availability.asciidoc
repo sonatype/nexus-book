@@ -9,7 +9,7 @@
 reducing points of system failure.
 
 This chapter covers the benefits and steps needed to implement high availability clusters. Clustering sets the 
-standard for automating system failover and implementing continuous uptime. This relieves teams of performing
+baseline for automating system failover and implementing continuous uptime. This relieves teams of performing
 manual recovery techniques and creates a binary storage for the entire suite of features and components available
 in your repository managers.
 
@@ -17,11 +17,11 @@ in your repository managers.
 === Clustering {pro}
 
 The minimum supported configuration for a high availability cluster is three nodes. One node represents an
-individual server (the repository manager), where at least two additional servers must be modified along with
-the primary server to form the cluster.
+individual server (the repository manager), where at least two additional servers must be joined with the
+primary server to form the cluster.
 
 When the cluster is established, nodes communicate with each other to create continuous uptime and the assurance
-that if one fails, the other nodes can be used.
+that if one is taken down, the other nodes can be used.
 
 In the scenarios below joining three nodes is the minimum requirement for node redundancy. When you form a cluster,
 the three nodes act as one transparent instance.
@@ -101,7 +101,7 @@ CAUTION: In the event you have empty nodes and are adding existing configured no
 unconfigured nodes would erase the existing configuration of the nodes added. When creating a cluster, it is 
 important you start the configured nodes before the empty nodes to avoid unwanted configuration loss.
 
-When you enable high availability, the nodes discover on another via link:https://hazelcast.com/[Hazelcast].
+When you enable high availability, the nodes discover one another via link:https://hazelcast.com/[Hazelcast].
 Hazelcast, by default, employs multicast to discover cluster members, but it supports node discovery in other
 ways. If the default configuration isn't suitable for your network infrastructure, you will need to customize
 `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>> for a concrete example.
@@ -140,26 +140,25 @@ which you connect to, as they are synchronized.
 See <<nodes>> for details on viewing active nodes in a cluster.
 
 [[high-availability-environment]]
-=== Configuring an Existing Cluster after Setup
+=== Configuring a Cluster after Setup
 
 Once you have your high availability environment set up, be aware that almost all configuration done via the 
 user interface is shared between all nodes in the cluster. There is no master node; they are all treated
 equally. For example, if you create a new repository all nodes in the cluster will be able to see it
 and utilize it. Or if you want to change your 'Email Server' port you just need to do it once via the user
-interface on any of the servers and the change will share. Because all servers share out the changes,
-changing on any is acceptable.
+interface on any of the servers and the change will share.
 
 NOTE: Same as a single server be aware, if multiple people are configuring something at the same time in your 
 cluster, it may appear the changes are not sharing. If you refresh your screen, you will see the changes when 
 they come across.
 
 There are some things, however, that are not done or shared within the UI and need to be done on each individual 
-server. These are:
+server. These include:
 
 - Any configuration files you modify (such as specifying a port via `nexus.properties` or setting up SSL)
 - 'Refresh Interval' of the GUI 'Log Viewer' setting
-- Most log messages are not shared across the server (some few are) however logging levels are shared
-- 'Metrics' displayed are for the individual server (and not for the cluster)
+- Most log messages are not shared across the server, however logging levels are shared
+- 'Metrics' displayed are for the individual server
 - A 'Support ZIP' is for the individual server. If you have issues forming a cluster, consult your support
 technician and provide support zips for all nodes.
 - 'Analytics' events are per server
