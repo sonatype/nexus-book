@@ -617,8 +617,8 @@ After a completed installation and global configuration of Jenkins, you are read
 
 The freestyle build job is a flexible and configurable option, and can be used for any type of project.
 
-. To start, create a Freestyle Project by clicking the 'New Item' link on the Dashboard. Give the project a name and click 'OK' to continue with the configuration.
-. In the 'Build' section of the freestyle project configuration screen, click the 'Add Build Step' dropdown button and then select '{nxrm} Publisher'. Enter the following parameters:
+. To start, create a freestyle project by clicking the 'New Item' link on the Dashboard. Give the project a name and click 'OK' to continue with the configuration.
+. In the 'Build' section of the configuration screen, click the 'Add Build Step' dropdown button and then select '{nxrm} Publisher'. Enter the following parameters:
 * *Nexus Instance*: Select the display name set in global configuration.
 * *Nexus Repository*: List of all repositories your authenticated user has access to. Select a repository that has release repository policy and allows for artifact uploads.
 * *Packages*: (optional) Select packages to publish to {nxrm} during your freestyle build. For this example, use the 'Add Package' dropdown to select a 'Maven' Package. 
@@ -629,7 +629,7 @@ image::figs/web/jenkins-freestyle-build-step.png[scale=45]
 +
 [start=4]
 . Complete your freestyle build as desired and click 'Save'.
-. Launch a build for your project. When the build completes. you will see output similar to the example below:
+. Launch a build for your project. When the build completes, you will see output similar to the example below:
 +
 [[fig-nexus-jenkins-freestyle-output]]
 .Nexus Jenkins Plugin Freestyle Build Output
@@ -643,14 +643,14 @@ image::figs/web/jenkins-freestyle-release-repo.png[scale=45]
 
 ===== Pipeline Build Step Configuration
 
-Jenkins Pipeline builds allow for precise control and configuration over your build process. 
+Pipeline builds allow for precise control and configuration over your build process. 
 
-. To start, create a Pipeline project by clicking the 'New Item' link on the Dashboard. Give the project a name and click 'OK' to continue with the configuration.
+. To start, create a pipeline project by clicking the 'New Item' link on the Dashboard. Give the project a name and click 'OK' to continue with the configuration.
 +
 NOTE: Pipeline jobs allow you to configure the job via a Groovy script. The script is editable in the 'Pipeline' section. In this example we will use the sample 'Github + Maven' script.
 
 [start=3]
-. In the 'Pipeline' section, click the 'try sample Pipeline' dropdown, and then select 'Github + Maven'.
+. In the 'Pipeline' section of the configuration screen, click the 'try sample Pipeline' dropdown, and then select 'Github + Maven'.
 +
 [[fig-nexus-jenkins-sample-script]]
 .Sample Pipeline
@@ -675,26 +675,25 @@ TIP: The {nxrm} Publisher build step should occur after the build so the binarie
 * *Nexus Instance*: Select the display name set in global configuration.
 * *Nexus Repository*: List of all repositories your authenticated user has access to. Select a repository that has Release Repository Policy and allows for Artifact Uploads.
 * *Packages*: (optional) Select packages to publish to {nxrm} during your pipeline build. For this example, use the 'Add Package' dropdown to select a 'Maven' Package. 
-+
+
 [[fig-nexus-jenkins-pipeline-steps]]
 .Pipeline Sample Script
 image::figs/web/jenkins-pipeline-steps.png[scale=45]
-+
-. Click the 'Generate Pipeline Script' button.
-An example pipeline script is shown below:
-+
+
+. Click the 'Generate Pipeline Script' button. An example pipeline script is shown below:
+
 ----
 
 nexusPublisher nexusInstanceId: 'localNexus', nexusRepositoryId: 'releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'war/target/jenkins.war']], mavenCoordinate: [artifactId: 'jenkins-war', groupId: 'org.jenkins-ci.main', packaging: 'war', version: '2.23']]]
 
 ----
-+
+
 . Copy the generated script and paste it into the previously added publish stage of your pipeline script.
 . Complete your pipeline build as desired and click 'Save'.
 . Run the build. When completed, you should see a successful build.
 
 Returning to {nxrm}, the Jenkins war is now available in the 'Releases' repository:
-+
+
 [[fig-nexus-jenkins-pipeline-repo]]
 .Jenkins War in Release Repo
 image::figs/web/jenkins-pipeline-release-repo.png[scale=45]
