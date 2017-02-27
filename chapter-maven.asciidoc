@@ -563,12 +563,12 @@ To install Nexus for Jenkins, perform the following steps:
 . Select 'Manage Jenkins' from the Dashboard's left-navigation menu.
 . Select 'Manage Plugins' from the list of configuration options.
 . Click the 'Advanced' tab on the 'Plugin Manager' screen.
-. In the 'Upload Plugin' section click 'Choose File', open the downloaded Nexus for Jenkins hpi file, and then click 'Upload'. 
-+
+. In the 'Upload Plugin' section, click 'Choose File', open the link:http://download.sonatype.com/nexus/ci/latest.hpi[hpi file], and then click 'Upload'. 
+
 [[fig-nexus-jenkins-plugin-upload]]
-.Nexus Jenkins Plugin Upload
+.Nexus for Jenkins Upload
 image::figs/web/jenkins-plugin-upload.png[scale=45]
-+
+
 A message displays on the screen when Nexus for Jenkins is successfully installed.
 
 [[jenkins-plugin-global-config]]
@@ -586,7 +586,7 @@ Use the following instructions to configure Jenkins to connect to {nxrm}:
 . Click the 'Test Connection' button.
 +
 [[fig-nexus-jenkins-global-config]]
-.Nexus Jenkins Plugin Global Configuration
+.Nexus for Jenkins Global Configuration
 image::figs/web/jenkins-configure-plugin.png[scale=45]
 +
 . After a successful connection to {nxrm}, click the 'Save' button.
@@ -595,7 +595,7 @@ image::figs/web/jenkins-configure-plugin.png[scale=45]
 
 ==== Tool Configuration (Optional)
 
-NOTE: The examples provided in this guide use Maven to build in a project. A Maven installation must be configured in Jenkins for these examples to work.
+NOTE: Nexus for Jenkins can upload artifacts to a Maven repository without a Maven installation, however the examples provided in this guide use Maven to build in a project. A Maven installation must be configured in Jenkins for these examples to work.
 
 To configure a Maven installation: 
 
@@ -605,7 +605,7 @@ To configure a Maven installation:
 . Configure a Maven installation as shown in the figure below:
 +
 [[fig-nexus-jenkins-tool-config]]
-.Nexus Jenkins Plugin Tool Configuration
+.Nexus Jenkins Tool Configuration
 image::figs/web/jenkins-tool-config.png[scale=45]
 
 [[nexus-jenkins-job-config]]
@@ -621,7 +621,7 @@ The freestyle build job is a flexible and configurable option, and can be used f
 . In the 'Build' section of the configuration screen, click the 'Add Build Step' dropdown button and then select '{nxrm} Publisher'. Enter the following parameters:
 * *Nexus Instance*: Select the display name set in global configuration.
 * *Nexus Repository*: List of all repositories your authenticated user has access to. Select a repository that has release repository policy and allows for artifact uploads.
-* *Packages*: (optional) Select packages to publish to {nxrm} during your freestyle build. For this example, use the 'Add Package' dropdown to select a 'Maven' Package. 
+* *Packages*: Select packages to publish to {nxrm} during your freestyle build. For this example, use the 'Add Package' dropdown to select a 'Maven' Package. 
 +
 [[fig-nexus-jenkins-freestyle-config]]
 .Nexus Jenkins Plugin Freestyle Build Configuration
@@ -635,7 +635,7 @@ image::figs/web/jenkins-freestyle-build-step.png[scale=45]
 .Nexus Jenkins Plugin Freestyle Build Output
 image::figs/web/jenkins-freestyle-build-output.png[scale=45]
 +
-Returning to {nxrm}, the Jenkins war is now available in the 'Releases' repository:
+Returning to {nxrm}, any artifact selected in 'Packages' will be available in the selected repository. In this example, the Jenkins war is now available in the 'Releases' repository:
 +
 [[fig-nexus-jenkins-freestyle-repo]]
 .Jenkins War in Release Repo
@@ -674,7 +674,7 @@ TIP: The {nxrm} Publisher build step should occur after the build so the binarie
 * *Sample Step*: Select 'NexusPublisher: {nxrm} Publisher'.
 * *Nexus Instance*: Select the display name set in global configuration.
 * *Nexus Repository*: List of all repositories your authenticated user has access to. Select a repository that has Release Repository Policy and allows for Artifact Uploads.
-* *Packages*: (optional) Select packages to publish to {nxrm} during your pipeline build. For this example, use the 'Add Package' dropdown to select a 'Maven' Package. 
+* *Packages*: Select packages to publish to {nxrm} during your pipeline build. For this example, use the 'Add Package' dropdown to select a 'Maven' Package. 
 
 [[fig-nexus-jenkins-pipeline-steps]]
 .Pipeline Sample Script
@@ -692,7 +692,7 @@ nexusPublisher nexusInstanceId: 'localNexus', nexusRepositoryId: 'releases', pac
 . Complete your pipeline build as desired and click 'Save'.
 . Run the build. When completed, you should see a successful build.
 
-Returning to {nxrm}, the Jenkins war is now available in the 'Releases' repository:
+Returning to {nxrm}, any artifact selected in 'Packages' will be available in the selected repository. In this example, the Jenkins war is now available in the 'Releases' repository:
 
 [[fig-nexus-jenkins-pipeline-repo]]
 .Jenkins War in Release Repo
