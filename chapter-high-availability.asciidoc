@@ -23,8 +23,8 @@ primary server to form the cluster.
 When the cluster is established, nodes communicate with each other to create continuous uptime and the assurance
 that if one is taken down, the other nodes can be used.
 
-In the scenarios below joining three nodes is the minimum requirement for node redundancy. When you form a cluster,
-the three nodes act as one transparent instance.
+Joining three nodes is the minimum requirement for node redundancy. When you form a cluster, the three nodes act
+as one transparent instance.
 
 Consider the two methods to form a cluster:
 
@@ -39,12 +39,13 @@ Preparing a high availability cluster requires you to:
 
 * Configure three servers to establish the connection between the nodes by enabling high availability in each
 repository manager.
-* Join the nodes together by a common blob store path to maintain a shared storage for blobs, components and assets.
-* Allow the first enabled node to complete the start-up sequence, then start the second and third nodes to form the
-cluster.
+* Join the nodes together by a common blob store path to maintain a shared storage for blobs, components,
+and assets.
+* Allow the first enabled node to complete the start-up sequence, then start the second and third nodes to
+form the cluster.
 
-When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from 'Nodes' screen
-located in 'System' from the 'Administration' menu.
+When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from the 'Nodes'
+screen located in 'System' from the 'Administration' menu.
 
 [[high-availability-install]]
 === Installing {pro} for High Availability
@@ -83,6 +84,10 @@ one node fails the other nodes in the cluster will maintain that data.
 [[high-availability-blob-store]]
 === Configuring a Node to Share a Blob Store
 
+If you're working with a fresh installation of the repository manager, it comes with a 'default' blob store.
+The default will not be shared with the additional nodes; therefore you need to configure the repositories
+in the all nodes to point to new shared blob store location.
+
 Regardless of the method you choose to enable high availability, be mindful that configuring a single node to
 share an entire `sonatype-work` directory will undermine HA configuration, and cause it not to function. All
 elements of the system except the blob store needed for HA configuration should be distinct and not shared
@@ -91,16 +96,27 @@ with `sonatype-work`.
 Instead, you only need to join the <<admin-repository-blobstores,blob stores>> together, where the nodes
 share access to components.
 
-If you're working with a fresh installation of the repository manager, it comes with a 'default' blob store.
-The default will not be shared with the additional nodes; therefore you need to configure your repositories
-to point to new shared blob store location.
+To configure a new location for repository components to a location for shared blob store access:
 
-To configure the location where blob store data can be shared:
-
-1. Create directory outside of the application directory, away from the `sonatype-work` directory.
+1. Create a directory outside of the application directory.
 2. Start your primary repository manager.
 3. Choose a 'Name' and add a 'Path' from the 'Blob stores' screen, referencing the new directory you created.
-4. Click 'Create blob store' 
+4. Click 'Create blob store'.
+
+After completing these steps, you can create new repositories and point them to the new blob store configured
+for shared access with a cluster.
+
+==== Example: Configuring a Shared Blob Store for a Cluster
+
+Let's say you create a new blob store called `data-location` and you want to point an 'npm (proxy)' repository
+to this location, intended for shared blob store access within the cluster. You need to do the following:
+
+1. Select a recipe from the 'Repositories' form, e.g.'npm (proxy)'
+2. Pick the `data-location` blob store in the 'Storage' section of the 'Repositories' form.
+3. Click 'Create repository' to establish the new repository.
+
+When you <<high-availability-nodes,enable>> the cluster, the components and assets of the primary node are
+identically distributed to the second and third nodes.
 
 [[high-availability-nodes]]
 === Enabling High Availability
