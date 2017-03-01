@@ -244,3 +244,21 @@ The `$install-dir/etc/fabric/hazelcast.xml` file with the modified properties wi
     </aws>
 </join>
 ----
+
+[[high-availability-backup]]
+=== Backing up your HA cluster
+
+NOTE: The task described here only backs up the configuration and metadata.  The (shared) blob store(s) must be 
+backed up independently.
+
+Backup for HA uses the same concepts as outlined in <<backup>>. The notable exception is that when creating your 
+'Export configuration & metadata for backup' scheduled task you must choose a node for the backup to run against. 
+Since these nodes are sharing the same data, in most cases your selection should not matter.
+
+Running the same scheduled task against the same node over and over does provide assurances that your files are 
+backed up in the same place continuously.
+
+While the scheduled task runs, the node configured against becomes read only. During this time, the other nodes 
+in the cluster function as normal. When the backup is complete, the node picks up any changes made to the cluster 
+configuration while it was performing the task. Any write operations run specifically against this node (as 
+opposed to the cluster) will be run at that time as well.
