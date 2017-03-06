@@ -106,6 +106,9 @@ To configure a new location for repository components to a location for shared b
 If your existing repository manager points to local, non-HA configured blob store, 'default' or otherwise,
 follow the steps above.
 
+After the shared blob stores are configured, continue to point any new repositories you create to the shared
+location.
+
 ==== Example: Configuring a Shared Blob Store for a Cluster
 
 Let's say you create a new blob store called `data-location` and you want to point a hosted npm repository to
@@ -117,9 +120,6 @@ this location, for shared blob store access. Do the following:
 
 When you <<high-availability-nodes,enable>> the cluster, the new repositories and their components and assets
 of the primary node are identically distributed to the second and third nodes.
-
-If you to share new repositories across multiple blob stores, these steps can be repeated for as many as you
-want. From this point on, any new repositories you create, perform the same steps.
 
 [[high-availability-nodes]]
 === Enabling High Availability
@@ -142,8 +142,8 @@ Follow these steps to enable high availability:
 [[high-availability-startup]]
 ==== Startup and Confirming Node Connectivity
 
-After enabling high availability for all three repository managers, check the console to confirm that multicast
-discovers all three corresponding nodes.
+After enabling high availability for your nodes, check the console to confirm that multicast discovers all three
+corresponding nodes.
 
 When you start the nodes, you will see a message in the `nexus.log` confirming the connection of the cluster
 members, like the one below:
@@ -170,10 +170,10 @@ See <<nodes>> for details on viewing active nodes in a cluster.
 === Configuring a Cluster after Setup
 
 Once you have your high availability environment set up, be aware that almost all configuration done via the 
-user interface is shared between all nodes in the cluster. There is no master node; they are all treated
-equally. For example, if you create a new repository all nodes in the cluster will be able to see it
-and utilize it. Or if you want to change your 'Email Server' port you just need to do it once via the user
-interface on any of the servers and the change will share.
+user interface is shared among all nodes in the cluster. In an HA cluster all nodes are all treated equally.
+For example, if you create a new repository all nodes in the cluster will be able to see it and utilize it.
+Or if you want to change your 'Email Server' port you just need to do it once via the user interface on any
+of the servers and the change will share.
 
 NOTE: Same as a single server be aware, if multiple people are configuring something at the same time in your 
 cluster, it may appear the changes are not sharing. If you refresh your screen, you will see the changes when 
