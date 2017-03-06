@@ -32,11 +32,38 @@ Consider the two methods to form a cluster:
 * If you're converting an existing server into a cluster, skip to <<high-availability-existing,Converting an
 Existing Instance of {pro} into a Cluster>>.
 
+[[high-availability-quorum]]
+=== Optimal Node Count
+
+In some HA environments two-node cluster is minimum node redundancy. But, to reduce the probability of node
+failure over a large-scale network we set the minimum count for a cluster to three nodes.
+
+The appropriate quorum of nodes is an odd-number cluster, so we recommend a 3- or 5-node cluster before
+recommending a 4-node cluster. Choosing an odd-number of nodes is optimal because if one crashes, your cluster
+won’t fail the entire load over to a single node.
+
+[[high-availability-os-support]]
+=== Supported Systems for High Availability
+
+There are multiple supported operating systems and platforms supporting node distribution in an HA cluster.
+They may include:
+
+* physical servers
+* virtual machines
+* cloud services
+
+Though it’s a requirement for your HA environment to share the same network, the mix of servers and platforms
+may vary. Your network configuration may consist of the same operating systems or platforms, or perhaps even
+different virtual operating system instances spread across different physical machines. Given the above, your
+network isn’t limited to these scenarios. Whichever configuration you choose be mindful of server performance,
+so your nodes can remain at their most optimal speed.
+
 [[high-availability-prepare]]
 === Preparing a Cluster for High Availability
 
 Preparing a high availability cluster requires you to:
 
+* Choose 
 * Configure three servers to establish the connection between the nodes by enabling high availability in each
 repository manager.
 * Join the nodes together by a common blob store path to maintain a shared storage for blobs, components,
