@@ -84,14 +84,14 @@ one node fails the other nodes in the cluster will maintain that data.
 [[high-availability-blob-store]]
 === Configuring a Node to Share a Blob Store
 
-If you're working with a fresh installation of the repository manager, it comes with a 'default' blob store.
-The default will not be shared with the additional nodes; therefore you need to configure the repositories
-in the all nodes to point to new shared blob store location.
+All instances of {pro}, new or existing, come with a 'default' <<admin-repository-blobstores,blob store>>.
+The default will not be shared with the additional nodes. So, for an HA environment you must configure all
+repositories in the first node to point to new, secure file system location where they share blob store
+access.
 
-Regardless of the method you choose to enable high availability, be mindful that configuring a single node to
-share an entire `sonatype-work` directory will undermine HA configuration, and cause it not to function. All
-elements of the system except the blob store needed for HA configuration should be distinct and not shared
-with `sonatype-work`.
+Be mindful that configuring a single node to share an entire `sonatype-work` directory will undermine HA
+configuration, and cause it not to function. All elements of the system except the blob store needed for
+HA configuration should be distinct and not shared with `sonatype-work`.
 
 Instead, you only need to join the <<admin-repository-blobstores,blob stores>> together, where the nodes
 share access to components.
@@ -103,24 +103,23 @@ To configure a new location for repository components to a location for shared b
 3. Choose a 'Name' and add a 'Path' from the 'Blob stores' screen, referencing the new directory you created.
 4. Click 'Create blob store'.
 
-After completing these steps, you can create new repositories and point them to the new blob store configured
-for shared access with a cluster.
+If your existing repository manager points to local, non-HA configured blob store, 'default' or otherwise,
+follow the steps above.
 
 ==== Example: Configuring a Shared Blob Store for a Cluster
 
-Let's say you create a new blob store called `data-location` and you want to point an 'npm (proxy)' repository
-to this location, intended for shared blob store access within the cluster. You need to do the following:
+Let's say you create a new blob store called `data-location` and you want to point a hosted npm repository to
+this location, for shared blob store access. Do the following:
 
-1. Select a recipe from the 'Repositories' form, e.g.'npm (proxy)'
+1. Select a recipe from the 'Repositories' form, i.e. 'npm (hosted)'
 2. Pick the `data-location` blob store in the 'Storage' section of the 'Repositories' form.
 3. Click 'Create repository' to establish the new repository.
 
-When you <<high-availability-nodes,enable>> the cluster, the components and assets of the primary node are
-identically distributed to the second and third nodes.
+When you <<high-availability-nodes,enable>> the cluster, the new repositories and their components and assets
+of the primary node are identically distributed to the second and third nodes.
 
 If you to share new repositories across multiple blob stores, these steps can be repeated for as many as you
-want. New repositories created after the shared blob store is configured should be shared among these new blob
-stores.
+want. From this point on, any new repositories you create, perform the same steps.
 
 [[high-availability-nodes]]
 === Enabling High Availability
