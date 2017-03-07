@@ -5,26 +5,33 @@
 [[high-availability-introduction]]
 === Introduction
 
-{nxrm}'s high availability (HA) feature provides a more fail-safe repository manager, minimizing downtime, and 
+High Availability (HA) for {pro} enhances your repository manager's performance, minimizing downtime and 
 reducing points of system failure.
 
-This chapter covers the benefits and steps needed to implement high availability clusters. Clustering sets the 
-baseline for automating system failover and implementing continuous uptime. This relieves teams of performing
-manual recovery techniques and creates a binary storage for the entire suite of features and components available
-in your repository managers.
+{pro} HA supports a three-node, active/active setup. As components are uploaded or modified, metadata about
+those components are immediately synchronized across the cluster.  Component binaries sit in a shared, on-disk
+blob store that is accessible to all three nodes.
 
-[[high-availability-clustering]]
-=== Clustering {pro}
+This gives you the ability to scale NXRM horizontally, while eliminating single points of failure that cause
+unplanned downtime.
 
-The minimum supported configuration for a high availability cluster is three nodes. One node represents an
-individual server (the repository manager), where at least two additional servers must be joined with the
-primary server to form the cluster.
+[[high-availability-nodes-cluster]]
+=== Nodes and Clustering
 
-When the cluster is established, nodes communicate with each other to create continuous uptime and the assurance
-that if one is taken down, the other nodes can be used.
+Each instance of {pro} in an HA cluster is a node. You can run nodes on physical or virtual servers, Docker
+containers, or cloud services like <<high-availability-aws,AWS>>. To learn how to identify your nodes, review
+the <<nodes,Nodes>> section in this book.
 
-Joining three nodes is the minimum requirement for node redundancy. When you form a cluster, the nodes act as
-one transparent instance.
+An HA cluster is established when nodes communicate with each other and distribute the load of repository data
+and system configuration equally among themselves.
+
+[[high-availability-quorum]]
+==== Required Node Count
+
+In some HA environments a two-node cluster is the minimum required to provide node redundancy. However, to
+reduce the probability of node failure over your network, we set the minimum count for a cluster to three
+nodes. So, we recommend you choose an odd-number of nodes because if one crashes, your cluster won’t fail
+the entire load over to a single node.
 
 Consider the two methods to form a cluster:
 
@@ -32,44 +39,17 @@ Consider the two methods to form a cluster:
 * If you're converting an existing server into a cluster, skip to <<high-availability-existing,Converting an
 Existing Instance of {pro} into a Cluster>>.
 
-[[high-availability-quorum]]
-=== Optimal Node Count
-
-In some HA environments two-node cluster is minimum node redundancy. But, to reduce the probability of node
-failure over a large-scale network we set the minimum count for a cluster to three nodes.
-
-The appropriate quorum of nodes is an odd-number cluster, so we recommend a 3- or 5-node cluster before
-recommending a 4-node cluster. Choosing an odd-number of nodes is optimal because if one crashes, your cluster
-won’t fail the entire load over to a single node.
-
-[[high-availability-os-support]]
-=== Supported Systems for High Availability
-
-There are multiple supported operating systems and platforms supporting node distribution in an HA cluster.
-They may include:
-
-* physical servers
-* virtual machines
-* cloud services
-
-Though it’s a requirement for your HA environment to share the same network, the mix of servers and platforms
-may vary. Your network configuration may consist of the same operating systems or platforms, or perhaps even
-different virtual operating system instances spread across different physical machines. Given the above, your
-network isn’t limited to these scenarios. Whichever configuration you choose be mindful of server performance,
-so your nodes can remain at their most optimal speed.
-
 [[high-availability-prepare]]
 === Preparing a Cluster for High Availability
 
-Preparing a high availability cluster requires you to:
+Before you begin, you should have a basic understanding of the required tools and softward to get your
+HA environment configured. Here’s a list of the most important things you should have:
 
-* Choose 
-* Configure three servers to establish the connection between the nodes by enabling high availability in each
-repository manager.
-* Join the nodes together by a common blob store path to maintain a shared storage for blobs, components,
-and assets.
-* Allow the first enabled node to complete the start-up sequence, then start the second and third nodes to
-form the cluster.
+* An installation of {pro} HA
+* If you are using an existing {pro} installation as the basis for your testing, upgrade your
+existing, pre-3.3 version of Nexus {pro} from the instructions in the support article
+* Install a load balancer, such as NGINX or Apache HTTP
+* Shared storage, for maintaining critical repository data shared among multiple nodes
 
 When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from the 'Nodes'
 screen located in 'System' from the 'Administration' menu.
@@ -130,12 +110,6 @@ To configure a new location for repository components to a location for shared b
 3. Choose a 'Name' and add a 'Path' from the 'Blob stores' screen, referencing the new directory you created.
 4. Click 'Create blob store'.
 
-If your existing repository manager points to local, non-HA configured blob store, 'default' or otherwise,
-follow the steps above.
-
-After the shared blob stores are configured, continue to point any new repositories you create to the shared
-location.
-
 ==== Example: Configuring a Shared Blob Store for a Cluster
 
 Let's say you create a new blob store called `data-location` and you want to point a hosted npm repository to
@@ -145,8 +119,8 @@ this location, for shared blob store access. Do the following:
 2. Pick the `data-location` blob store in the 'Storage' section of the 'Repositories' form.
 3. Click 'Create repository' to establish the new repository.
 
-When you <<high-availability-nodes,enable>> the cluster, the new repositories and their components and assets
-of the primary node are identically distributed to the second and third nodes.
+After the shared storage for blob stores is set up, continue to point all new repositories you create to the
+shared location.
 
 [[high-availability-nodes]]
 === Enabling High Availability
