@@ -5,30 +5,45 @@
 [[high-availability-introduction]]
 === Introduction
 
-High Availability (HA) for {nxrm} is designed to your repository manager's uptime. High availability
+High Availability (HA) for {nxrm} is designed to improve your repository manager's uptime. High availability
 distributes traffic across a cluster of repository managers (nodes), allowing horizontal scalability and
 reducing the need for a single instance of {nxrm}.
 
 {nxrm} HA supports a three-node active/active setup. As components are uploaded or modified, metadata about
-those components are immediately synchronized across the cluster.  Component binaries sit in a shared, on-disk
+those components are immediately synchronized across the cluster. Component binaries sit in a shared, on-disk
 blob store that is accessible to all three nodes.
 
-[[high-availability-nodes-cluster]]
-=== Nodes and Clustering
+This chapter guides you through the steps and best practices for creating a high availability solution with
+{nxrm}. Ultimately, the chapter explains how {nxrm} provides an appropriate solutions for environments that
+require high availability.
 
-An HA cluster is established when nodes communicate with each other and distribute the load of repository data
-and system configuration equally among themselves.
+[[high-availability-prepare]]
+=== Preparing a Cluster for High Availability
 
-Each instance of {pro} in an HA cluster is a node. You can run nodes on physical or virtual servers, Docker
-containers, or cloud services like <<high-availability-aws,AWS>>. To learn how to identify your nodes, review
-the <<nodes,Nodes>> section.
+Before you begin, you should have a basic understanding of the required tools and software to get your
+HA environment configured. Here’s a list of the most important things you should have:
 
-[[high-availability-quorum]]
-==== Required Node Count
+* An installation of {pro} HA
+** If you are existing {pro} installation as the basis for your testing, upgrade your existing, pre-3.3 version
+of Nexus {pro} from the instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[support article]
+* A load balancer, such as NGINX or Apache HTTP
+* Shared storage, for maintaining repository data shared among multiple nodes
 
-We require three nodes to form an HA cluster. This allows nodes to vote on each change that comes through the
-cluster, and reduces the probability of high availability failure. In the event a node does crash, your cluster
-won’t fail the entire load over to a single node.
+[[high-availability-expectations]]
+=== Expectations for an HA Environment
+
+A minimum of three nodes is required to form an HA cluster. This allows nodes to vote on each change that comes
+through the cluster, and reduces the probability of high availability failure. In the event a node does crash,
+your cluster won’t fail the entire load over to a single node.
+
+Each instance of {nxrm} in an HA cluster is a node. Those nodes can run on physical or virtual servers, Docker
+containers, or cloud services like <<high-availability-aws,AWS>>. Your network configuration may consist of at
+least three different operating system instances, or perhaps even different virtual operating system instances
+spread across different physical machines.
+
+Whichever combination of servers you choose configure each node to its own server to mitigate hardware failure.
+In addition that, the entire cluster must share the same network because of shared storage dependencies explained
+later.
 
 [[high-availability-replication]]
 ==== What Gets Replicated?
@@ -42,23 +57,10 @@ as well as system data and configuration.
 [[high-availability-system]]
 ==== Making a Cluster Highly Available
 
-When the nodes are synchronized all requests are distributed among the nodes, equally. Still, you must prepare
-your HA environment to mitigate any single points of failure. A load balancer, therefore, improves the distribution
-of workload across clusters in your HA environment. If one node goes down it redirects requests to all surviving
-nodes.
-
-[[high-availability-prepare]]
-=== Preparing a Cluster for High Availability
-
-Before you begin, you should have a basic understanding of the required tools and software to get your
-HA environment configured. Here’s a list of the most important things you should have:
-
-* an installation of {pro} HA
-* if you are using an existing {pro} installation as the basis for your testing, upgrade your
-existing, pre-3.3 version of Nexus {pro} from the instructions in the
-https://support.sonatype.com/hc/en-us/articles/231723267[support article]
-* a load balancer, such as NGINX or Apache HTTP
-* shared storage, for maintaining repository data shared among multiple nodes
+An HA cluster is established when nodes communicate with each other and distribute the load of repository
+data and system configuration equally among themselves. Still, you must prepare your HA environment to mitigate
+any single points of failure. A load balancer, therefore, improves the distribution of workload across clusters
+in your HA environment. If one node goes down it redirects traffic to all surviving nodes.
 
 [[high-availability-methods]]
 === Methods to Configure a Cluster
@@ -105,9 +107,6 @@ upgrade the repository manager to a version that supports high availability.
 6. <<high-availability-nodes,Enable>> high availability on the three nodes.
 7. Start the first node and wait for its start-up sequence to complete, then start the second and third
 nodes to form the cluster.
-
-In both scenarios the data from the first node is synchronized with the second and third nodes, so that if
-one node fails the other nodes in the cluster will maintain that data.
 
 [[high-availability-blob-store]]
 === Configuring a Node to Share a Blob Store
