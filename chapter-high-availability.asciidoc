@@ -17,8 +17,8 @@ This chapter guides you through the steps and best practices for creating a high
 {nxrm}. Ultimately, the chapter explains how {nxrm} provides an appropriate solutions for environments that
 require high availability.
 
-[[high-availability-prepare]]
-=== Preparing a Cluster for High Availability
+[[high-availability-requirements]]
+=== Expectations of an HA Environment
 
 Before you begin, you should have a basic understanding of the required tools and software to get your
 HA environment configured. Here’s a list of the most important things you should have:
@@ -29,8 +29,8 @@ of Nexus {pro} from the instructions in the https://support.sonatype.com/hc/en-u
 * A load balancer, such as NGINX or Apache HTTP
 * Shared storage, for maintaining repository data shared among multiple nodes
 
-[[high-availability-expectations]]
-=== Expectations for an HA Environment
+[[high-availability-prepare]]
+==== Preparing an HA Environment
 
 A minimum of three nodes is required to form an HA cluster. This allows nodes to vote on each change that comes
 through the cluster, and reduces the probability of high availability failure. In the event a node does crash,
@@ -42,8 +42,18 @@ least three different operating system instances, or perhaps even different virt
 spread across different physical machines.
 
 Whichever combination of servers you choose configure each node to its own server to mitigate hardware failure.
-In addition that, the entire cluster must share the same network because of shared storage dependencies explained
-later.
+In addition that, the entire cluster must share the same network because of shared storage dependencies
+explained later.
+
+[[high-availability-diagram]]
+==== Example of an HA Environment
+
+This is diagram highlights the key layers of an {nxrm} HA environment.
+
+[[fig-high-availability-architecture]]
+.Sample High Availability Environment
+image::figs/web/high-availability-architecture[scale=60]
+
 
 [[high-availability-replication]]
 ==== What Gets Replicated?
@@ -62,6 +72,28 @@ data and system configuration equally among themselves. Still, you must prepare 
 any single points of failure. A load balancer, therefore, improves the distribution of workload across clusters
 in your HA environment. If one node goes down it redirects traffic to all surviving nodes.
 
+[[high-availability-connection]]
+==== Losing a Node Connection
+
+In the event a single node loses connection to the cluster, the remaining nodes will continue to make decisions
+on which data changes are valid. The disconnected node will reject further writes until it can rejoin the cluster.
+
+If you run multiple nodes the 'Nodes' screen displays all synchronized nodes in the table. The client you use to
+view your local node (e.g. browser) will be listed as 'true'. View the table to monitor and verify server
+connections.
+
+[[high-availability-storage]]
+==== Storing Critical Data
+
+All instances of {pro}, new or existing, come with a 'default' <<admin-repository-blobstores,blob store>>.
+The default will not be shared with the additional nodes. So, for an HA environment you must configure all
+repositories in the first node to point to new, secure file system location where they share blob store
+access.
+
+Be mindful that configuring a single node to share an entire `sonatype-work` directory will undermine HA
+configuration, and cause it not to function. All elements of the system except the blob store needed for
+HA configuration should be distinct and not shared with `sonatype-work`.
+
 [[high-availability-methods]]
 === Methods to Configure a Cluster
 
@@ -74,14 +106,6 @@ Existing Instance of {pro} into a Cluster>>.
 When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from the 'Nodes'
 screen located in 'System' from the 'Administration' menu.
 
-[[high-availability-diagram]]
-=== Example of an HA Environment
-
-TBD
-
-////
-Insert diagram
-////
 
 [[high-availability-new]]
 ==== Using a Fresh Installation of {pro}
@@ -95,8 +119,8 @@ To prepare a fresh installation of {pro} for high availability:
 [[high-availability-existing]]
 ==== Converting an Existing Instance of {pro} into a Cluster
 
-If you have an earlier version of {pro} 3, you can convert it into a cluster. Follow the steps below to
-configure this non-HA-supported version so it's synchronized with the second and third nodes.
+If you have an existing version pre-HA installation of {pro} 3, you can convert it into a cluster. Follow the
+steps below to synchronize it with the second and third nodes.
 
 1. Stop running the existing repository manager.
 2. Follow the steps in the https://support.sonatype.com/hc/en-us/articles/231723267[support article] to
@@ -111,15 +135,6 @@ nodes to form the cluster.
 [[high-availability-blob-store]]
 === Configuring a Node to Share a Blob Store
 
-All instances of {pro}, new or existing, come with a 'default' <<admin-repository-blobstores,blob store>>.
-The default will not be shared with the additional nodes. So, for an HA environment you must configure all
-repositories in the first node to point to new, secure file system location where they share blob store
-access.
-
-Be mindful that configuring a single node to share an entire `sonatype-work` directory will undermine HA
-configuration, and cause it not to function. All elements of the system except the blob store needed for
-HA configuration should be distinct and not shared with `sonatype-work`.
-
 Instead, you only need to join the <<admin-repository-blobstores,blob stores>> together, where the nodes
 share access to components.
 
@@ -130,7 +145,7 @@ To configure a new location for repository components to a location for shared b
 3. Choose a 'Name' and add a 'Path' from the 'Blob stores' screen, referencing the new directory you created.
 4. Click 'Create blob store'.
 
-==== Example: Configuring a Shared Blob Store for a Cluster
+*Example: Configuring a Shared Blob Store for a Cluster*
 
 Let's say you create a new blob store called `data-location` and you want to point a hosted npm repository to
 this location, for shared blob store access. Do the following:
