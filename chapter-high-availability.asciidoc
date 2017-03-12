@@ -59,7 +59,11 @@ image::figs/web/high-availability-architecture[scale=60]
 ==== What Gets Replicated?
 
 Component binaries are stored as blobs, in either the default blob store, or in a blob store at a user-specified
-location. You will need to set up an external, shared blob store location that is accessible to all three nodes.
+location. You will need to set up an external, shared blob store location accessible to all three nodes.
+
+////
+NOTE to expand this section, link to backup/restore perhaps
+////
 
 Everything else is replicated through the embedded, clustered database, OrientDB. This includes component metadata,
 as well as system data and configuration.
@@ -84,6 +88,9 @@ connections.
 
 [[high-availability-storage]]
 ==== Storing Critical Data
+
+NOTE: As a best practice, use a remote external server to store your exported OrientDB database exports,
+blob stores, data directory, and any other custom configurations within the {nxrm} HA cluster.
 
 All instances of {pro}, new or existing, come with a 'default' <<admin-repository-blobstores,blob store>>.
 The default will not be shared with the additional nodes. So, for an HA environment you must configure all
@@ -127,7 +134,7 @@ steps below to synchronize it with the second and third nodes.
 upgrade the repository manager to a version that supports high availability.
 3. Download and unpack a new repository manager to establish a second node.
 4. Create a third instance by copying the second repository manager to establish a third node.
-5. Configure all three nodes to share the same the blob stores.
+5. Configure the blob store in the first node to an external location so the second and third can access it.
 6. <<high-availability-nodes,Enable>> high availability on the three nodes.
 7. Start the first node and wait for its start-up sequence to complete, then start the second and third
 nodes to form the cluster.
@@ -147,8 +154,8 @@ To configure a new location for repository components to a location for shared b
 
 *Example: Configuring a Shared Blob Store for a Cluster*
 
-Let's say you create a new blob store called `data-location` and you want to point a hosted npm repository to
-this location, for shared blob store access. Do the following:
+Let's say you create a new blob store in an external backup location (e.g. `data-location`) and you want
+to point a hosted npm repository to this location, for shared blob store access. Do the following:
 
 1. Select a recipe from the 'Repositories' form, i.e. 'npm (hosted)'
 2. Pick the `data-location` blob store in the 'Storage' section of the 'Repositories' form.
