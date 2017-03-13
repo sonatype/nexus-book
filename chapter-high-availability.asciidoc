@@ -13,9 +13,9 @@ reducing the need for a single instance of {nxrm}.
 those components are immediately synchronized across the cluster. Component binaries sit in a shared, on-disk
 blob store that is accessible to all three nodes.
 
-This chapter guides you through the steps and best practices for creating a high availability solution with
-{nxrm}. Ultimately, the chapter explains how {nxrm} provides an appropriate solutions for environments that
-require high availability.
+This chapter guides you through the a solution to synchronize all repository data, system, and custom
+configurations with the services provided by {nxrm}. Ultimately, the chapter explains how {nxrm} provides
+all appropriate steps to create an highly availability environment.
 
 [[high-availability-requirements]]
 === Requirements for an HA Environment
@@ -66,6 +66,9 @@ the nodes in the cluster.
 Everything else is replicated through the embedded, clustered database, OrientDB. This includes component metadata,
 as well as system data and configuration.
 
+NOTE: Some repository manager-level modifications won't synchronize across nodes. See <<high-availability-environment >>
+for details on what you need to configure on an individual node.
+
 [[high-availability-system]]
 ==== Making a Cluster Highly Available
 
@@ -83,24 +86,26 @@ on which data changes are valid. The disconnected node will reject further write
 From the user interface the most accessible way to view active nodes is from the 'Nodes' screen, in the
 'Adminstration' menu. It displays all synchronized nodes in a table. In this table, notice a distinguishable node
 listed as 'true'. The 'true' value indicates that you're viewing your local node from the client (e.g. browser).
-Conversely, all values listed as 'false' imply the additional, synchronized nodes that are configured to their
-own 
+Conversely, all values listed as 'false' imply the additional, synchronized nodes are configured to their
+own servers.
 
 [[high-availability-storage]]
 ==== Storing Critical Data
+
+NOTE: As a best practice, use a remote external server to store your exported databases, blob stores, data
+directory, and any other custom configurations within the {nxrm} HA cluster.
 
 The core of an HA environment is to have reliable, fault-tolerant storage. With this in mind, you must create
 and configure a location to store shared blob store data and your OrientDB databases.
 
 Normally, all instances of {nxrm} come with a 'default' <<admin-repository-blobstores,blob store>>. The default
 in the first node will not be shared with the additional nodes. Instead, utilize a shared storage network, create
-a new disk location within it, and then then configure all repositories and data in that node to point to the new
-location where they have common blob store access.
+a new external location within it, and then then configure all repositories and data in that node to point to the
+new location where they have common blob store access.
 
-Additionally, you must also prepare an external location to store the exported databases you with to back up and restore. See <<backup-preparation>> for details.
-
-NOTE: As a best practice, use a remote external server to store your exported databases, blob stores, data directory,
-and any other custom configurations within the {nxrm} HA cluster.
+Additionally, you must also prepare the external location to store the exported databases configured from a
+scheduled task in order to effectively back up its contents for the HA cluster. See <<backup-preparation>> for
+details.
 
 [[high-availability-methods]]
 === Methods to Configure a Cluster
@@ -113,7 +118,6 @@ Existing Instance of {pro} into a Cluster>>.
 
 When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from the 'Nodes'
 screen located in 'System' from the 'Administration' menu.
-
 
 [[high-availability-new]]
 ==== Using a Fresh Installation of {pro}
@@ -140,6 +144,15 @@ upgrade the repository manager to a version that supports high availability.
 6. <<high-availability-nodes,Enable>> high availability on the three nodes.
 7. Start the first node and wait for its start-up sequence to complete, then start the second and third
 nodes to form the cluster.
+
+[[high-availability-move]]
+==== Moving Blob Stores from an Existing Instance of {pro}
+
+As inferred in <<high-availability-storage>>, your node may contain blob stores created before initiating HA.
+As is, those blob stores and their data will not be replicated. So to preserve them with data intact, you must
+relocate them to the shared location planned for your HA environment. To do so, follow the steps in the
+https://support.sonatype.com/hc/en-us/articles/235816228[support article]. After completing the steps, refer
+to step 3 in <<high-availability-existing>> to complete HA set up.
 
 [[high-availability-blob-store]]
 ==== Configuring a Node to Share a Blob Store
@@ -306,7 +319,6 @@ opposed to the cluster) will be run at that time as well.
 [[high-availability-restore]]
 ==== Restoring your HA Cluster
 
-TBD
-////
-See HA restore ticket
-////
+Similar to the concepts outlined in <<backup>>, you can restore your a node with shared data in your HA environment.
+You are required to choose a node from which you desire to restore OrientDB database contents. Then, follow the steps
+in detail from <<backup-restore>>.
