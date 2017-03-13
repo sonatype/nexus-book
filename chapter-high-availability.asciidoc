@@ -10,12 +10,20 @@ distributes traffic across a cluster of repository managers (nodes), allowing ho
 reducing the need for a single instance of {nxrm}.
 
 {nxrm} HA supports a three-node active/active setup. As components are uploaded or modified, metadata about
-those components are immediately synchronized across the cluster. Component binaries sit in a shared, on-disk
-blob store that is accessible to all three nodes.
+those components are synchronized across the cluster. Component binaries sit in a shared, on-disk blob store
+that is accessible to all three nodes.
 
-This chapter guides you through the a solution to synchronize all repository data, system, and custom
-configurations with the services provided by {nxrm}. Ultimately, the chapter explains how {nxrm} provides
-all appropriate steps to create an highly availability environment.
+This chapter guides you through the procedures to synchronize all repository data, system, and custom
+configurations with the services provided by {nxrm}. Ultimately, the chapter explains you can use {nxrm}
+as a continuously operational, highly-available environment.
+
+[[high-availability-benefits]]
+=== Benefits of High Availability
+
+TBD (e.g. If you feel high availability is a solution your organization needs, consider the benefits:)
+////
+New section
+////
 
 [[high-availability-requirements]]
 === Requirements for an HA Environment
@@ -24,10 +32,22 @@ Before you begin, you should have a basic understanding of the required tools an
 HA environment configured. Here’s a list of the most important things you should have:
 
 * An installation of {pro} HA
-** If you have an existing {pro} installation, upgrade your existing, pre-3.3 version of Nexus {pro} from
-the instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[support article]
+** If you have an existing {pro} installation without HA upgrade to an HA-supported version of {pro}, from the
+instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[support article]
 * A load balancer, such as NGINX or Apache HTTP
 * Shared storage, for maintaining repository data shared among multiple nodes
+
+[[high-availability-node]]
+==== What is a Node?
+
+Each instance of {nxrm} in an HA cluster is a node. They are synchronized inside a cluster via a service called
+Hazelcast which provides in-memory computing for replicated data. Hazelcast can employ multicast to discover
+participating nodes though it can support node sychronization in other ways such as <<high-availability-aws,AWS>>
+also covered in this chapter.
+
+All participating nodes require a unique port address in order to form the HA cluster. When unique hostnames are
+assigned and high availabiity is enabled, synchronization occurs, as explained in  <<high-availability-system>>.
+Since this is a requirement, learn the details about changing port address in <<config-http-port>>. 
 
 [[high-availability-prepare]]
 ==== Preparing an HA Environment
@@ -36,10 +56,9 @@ A minimum of three nodes is required to form an HA cluster. This allows nodes to
 through the cluster, and reduces the probability of high availability failure. In the event a node does crash,
 your cluster won’t fail the entire load over to a single node.
 
-Each instance of {nxrm} in an HA cluster is a node. Those nodes can run on physical or virtual servers, Docker
-containers, or cloud services like <<high-availability-aws,AWS>>. Your network configuration may consist of at
-least three different operating system instances, or perhaps even different virtual operating system instances
-spread across different physical machines.
+Nodes can run on physical or virtual servers, Docker containers, or cloud services like <<high-availability-aws,AWS>>.
+Your network configuration may consist of at least three different operating system instances, or perhaps even
+different virtual operating system instances spread across different physical machines.
 
 Whichever combination of servers you choose, configure each node to its own server to mitigate hardware failure.
 In addition to that, the entire cluster must share the same network because of shared storage dependencies
@@ -48,15 +67,15 @@ explained in <<high-availability-storage >>.
 [[high-availability-diagram]]
 ==== Example of an HA Environment
 
-This is an example of {nxrm} HA's key layers. The depiction shows the discovery of enabled nodes via Hazelcast
+This is an example of {nxrm} HA's key layers. The diagram shows the discovery of enabled nodes via Hazelcast
 and distribution of traffic passing through a load balancer to the nodes.
 
 [[fig-high-availability-architecture]]
 .Sample High Availability Environment
 image::figs/web/high-availability-architecture[scale=60]
 
-As stated in <<high-availability-storage>>, you must to provide your own shared memory and network configuration
-to host shared data, such as blob stores and exported database content.
+As stated in <<high-availability-storage>>, you must to provide your own shared memory to  host shared data,
+such as blob stores and exported database content.
 
 [[high-availability-replication]]
 ==== What Gets Replicated?
@@ -101,9 +120,10 @@ directory, and any other custom configurations within the {nxrm} HA cluster.
 The core of an HA environment is to have reliable, fault-tolerant storage. With this in mind, you must create
 and configure a location to store shared blob store data and your OrientDB databases.
 
-Normally, all instances of {nxrm} come with a 'default' <<admin-repository-blobstores,blob store>>. The default
-in the first node will not be shared with the additional nodes. Instead, utilize a shared storage network, create
-a new external location within it, and then then configure all repositories and data in that node to point to the
+Normally, all instances of {nxrm} come with a 'default' <<admin-repository-blobstores,blob store>>. The 'default'
+blob store in the first node will not be shared with the additional nodes unless configured to a new location,
+as explained in <<high-availability-move>>. With this mind, you must utilize a shared storage network, create
+a new external location within it, and then configure all repositories and data in that node to point to the
 new location where they have common blob store access.
 
 Additionally, you must also prepare the external location to store the exported databases configured from a
