@@ -18,21 +18,21 @@ This chapter guides you through the steps and best practices for creating a high
 require high availability.
 
 [[high-availability-requirements]]
-=== Expectations of an HA Environment
+=== Requirements for an HA Environment
 
 Before you begin, you should have a basic understanding of the required tools and software to get your
 HA environment configured. Here’s a list of the most important things you should have:
 
 * An installation of {pro} HA
-** If you are existing {pro} installation as the basis for your testing, upgrade your existing, pre-3.3 version
-of Nexus {pro} from the instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[support article]
+** If you have an existing {pro} installation, upgrade your existing, pre-3.3 version of Nexus {pro} from
+the instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[support article]
 * A load balancer, such as NGINX or Apache HTTP
 * Shared storage, for maintaining repository data shared among multiple nodes
 
 [[high-availability-prepare]]
 ==== Preparing an HA Environment
 
-A minimum of three nodes is required to form an HA cluster. This allows nodes to vote on each change that comes
+A minimum of three nodes is required to form an HA cluster. This allows nodes to vote on each change that passes
 through the cluster, and reduces the probability of high availability failure. In the event a node does crash,
 your cluster won’t fail the entire load over to a single node.
 
@@ -41,9 +41,9 @@ containers, or cloud services like <<high-availability-aws,AWS>>. Your network c
 least three different operating system instances, or perhaps even different virtual operating system instances
 spread across different physical machines.
 
-Whichever combination of servers you choose configure each node to its own server to mitigate hardware failure.
-In addition that, the entire cluster must share the same network because of shared storage dependencies
-explained later.
+Whichever combination of servers you choose, configure each node to its own server to mitigate hardware failure.
+In addition to that, the entire cluster must share the same network because of shared storage dependencies
+explained in <<high-availability-storage >>.
 
 [[high-availability-diagram]]
 ==== Example of an HA Environment
@@ -59,11 +59,9 @@ image::figs/web/high-availability-architecture[scale=60]
 ==== What Gets Replicated?
 
 Component binaries are stored as blobs, in either the default blob store, or in a blob store at a user-specified
-location. You will need to set up an external, shared blob store location accessible to all three nodes.
-
-////
-NOTE to expand this section, link to backup/restore perhaps
-////
+location. As mentioned in <<high-availability-blob-store>> you will need to set up an external, shared blob store
+location accessible to all three nodes. After configuration, all repositories and data gets synchronized across
+the nodes in the cluster.
 
 Everything else is replicated through the embedded, clustered database, OrientDB. This includes component metadata,
 as well as system data and configuration.
@@ -77,29 +75,32 @@ any single points of failure. A load balancer, therefore, improves the distribut
 in your HA environment. If one node goes down it redirects traffic to all surviving nodes.
 
 [[high-availability-connection]]
-==== Losing a Node Connection
+==== Monitoring Node Connections
 
 In the event a single node loses connection to the cluster, the remaining nodes will continue to make decisions
-on which data changes are valid. The disconnected node will reject further writes until it can rejoin the cluster.
+on which data changes are valid. The disconnected node will reject further writes until it rejoins the cluster.
 
-If you run multiple nodes the 'Nodes' screen displays all synchronized nodes in the table. The client you use to
-view your local node (e.g. browser) will be listed as 'true'. View the table to monitor and verify server
-connections.
+From the user interface the most accessible way to view active nodes is from the 'Nodes' screen, in the
+'Adminstration' menu. It displays all synchronized nodes in a table. In this table, notice a distinguishable node
+listed as 'true'. The 'true' value indicates that you're viewing your local node from the client (e.g. browser).
+Conversely, all values listed as 'false' imply the additional, synchronized nodes that are configured to their
+own 
 
 [[high-availability-storage]]
 ==== Storing Critical Data
 
-NOTE: As a best practice, use a remote external server to store your exported OrientDB database exports,
-blob stores, data directory, and any other custom configurations within the {nxrm} HA cluster.
+The core of an HA environment is to have reliable, fault-tolerant storage. With this in mind, you must create
+and configure a location to store shared blob store data and your OrientDB databases.
 
-All instances of {pro}, new or existing, come with a 'default' <<admin-repository-blobstores,blob store>>.
-The default will not be shared with the additional nodes. So, for an HA environment you must configure all
-repositories in the first node to point to new, secure file system location where they share blob store
-access.
+Normally, all instances of {nxrm} come with a 'default' <<admin-repository-blobstores,blob store>>. The default
+in the first node will not be shared with the additional nodes. Instead, utilize a shared storage network, create
+a new disk location within it, and then then configure all repositories and data in that node to point to the new
+location where they have common blob store access.
 
-Be mindful that configuring a single node to share an entire `sonatype-work` directory will undermine HA
-configuration, and cause it not to function. All elements of the system except the blob store needed for
-HA configuration should be distinct and not shared with `sonatype-work`.
+Additionally, you must also prepare an external location to store the exported databases you with to back up and restore. See <<backup-preparation>> for details.
+
+NOTE: As a best practice, use a remote external server to store your exported databases, blob stores, data directory,
+and any other custom configurations within the {nxrm} HA cluster.
 
 [[high-availability-methods]]
 === Methods to Configure a Cluster
@@ -117,11 +118,12 @@ screen located in 'System' from the 'Administration' menu.
 [[high-availability-new]]
 ==== Using a Fresh Installation of {pro}
 
-To prepare a fresh installation of {pro} for high availability:
+To set up a fresh installation of {pro} for high availability:
 
 1. Download {pro}, supported with high availability.
 2. Install two additional {pro} instances on different hosts to establish three nodes.
-3. Configure all three nodes to use the same <<admin-repository-blobstores,blob store>> path.
+3. Configure the blob store in the first node to an external location where the second and third nodes can
+access it.
 
 [[high-availability-existing]]
 ==== Converting an Existing Instance of {pro} into a Cluster
@@ -134,7 +136,7 @@ steps below to synchronize it with the second and third nodes.
 upgrade the repository manager to a version that supports high availability.
 3. Download and unpack a new repository manager to establish a second node.
 4. Create a third instance by copying the second repository manager to establish a third node.
-5. Configure the blob store in the first node to an external location so the second and third can access it.
+5. Configure the blob store in the first node to an external location where the second and third can access it.
 6. <<high-availability-nodes,Enable>> high availability on the three nodes.
 7. Start the first node and wait for its start-up sequence to complete, then start the second and third
 nodes to form the cluster.
@@ -142,12 +144,13 @@ nodes to form the cluster.
 [[high-availability-blob-store]]
 ==== Configuring a Node to Share a Blob Store
 
-Instead, you only need to join the <<admin-repository-blobstores,blob stores>> together, where the nodes
-share access to components.
+NOTE: Configuring a single node to share an entire `sonatype-work` directory will undermine HA configuration,
+and might cause functional errors in the cluster. As mentioned in <<high-availability-storage >>, configure
+the nodes to share access to components, instead.
 
-To configure a new location for repository components to a location for shared blob store access:
+To configure a node to shares blob store access among equal nodes:
 
-1. Create a directory outside of the application directory.
+1. Create a directory in an external location.
 2. Start your primary repository manager.
 3. Choose a 'Name' and add a 'Path' from the 'Blob stores' screen, referencing the new directory you created.
 4. Click 'Create blob store'.
@@ -213,7 +216,7 @@ See <<nodes>> for details on viewing active nodes in a cluster.
 ==== Configuring a Cluster after Setup
 
 Once you have your high availability environment set up, be aware that almost all configuration done via the 
-user interface is shared among all nodes in the cluster. In an HA cluster all nodes are all treated equally.
+user interface is shared among all nodes in the cluster. In an HA cluster all nodes are treated equally.
 For example, if you create a new repository all nodes in the cluster will be able to see it and utilize it.
 Or if you want to change your 'Email Server' port you just need to do it once via the user interface on any
 of the servers and the change will share.
@@ -231,11 +234,6 @@ server. These include:
 - 'Metrics' displayed are for the individual server
 - A 'Support ZIP' is for the individual server. If you have issues forming a cluster, consult your support
 technician and provide support zips for all nodes.
-- 'Analytics' events are per server
-- 'Audit' events are per server
-////
-last 2 should be changing with NEXUS-10489
-////
 
 TIP: Scheduled tasks will run against one node unless the 'Multi node' configuration option is selected or the 
 task affects something that is in itself shared (like compaction of blob stores).
@@ -297,7 +295,7 @@ Backup for HA uses the same concepts as outlined in <<backup>>. The notable exce
 'Export configuration & metadata for backup' scheduled task you must choose a node for the backup to run against. 
 Since these nodes are sharing the same data, in most cases your selection should not matter.
 
-Running the same scheduled task against the same node over and over does provide assurances that your files are 
+Running the same scheduled task against the same node over and over does provide assurance that your files are 
 backed up in the same place continuously.
 
 While the scheduled task runs, the node configured against becomes read only. During this time, the other nodes 
