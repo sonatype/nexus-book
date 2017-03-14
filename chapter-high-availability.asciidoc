@@ -9,22 +9,22 @@ High Availability (HA) for {nxrm} is designed to improve your repository manager
 distributes traffic across a cluster of nodes, allowing horizontal scalability and reducing the need for a
 single instance of {nxrm}.
 
-{nxrm} HA supports a three-node active/active setup. As components are uploaded or modified, metadata about
-those components are synchronized across the cluster. Component binaries sit in a shared, on-disk blob store
-that is accessible to all three nodes.
-
 This chapter guides you through the procedures to synchronize all repository data, system, and custom
-configurations with the services provided by {nxrm}. Ultimately, the chapter explains you can use {nxrm}
+configurations with the services provided by {nxrm}. Ultimately, the chapter explains how you can use {nxrm}
 as a continuously operational, highly-available environment.
 
 [[high-availability-benefits]]
 === Benefits of High Availability
 
-{nxrm} HA can be a critical solution to managing assessible data even in the case of hardware failure.
-If you feel high availability meets your organization's needs, consider its benefits:
+{nxrm} HA is a tool for maintaining access to mission critical services even in the case of hardware failure.
+If you desire high availability for your organization you should assess and evaluate your current system
+architecture and configurations before optimizing your ecosystem with {nxrm} HA.
 
-* allocation of traffic to nodes dynamically
-* compensation of data loss via node clustering
+On the other hand, if you feel this feature meets your organization's needs, consider its benefits:
+
+* prevention of data loss via node clustering
+* consistent view of node health across all nodes
+* active/active network architecture where all node have write-access
 * mimimal uninterrupted use of HA servers
 
 [[high-availability-requirements]]
@@ -39,27 +39,34 @@ instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[sup
 * A load balancer, such as NGINX or Apache HTTP
 * Shared storage, for maintaining repository data shared among multiple nodes
 
+////
 [[high-availability-node]]
 ==== What is a Node?
 
-Each instance of {nxrm} in an HA cluster is a node. They are synchronized inside a cluster via a service called
-Hazelcast which provides in-memory computing for replicated data. Hazelcast can employ multicast to discover
+Each instance of {nxrm} in an HA cluster is a node.
+
+
+They are synchronized inside a cluster via a service called Hazelcast which provides the infrastructure for
+replicated data. Hazelcast can employ multicast to discover
 participating nodes though it can support node sychronization in other ways such as <<high-availability-aws,AWS>>
 also covered in this chapter.
+////
 
 [[high-availability-prepare]]
 ==== Preparing an HA Environment
 
 A minimum of three nodes is required to form an HA cluster. This allows nodes to vote on each change that passes
-through the cluster, and reduces the probability of high availability failure. In the event a node does crash,
-your cluster won’t fail the entire load over to a single node.
+through the cluster, and reduces the probability of node failure. As components are uploaded or modified, metadata
+about those components are synchronized across the cluster. Component binaries sit in a shared, on-disk blob store
+accessible to all three nodes.
 
 Nodes can run on physical or virtual servers, Docker containers, or cloud services like <<high-availability-aws,AWS>>.
 Your network configuration may consist of at least three different operating system instances, or perhaps even
 different virtual operating system instances spread across different physical machines.
 
-Whichever combination of servers you choose, each node must be assigned its own host address. The cluster itself
-must share the same network due to shared storage dependencies explained in <<high-availability-storage >>.
+Whichever combination of servers you choose, each node must be visible to each other so the cluster can form.
+In the cluster itself, the nodes must share the same network so that latency doesn't negatively impact
+performance.
 
 [[high-availability-diagram]]
 ==== Example of an HA Environment
@@ -71,16 +78,23 @@ and distribution of traffic passing through a load balancer to the nodes.
 .Sample High Availability Environment
 image::figs/web/high-availability-architecture[scale=60]
 
-As stated in <<high-availability-storage>>, you must to provide your own shared memory to host shared data,
+As stated in <<high-availability-storage>>, you must to provide your own shared storage to host shared data,
 such as blob stores and exported database content.
+
+[[high-availability-network]]
+==== Supported Network Architecture
+
+{nxrm} HA supports a three-node active/active setup. Unlike an active/passive architecture where only one
+node allow writes or active/standby where a backup stays offline until needed, {nxrm} HA permits write-access
+to all nodes.
 
 [[high-availability-replication]]
 ==== What Gets Replicated?
 
-Component binaries are stored as blobs, in either the default blob store, or in a blob store at a user-specified
-location. As mentioned in <<high-availability-blob-store>> you will need to set up an external, shared blob store
-location accessible to all three nodes. After configuration, all repositories and data gets synchronized across
-the nodes in the cluster.
+Component binaries are stored as blobs, in a user-specified blob store location. As mentioned in
+<<high-availability-blob-store>> you will need to set up an external, shared blob store location accessible
+to all three nodes. After configuration, all repositories and data gets synchronized across the nodes in the
+cluster.
 
 Everything else is replicated through the embedded, clustered database, OrientDB. This includes component metadata,
 as well as system data and configuration.
@@ -103,7 +117,7 @@ In the event a single node loses connection to the cluster, the remaining nodes 
 on which data changes are valid. The disconnected node will reject further writes until it rejoins the cluster.
 
 From the user interface the most accessible way to view active nodes is from the 'Nodes' screen, in the
-'Adminstration' menu. It displays all synchronized nodes in a table. In this table, notice a distinguishable node
+'Adminstration' menu. It displays all clustered nodes in a table. In this table, notice a distinguishable node
 listed as 'true'. The 'true' value indicates that you're viewing your local node from the client (e.g. browser).
 Conversely, all values listed as 'false' imply the additional, synchronized nodes are configured to their
 own servers.
@@ -114,18 +128,14 @@ own servers.
 NOTE: As a best practice, use a remote external server to store your exported databases, blob stores, data
 directory, and any other custom configurations within the {nxrm} HA cluster.
 
-The core of an HA environment is to have reliable, fault-tolerant storage. With this in mind, you must create
-and configure a location to store shared blob store data and your OrientDB databases.
+The core of an HA environment is to have reliable, fault-tolerant storage. The solution is to utilize a shared
+storage network to maintain repository data and configurations. To do this:
 
-Normally, all instances of {nxrm} come with a 'default' <<admin-repository-blobstores,blob store>>. The 'default'
-blob store in the first node will not be shared with the additional nodes unless configured to a new location,
-as explained in <<high-availability-move>>. With this mind, you must utilize a shared storage network, create
-a new external location within it, and then configure all repositories and data in that node to point to the
-new location where they have common blob store access.
+* create a storage location for each node, including their data directories and exported databases
+* create a storage location where all nodes can shared component binary information as a common blob store access
+point.
 
-Additionally, you must also prepare the external location to store the exported databases configured from a
-scheduled task in order to effectively back up its contents for the HA cluster. See <<backup-preparation>> for
-details.
+All aforementioned data can be stored to the same external location.
 
 [[high-availability-methods]]
 === Methods to Configure a Cluster
