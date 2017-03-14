@@ -37,20 +37,14 @@ HA environment configured. Here’s a list of the most important things you shou
 ** If you have an existing {pro} installation without HA upgrade to an HA-supported version of {pro}, from the
 instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[support article]
 * A load balancer, such as NGINX or Apache HTTP
-* Shared storage, for maintaining repository data shared among multiple nodes
+* Shared storage, for maintaining repository data shared among the nodes.
 
-////
 [[high-availability-node]]
 ==== What is a Node?
 
-Each instance of {nxrm} in an HA cluster is a node.
-
-
-They are synchronized inside a cluster via a service called Hazelcast which provides the infrastructure for
-replicated data. Hazelcast can employ multicast to discover
-participating nodes though it can support node sychronization in other ways such as <<high-availability-aws,AWS>>
-also covered in this chapter.
-////
+Each instance of {nxrm} in an HA cluster is a node. Nodes participating in a cluster discover each other via
+a service called Hazelcast. All data with nodes are replicated through OrientDB. This includes component metadata,
+as well as system data and configuration.
 
 [[high-availability-prepare]]
 ==== Preparing an HA Environment
@@ -88,6 +82,7 @@ such as blob stores and exported database content.
 node allow writes or active/standby where a backup stays offline until needed, {nxrm} HA permits write-access
 to all nodes.
 
+////
 [[high-availability-replication]]
 ==== What Gets Replicated?
 
@@ -96,11 +91,9 @@ Component binaries are stored as blobs, in a user-specified blob store location.
 to all three nodes. After configuration, all repositories and data gets synchronized across the nodes in the
 cluster.
 
-Everything else is replicated through the embedded, clustered database, OrientDB. This includes component metadata,
-as well as system data and configuration.
-
 NOTE: Some repository manager-level modifications won't synchronize across nodes. See <<high-availability-environment >>
 for details on what's needed to properly configure an individual node for HA.
+////
 
 [[high-availability-system]]
 ==== Making a Cluster Highly Available
@@ -334,9 +327,6 @@ backed up independently.
 Backup for HA uses the same concepts as outlined in <<backup>>. The notable exception is that when creating your 
 'Export configuration & metadata for backup' scheduled task you must choose a node for the backup to run against. 
 Since these nodes are sharing the same data, in most cases your selection should not matter.
-
-Running the same scheduled task against the same node over and over does provide assurance that your files are 
-backed up in the same place continuously.
 
 While the scheduled task runs, the node configured against becomes read only. During this time, the other nodes 
 in the cluster function as normal. When the backup is complete, the node picks up any changes made to the cluster 
