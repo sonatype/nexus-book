@@ -34,8 +34,8 @@ Before you begin, you should have a basic understanding of the required tools an
 HA environment configured. Here’s a list of the most important things you should have:
 
 * An installation of {pro} HA
-** If you have an existing {pro} installation without HA upgrade to an HA-supported version of {pro}, from the
-instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[support article]
+** If you have an existing {pro} installation without HA upgrade to an HA-supported version of {pro}, from
+the instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[support article]
 * A load balancer, such as NGINX or Apache HTTP
 * Shared storage, for maintaining repository data shared among the nodes.
 
@@ -43,16 +43,16 @@ instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[sup
 ==== What is a Node?
 
 Each instance of {nxrm} in an HA cluster is a node. Nodes participating in a cluster discover each other via
-a service called Hazelcast. All data with nodes are replicated through OrientDB. This includes component metadata,
-as well as system data and configuration.
+a service called Hazelcast. All data within nodes are replicated through OrientDB. This includes component
+metadata, as well as system data and configuration.
 
 [[high-availability-prepare]]
 ==== Preparing an HA Environment
 
 A minimum of three nodes is required to form an HA cluster. This allows nodes to vote on each change that passes
 through the cluster, and reduces the probability of node failure. As components are uploaded or modified, metadata
-about those components are synchronized across the cluster. Component binaries sit in a shared, on-disk blob store
-accessible to all three nodes.
+about those components are synchronized across the cluster. Component binaries sit in a shared, on-disk blob
+store accessible to all three nodes.
 
 Nodes can run on physical or virtual servers, Docker containers, or cloud services like <<high-availability-aws,AWS>>.
 Your network configuration may consist of at least three different operating system instances, or perhaps even
@@ -70,7 +70,7 @@ and distribution of traffic passing through a load balancer to the nodes.
 
 [[fig-high-availability-architecture]]
 .Sample High Availability Environment
-image::figs/web/high-availability-architecture[scale=60]
+image::figs/web/high-availability-architecture[scale=50]
 
 As stated in <<high-availability-storage>>, you must to provide your own shared storage to host shared data,
 such as blob stores and exported database content.
@@ -118,9 +118,6 @@ own servers.
 [[high-availability-storage]]
 ==== Storing Critical Data
 
-NOTE: As a best practice, use a remote external server to store your exported databases, blob stores, data
-directory, and any other custom configurations within the {nxrm} HA cluster.
-
 The core of an HA environment is to have reliable, fault-tolerant storage. The solution is to utilize a shared
 storage network to maintain repository data and configurations. To do this:
 
@@ -136,9 +133,6 @@ When you're ready to set up a cluster, consider these two methods:
 * If you're setting up a new cluster, skip to <<high-availability-new,Using a Fresh Installation of {pro}>>.
 * If you're converting an existing server into a cluster, skip to <<high-availability-existing,Converting an
 Existing Instance of {pro} into a Cluster>>.
-
-When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from the 'Nodes'
-screen located in 'System' from the 'Administration' menu.
 
 [[high-availability-new]]
 ==== Using a Fresh Installation of {pro}
