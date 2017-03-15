@@ -5,95 +5,207 @@
 [[high-availability-introduction]]
 === Introduction
 
-{nxrm}'s high availability (HA) feature provides a more fail-safe repository manager, minimizing downtime, and 
-reducing points of system failure.
+High Availability (HA) for {nxrm} is designed to improve your repository manager's uptime. High availability
+distributes traffic across a cluster of nodes, allowing horizontal scalability and reducing the need for a
+single instance of {nxrm}.
 
-This chapter covers the benefits and steps needed to implement high availability clusters. Clustering sets the 
-standard for automating the process of continuous uptime, relieving teams of manual recovery techniques, and 
-creating a binary storage for the entire suite of features and components available in your repository managers.
+This chapter guides you through the procedures to synchronize all repository data, system, and custom
+configurations with the services provided by {nxrm}. Ultimately, the chapter explains how you can use {nxrm}
+as a continuously operational, highly-available environment.
+
+[[high-availability-benefits]]
+=== Benefits of High Availability
+
+{nxrm} HA is a tool for maintaining access to mission critical services even in the case of hardware failure.
+If you desire high availability for your organization you should assess and evaluate your current system
+architecture and configurations before optimizing your ecosystem with {nxrm} HA.
+
+On the other hand, if you feel this feature meets your organization's needs, consider its benefits:
+
+* prevention of data loss via node clustering
+* consistent view of node health across all nodes
+* active/active network architecture where all node have write-access
+* mimimal uninterrupted use of HA servers
+
+[[high-availability-requirements]]
+=== Requirements for an HA Environment
+
+Before you begin, you should have a basic understanding of the required tools and software to get your
+HA environment configured. Here’s a list of the most important things you should have:
+
+* An installation of {pro} HA
+** If you have an existing {pro} installation without HA upgrade to an HA-supported version of {pro}, from
+the instructions in the https://support.sonatype.com/hc/en-us/articles/231723267[support article]
+* A load balancer, such as NGINX or Apache HTTP
+* Shared storage, for maintaining repository data shared among the nodes.
+
+[[high-availability-node]]
+==== What is a Node?
+
+Each instance of {nxrm} in an HA cluster is a node. Nodes participating in a cluster discover each other via
+a service called Hazelcast. All data within nodes are replicated through OrientDB. This includes component
+metadata, as well as system data and configuration.
 
 [[high-availability-prepare]]
-=== Preparing a Cluster for High Availability
+==== Preparing an HA Environment
 
-In {pro}, there are two ways you can implement HA. In the scenarios below you join three nodes to meet the minimum
-requirement for redundancy. A cluster, which contains three redundant nodes, acts as one transparent instance.
+A minimum of three nodes is required to form an HA cluster. This allows nodes to vote on each change that passes
+through the cluster, and reduces the probability of node failure. As components are uploaded or modified, metadata
+about those components are synchronized across the cluster. Component binaries sit in a shared, on-disk blob
+store accessible to all three nodes.
 
-Clustering requires you to:
+Nodes can run on physical or virtual servers, Docker containers, or cloud services like <<high-availability-aws,AWS>>.
+Your network configuration may consist of at least three different operating system instances, or perhaps even
+different virtual operating system instances spread across different physical machines.
 
-1. Configure three servers to establish the connection between the nodes by enabling HA in each repository manager.
-2. Join the nodes together by a common blob store path to maintain a shared storage for blobs, components and assets.
-3. Allow the first enabled node to complete the start-up sequence, then start the second and third nodes to form the
+Whichever combination of servers you choose, each node must be visible to each other so the cluster can form.
+In the cluster itself, the nodes must share the same network so that latency doesn't negatively impact
+performance.
+
+[[high-availability-diagram]]
+==== Example of an HA Environment
+
+This is an example of {nxrm} HA's key layers. The diagram shows the discovery of enabled nodes via Hazelcast
+and distribution of traffic passing through a load balancer to the nodes.
+
+[[fig-high-availability-architecture]]
+.Sample High Availability Environment
+image::figs/web/high-availability-architecture[scale=50]
+
+As stated in <<high-availability-storage>>, you must to provide your own shared storage to host shared data,
+such as blob stores and exported database content.
+
+[[high-availability-network]]
+==== Supported Network Architecture
+
+{nxrm} HA supports a three-node active/active setup. Unlike an active/passive architecture where only one
+node allow writes or active/standby where a backup stays offline until needed, {nxrm} HA permits write-access
+to all nodes.
+
+////
+[[high-availability-replication]]
+==== What Gets Replicated?
+
+Component binaries are stored as blobs, in a user-specified blob store location. As mentioned in
+<<high-availability-blob-store>> you will need to set up an external, shared blob store location accessible
+to all three nodes. After configuration, all repositories and data gets synchronized across the nodes in the
 cluster.
 
-When the cluster is formed you can <<high-availability-verify,verify node synchronization>> from the administration
-menu.
+NOTE: Some repository manager-level modifications won't synchronize across nodes. See <<high-availability-environment >>
+for details on what's needed to properly configure an individual node for HA.
+////
 
-You can implement this by the following methods:
+[[high-availability-system]]
+==== Making a Cluster Highly Available
 
-* Start with a fresh installation of {pro} that includes high availability.
-* Upgrade an older version of {pro} 3 to a version that supports high availability.
+An HA cluster is established when nodes communicate with each other and distribute the load of repository
+data and system configuration equally among themselves. Still, you must prepare your HA environment to mitigate
+any single points of failure. A load balancer, therefore, improves the distribution of workload across clusters
+in your HA environment. If one node goes down it redirects traffic to all surviving nodes.
 
-When the cluster is established the nodes communicate with each other to create continuous uptime and the assurance
-that if one fails, the other nodes can be used.
+[[high-availability-connection]]
+==== Monitoring Node Connections
 
-[[high-availability-servers]]
-=== Supported Servers for High Availability
+In the event a single node loses connection to the cluster, the remaining nodes will continue to make decisions
+on which data changes are valid. The disconnected node will reject further writes until it rejoins the cluster.
 
-There are three supported infrastructures you can consider for managing an HA cluster. You can install them across
-a mix of the following environments:
+From the user interface the most accessible way to view active nodes is from the 'Nodes' screen, in the
+'Adminstration' menu. It displays all clustered nodes in a table. In this table, notice a distinguishable node
+listed as 'true'. The 'true' value indicates that you're viewing your local node from the client (e.g. browser).
+Conversely, all values listed as 'false' imply the additional, synchronized nodes are configured to their
+own servers.
 
-- physical servers
-- virtual machines
-- Docker instances
+[[high-availability-storage]]
+==== Storing Critical Data
 
-[[high-availability-install]]
-=== Installing {pro} for High Availability
+The core of an HA environment is to have reliable, fault-tolerant storage. The solution is to utilize a shared
+storage network to maintain repository data and configurations. To do this:
 
-Whether you use a fresh installation or upgrade a non-HA-supported version of {pro} to form a cluster, you
-need to run the additional nodes on different hosts. Follow the appropriate scenario in this section. 
+* create a storage location for each node, including their data directories and exported databases
+* create a storage location where all nodes can shared component binary information as a common blob store access
+point.
 
+[[high-availability-methods]]
+=== Methods to Configure a Cluster
+
+When you're ready to set up a cluster, consider these two methods:
+
+* If you're setting up a new cluster, skip to <<high-availability-new,Using a Fresh Installation of {pro}>>.
+* If you're converting an existing server into a cluster, skip to <<high-availability-existing,Converting an
+Existing Instance of {pro} into a Cluster>>.
+
+[[high-availability-new]]
 ==== Using a Fresh Installation of {pro}
 
-To prepare a fresh installation of {pro} for high availability
+To set up a fresh installation of {pro} for high availability:
 
 1. Download {pro}, supported with high availability.
 2. Install two additional {pro} instances on different hosts to establish three nodes.
-3. Configure all three nodes to use the same <<admin-repository-blobstores,blob store>> path.
+3. Configure the blob store in the first node to an external location where the second and third nodes can
+access it.
 
+[[high-availability-existing]]
 ==== Converting an Existing Instance of {pro} into a Cluster
 
-If you have an earlier version of {pro} 3, you can convert it into a cluster. Follow the steps below to
-configure this non-HA-supported version so it's synchronized with the second and third nodes.
+If you have an existing version pre-HA installation of {pro} 3, you can convert it into a cluster. Follow the
+steps below to synchronize it with the second and third nodes.
 
 1. Stop running the existing repository manager.
 2. Follow the steps in the https://support.sonatype.com/hc/en-us/articles/231723267[support article] to
 upgrade the repository manager to a version that supports high availability.
 3. Download and unpack a new repository manager to establish a second node.
 4. Create a third instance by copying the second repository manager to establish a third node.
-5. Configure all three nodes to share the same the blob stores.
+5. Configure the blob store in the first node to an external location where the second and third can access it.
 6. <<high-availability-nodes,Enable>> high availability on the three nodes.
 7. Start the first node and wait for its start-up sequence to complete, then start the second and third
 nodes to form the cluster.
 
-In both scenarios the data from the first node is synchronized with the second and third nodes, so that if
-one node fails the other nodes in the cluster will maintain that data.
+[[high-availability-move]]
+==== Moving Blob Stores from an Existing Instance of {pro}
+
+As inferred in <<high-availability-storage>>, your node may contain blob stores created before initiating HA.
+As is, those blob stores and their data will not be replicated. So to preserve them with data intact, you must
+relocate them to the shared location planned for your HA environment. To do so, follow the steps in the
+https://support.sonatype.com/hc/en-us/articles/235816228[support article]. After completing the steps, refer
+to step 3 in <<high-availability-existing>> to complete HA set up.
 
 [[high-availability-blob-store]]
-=== Configuring Nodes to Share the Same Blob Stores
+==== Configuring a Node to Share a Blob Store
 
-Regardless of the method you choose to enable high availability, be mindful that configuring your nodes to
-share an entire data directory will undermine HA configuration, and cause it not to function. All elements
-of the system except the blob stores should be distinct and not shared.
+NOTE: Configuring a single node to share an entire `sonatype-work` directory will undermine HA configuration,
+and might cause functional errors in the cluster. As mentioned in <<high-availability-storage >>, configure
+the nodes to share access to components, instead.
 
-Instead, you only need to join the <<admin-repository-blobstores,blob stores>> together, where the nodes
-share access to components.
+To configure a single node sharing blob store access among new nodes:
 
-As an example let's say you create three nodes, `node-a` for the initial server and two new nodes called
-`node-b` and `node-c`, to represent the second and third servers. Then the base directory for blob stores,
-i.e. `$data-dir/blobs`, on all three of these nodes must be mounted to the same filesystem.
+1. Create a directory in an external location.
+2. Start your primary repository manager.
+3. Choose a 'Name' and add a 'Path' from the 'Blob stores' screen, referencing the new directory you created.
+4. Click 'Create blob store'.
+
+After the shared storage for blob stores is set up, continue to point all new repositories you create to the
+shared location.
+
+*Example: Configuring a Shared Blob Store for a Cluster*
+
+Let's say you create a new blob store in an external backup location (e.g. `data-location`) and you want
+to point a hosted npm repository to this location, for shared blob store access. Do the following:
+
+1. Select a recipe from the 'Repositories' form, i.e. 'npm (hosted)'
+2. Pick the `data-location` blob store in the 'Storage' section of the 'Repositories' form.
+3. Click 'Create repository' to establish the new repository.
 
 [[high-availability-nodes]]
-=== Enabling the Nodes
+==== Enabling High Availability
+
+CAUTION: In the event you have empty nodes and are adding existing configured nodes to it, the existing 
+unconfigured nodes would erase the existing configuration of the nodes added. When creating a cluster, it is 
+important you start the configured nodes before the empty nodes to avoid unwanted configuration loss.
+
+When you enable high availability, the nodes discover one another via link:https://hazelcast.com/[Hazelcast].
+Hazelcast, by default, employs multicast to discover cluster members, but it supports node discovery in other
+ways. If the default configuration isn't suitable for your network infrastructure, you will need to customize
+`$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>> for a concrete example.
 
 Follow these steps to enable high availability:
 
@@ -101,14 +213,14 @@ Follow these steps to enable high availability:
 2. Remove the `#` before +nexus.clustered = true+ to enable the node at start-up. 
 3. Go to the second and third repository managers and repeat steps 1 and 2, to enable them for high availability.
 
-Given that all nodes are mounted to the same blob store, with the same path, synchronization of data and configuration
-will occur automatically.
-
 [[high-availability-startup]]
-==== Starting the High Availability Service
+==== Startup and Confirming Node Connectivity
 
-Bring the nodes to full service by starting the repository managers. You will see connection messages similar to
-this:
+After enabling high availability for your nodes, check the console to confirm that multicast discovers all three
+corresponding nodes.
+
+When you start the nodes, you will see a message in the `nexus.log` confirming the connection of the cluster
+members, like the one below:
 
 ----
 2016-06-28 17:34:26,577-0400 INFO  [hz.nexus.generic-operation.thread-1] *SYSTEM com.hazelcast.cluster.ClusterService - [192.168.99.1]:5702 [nexus] [3.5.3]
@@ -120,13 +232,8 @@ Members [3] {
 }
 ----
 
-The nodes are synchronized via link:https://hazelcast.com/[Hazelcast], which provides in-memory computing for
-active data and active backup. Hazelcast can employ multicast to discover cluster members, but it supports node
-discovery in other ways. If the default configuration isn't suitable for your network infrastructure, you will
-need to customize `$install-dir/etc/fabric/hazelcast.xml`. See <<high-availability-aws>> for a concrete example.
-
 [[high-availability-verify]]
-=== Verifying Synchronization
+==== Verifying Synchronization
 
 At runtime, the repository manager user interface allows you to view the status of the nodes, regardless of
 which you connect to, as they are synchronized.
@@ -134,48 +241,38 @@ which you connect to, as they are synchronized.
 See <<nodes>> for details on viewing active nodes in a cluster.
 
 [[high-availability-environment]]
-=== Configuring {pro} Environment for High Availability
+==== Configuring a Cluster after Setup
 
-Once you have your high availability environment set up, be aware that almost all configuration done via the UI 
-is shared between all nodes in the cluster. There is no master node you must hit; they are all treated equally. 
-For example, if you create a new repository all nodes in the cluster will be able to see it and utilize it. Or 
-if you want to change your 'Email Server' port you just need to do it once via the UI on any of the servers and 
-the change will share. Because all servers share out the changes, changing on any is acceptable.
+Once you have your high availability environment set up, be aware that almost all configuration done via the 
+user interface is shared among all nodes in the cluster. In an HA cluster all nodes are treated equally.
+For example, if you create a new repository all nodes in the cluster will be able to see it and utilize it.
+Or if you want to change your 'Email Server' port you just need to do it once via the user interface on any
+of the servers and the change will share.
 
 NOTE: Same as a single server be aware, if multiple people are configuring something at the same time in your 
-cluster, it may appear the changes are not sharing. If you refresh your screen, you will see the changes when 
-they come across.
+cluster, it may appear the changes are not sharing. If you refresh your screen, the latest changes will appear.
 
 There are some things, however, that are not done or shared within the UI and need to be done on each individual 
-server. These are:
+server. These include:
 
-- Any CLI configurations you do (such as specifying a port via nexus.properties or setting up SSL)
-- 'Refresh Interval' of the GUI 'Log Viewer' setting
-- Most log messages are not shared across the server (some few are) however logging levels are shared
-- 'Metrics' displayed are for the individual server (and not for the cluster)
-- A 'Support ZIP' is for the individual server. Consult with your support technician which zips they need if 
-troubleshooting.
-- 'Analytics' events are per server
-- 'Audit' events are per server
-////
-last 2 should be changing with NEXUS-10489
-////
+- Any configuration files you add or modify (such as specifying a port via `nexus.properties` or setting up SSL)
+- 'Refresh Interval' of the UI 'Log Viewer' setting
+- Most log messages are not shared across the server, however logging levels are shared
+- 'Metrics' displayed are for the individual server
+- A 'Support ZIP' is for the individual server. If you have issues forming a cluster, consult your support
+technician and provide support zips for all nodes.
 
 TIP: Scheduled tasks will run against one node unless the 'Multi node' configuration option is selected or the 
 task affects something that is in itself shared (like compaction of blob stores).
 
-Regardless, {nxrm} configuration is not done via any load balancers that might be in place. It is done on the 
-individual node level and shared or not.
+Regardless, {nxrm} configuration should not be done through the cluster's load balancer. Configuration should
+occur on the individual node level.
 
 When adding new nodes to the existing cluster be aware that they will get the shared configuration of the cluster 
 regardless of how they are preconfigured.
 
-CAUTION: In the event you have empty nodes and are adding existing configured nodes to it, the existing 
-unconfigured nodes would erase the existing configuration of the nodes added. When creating a cluster, it is 
-important you start the configured nodes before the empty nodes to avoid unwanted configuration loss.
-
 [[high-availability-aws]]
-=== Configuring High Availability for Amazon Web Services
+==== Configuring High Availability for Amazon Web Services
 
 {nxrm} can be deployed on cloud-computing services, such as Amazon Web Services (AWS). Depending on your network
 security, additional configuration may be required. For example, if you use a network layer firewall application
@@ -214,3 +311,25 @@ The `$install-dir/etc/fabric/hazelcast.xml` file with the modified properties wi
     </aws>
 </join>
 ----
+
+[[high-availability-backup]]
+==== Backing up your HA Cluster
+
+NOTE: The task described here only backs up the configuration and metadata.  The (shared) blob store(s) must be 
+backed up independently.
+
+Backup for HA uses the same concepts as outlined in <<backup>>. The notable exception is that when creating your 
+'Export configuration & metadata for backup' scheduled task you must choose a node for the backup to run against. 
+Since these nodes are sharing the same data, in most cases your selection should not matter.
+
+While the scheduled task runs, the node configured against becomes read only. During this time, the other nodes 
+in the cluster function as normal. When the backup is complete, the node picks up any changes made to the cluster 
+configuration while it was performing the task. Any write operations run specifically against this node (as 
+opposed to the cluster) will be run at that time as well.
+
+[[high-availability-restore]]
+==== Restoring your HA Cluster
+
+Similar to the concepts outlined in <<backup>>, you can restore your a node with shared data in your HA environment.
+You are required to choose a node from which you desire to restore OrientDB database contents. Then, follow the steps
+in detail from <<backup-restore>>.
