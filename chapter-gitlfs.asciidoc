@@ -1,0 +1,83 @@
+[[gitlfs]]
+== Git LFS Repositories
+{inall}
+
+[[gitlfs-introduction]]
+=== Introduction
+
+Git Large File Storage (LFS) is a Git extension mechanism that allows large files to be stored outside of a normal Git
+repository, yet allows end users to interact with those files as if they were part of the same project. Instead of the
+actual large file, a small pointer file replaces the file in your Git repository, and the file content is stored in a
+separate location. More information on this format can be found at the https://git-lfs.github.com/[Git LFS homepage].
+
+{pro} and {oss} include the ability to host Git LFS repositories. {nxrm}'s Git LFS implementation supports the
+batch API, the basic transfer adapter for uploading and downloading files, and a place for storing and retrieving the
+actual files transferred from the Git LFS client. These operations are handled automatically by the Git LFS client once
+installed on developers' workstations and configured for use with {nxrm}.
+
+This chapter details the process of configuring a Git LFS hosted repository and configuring a specific Git project to
+use {nxrm} for Git LFS file storage.
+
+[[gitlfs-hosted]]
+=== Creating a Hosted Git LFS Repository
+
+To host Git LFS content in {nxrm}, you will need to create a new 'gitlfs (hosted)' repository as documented in
+<<hosted-repository>>.
+
+Minimal configuration steps are:
+
+* Define 'Name' - e.g. `gitlfs-hosted`
+* Pick a 'Blob store' for 'Storage'
+
+WARNING: Removing content from a Git LFS repository is not recommended and no cleanup task exists. Removing files from
+Git LFS means that those files will no longer be available from your associated Git repository, and the pointer files
+in Git will point to content that no longer exists. A one-to-one mapping between Git LFS repositories and Git
+repositories and the use of dedicated blobstores may mitigate some concerns by making it easier to add additional
+storage in the future.
+
+The 'Strict Content Type Validation' option has no effect for Git LFS repositories. Since Git LFS by its nature
+accepts any kind of file content, we perform no content validation on incoming files and assume all files are generic
+`application/octet-stream` content.
+
+[[gitlfs-installation]]
+=== Installing Git LFS Locally
+
+You will need to install https://git-lfs.github.com/[Git LFS] on their local machine if you have not done so already.
+Follow the installation directions for Git LFS for your particular platform. After installation, running `git lfs env`
+is also a good way to confirm that the install succeeded.
+
+[[gitlfs-configuration]]
+=== Configuring Git LFS Locally
+
+You will need to configure your local Git LFS installation to use {nxrm} as its Git LFS backend. While we highly
+recommend the https://github.com/git-lfs/git-lfs/wiki/Tutorial[Git LFS Tutorial], we provide specifics for use with your
+repository manager.
+
+If you have a Git project that you wish to use with Git LFS and you wish to configure it on a per-project basis, you
+should use the Git command line tool to configure your `.lfsconfig` file appropriately (making substitutions as
+appropriate):
+
+----
+git config -f .lfsconfig lfs.url https://localhost:8081/repository/gitlfs-hosted/info/lfs
+----
+
+Doing so will also create (or modify) your `.lfsconfig` file, which should then be committed and pushed to your Git
+project so all developers will use the same configuration and Git LFS repository for their large files.
+
+TIP: You should carefully consider the mapping between Git LFS hosted repositories and your actual Git projects. The
+origin of a particular file is not provided to a Git LFS repository, so without such consideration, you will not be able
+to determine the associated Git repository for a particular file without examining your Git repositories directly.
+
+You also need to tell Git LFS what large files to track. For example:
+
+----
+git lfs track '*.jpg'
+----
+
+This will create (or modify) your `.gitattributes` file, which should be committed and pushed to your Git
+repository so that it will be shared by all developers.
+
+WARNING: Do not track your configuration files. If you track them, they will be replaced by pointer files and
+unexpected behavior may result. In particular, Git LFS may no longer be configured to communicate with {nxrm}. It is
+possible under such circumstances that Git LFS will appear to be working correctly but not send or retrieve files
+from {nxrm}.
