@@ -66,7 +66,7 @@ Analytics:: event data and overall repository manager usage
 Auditing:: a record of repository manager configuration changes as well as asset or component additions and
 removals
 Component:: all related data that make up components within the repository manager 
-Configuration:: general adminstrative configurations such as scheduled tasks, email server configuration, etc.
+Configuration:: general administrative configurations such as scheduled tasks, email server configuration
 Security:: all user and access rights management content
 
 All backup files are presented in the timestamp format based on the time the task was started. 
@@ -84,16 +84,24 @@ You can restore the exported database files to the state when you ran the schedu
 
 * access the location specified in the `Backup location` field from the `Export configuration & metadata for backup`
 task where the databases were exported.
-* remove the database directories you want to restore, but only the ones you want restored to the previous state.
+* remove the all of the database directories in order to restore them to the previous state.
 
-The restoration will not overwrite the existing data of databases left in place.
+The restoration should include all of the databases that were exported during the backup process. The databases should
+not be restored individually, and only files from a single backup (i.e. those with the same timestamp) should be used
+during restoration.
 
 Start the database restoration with these steps:
 
 1. Stop {nxrm}.
-2. Remove the directories you want to restore from `$data-dir/nexus3/db`.
+2. Remove the following directories from `$data-dir/nexus3/db`.
+  * `accesslog`
+  * `analytics`
+  * `audit`
+  * `component`
+  * `config`
+  * `security`
 3. Go to the location where you stored the exported databases.
-4. Copy the `.bak` files you wish to restore to `$data-dir/nexus3/backup`.
+4. Copy the corresponding `.bak` files to `$data-dir/nexus3/backup` for restoration.
 5. Restart {nxrm}.
 
 You can verify the restoration is complete by viewing the fully-restored databases previously removed from
