@@ -43,7 +43,7 @@ button in the repository configuration view.
 
 Once enabled, a task that performs the analysis is created and initialized. This task uses the identifier of the  
 repository and the prefix 'Health Check:' as a name and is automatically configured to run regularly. The 
-recurrence frequency can be changed in the scheduled task administration described in. New 
+recurrence frequency can be changed in the scheduled task administration described in <<admin-system-tasks>>. New 
 component data is supplied by the {ds} to {nxrm} daily.
 
 Disabling health check for a specific repository removes this scheduled task automatically. You can also remove 
@@ -51,19 +51,80 @@ these tasks manually. Adding them, however, cannot be done through the tasks adm
 described previously.
 
 After a successful analysis and refresh, the 'Health check' column in the list of repositories will display 
-security and license issue counts for the repository. An example is displayed in. 
+security and license issue counts for the repository. An example is displayed in <<fig-rhc-repo-list-quality>>. 
 
+[[fig-rhc-repo-list-quality]]
+.The Repositories List with Health Check Result Count
+image::figs/web/rhc-repo-list.png[scale=45]
 
-Hovering your mouse pointer over that value will display the summary data in a pop-up window.
+Hovering your mouse pointer over that value will display the summary data in a pop-up window. A sample window is
+displayed in <<fig-rhc-summary-pop-up>>.
+
+[[fig-rhc-summary-pop-up]]
+.A Result Summary for a {rhc}
+image::figs/web/rhc-summary-report.png[scale=40]
 
 At the bottom of the summary, you can click the link 'View Detailed Report' to access a more detailed report. This
-report is only available in {pro}.
+report is only available in {pro}.  More details are provided in <<rhc-details>>.
 
+==== Global Configuration
 
+Rather than enabling and disabling health check for each repository, you can enable {rhc} globally. This can 
+be achieved by creating and configuring a new capability called 'Health Check: Configuration'. General details 
+about managing capabilities can be found in <<admin-system-capabilities>>. 
+
+The 'Health Check: Configuration' capability can be enabled and disabled using the 'Enabled' checkbox and set up 
+health check for all proxy repositories by enabling 'Configure for all proxy repositories'. With this 
+configuration, health check will be enabled for all existing proxy repositories. Any newly created 
+proxy repository will automatically have health check enabled as well.
+
+Selecting 'Use the Nexus truststore' allows seemless interaction when remote repositories are accessed
+via SSL. For more on adding certificates, see <<ssl-proxy-repo>>.
+
+[[rhc-details]]
+=== Accessing the Detailed {rhc} Report
+
+{inrmonly}
+
+The detailed report contains the same overview data and charts for security and license information at the top 
+displayed in <<fig-rhc-detail-summary>>.
+
+[[fig-rhc-detail-summary]]
+.Summary of the Detailed {rhc} Panel
+image::figs/web/rhc-detail-summary.png[scale=50]
+
+Below the overview a drop-down allows you to toggle between two lists displaying further details, as shown in
+<<fig-rhc-detail-security-list>>. Select 'View By: Vulnerabilities' to inspect details of the security issues and
+'View By: Artifacts' to further review the license information. Both lists have a filter for each column at the
+bottom of the list that allows you to narrow down the number of rows in the table and find specific entries
+easily.
+
+The security list, as visible in <<fig-rhc-detail-security-list>>, contains columns for 'Threat Level', 'Problem
+Code' and the GAV parameters identifying the affected component. The 'Problem Code' column is a link to the
+security warning referenced and commonly links a specific entry in http://cve.mitre.org[the Common 
+Vulnerabilities and Exposures] list. This database has descriptive text on vulnerabilities and further information with reference links.
+
+[[fig-rhc-detail-security-list]]
+.The Security Data in the Detailed Repository Health Check Report
+image::figs/web/rhc-detail-security-list.png[scale=45]
+
+The 'Threat Level' is rated in values used by the vulnerability databases and ranges from 0 for a low threat to 
+10 for the highest threat. 'Critical' values (noted in red) range from 8 to 10. 'Severe' values (noted in orange) 
+range from 4-7, and 'Moderate' values (noted in yellow) range from 1 to 3.
+
+The license list, as visible in <<fig-rhc-detail-license-list>>, shows a derived threat in the 'License Threat' 
+column. The 'Declared License' column details the license information found in POM file. The 'Observed Licenses 
+in Source' columns lists all the licenses found in the actual source code of the library in the form of file 
+headers and license files. This data is based on source code scanning performed and provided by the {ds}.
+
+For Maven components, the next columns for the GAV parameters allow you to identify the component.  For NuGet 
+components the columns are instead 'Id' and 'Version' but with the same intent.
+
+The column 'Security Issues' displays an indicator for potentially existing security issue for the same component.
 
 [[fig-rhc-detail-license-list]]
 .The License Data in the Detailed Repository Health Check Report
-image::[scale=45]
+image::figs/web/rhc-detail-license-list.png[scale=45]
 
 Licenses such as GPL-2.0 or GPL-3.0 are classified as the highest 'License Threat' and labeled as 'Copyleft' and 
 use red as signaling color.
