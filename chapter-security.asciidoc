@@ -123,19 +123,50 @@ Click the 'Create privilege' button to view a list of privilege types, as seen i
 .Choosing Privilege Types
 image::figs/web/privileges-types.png[scale=80]
 
-Select the privilege type corresponding to the area of the repository manager you wish to grant permissions. The 
-privilege types are as follows:
+[[privileges-define]]
+==== Privilege Type Definitions
+
+Select the 'Privilege Type' corresponding to the area of the repository manager you wish to grant permissions.
+The privilege types are as follows:
 
 Application:: These are privileges related to a defined aspect of the repository manager.
 Repository Admin:: These are privileges related to the administration and configuration of a specific repository.
-Repository Content Selector:: These are privileges attributed to filtered content within a format, evaluated against a JEXL expression.
+Repository Content Selector:: These are privileges attributed to filtered content within a format, evaluated
+against a JEXL expression.
 Repository View:: These are privileges controlling access to the content of a specific repository.
 Script:: These are privileges related to the execution and management of scripts as documented in <<scripting>>.
 Wildcard:: These are privileges that use patterns to group other privileges.
 
-In all 'Privilege Types', above, the variables assigned to a role are defined as 'Actions'. 'Actions' can either
-be exclusive or a combination of `add`, `browse`, `create`, `delete`, `edit`, `read` and `*` (all) storage
-functions.
+[[privileges-actions]]
+==== Actions
+
+When you create a new 'Privilege Type' you can assign 'Actions'. 'Actions' allow an explicit behavior that the
+role can do with the associated function. In particular, these actions are  `add`, `browse`, `create`,`delete`,
+`edit`, `read`, and `*`. You can assign a single or combination of comma-delimited actions when creating new
+privilege types.
+
+If creating custom 'Privileges Types' consider the logic behind each action:
+
+`add`:: This action permits you to add repositories.
+
+`browse`:: This action permits you to browse content in specified repositories.
+
+`create`:: This action permits you to assigned roles that can create such configurations as blob store, user,
+and task creation.  Since a `read` permission is required to view a configuration, its logic is associated with
+most `create` functions.
+
+`delete`:: This action permits assigned users to delete permissions for configurations such as blob stores,
+capabilities, and LDAP. A `read` permission is associated with all `delete` functions, which allows you or
+assigned users to view a specific configuration you want to delete. With this permission you can delete
+associated privilege types, such as 'Application', 'Repository Admin', 'Repository View', and 'Script'. 
+
+`edit`:: This action permits you and the roles or administrators with permissions to a specific repository
+in order to view or modify associated repository content.
+
+`read`:: Unlike the `browse` action, `read` allows you to view a wider range of configurations and permissions
+across the repository.
+
+`*`:: This action is a wildcard giving you the ability to group all actions into one privilege type.
 
 To save a new custom privilege click the 'Create privilege' button. The privilege can be found listed among the
 default privileges on the main 'Privileges' screen. You can use the 'Filter' input box to find a specific
