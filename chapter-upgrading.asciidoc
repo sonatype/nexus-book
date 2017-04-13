@@ -62,6 +62,20 @@ https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base article]
 NOTE: Follow these https://support.sonatype.com/hc/en-us/articles/231723267[specific instructions] to upgrade to
 3.1.0-4 or later. Since the release of 3.1.0-4, the directory structure has changed for this and later versions.
 
+[[upgrade-version-three-ha]]
+=== Upgrading from 3.x HA to 3.y HA
+
+It is recommended to conduct a comprehensive <<backup,backup>> before attempting the upgrade of an HA cluster.
+This includes a backup of shared blob store filesystems and the
+<<data-directory,data directory>> on each cluster node.
+
+Currently, {nxrm} must be stopped on all nodes in the cluster before upgrading each individual node. The software
+on each node can be upgraded as in <<upgrade-version-three>>. Afterward you must re-apply any customizations that
+are not contained in the <<data-directory,data directory>>.
+
+After the software has been upgraded on each node, the nodes can be brought back online one at a time, allowing
+each node to startup completely before bringing the next node online.
+
 [[upgrade-version-two-three]]
 === Upgrading 2.x to 3.y
 
