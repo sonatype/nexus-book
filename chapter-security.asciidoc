@@ -99,8 +99,8 @@ Privileges control access to specific functionality of the repository manager an
 assigned to a specific users.
 
 To access 'Privileges' go to the 'Security' section, where it's listed as a sub-section. An extensive list of
-privileges is already built in the repository manager and is partially depicted in
-<<fig-privileges-partial-list>>. This feature allows you inspect existing privileges and create custom privileges.
+privileges is already built in the repository manager and is partially depicted in <<fig-privileges-partial-list>>.
+This feature allows you inspect existing privileges and create custom privileges.
 
 [[fig-privileges-partial-list]]
 .Partial List of Security Privileges
@@ -124,8 +124,10 @@ Click the 'Create privilege' button to view a list of privilege types, as seen i
 .Choosing Privilege Types
 image::figs/web/privileges-types.png[scale=80]
 
-Select the 'Privilege Type' corresponding to the area of the repository manager you wish to grant permissions.
-The privilege types are as follows:
+Select the type corresponding to the area of the repository manager you wish to grant permissions. When you
+create a new 'Privilege Type' you must assign at least one action in the 'Actions' field.
+
+The privileges are as follows:
 
 Application:: These are privileges related to a specific domain in the repository manager.
 Repository Admin:: These are privileges related to the administration and configuration of a specific repository.
@@ -135,46 +137,38 @@ Repository View:: These are privileges controlling access to the content of a sp
 Script:: These are privileges related to the execution and management of scripts as documented in <<scripting>>.
 Wildcard:: These are privileges that use patterns to group other privileges.
 
-When you create a new 'Privilege Type' you can assign 'Actions'. 'Actions' are a list of functions allowing an
-explicit behavior the privilege can perform with the associated function.
-
 [[privileges-actions]]
 ==== Actions
 
+'Actions' are functions allowing an explicit behavior the privilege can perform with the associated function.
+
 The 'Actions' to choose from are  `add`, `browse`, `create`, `delete`, `edit`, `read`, `update`, and `*`. You
-can assign a single or combination of comma-delimited actions when creating new privilege types. The roles to
-which you apply any of these 'Actions' will perform the action's implied behavior. Consider how each action
-behaves with an associated role, if the 'Privilege Type' contains any or all the actions below:
+can assign a single or combination of comma-delimited actions when creating new privileges. The 'Privilege
+type' to which you apply any of these 'Actions' will perform the action's implied behavior. Consider how each
+action behaves when applied to a privilege. The actions are defined below:
 
+`add`:: This action allows privileges to add repositories or scripts.
 
-`add`:: This action allows the privilege type to add repositories or scripts.
+`browse`:: This action allows privileges to view the contents of associated repositories. Unlike `read`, privilege
+types with `browse` can only view and administrate repository contents from UI.
 
-`browse`:: This action is associated with privilege types that allow roles to browse the contents of associated
-repositories. Though some privilege types associated with `browse` may only permit a given role to administrate
-repositories but not see its contents. This action is distinct from `read` where an associated role may only be
-able to look at contents only from UI.
+`create`:: This action allows privileges to create repository manager configurations. Since a `read` permission
+is required to view a configuration, this action is associated with most existing `create` actions.
 
-`create`:: This action is associated with privilege types that allow roles to create such configurations as
-blob store, user, and task creation.  Since a `read` permission is required to view a configuration, this
-action is associated with most existing `create` actions.
+`delete`:: This action allows privileges to delete repository manager configurations, repository contents, and
+scripts. A `read` action is associated with some `delete` actions so the actor can view these configurations
+to remove them.
 
-`delete`:: This action allows roles with an associated privilege type to delete permissions for configurations
-such as blob stores, capabilities, and LDAP. A `read` permission is associated with all existing `delete`
-actions, which allows the privilege type to view a specific configuration that can be deleted. With this
-action you can delete associated privilege types, such as 'Application', 'Repository Admin', 'Repository View',
-and 'Script'. 
+`edit`:: This action allows privileges to modify associated scripts, repository content, administration, and
+configuration. 
 
-`edit`:: This action allows roles with an associated privilege type to make edits to a specific repository
-in order to modify associated repository content.
+`read`:: This action allows privileges to view various configuration lists. Without `read`, any associated
+action will permit a privilege to see these lists but not its contents. The `read` action also allows privileges
+to utilize tools that can look at configurations from the command line.
 
-`read`:: This actions allows roles with an associated privilege type to see permissions of various
-configuration lists. Without this action, an associated action a role may see these lists but not its
-contents. The `read` action also allows an associated privilege type to utilize tools that can look at
-configuration contents from the command line.
-
-`update`:: This action is associated with privilege types that allow roles to update such configurations as
-blob store, user, and task creation.  Since a `read` permission is associated with a most update actions, a
-privilege type that includes `update` can also view certain configurations in order to update them.
+`update`:: This action allows privileges to update repository manager configurations. Most existing privileges
+with `update` include `read` actions. Therefore, if creating custom privileges with `update`, the actor must add
+`read` to the privilege to allow repository manager configuration updates.
 
 `*`:: This action is a wildcard giving you the ability to group all actions together.
 
