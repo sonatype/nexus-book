@@ -6,12 +6,12 @@
 === Introduction
 
 High Availability (HA) for {nxrm} is designed to improve your repository manager's uptime. High availability
-distributes traffic across a cluster of nodes, allowing horizontal scalability and reducing the need for a
-single instance of {nxrm}.
+distributes traffic across a cluster of nodes, allowing horizontal scalability and reducing the need for a single
+instance of {nxrm}.
 
-This chapter guides you through the procedures to synchronize all repository data, system, and custom
-configurations with the services provided by {nxrm}. Ultimately, the chapter explains how you can use {nxrm}
-as a continuously operational, highly-available environment.
+This chapter guides you through the procedures to synchronize all repository data, system, and custom configurations
+with the services provided by {nxrm}. Ultimately, the chapter explains how you can use {nxrm} as a continuously
+operating, highly-available environment.
 
 [[high-availability-benefits]]
 === Benefits of High Availability
@@ -45,6 +45,16 @@ the instructions in the https://support.sonatype.com/hc/en-us/articles/115000350
 Each instance of {nxrm} in an HA cluster is a node. Nodes participating in a cluster discover each other via
 a service called Hazelcast. All data within nodes are replicated through OrientDB. This includes component
 metadata, as well as system data and configuration.
+
+[[high-availability-quorum]]
+==== Optimal Node Count
+
+In some HA environments two-node cluster is minimum node redundancy. But, to reduce the probability of node
+failure over a large-scale network we recommend the minimum count for a cluster to consist of three nodes.
+
+The appropriate quorum of nodes is an odd-number cluster, so we recommend a 3 node cluster. Choosing an
+odd-number of nodes is optimal because if one goes down, your cluster won’t fail the the entire load over to
+a single node.
 
 [[high-availability-prepare]]
 ==== Preparing an HA Environment
