@@ -31,6 +31,13 @@ can point to non-existent blob stores, or the blob store metadata may be non-des
 the exported data. So, your backup strategy should involve copying both your databases and blob stores together to
 a new location, in order to keep the data intact.
 
+While the backup process is running, {nxrm} will automatically place the database in read-only mode.
+This is done for both single node and HA deployments to preserve data integrity. While in read-only mode, attempts to
+publish new components or make changes to {nxrm} configuration will fail.
+
+{nxrm} will automatically release the read-only status when backup completes. Schedule the backup task
+for a time of day that usually has low to no activity to minimize client publishing errors.
+
 Here's a common scenario for backing up custom configurations in tandem with the database export task:
 
 1. Configure the 'Export configuration & metadata for backup' task to export databases.
