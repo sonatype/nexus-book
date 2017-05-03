@@ -9,8 +9,8 @@ High Availability (HA) for {nxrm} is a set of features designed to improve uptim
 a cluster of nodes to share traffic, allowing horizontal scalability and reducing the need for a single
 instance of {nxrm}.
 
-This chapter guides you through the procedures to synchronize all repository data and configuration with the
-services provided by {nxrm}. Ultimately, the chapter explains how you can use {nxrm} as a continuously
+This chapter guides you through the procedures to synchronize all repository data and configuration using
+the services provided by {nxrm}. Ultimately, the chapter explains how you can use {nxrm} as a continuously
 operating, highly-available service.
 
 [[high-availability-benefits]]
@@ -20,7 +20,7 @@ operating, highly-available service.
 If you desire high availability for your organization you should assess and evaluate your current system
 architecture and configurations before optimizing your ecosystem with {nxrm} HA.
 
-On the other hand, if you feel this feature meets your organization's needs, consider its benefits:
+If you feel this feature meets your organization's needs, consider its benefits:
 
 * prevention of data loss via node clustering
 * consistent view of node health across all nodes
@@ -101,6 +101,33 @@ From the user interface the most accessible way to view active nodes is from the
 listed as 'true'. The 'true' value indicates that you're viewing your local node from the client (e.g. browser).
 Conversely, all values listed as 'false' imply the additional, synchronized nodes are configured to their
 own servers.
+
+[[high-availability-backup]]
+==== Backing up your HA Cluster
+
+Backup for HA uses the same concepts described in the <<backup-restore,Backup and Restore chapter>>. The notable
+exception is that your local cluster has shared storage. So, when configuring the 'Export configuration & metadata
+for backup' scheduled task choose a node for the backup to run against.
+
+This task, only exports data. But it’s necessary to configure it when backing up and restoring your cluster if you
+want to roll back its current state to an earlier state, such as in the case of failure of the underlying
+infrastructure.
+
+While the scheduled task runs, all nodes in the cluster become read-only. This is done to preserve data integrity.
+While in read-only mode, attempts to publish components or make changes to repository manager configuration will
+fail.
+
+Nexus Repository Manager will automatically release the read-only status when the backup task completes. Schedule
+the backup task for a time of day that usually has low to no activity to minimize client errors
+
+
+[[high-availability-restore]]
+==== Restoring your HA Cluster
+
+Similar to the concepts outlined in <<backup>>, you can restore exported configuration and metadata in your HA
+environment. You are required to choose a node from which you desire to restore OrientDB database contents. Then, follow
+the steps in detail from <<backup-restore>>. You will want to shut down all other nodes in the cluster during the
+restoration process, bringing them back into the cluster after the restoration process has been completed.
 
 [[high-availability-methods]]
 === Methods to Configure a Cluster
@@ -289,25 +316,3 @@ The `$install-dir/etc/fabric/hazelcast.xml` file with the modified properties wi
 </join>
 ----
 
-[[high-availability-backup]]
-==== Backing up your HA Cluster
-
-NOTE: The task described here only backs up the configuration and metadata.  The (shared) blob store(s) must be 
-backed up independently.
-
-Backup for HA uses the same concepts as outlined in <<backup>>. The notable exception is that when creating your 
-'Export configuration & metadata for backup' scheduled task you must choose a node for the backup to run against. 
-Since these nodes are sharing the same data, in most cases your selection should not matter.
-
-While the scheduled task runs, the node configured against becomes read only. During this time, the other nodes 
-in the cluster function as normal. When the backup is complete, the node picks up any changes made to the cluster 
-configuration while it was performing the task. Any write operations run specifically against this node (as 
-opposed to the cluster) will be run at that time as well.
-
-[[high-availability-restore]]
-==== Restoring your HA Cluster
-
-Similar to the concepts outlined in <<backup>>, you can restore exported configuration and metadata in your HA
-environment. You are required to choose a node from which you desire to restore OrientDB database contents. Then, follow
-the steps in detail from <<backup-restore>>. You will want to shut down all other nodes in the cluster during the
-restoration process, bringing them back into the cluster after the restoration process has been completed.
