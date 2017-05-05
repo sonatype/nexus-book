@@ -16,16 +16,18 @@ operating, highly-available service.
 [[high-availability-benefits]]
 === Benefits of High Availability
 
-{nxrm} HA allows your repository manager to continue functioning, even when the hardware of a node fails.
-If you desire high availability for your organization you should assess and evaluate your current system
-architecture and configurations before optimizing your ecosystem with {nxrm} HA.
+{nxrm} HA is a three-node active/active model, providing more flexible support for maintenance and testing.
+With all nodes actively serving application load, active/active HA ensures a greater possibility of no
+issues occurring after a failover. This differs from the active/passive model where only one node allows
+writes while a backup stays offline until needed.
 
-If you feel this feature meets your organization's needs, consider its benefits:
+So, if you feel this feature meets your organization's needs, consider what {nxrm} HA provides:
 
-* prevention of data loss via node clustering
-* consistent view of node health across all nodes
-* active/active network architecture where all nodes have write -access
+* the assurance of little to no data loss since all nodes are in service
+* a network structure allowing all nodes to have write access
+* a consistent view of node health across all nodes
 * minimal uninterrupted use of HA servers
+
 
 [[high-availability-node]]
 ==== What is a Node?
@@ -37,8 +39,8 @@ This includes component metadata, as well as system data and configuration.
 [[high-availability-prepare]]
 ==== Preparing an HA Environment
 
-NOTE: Some repository manager-level modifications won't synchronize across nodes. See <<high-availability-environment >>
-for details on what's needed to properly configure an individual node for HA.
+NOTE: Some application settings must be made on each node. See <<high-availability-environment >> for details
+on what's needed to properly configure an individual node for HA.
 
 {nxrm} HA clusters should be configured with three nodes for normal operation. Cluster nodes vote on each
 change that passes through the cluster, and accept them if a majority quorum of nodes can be contacted. As
@@ -80,13 +82,13 @@ specifically the <<admin-repository-blobstores,blob stores>> which hold the bina
 ==== Storing Critical Data
 
 The core of an HA environment is to have reliable, fault-tolerant storage. The solution is to utilize a shared
-storage network to maintain repository data and configurations. To do this create a storage locations:
+storage network to maintain repository data and configuration. To do this create storage locations:
 
 * for each node, including their data directories and exported databases
 * where all nodes can shared component binary information as a common blob store access point.
 
-A shared-disk file system is recommended for your clustered nodes. So on your network, make sure they can see
-the blob store on a highly-available, file system of your choice.
+A shared-disk file system is mandatory for your clustered nodes. So on your network, make sure they can see
+the blob store on a highly-available file system of your choice.
 
 The clustered nodes share component metadata and repository manager configuration amongst themselves.
 
@@ -96,11 +98,14 @@ The clustered nodes share component metadata and repository manager configuratio
 In the event a single node loses connection to the cluster, the remaining nodes will continue to make decisions
 on which data changes are valid. The disconnected node will reject further writes until it rejoins the cluster.
 
+////
+this section, add to verifying node connection
 From the user interface the most accessible way to view active nodes is from the 'Nodes' screen, in the
 'Adminstration' menu. It displays all clustered nodes in a table. In this table, notice a distinguishable node
 listed as 'true'. The 'true' value indicates that you're viewing your local node from the client (e.g. browser).
 Conversely, all values listed as 'false' imply the additional, synchronized nodes are configured to their
 own servers.
+////
 
 [[high-availability-backup]]
 ==== Backing up your HA Cluster
@@ -125,9 +130,10 @@ the backup task for a time of day that usually has low to no activity to minimiz
 ==== Restoring your HA Cluster
 
 Similar to the concepts outlined in <<backup>>, you can restore exported configuration and metadata in your HA
-environment. You are required to choose a node from which you desire to restore OrientDB database contents. Then, follow
-the steps in detail from <<backup-restore>>. You will want to shut down all other nodes in the cluster during the
-restoration process, bringing them back into the cluster after the restoration process has been completed.
+environment. You are required to choose a node from which you desire to restore OrientDB database contents. Then,
+follow the steps in detail from <<backup-restore>>. You will want to shut down all other nodes in the cluster
+during the restoration process, bringing them back into the cluster after the restoration process has been
+completed.
 
 [[high-availability-methods]]
 === Methods to Configure a Cluster
