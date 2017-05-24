@@ -66,9 +66,9 @@ the instructions in the https://support.sonatype.com/hc/en-us/articles/115000350
 
 ==== Network Preparation
 
-The nodes in a {nxrm} cluster need to be able to communicate with each other over TCP/IP. For cluster communications,
-{nxrm} will use a range of ports starting with 5701. Each node in the {nxrm} cluster will require that an extra port
-is available, the extra ports used by {nxrm} will be bound sequentially by default.
+The nodes in a {nxrm} cluster need to be able to communicate with each other over TCP/IP. For cluster
+communications, {nxrm} will use a range of ports starting with 5701. Each node in the {nxrm} cluster will require
+that an extra port is available, the extra ports used by {nxrm} will be bound sequentially by default.
 
 For example, in a three-node cluster, each of the nodes in the cluster will need to have ingress opened on ports
 `5701`, `5702`, and `5703`. The nodes will use ephemeral ports for outbound (egress) communications. If outbound or
@@ -80,6 +80,61 @@ http://docs.hazelcast.org/docs/3.6/manual/html-single/index.html#setting-up-clus
 
 The nodes in a {nxrm} cluster will also replicate database transactions among the nodes in the cluster. The database
 requires ports `2424` and `2434` be open for ingress and egress to each of the rest of the nodes in the cluster.
+
+==== Node Discovery
+
+In the default configuration, {nxrm} uses multicast to discover other {nxrm} nodes. This is done to simplify cluster
+configuration. However, multicast may not work reliably in all network environments. To test multicast connectivity
+between nodes, we recommend using https://iperf.fr/[iPerf]. IPerf is available for Windows, Linux and Mac OSX.
+
+To test multicast connectivity between two nodes, each node will need to have iPerf installed (note: iPerf3 does not
+support multicast client testing). During testing, one node will act as the "server" while the other node acts as the
+"client." This is important during testing, and further, we suggest that each node be tested as a server and as a client
+to ensure proper two-way multicast communication.
+
+*Testing multicast from the server side.*
+----
+iperf -s -B 224.2.2.3 -p 54327 -i 1
+----
+
+*Testing multicast from the client side.*
+----
+iperf -c 224.2.2.3 -p 54327 -u -i 1
+----
+
+The address and port `224.2.2.3:54327` was chosen because this is the default port and address that will be used
+by {nxrm} during the node discovery. When the client is able to successfully connect and communicate with the server
+node, the client will output a set of brief diagnostic messages indicating how much data was sent and received. The
+following is a sample of the output from a client in a successful session:
+
+.Sample Output
+....
+Client connecting to 224.2.2.3, UDP port 54327
+Sending 1470 byte datagrams
+Setting multicast TTL to 1
+UDP buffer size:  208 KByte (default)
+
+[  3] local 10.10.0.102 port 33743 connected with 224.2.2.3 port 54327
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0- 1.0 sec   129 KBytes  1.06 Mbits/sec
+[  3]  1.0- 2.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  2.0- 3.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  3.0- 4.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  4.0- 5.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  5.0- 6.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  6.0- 7.0 sec   129 KBytes  1.06 Mbits/sec
+[  3]  7.0- 8.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  8.0- 9.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  9.0-10.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  0.0-10.0 sec  1.25 MBytes  1.05 Mbits/sec
+[  3] Sent 893 datagrams
+....
+
+The advantage of the using multicast for {nxrm} node discovery is that nodes can be added and removed from the
+cluster without cluster administrators needing to perform configuration or configuration changes. However, routers
+may not be able to route multicast requests properly between subnets, or multicast may be disabled altogether.
+In these situations the cluster configuration can be done manually. To manually configure your cluster, please
+see the documentation for http://docs.hazelcast.org/docs/3.6/manual/html-single/index.html#setting-up-clusters[Hazelcast cluster configuration].
 
 [[high-availability-diagram]]
 ==== Example of an HA Environment
