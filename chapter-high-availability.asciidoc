@@ -5,27 +5,52 @@
 [[high-availability-introduction]]
 === Introduction
 
-High Availability (HA) for {nxrm} is designed to improve your repository manager's uptime. High availability
-distributes traffic across a cluster of nodes, allowing horizontal scalability and reducing the need for a
-single instance of {nxrm}.
+High Availability (HA) for {nxrm} is a set of features designed to improve uptime. High availability allows
+a cluster of nodes to share traffic, allowing horizontal scalability and reducing the need for a single
+instance of {nxrm}.
 
-This chapter guides you through the procedures to synchronize all repository data, system, and custom
-configurations with the services provided by {nxrm}. Ultimately, the chapter explains how you can use {nxrm}
-as a continuously operational, highly-available environment.
+This chapter guides you through the procedures to synchronize all repository data and configuration using
+the services provided by {nxrm}. Ultimately, the chapter explains how you can use {nxrm} as a continuously
+operating, highly-available service.
 
 [[high-availability-benefits]]
 === Benefits of High Availability
 
-{nxrm} HA maintains access to mission critical services even in the case of hardware failure.
-If you desire high availability for your organization you should assess and evaluate your current system
-architecture and configurations before optimizing your ecosystem with {nxrm} HA.
+{nxrm} HA is a three-node active/active model, providing more flexible support for maintenance and testing.
+With all nodes actively serving application load, active/active HA ensures a greater possibility of no
+issues occurring after a failover. This differs from the active/passive model where only one node allows
+writes while a backup stays offline until needed.
 
-On the other hand, if you feel this feature meets your organization's needs, consider its benefits:
+So, if you feel this feature meets your organization's needs, consider what {nxrm} HA provides:
 
-* prevention of data loss via node clustering
-* consistent view of node health across all nodes
-* active/active network architecture where all node have write-access
-* mimimal uninterrupted use of HA servers
+* the assurance of little to no data loss since all nodes are in service
+* a network structure allowing all nodes to have write access
+* a consistent view of node health across all nodes
+* minimal uninterrupted use of HA servers
+
+
+[[high-availability-node]]
+==== What is a Node?
+
+Each instance of {nxrm} in an HA cluster is a node. Nodes participating in a cluster discover each other via
+a service called Hazelcast. All data within nodes are replicated through http://orientdb.com/orientdb/[OrientDB].
+This includes component metadata, as well as system data and configuration.
+
+[[high-availability-prepare]]
+==== Preparing an HA Environment
+
+NOTE: Some application settings must be made on each node. See <<high-availability-environment >> for details
+on what's needed to properly configure an individual node for HA.
+
+{nxrm} HA clusters should be configured with three nodes for normal operation. Cluster nodes vote on each
+change that passes through the cluster, and accept them if a majority quorum of nodes can be contacted. As
+components are uploaded or modified, metadata about those components are synchronized across the cluster.
+Component binaries sit in a shared, on-disk blob store accessible to all three nodes.
+
+Nodes can run on physical or virtual servers, Docker containers, or cloud services like <<high-availability-aws,AWS>>.
+
+Whichever combination of servers you choose, each node must be visible to each other so the cluster can form.
+In the cluster itself, the nodes must share the same network so that latency doesn't negatively impact performance.
 
 [[high-availability-requirements]]
 === Requirements for an HA Environment
@@ -39,28 +64,77 @@ the instructions in the https://support.sonatype.com/hc/en-us/articles/115000350
 * A load balancer, such as NGINX or Apache HTTP
 * Shared storage, for maintaining repository data shared among the nodes.
 
-[[high-availability-node]]
-==== What is a Node?
+==== Network Preparation
 
-Each instance of {nxrm} in an HA cluster is a node. Nodes participating in a cluster discover each other via
-a service called Hazelcast. All data within nodes are replicated through OrientDB. This includes component
-metadata, as well as system data and configuration.
+The nodes in a {nxrm} cluster need to be able to communicate with each other over TCP/IP. For cluster
+communications, {nxrm} will use a range of ports starting with 5701. Each node in the {nxrm} cluster will require
+that an extra port is available, the extra ports used by {nxrm} will be bound sequentially by default.
 
-[[high-availability-prepare]]
-==== Preparing an HA Environment
+For example, in a three-node cluster, each of the nodes in the cluster will need to have ingress opened on ports
+`5701`, `5702`, and `5703`. The nodes will use ephemeral ports for outbound (egress) communications. If outbound or
+inbound network communications need to be customized and may be blocked by a firewall or other network appliance,
+the ports used for cluster communications can be customized in the Hazelcast configuration.
 
-A minimum of three nodes is required to form an HA cluster. This allows nodes to vote on each change that passes
-through the cluster, and reduces the probability of node failure. As components are uploaded or modified, metadata
-about those components are synchronized across the cluster. Component binaries sit in a shared, on-disk blob
-store accessible to all three nodes.
+TIP: For more information on customizing Hazelcast and the ports it uses, please see the documentation for
+http://docs.hazelcast.org/docs/3.6/manual/html-single/index.html#setting-up-clusters[Hazelcast cluster configuration].
 
-Nodes can run on physical or virtual servers, Docker containers, or cloud services like <<high-availability-aws,AWS>>.
-Your network configuration may consist of at least three different operating system instances, or perhaps even
-different virtual operating system instances spread across different physical machines.
+The nodes in a {nxrm} cluster will also replicate database transactions among the nodes in the cluster. The database
+requires ports `2424` and `2434` be open for ingress and egress to each of the rest of the nodes in the cluster.
 
-Whichever combination of servers you choose, each node must be visible to each other so the cluster can form.
-In the cluster itself, the nodes must share the same network so that latency doesn't negatively impact
-performance.
+==== Node Discovery
+
+In the default configuration, {nxrm} uses multicast to discover other {nxrm} nodes. This is done to simplify cluster
+configuration. However, multicast may not work reliably in all network environments. To test multicast connectivity
+between nodes, we recommend using https://iperf.fr/[iPerf]. IPerf is available for Windows, Linux and Mac OSX.
+
+To test multicast connectivity between two nodes, each node will need to have iPerf installed (note: iPerf3 does not
+support multicast client testing). During testing, one node will act as the "server" while the other node acts as the
+"client." This is important during testing, and further, we suggest that each node be tested as a server and as a client
+to ensure proper two-way multicast communication.
+
+*Testing multicast from the server side.*
+----
+iperf -s -B 224.2.2.3 -p 54327 -i 1
+----
+
+*Testing multicast from the client side.*
+----
+iperf -c 224.2.2.3 -p 54327 -u -i 1
+----
+
+The address and port `224.2.2.3:54327` was chosen because this is the default port and address that will be used
+by {nxrm} during the node discovery. When the client is able to successfully connect and communicate with the server
+node, the client will output a set of brief diagnostic messages indicating how much data was sent and received. The
+following is a sample of the output from a client in a successful session:
+
+.Sample Output
+....
+Client connecting to 224.2.2.3, UDP port 54327
+Sending 1470 byte datagrams
+Setting multicast TTL to 1
+UDP buffer size:  208 KByte (default)
+
+[  3] local 10.10.0.102 port 33743 connected with 224.2.2.3 port 54327
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0- 1.0 sec   129 KBytes  1.06 Mbits/sec
+[  3]  1.0- 2.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  2.0- 3.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  3.0- 4.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  4.0- 5.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  5.0- 6.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  6.0- 7.0 sec   129 KBytes  1.06 Mbits/sec
+[  3]  7.0- 8.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  8.0- 9.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  9.0-10.0 sec   128 KBytes  1.05 Mbits/sec
+[  3]  0.0-10.0 sec  1.25 MBytes  1.05 Mbits/sec
+[  3] Sent 893 datagrams
+....
+
+The advantage of the using multicast for {nxrm} node discovery is that nodes can be added and removed from the
+cluster without cluster administrators needing to perform configuration or configuration changes. However, routers
+may not be able to route multicast requests properly between subnets, or multicast may be disabled altogether.
+In these situations the cluster configuration can be done manually. To manually configure your cluster, please
+see the documentation for http://docs.hazelcast.org/docs/3.6/manual/html-single/index.html#setting-up-clusters[Hazelcast cluster configuration].
 
 [[high-availability-diagram]]
 ==== Example of an HA Environment
@@ -73,35 +147,22 @@ and distribution of traffic passing through a load balancer to the nodes.
 image::figs/web/high-availability-architecture[scale=50]
 
 As stated in <<high-availability-storage>>, you must to provide your own shared storage to host shared data,
-such as blob stores and exported database content.
+specifically the <<admin-repository-blobstores,blob stores>> which hold the binary artifacts uploaded into
+{nxrm}.
 
-[[high-availability-network]]
-==== Supported Network Architecture
+[[high-availability-storage]]
+==== Storing Critical Data
 
-{nxrm} HA supports a three-node active/active setup. Unlike an active/passive architecture where only one
-node allow writes or active/standby where a backup stays offline until needed, {nxrm} HA permits write-access
-to all nodes.
+The core of an HA environment is to have reliable, fault-tolerant storage. The solution is to utilize a shared
+storage network to maintain repository data and configuration. To do this create storage locations:
 
-////
-[[high-availability-replication]]
-==== What Gets Replicated?
+* for each node, including their data directories and exported databases
+* where all nodes can shared component binary information as a common blob store access point.
 
-Component binaries are stored as blobs, in a user-specified blob store location. As mentioned in
-<<high-availability-blob-store>> you will need to set up an external, shared blob store location accessible
-to all three nodes. After configuration, all repositories and data gets synchronized across the nodes in the
-cluster.
+A shared-disk file system is mandatory for your clustered nodes. So on your network, make sure they can see
+the blob store on a highly-available file system of your choice.
 
-NOTE: Some repository manager-level modifications won't synchronize across nodes. See <<high-availability-environment >>
-for details on what's needed to properly configure an individual node for HA.
-////
-
-[[high-availability-system]]
-==== Making a Cluster Highly Available
-
-An HA cluster is established when nodes communicate with each other and distribute the load of repository
-data and system configuration equally among themselves. Still, you must prepare your HA environment to mitigate
-any single points of failure. A load balancer, therefore, improves the distribution of workload across clusters
-in your HA environment. If one node goes down it redirects traffic to all surviving nodes.
+The clustered nodes share component metadata and repository manager configuration amongst themselves.
 
 [[high-availability-connection]]
 ==== Monitoring Node Connections
@@ -109,21 +170,42 @@ in your HA environment. If one node goes down it redirects traffic to all surviv
 In the event a single node loses connection to the cluster, the remaining nodes will continue to make decisions
 on which data changes are valid. The disconnected node will reject further writes until it rejoins the cluster.
 
+////
+this section, add to verifying node connection
 From the user interface the most accessible way to view active nodes is from the 'Nodes' screen, in the
 'Adminstration' menu. It displays all clustered nodes in a table. In this table, notice a distinguishable node
 listed as 'true'. The 'true' value indicates that you're viewing your local node from the client (e.g. browser).
 Conversely, all values listed as 'false' imply the additional, synchronized nodes are configured to their
 own servers.
+////
 
-[[high-availability-storage]]
-==== Storing Critical Data
+[[high-availability-backup]]
+==== Backing up your HA Cluster
 
-The core of an HA environment is to have reliable, fault-tolerant storage. The solution is to utilize a shared
-storage network to maintain repository data and configurations. To do this:
+Backup for HA uses the same concepts described in the <<backup-restore,Backup and Restore chapter>>. The notable
+exception is that your local cluster has shared storage. So, when configuring the 'Export configuration & metadata
+for backup' scheduled task choose a node for the backup to run against.
 
-* create a storage location for each node, including their data directories and exported databases
-* create a storage location where all nodes can shared component binary information as a common blob store access
-point.
+This task, only exports data. But it’s necessary to configure it when backing up and restoring your cluster if you
+want to roll back its current state to an earlier state, such as in the case of failure of the underlying
+infrastructure.
+
+While the scheduled task runs, all nodes in the cluster become read-only. This is done to preserve data integrity.
+While in read-only mode, attempts to publish components or make changes to repository manager configuration will
+fail.
+
+Nexus Repository Manager will automatically release the read-only status when the backup task completes. Schedule
+the backup task for a time of day that usually has low to no activity to minimize client errors
+
+
+[[high-availability-restore]]
+==== Restoring your HA Cluster
+
+Similar to the concepts outlined in <<backup>>, you can restore exported configuration and metadata in your HA
+environment. You are required to choose a node from which you desire to restore OrientDB database contents. Then,
+follow the steps in detail from <<backup-restore>>. You will want to shut down all other nodes in the cluster
+during the restoration process, bringing them back into the cluster after the restoration process has been
+completed.
 
 [[high-availability-methods]]
 === Methods to Configure a Cluster
@@ -163,11 +245,11 @@ nodes to form the cluster.
 [[high-availability-move]]
 ==== Moving Blob Stores from an Existing Instance of {pro}
 
-As inferred in <<high-availability-storage>>, your node may contain blob stores created before initiating HA.
-As is, those blob stores and their data will not be replicated. So to preserve them with data intact, you must
-relocate them to the shared location planned for your HA environment. To do so, follow the steps in the
-https://support.sonatype.com/hc/en-us/articles/235816228[support article]. After completing the steps, refer
-to step 3 in <<high-availability-existing>> to complete HA set up.
+Your existing node may contain blob stores created before initiating HA. These blob stores will only be part of
+the existing node, not the HA cluster. So to utilize them in HA, you must relocate them to the shared location
+planned for your HA environment. To do so, follow the steps in the
+https://support.sonatype.com/hc/en-us/articles/235816228[support article]. After completing the steps, refer to
+step 3 in <<high-availability-existing>> to complete HA set up.
 
 [[high-availability-blob-store]]
 ==== Configuring a Node to Share a Blob Store
@@ -311,25 +393,3 @@ The `$install-dir/etc/fabric/hazelcast.xml` file with the modified properties wi
     </aws>
 </join>
 ----
-
-[[high-availability-backup]]
-==== Backing up your HA Cluster
-
-NOTE: The task described here only backs up the configuration and metadata.  The (shared) blob store(s) must be 
-backed up independently.
-
-Backup for HA uses the same concepts as outlined in <<backup>>. The notable exception is that when creating your 
-'Export configuration & metadata for backup' scheduled task you must choose a node for the backup to run against. 
-Since these nodes are sharing the same data, in most cases your selection should not matter.
-
-While the scheduled task runs, the node configured against becomes read only. During this time, the other nodes 
-in the cluster function as normal. When the backup is complete, the node picks up any changes made to the cluster 
-configuration while it was performing the task. Any write operations run specifically against this node (as 
-opposed to the cluster) will be run at that time as well.
-
-[[high-availability-restore]]
-==== Restoring your HA Cluster
-
-Similar to the concepts outlined in <<backup>>, you can restore your a node with shared data in your HA environment.
-You are required to choose a node from which you desire to restore OrientDB database contents. Then, follow the steps
-in detail from <<backup-restore>>.
