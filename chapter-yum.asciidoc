@@ -1,0 +1,70 @@
+[[yum]]
+== Yum Repositories
+{inall}
+
+[[yum-introduction]]
+=== Introduction
+
+http://yum.baseurl.org/[Yum] or "Yellowdog Updater, Modified", is a command line package management utility for
+Linux distributions using the RPM package manager. It allows for many commonly used Linux packages to be easily
+installed on to distributions such as RedHat, CentOS and Fedora.
+
+{pro} and {oss} support the Yum repository format for proxy repositories. This allows the repository
+manager to take advantage of the packages in public Yum repositories without
+incurring repeated downloads of packages. This will also allow you to perform offline installs, for example
+allowing you to install CentOS without a connection to the internet.
+
+[[yum-proxy]]
+=== Proxying Yum Repositories
+
+You can set up a Yum proxy repository to access a remote repository location.
+
+To proxy a Yum repository, you simply create a new 'yum (proxy)' as documented in <<admin-repositories>>. Minimal
+configuration steps are:
+
+- Define 'Name' e.g. 'yum-proxy'
+- Define URL for 'Remote storage' e.g. http://dl.fedoraproject.org/pub/epel/7/x86_64/[http://dl.fedoraproject.org/pub/epel/7/x86_64/]
+- Select a 'Blob store' for 'Storage'
+
+NOTE: We do not create a default Yum proxy repository as there are many. Determine which repositores are
+appropriate for your environment.
+
+TIP: Some common CentOS repositories are available at
+http://mirror.centos.org/centos/[http://mirror.centos.org/centos/]
+
+[[yum-installation]]
+=== Installing Yum
+
+Yum should come pre-installed with RedHat, CentOS, Fedora and a long list of Linux flavors. If your system does
+not have Yum preinstalled, you may have larger problems that cannot be solved in these docs.
+
+NOTE: Fedora users have been encouraged to use http://dnf.baseurl.org/[DNF] as of Fedora version 20. DNF is
+currently backwards compatible and SHOULD work with {nxrm} 3, but is not explicitly supported.
+
+[[yum-client]]
+=== Configuring Yum Client
+
+Create a `nexus.repo` file in `/etc/yum.repos.d/` that looks similar to the following:
+
+.nexus.repo
+----
+[nexusrepo]
+name=Nexus Repository
+baseurl=http://serveraddress:port/repository/yum-proxy/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+priority=1
+----
+
+NOTE: If you have set `gpgcheck` to enabled, you'll want to provide the location of the `gpgkey`, replacing the value
+we've shown in the example above.
+
+[[yum-browse-search]]
+=== Browsing Yum Repositories and Searching Packages
+
+You can browse Yum repositories in the user interface inspecting the components and assets and their details, as
+described in <<browse-browse>>.
+
+Searching for Yum packages can be performed in the user interface, too. It finds all packages that are currently
+stored in the repository manager, as described in <<search-components>>.
