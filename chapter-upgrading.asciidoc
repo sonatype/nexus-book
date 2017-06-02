@@ -21,10 +21,6 @@ IMPORTANT: {pro} customers can take advantage of the assistance of the support t
 [[why-upgrade]]
 === Why Upgrade?
 
-WARNING: Upgrading {nxrm} 2 to 3 provides tooling to transfer content and configurations from the respective source
-repository manager to the target repository manager. These steps and procedures do not support large-scale data center
-to data center upgrades.
-
 As of {nxrm} 3.1  there is wider feature and functionality equivalency to {nxrm} 2. Highlights of new functionality
 include:
 ////
@@ -42,6 +38,10 @@ practices and automation. However, it is a good idea to review the support site 
 link:https://support.sonatype.com/hc/en-us/articles/226495428[repository format support], 
 link:https://support.sonatype.com/hc/en-us/articles/226489388[feature equivalency], and 
 link:https://support.sonatype.com/hc/en-us/articles/222426568[compatibility across versions].
+
+Upgrading {nxrm} 2 to 3 only provides tooling to transfer content and configurations from the respective source
+repository manager to the target repository manager. The upgrade agent provided by {nxrm} should not act as
+a data center to data center transfer mechanism.
 
 [[upgrade-version-two]]
 === Upgrading from 2.x to 2.y
@@ -70,15 +70,15 @@ NOTE: Follow these https://support.sonatype.com/hc/en-us/articles/231723267[spec
 === Upgrading from 3.x HA to 3.y HA
 
 It is recommended to conduct a comprehensive <<backup,backup>> before attempting the upgrade of an HA cluster.
-This includes a backup of shared blob store filesystems and the
-<<data-directory,data directory>> on each cluster node.
+This includes a backup of shared blob store filesystems and the <<data-directory,data directory>> on each cluster
+node.
 
 Currently, {nxrm} must be stopped on all nodes in the cluster before upgrading each individual node.
 The software on each node can be upgraded as in <<upgrade-version-three>>, taking care to re-apply
 any customizations that are not contained in the <<data-directory,data directory>>.
 
-After the software has been upgraded on each node, the nodes can be brought back online one at a
-time, allowing each node to startup completely before bringing the next node online.
+After the software has been upgraded on each node, the nodes can be brought back online one at a time, allowing
+each node to startup completely before bringing the next node online.
 
 [[upgrade-version-two-three]]
 === Upgrading 2.x to 3.y
@@ -110,9 +110,6 @@ manager incurs restrictions that make the upgrade more complex and potentially r
 [[upgrade-process-expectations]]
 ==== Upgrade Process and Expectations
 
-NOTE:  Upgrading data and configurations while simultaneouly moving any dependent data across data centers is
-prohibited. If performance issues occur, our Support team must be able to diagnose errors inherent to {nxrm}.
-
 The process of upgrading {nxrm} 2 to 3, is similar to any major enterprise application upgrade, and should be
 managed via an upgrade plan. The upgrade plan is really just a specific checklist of all the steps required to
 perform the upgrade.
@@ -124,6 +121,11 @@ changes are not.
 You should not make changes to items such as realm settings, permissions, roles, role assignments, HTTP
 configuration, SSL certificates, or add new repositories. These types of configuration changes are not taken into
 account for an ongoing upgrade and can cause the upgrade process to fail.
+
+As mentioned in <<why-upgrade,Why Upgrade?>> upgrading data and configurations while simultaneouly moving any
+dependent data across data centers is prohibited. In other words, your version 2-to-3 upgrade plan should be isolated
+from other transfer procedures in your organization. If {nxrm} 2 to 3 upgrade performance issues occur, our Support
+team must be able to diagnose such errors inherent to {nxrm}.
 
 [[upgraded]]
 ==== What Is Upgraded
@@ -226,6 +228,10 @@ configuration and data. This is the slowest option.
 
 If version 2 and version 3 are running on different machines and do not share access to the same file system
 storage, you must use the HTTP download method.
+
+WARNING: As mentioned in <<upgrade-process-expectations,processes and expectations>> we recommended that you use
+this upgrade guide solely to transfer content from {nxrm} 2 to 3. Please avoid using this tool to execute cloud
+to on-premises data centers, or vice versa.
 
 *File System Copying*
 
