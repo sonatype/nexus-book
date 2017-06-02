@@ -39,9 +39,10 @@ link:https://support.sonatype.com/hc/en-us/articles/226495428[repository format 
 link:https://support.sonatype.com/hc/en-us/articles/226489388[feature equivalency], and 
 link:https://support.sonatype.com/hc/en-us/articles/222426568[compatibility across versions].
 
-Upgrading {nxrm} 2 to 3 only provides tooling to transfer content and configurations from the respective source
-repository manager to the target repository manager. The upgrade agent provided by {nxrm} should not act as
-a data center to data center transfer mechanism.
+IMPORTANT: Upgrading {nxrm} 2 to 3 only provides native tooling to transfer content and configurations from
+the respective source repository manager to the target repository manager. We strongly discourage you to
+run the upgrade from version 2 to version 3 while simultaneously running any data center-to-data center
+transfers (e.g. synchronizing applications in your cloud server to on-premises data centers, or vice-versa)
 
 [[upgrade-version-two]]
 === Upgrading from 2.x to 2.y
@@ -61,7 +62,8 @@ Further instructions are available on the https://support.sonatype.com/hc/en-us/
 
 Upgrades of version 3 are supported for version 3 milestone 7 and later. The upgrade is a similar process to
 version 2 upgrades and is documented in more detail in the
-https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base article].
+https://support.sonatype.com/hc/en-us/articles/217967608[knowledge base article]. This must be done before
+<<upgrade-version-two-three,upgrading version 2.x to 3.y>>.
 
 NOTE: Follow these https://support.sonatype.com/hc/en-us/articles/231723267[specific instructions] to upgrade to
 3.1.0-4 or later. Since the release of 3.1.0-4, the directory structure has changed for this and later versions.
@@ -121,11 +123,6 @@ changes are not.
 You should not make changes to items such as realm settings, permissions, roles, role assignments, HTTP
 configuration, SSL certificates, or add new repositories. These types of configuration changes are not taken into
 account for an ongoing upgrade and can cause the upgrade process to fail.
-
-As mentioned in <<why-upgrade,Why Upgrade?>> upgrading data and configurations while simultaneouly moving any
-dependent data across data centers is prohibited. In other words, your version 2-to-3 upgrade plan should be isolated
-from other transfer procedures in your organization. If {nxrm} 2 to 3 upgrade performance issues occur, our Support
-team must be able to diagnose such errors inherent to {nxrm}.
 
 [[upgraded]]
 ==== What Is Upgraded
@@ -219,19 +216,19 @@ methods for this transfer:
 
 - HTTP Download
 - File System Copying
-- File System Hard Linking 
+- File System Hard Linking
 
 *HTTP Downloading*
+
+WARNING: When running the HTTP download method, we discourage you to synchronize repository manager content to
+cloud services or on-premises data centers. This tool is solely designed to allow for data and configuration
+transfers between {nxrm} 2 to 3.
 
 HTTP download is a transfer method in which version 3 makes HTTP requests to version 2 to transfer
 configuration and data. This is the slowest option.
 
 If version 2 and version 3 are running on different machines and do not share access to the same file system
 storage, you must use the HTTP download method.
-
-WARNING: As mentioned in <<upgrade-process-expectations,processes and expectations>> we recommended that you use
-this upgrade guide solely to transfer content from {nxrm} 2 to 3. Please avoid using the upgrade tool to execute
-cloud to on-premises data center transfers, or vice versa.
 
 *File System Copying*
 
