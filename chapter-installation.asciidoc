@@ -763,17 +763,32 @@ ssl:: A directory to put keystores when configuring HTTPS
 [[config-jvm]]
 ==== Updating Memory Allocation and other JVM Paramaters
 
-The default and maximum heap sizes for the repository manager are a value of `1200M`, suitable for most usage
-patterns. As a Java application running on the JVM the repository manager is using JVM configuration parameters
-for numerous settings as part of the startup parameters for the JVM. These values are defined in the configuration
-file `$install-dir/bin/nexus.vmoptions`. Increased memory configuration can be set with e.g.:
+{nxrm} uses a value of `1200M` for the minimum and maximum JVM heap, suitable for most usage patterns.
+Minimum and maximum value heap, as well as many other JVM system tuning parameters, can be adjusted by modifying the
+configuration file `$install-dir/bin/nexus.vmoptions`. Here is an example increasing the minimum heap, maximum heap, and
+maximum direct memory:
 
 ----
--Xms1500M
--Xmx2G
+-Xms2703M
+-Xmx2703M
+-XX:MaxDirectMemorySize=2703M
+-XX:+UnlockDiagnosticVMOptions
+-XX:+UnsyncloadClass
+-XX:+LogVMOutput
+-XX:LogFile=../sonatype-work/nexus3/log/jvm.log
+-Djava.net.preferIPv4Stack=true
+-Dkaraf.home=.
+-Dkaraf.base=.
+-Dkaraf.etc=etc/karaf
+-Djava.util.logging.config.file=etc/karaf/java.util.logging.properties
+-Dkaraf.data=../sonatype-work/nexus3
+-Djava.io.tmpdir=../sonatype-work/nexus3/tmp
+-Dkaraf.startLocalConsole=false
 ----
 
-Other JVM parameters such as GC algorithm can be configured in the same location.
+Other JVM parameters such as GC algorithm can be configured in the same location. **Always be sure to include all of the
+properties found in the original `$install-dir/bin/nexus.vmoptions` file from the distribution; absence of any of these
+parameters can have significant negative impact on {nxrm} stability and performance.**
 
 [[config-http-port]]
 ==== Changing the HTTP Port
