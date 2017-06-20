@@ -151,16 +151,23 @@ jquery#2.2.0 bower_components/jquery
 
 If anonymous access to the repository manager is disabled, you have to specify the credentials for the accessing
 the repository manager as part of the URL like `http://username:password@host:port/repository/bower-all` and add a
-`nexus` section to your `.bowerrc` file.
+`nexus` section to your `.bowerrc` file, as in this example:
 
 ----
-{
-  "nexus" : {
-    "username" : "myusername",
-    "password" : "mypassword"
+{     
+   "registry" : {
+      "search" : [ "http://username:password@host:port/repository/bower-all" ]
+   },
+   "resolvers" : [ "bower-nexus3-resolver" ],
+   "nexus" : {
+      "username" : "myusername",
+      "password" : "mypassword"
   }
 }
 ----
+
+TIP: If your organization's policy prevents clear text passwords from being saved in local configuration files, 
+{pro} supports obfuscation of those fields using User Tokens as described in <<user-token>>.
 
 Downloaded packages are cached, do not have to be retrieved from the remote repositories again and can be
 inspected in the user interface.
