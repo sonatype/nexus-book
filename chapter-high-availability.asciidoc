@@ -10,7 +10,7 @@ deployment. This chapter explains why you would use HA-LC, how it works, support
 HC-LC, and procedures for setting it up.
 
 [[high-availability-deciding-to-use-ha-lc]]
-=== Deciding to Use HA-LC
+=== Making the Decision to Use HA-LC
 
 Managing three nodes is more complex than managing one. In particular, backup and restore procedures are more
 complex, as is the process for upgrading to newer versions of {rm}.
@@ -27,7 +27,7 @@ them. The nodes operate in an active/active configuration, meaning that both rea
 components) can be made to any of the three nodes.
 
 Internally, {rm} uses http://orientdb.com/orientdb/[OrientDB], a clustered database. Orient replicates state
-between the nodes using distributed transactions. Each node votes on whether to accept a transaction - if a
+between the nodes using distributed transactions. Each node votes on whether to accept a transaction, and if a
 majority quorum of nodes respond and report success, the transaction is accepted. In this way, if one node
 fails, anything written to it is guaranteed to be on at least one other node. The remaining two nodes still form a
 a majority, and can continue to accept writes until the failed node is restored and rejoins the cluster.
@@ -36,18 +36,21 @@ a majority, and can continue to accept writes until the failed node is restored 
 ==== What's Replicated?
 
 {nxrm} uses OrientDB to replicate:
+
 * all configuration which is modified through the {nxrm} user interface
 * metadata about the components stored in {rm}
 
 Some state is *not* replicated:
+
 * startup configuration files for each instance
 * binaries for the components hosted or proxied within {rm}
 
-Any deliberate changes to startup configuration need to be made on each node separately. This includes (but is not
+Any changes you make to the startup configuration need to be made on each node separately. This includes (but is not
 limited to) {rm} configuration properties, JVM settings, Jetty configuration overrides, and Hazelcast configuration.
 
-In addition, {rm} does not replicate binaries: these are stored in file system-based blob store. For an HA-LC
-deployment, administrators must provide a highly available file system which is accessible to all three nodes.
+In addition, {rm} does not replicate the binary artifacts themselves, as these are stored in file system-based blob
+store. For an HA-LC deployment, administrators must provide a file system which is accessible to all three nodes
+and which meets their availability requirements.
 
 This is illustrated in the following diagram:
 
