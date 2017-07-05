@@ -1,40 +1,62 @@
 [[high-availability]]
-==  High Availability
+==  High Availability - Clusters
 {inrmonly}
 
 [[high-availability-introduction]]
 === Introduction
 
-High Availability (HA) for {nxrm} is a set of features designed to improve uptime. High availability allows
-a cluster of nodes to share traffic, allowing horizontal scalability and reducing the need for a single
-instance of {nxrm}.
+High Availability Clusters (HA-C) is a set of features designed to improve the availability of a {nxrm}
+deployment. This chapter explains why you would use HA-LC, how it works, supported architectures for deploying 
+HC-LC, and procedures for setting it up.
 
-This chapter guides you through the procedures to synchronize all repository data and configuration using
-the services provided by {nxrm}. Ultimately, the chapter explains how you can use {nxrm} as a continuously
-operating, highly-available service.
+[[high-availability-deciding-to-use-ha-c]]
+=== Making the Decision to Use HA-C
 
-[[high-availability-benefits]]
-=== Benefits of High Availability
+Managing three nodes is more complex than managing one. In particular, backup and restore procedures are more
+complex, as is the process for upgrading to newer versions of {rm}.
 
-{nxrm} HA is a three-node active/active model, providing more flexible support for maintenance and testing.
-With all nodes actively serving application load, active/active HA ensures a greater possibility of no
-issues occurring after a failover. This differs from the active/passive model where only one node allows
-writes while a backup stays offline until needed.
+HA-C is not intended to improve the throughput or performance of an {rm} deployment, nor is it a replacement for
+traditional backup procedures. Consider using HA-C if your need for increased uptime outweighs the additional
+operational complexity.
 
-So, if you feel this feature meets your organization's needs, consider what {nxrm} HA provides:
+[[high-availability-how-it-works]]
+=== How It Works
 
-* the assurance of little to no data loss since all nodes are in service
-* a network structure allowing all nodes to have write access
-* a consistent view of node health across all nodes
-* minimal uninterrupted use of HA servers
+In a typical HA-C deployment, three {rm} nodes sit behind a load balancer, which divides incoming requests between
+them. The nodes operate in an active/active configuration, meaning that both reads and writes (e.g. publishing new
+components) can be made to any of the three nodes.
 
+Internally, {rm} uses http://orientdb.com/orientdb/[OrientDB], a clustered database. Orient replicates state
+between the nodes using distributed transactions. Each node votes on whether to accept a transaction, and if a
+majority quorum of nodes respond and report success, the transaction is accepted. In this way, if one node
+fails, anything written to it is guaranteed to be on at least one other node. The remaining two nodes still form a
+a majority, and can continue to accept writes until the failed node is restored and rejoins the cluster.
 
-[[high-availability-node]]
-==== What is a Node?
+[[high-availability-what-is-replicated]]
+==== What's Replicated?
 
-Each instance of {nxrm} in an HA cluster is a node. Nodes participating in a cluster discover each other via
-a service called Hazelcast. All data within nodes are replicated through http://orientdb.com/orientdb/[OrientDB].
-This includes component metadata, as well as system data and configuration.
+{nxrm} uses OrientDB to replicate:
+
+* all configuration which is modified through the {nxrm} user interface
+* metadata about the components stored in {rm}
+
+Some state is *not* replicated:
+
+* startup configuration files for each instance
+* binaries for the components hosted or proxied within {rm}
+
+Any changes you make to the startup configuration need to be made on each node separately. This includes (but is not
+limited to) {rm} configuration properties, JVM settings, Jetty configuration overrides, and Hazelcast configuration.
+
+In addition, {rm} does not replicate the binary artifacts themselves, as these are stored in file system-based blob
+store. For an HA-C deployment, administrators must provide a file system which is accessible to all three nodes
+and which meets their availability requirements.
+
+This is illustrated in the following diagram:
+
+// https://docs.google.com/drawings/d/1ODAxSyOUw7IX6gmIvMasjzRXh_mLy545C0FTvGrO0t8/edit
+
+image::figs/web/high-availability-arch-simple.png[scale=70]
 
 [[high-availability-prepare]]
 ==== Preparing an HA Environment
@@ -137,20 +159,6 @@ In these situations the cluster configuration can be done manually. To manually 
 see the documentation for
 http://docs.hazelcast.org/docs/3.6/manual/html-single/index.html#setting-up-clusters[Hazelcast cluster configuration].
 
-[[high-availability-diagram]]
-==== Example of an HA Environment
-
-This is an example of {nxrm} HA's key layers. The diagram shows the discovery of enabled nodes via Hazelcast
-and distribution of traffic passing through a load balancer to the nodes.
-
-[[fig-high-availability-architecture]]
-.Sample High Availability Environment
-image::figs/web/high-availability-architecture[scale=50]
-
-As stated in <<high-availability-storage>>, you must to provide your own shared storage to host shared data,
-specifically the <<admin-repository-blobstores,blob stores>> which hold the binary artifacts uploaded into
-{nxrm}.
-
 [[high-availability-storage]]
 ==== Storing Critical Data
 
@@ -164,12 +172,6 @@ A shared-disk file system is mandatory for your clustered nodes. So on your netw
 the blob store on a highly-available file system of your choice.
 
 The clustered nodes share component metadata and repository manager configuration amongst themselves.
-
-[[high-availability-connection]]
-==== Monitoring Node Connections
-
-In the event a single node loses connection to the cluster, the remaining nodes will continue to make decisions
-on which data changes are valid. The disconnected node will reject further writes until it rejoins the cluster.
 
 ////
 this section, add to verifying node connection
@@ -195,8 +197,8 @@ While the scheduled task runs, all nodes in the cluster become read-only. This i
 While in read-only mode, attempts to publish components or make changes to repository manager configuration will
 fail.
 
-Nexus Repository Manager will automatically release the read-only status when the backup task completes. Schedule
-the backup task for a time of day that usually has low to no activity to minimize client errors
+{nxrm} will automatically release the read-only status when the backup task completes. Schedule the backup task for
+a time of day that usually has low to no activity to minimize client errors
 
 
 [[high-availability-restore]]
@@ -236,11 +238,10 @@ steps below to synchronize it with the second and third nodes.
 1. Stop running the existing repository manager.
 2. Follow the steps in the https://support.sonatype.com/hc/en-us/articles/231723267[support article] to
 upgrade the repository manager to a version that supports high availability.
-3. Download and unpack a new repository manager to establish a second node.
-4. Create a third instance by copying the second repository manager to establish a third node.
-5. Configure the blob store in the first node to an external location where the second and third can access it.
-6. <<high-availability-nodes,Enable>> high availability on the three nodes.
-7. Start the first node and wait for its start-up sequence to complete, then start the second and third
+3. Copy a second and third instance of the newly upgraded repository manager to establish three nodes.
+4. Configure the blob store in the first node to an external location where the second and third can access it.
+5. <<high-availability-nodes,Enable>> high availability on the three nodes.
+6. Start the first node and wait for its start-up sequence to complete, then start the second and third
 nodes to form the cluster.
 
 [[high-availability-move]]
@@ -323,6 +324,10 @@ which you connect to, as they are synchronized.
 
 See <<nodes>> for details on viewing active nodes in a cluster.
 
+NOTE: In the event a single node loses connection to the cluster, the remaining nodes will continue to make
+decisions on which data changes are valid. The disconnected node will reject further writes until it rejoins
+the cluster.
+
 [[high-availability-environment]]
 ==== Configuring a Cluster after Setup
 
@@ -353,6 +358,13 @@ occur on the individual node level.
 
 When adding new nodes to the existing cluster be aware that they will get the shared configuration of the cluster 
 regardless of how they are preconfigured.
+
+[[high-availability-monitor]]
+==== Monitoring Node Health
+
+Once your HA environment is set up, you should monitor the health of the nodes in your cluster. See the support
+article for the https://support.sonatype.com/hc/en-us/articles/226254487[HTTP endpoints] that HA-C exposes and/or
+the support article for https://support.sonatype.com/hc/en-us/articles/218501277[enabling JMX], if desired.
 
 [[high-availability-aws]]
 ==== Configuring High Availability for Amazon Web Services
