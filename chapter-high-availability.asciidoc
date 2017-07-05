@@ -173,12 +173,6 @@ the blob store on a highly-available file system of your choice.
 
 The clustered nodes share component metadata and repository manager configuration amongst themselves.
 
-[[high-availability-connection]]
-==== Monitoring Node Connections
-
-In the event a single node loses connection to the cluster, the remaining nodes will continue to make decisions
-on which data changes are valid. The disconnected node will reject further writes until it rejoins the cluster.
-
 ////
 this section, add to verifying node connection
 From the user interface the most accessible way to view active nodes is from the 'Nodes' screen, in the
@@ -203,8 +197,8 @@ While the scheduled task runs, all nodes in the cluster become read-only. This i
 While in read-only mode, attempts to publish components or make changes to repository manager configuration will
 fail.
 
-Nexus Repository Manager will automatically release the read-only status when the backup task completes. Schedule
-the backup task for a time of day that usually has low to no activity to minimize client errors
+{nxrm} will automatically release the read-only status when the backup task completes. Schedule the backup task for
+a time of day that usually has low to no activity to minimize client errors
 
 
 [[high-availability-restore]]
@@ -244,11 +238,10 @@ steps below to synchronize it with the second and third nodes.
 1. Stop running the existing repository manager.
 2. Follow the steps in the https://support.sonatype.com/hc/en-us/articles/231723267[support article] to
 upgrade the repository manager to a version that supports high availability.
-3. Download and unpack a new repository manager to establish a second node.
-4. Create a third instance by copying the second repository manager to establish a third node.
-5. Configure the blob store in the first node to an external location where the second and third can access it.
-6. <<high-availability-nodes,Enable>> high availability on the three nodes.
-7. Start the first node and wait for its start-up sequence to complete, then start the second and third
+3. Copy a second and third instance of the newly upgraded repository manager to establish three nodes.
+4. Configure the blob store in the first node to an external location where the second and third can access it.
+5. <<high-availability-nodes,Enable>> high availability on the three nodes.
+6. Start the first node and wait for its start-up sequence to complete, then start the second and third
 nodes to form the cluster.
 
 [[high-availability-move]]
@@ -331,6 +324,10 @@ which you connect to, as they are synchronized.
 
 See <<nodes>> for details on viewing active nodes in a cluster.
 
+NOTE: In the event a single node loses connection to the cluster, the remaining nodes will continue to make
+decisions on which data changes are valid. The disconnected node will reject further writes until it rejoins
+the cluster.
+
 [[high-availability-environment]]
 ==== Configuring a Cluster after Setup
 
@@ -361,6 +358,13 @@ occur on the individual node level.
 
 When adding new nodes to the existing cluster be aware that they will get the shared configuration of the cluster 
 regardless of how they are preconfigured.
+
+[[high-availability-monitor]]
+==== Monitoring Node Health
+
+Once your HA environment is set up, you should monitor the health of the nodes in your cluster. See the support
+article for the https://support.sonatype.com/hc/en-us/articles/226254487[HTTP endpoints] that HA-C exposes and/or
+the support article for https://support.sonatype.com/hc/en-us/articles/218501277[enabling JMX], if desired.
 
 [[high-availability-aws]]
 ==== Configuring High Availability for Amazon Web Services
