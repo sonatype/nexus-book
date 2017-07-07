@@ -13,9 +13,9 @@ HC-LC, and procedures for setting it up.
 === Making the Decision to Use HA-C
 
 Managing three nodes is more complex than managing one. In particular, backup and restore procedures are more
-complex, as is the process for upgrading to newer versions of {rm}.
+complex, as is the process for upgrading to newer versions of the {rm}.
 
-HA-C is not intended to improve the throughput or performance of an {rm} deployment, nor is it a replacement for
+HA-C is not intended to improve the throughput or performance of a {rm} deployment, nor is it a replacement for
 traditional backup procedures. Consider using HA-C if your need for increased uptime outweighs the additional
 operational complexity.
 
@@ -26,7 +26,7 @@ In a typical HA-C deployment, three {rm} nodes sit behind a load balancer, which
 them. The nodes operate in an active/active configuration, meaning that both reads and writes (e.g. publishing new
 components) can be made to any of the three nodes.
 
-Internally, {rm} uses http://orientdb.com/orientdb/[OrientDB], a clustered database. Orient replicates state
+Internally, the {rm} uses http://orientdb.com/orientdb/[OrientDB], a clustered database. Orient replicates state
 between the nodes using distributed transactions. Each node votes on whether to accept a transaction, and if a
 majority quorum of nodes respond and report success, the transaction is accepted. In this way, if one node
 fails, anything written to it is guaranteed to be on at least one other node. The remaining two nodes still form a
@@ -46,9 +46,9 @@ Some state is *not* replicated:
 * binaries for the components hosted or proxied within {rm}
 
 Any changes you make to the startup configuration need to be made on each node separately. This includes (but is not
-limited to) {rm} configuration properties, JVM settings, Jetty configuration overrides, and Hazelcast configuration.
+limited to) the {rm} configuration properties, JVM settings, Jetty configuration overrides, and Hazelcast configuration.
 
-In addition, {rm} does not replicate the binary artifacts themselves, as these are stored in file system-based blob
+In addition, the {rm} does not replicate the binary artifacts themselves, as these are stored in file system-based blob
 store. For an HA-C deployment, administrators must provide a file system which is accessible to all three nodes
 and which meets their availability requirements.
 
@@ -84,7 +84,7 @@ HA environment configured. Here’s a list of the most important things you shou
 ** If you have an existing {pro} installation without HA upgrade to an HA-supported version of {pro}, from
 the instructions in the https://support.sonatype.com/hc/en-us/articles/115000350007[support article]
 * A load balancer, such as NGINX or Apache HTTP
-* Shared storage, for maintaining repository data shared among the nodes.
+* Shared storage, for maintaining repository data shared among the nodes
 
 ==== Network Preparation
 
