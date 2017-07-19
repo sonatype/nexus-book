@@ -538,6 +538,22 @@ setting up a {nxrm} instance. Go through the list of task types and consider you
 addition update your tasks when changing your usage. E.g., if you start to regularly deploy snapshots by 
 introducing continuous integration server builds with deployment.
 
+[[task-logging]]
+===== Task Logging
+
+The output of every task run will go to a separate log file. By default these task logs are stored in
++$data-dir/log/tasks+. The file name of each task log is the type followed by the full date and time the task started.
+For example: +repository-maven.purge-unused-snapshots-20170618153235.log+.
+
+Generally the output of the task will go to both the `nexus.log` and the specific task log, however some tasks will only
+go to the task log, while others only go to the `nexus.log`.
+
+For long running tasks, a periodic update will be logged back to the `nexus.log` every minute. For most jobs this will
+appear as +---- Mark ----+; however some tasks have the ability to report actual progress so you may see a percentage
+value.
+
+Task log files are removed after 30 days.
+
 [[admin-repositories]]
 === Repository Management
 {inall}
@@ -1330,6 +1346,9 @@ The 'Refresh interval' configuration on the right on the top of the view allows 
 the refresh as well as the size of the log displayed. A manual refresh can be triggered with the general refresh
 button in the main toolbar.
 
+===== Task Logging
+
+The output of every task run will go to a separate log file. See <<task-logging>> for more information.
 
 [[admin-support-metrics]]
 ==== Metrics
